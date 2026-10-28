@@ -5,10 +5,14 @@ import { useMutation, useQuery, useQueryClient, type QueryClient } from "@tansta
 import {
   createManagedCustomer,
   deleteManagedCustomer,
+  getManagedCustomer,
   getCustomerAnalyticsData,
   getCustomerManagementData,
+  prepareCustomerExportAction,
   updateManagedCustomer,
   type CustomerDetailAnalytics,
+  type CustomerExportRequest,
+  type CustomerExportResult,
   type CustomerManagementInput,
   type CustomerManagementRow,
   type CustomerRemovalResult,
@@ -21,6 +25,8 @@ export const customerManagementKeys = {
   all: ["customer-management"] as const,
   dashboard: (organizationId: string) =>
     [...customerManagementKeys.all, "dashboard", organizationId] as const,
+  detail: (organizationId: string, customerId: string) =>
+    [...customerManagementKeys.all, "detail", organizationId, customerId] as const,
   analytics: (organizationId: string, customerId: string) =>
     [...customerManagementKeys.all, "analytics", organizationId, customerId] as const,
 }
@@ -35,6 +41,8 @@ const copy = {
     archiveBody: "The unused customer was removed from active customer lists.",
     deactivateTitle: "Customer deactivated",
     deactivateBody: "The customer has history, so it was deactivated to preserve records.",
+    exportTitle: "Customer export ready",
+    exportBody: "The controlled export was generated, watermarked, and downloaded.",
     errorTitle: "Customer operation failed",
   },
   fr: {
@@ -46,6 +54,8 @@ const copy = {
     archiveBody: "Le client inutilise a ete retire des listes actives.",
     deactivateTitle: "Client desactive",
     deactivateBody: "Le client a de l'historique; il a ete desactive pour preserver les donnees.",
+    exportTitle: "Export client pret",
+    exportBody: "L'export controle a ete genere, filigrane et telecharge.",
     errorTitle: "Operation client echouee",
   },
 } as const
@@ -61,11 +71,43 @@ function invalidateCustomerQueries(queryClient: QueryClient, organizationId: str
   queryClient.invalidateQueries({ queryKey: ["orgCustomers", organizationId] })
 
   if (customerId) {
+    queryClient.invalidateQueries({ queryKey: customerManagementKeys.detail(organizationId, customerId) })
     queryClient.invalidateQueries({ queryKey: CustomerKeys.detail(customerId) })
     queryClient.invalidateQueries({ queryKey: customerManagementKeys.analytics(organizationId, customerId) })
     queryClient.invalidateQueries({ queryKey: ["customers", customerId] })
     queryClient.invalidateQueries({ queryKey: ["customer", customerId] })
   }
+}
+
+export function useManagedCustomer(organizationId: string, customerId: string) {
+  return useQuery<CustomerManagementRow | null>({
+    queryKey: customerManagementKeys.detail(organizationId, customerId),
+    queryFn: async () => {
+      const result = await getManagedCustomer(organizationId, customerId)
+
+      if (!result.success) {
+        throw new Error(result.error || "Failed to fetch customer")
+      }
+
+      return result.data ?? null
+    },
+    enabled: !!organizationId && !!customerId,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+  })
+}
+
+function downloadCustomerExport(result: CustomerExportResult) {
+  const blob = new Blob([result.content], { type: result.mimeType })
+  const url = URL.createObjectURL(blob)
+  const anchor = document.createElement("a")
+  anchor.href = url
+  anchor.download = result.fileName
+  anchor.style.display = "none"
+  document.body.appendChild(anchor)
+  anchor.click()
+  anchor.remove()
+  URL.revokeObjectURL(url)
 }
 
 export function useCustomerManagementData(organizationId: string) {
@@ -184,6 +226,39 @@ export function useDeleteManagedCustomer(organizationId: string, locale: Locale 
       }
 
       notifications.success(t.archiveTitle, t.archiveBody)
+    },
+    onError: (error: Error) => {
+      notifications.error(t.errorTitle, error.message || t.errorTitle)
+    },
+  })
+}
+
+export function useCustomerExport(locale: Locale = "en") {
+  const notifications = useNotifications()
+  const t = copy[locale]
+
+  return useMutation({
+    meta: {
+      operation: "export",
+      entity: "Customer",
+      suppressSuccessNotification: true,
+      suppressErrorNotification: true,
+    },
+    mutationFn: async (input: CustomerExportRequest) => {
+      const result = await prepareCustomerExportAction(input)
+
+      if (!result.success || !result.data) {
+        throw new Error(result.error || "Failed to export customer data")
+      }
+
+      return result.data
+    },
+    onSuccess: (result) => {
+      downloadCustomerExport(result)
+      notifications.success(
+        t.exportTitle,
+        `${t.exportBody} ${result.rowCount} row${result.rowCount === 1 ? "" : "s"}.`,
+      )
     },
     onError: (error: Error) => {
       notifications.error(t.errorTitle, error.message || t.errorTitle)

@@ -1,20 +1,22 @@
 import UnitsManagementDashboard from "@/components/units/UnitsManagementDashboard"
-import { getAuthenticatedUser } from "@/config/useAuth"
+import { checkPermission, getAuthenticatedUser } from "@/config/useAuth"
 import { localizePath, pickLocale } from "@/i18n/routing"
 import { redirect } from "next/navigation"
+import { routeByKey, withInventorySurfaceAccess } from "../../inventory-route-access"
 
 export const metadata = {
   title: "Create Unit | Stoquify",
   description: "Create a measurement unit for item, purchasing, sales, and POS workflows.",
 }
 
-export default async function CreateUnitPage({
+async function CreateUnitPageImpl({
   params,
 }: {
   params: Promise<{ locale: string }>
 }) {
   const { locale: rawLocale } = await params
   const locale = pickLocale(rawLocale)
+  await checkPermission("inventory.units.create")
   const user = await getAuthenticatedUser()
 
   if (!user.organizationId) {
@@ -32,4 +34,20 @@ export default async function CreateUnitPage({
       </div>
     </div>
   )
+}
+
+
+
+export default async function InventoryRoutePage(props: any = {}) {
+  const surface = routeByKey("inventory-units-create")
+
+  if (!surface) {
+    throw new Error("Missing inventory route surface definition: inventory-units-create")
+  }
+
+  return withInventorySurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => CreateUnitPageImpl(props),
+  })
 }

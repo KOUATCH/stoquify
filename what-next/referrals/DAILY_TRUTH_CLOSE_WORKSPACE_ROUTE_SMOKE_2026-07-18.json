@@ -1,0 +1,68 @@
+{
+  "checkedAt": "2026-07-18T19:36:04.831Z",
+  "baseUrl": "http://127.0.0.1:3011",
+  "mode": "fail",
+  "ok": true,
+  "routeCount": 1,
+  "screenshotTool": "playwright",
+  "auth": {
+    "storageState": "playwright/.auth/payroll.json",
+    "protectedRouteScreenshotMode": "saved-storage-state"
+  },
+  "routes": [
+    {
+      "route": {
+        "id": "manager-daily-close",
+        "path": "/en/dashboard/manager-action-center/daily-close",
+        "surface": "Read-only branch daily close",
+        "requiresAuth": true,
+        "viewports": [
+          "mobile",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": "browser-auth",
+        "finalUrl": "http://127.0.0.1:3011/en/dashboard/manager-action-center/daily-close",
+        "durationMs": 1,
+        "reason": "protected route validated with Playwright storage state"
+      }
+    }
+  ],
+  "warmup": {
+    "enabled": true,
+    "skipped": false,
+    "timeoutMs": 180000,
+    "routes": [
+      {
+        "routeId": "manager-daily-close",
+        "ok": true,
+        "finalUrl": "http://127.0.0.1:3011/en/dashboard/manager-action-center/daily-close",
+        "durationMs": 49488,
+        "authenticated": true
+      }
+    ]
+  },
+  "screenshots": {
+    "available": true,
+    "captures": [
+      {
+        "routeId": "manager-daily-close",
+        "viewport": "mobile",
+        "ok": true,
+        "file": "what-next/referrals/screenshots/daily-truth-close-workspace-2026-07-18/manager-daily-close-mobile.png",
+        "finalUrl": "http://127.0.0.1:3011/en/dashboard/manager-action-center/daily-close",
+        "authenticated": true
+      },
+      {
+        "routeId": "manager-daily-close",
+        "viewport": "desktop",
+        "ok": true,
+        "file": "what-next/referrals/screenshots/daily-truth-close-workspace-2026-07-18/manager-daily-close-desktop.png",
+        "finalUrl": "http://127.0.0.1:3011/en/dashboard/manager-action-center/daily-close",
+        "authenticated": true
+      }
+    ]
+  }
+}

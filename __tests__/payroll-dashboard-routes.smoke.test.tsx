@@ -609,7 +609,7 @@ describe("payroll dashboard route smoke", () => {
     expect(observeModuleAccess).toHaveBeenCalledWith(
       expect.objectContaining({
         accessIntent: "read",
-        mode: "enforce",
+        mode: "observe",
         moduleSlug: "payroll",
         surface: "/dashboard/payroll",
         surfaceType: "page",
@@ -1035,7 +1035,7 @@ describe("payroll dashboard route smoke", () => {
     });
   });
 
-  it("stops payroll route execution before protected actions when module entitlement denies access", async () => {
+  it("keeps payroll root report-only and stops enforce-mode payroll routes when module entitlement denies access", async () => {
     mockHappyPath();
     (observeModuleAccess as jest.Mock).mockResolvedValue({
       allowed: false,
@@ -1045,10 +1045,12 @@ describe("payroll dashboard route smoke", () => {
     render(await PayrollWorkbenchPage({ params: params() }));
     expect(
       screen.getByRole("heading", {
-        name: "HR and Payroll is not enabled for this organization",
+        name: "Payroll command center smoke",
       }),
     ).toBeInTheDocument();
-    expect(getPayrollCommandReadModelAction).not.toHaveBeenCalled();
+    expect(getPayrollCommandReadModelAction).toHaveBeenCalledWith({
+      limit: 25,
+    });
     cleanup();
     jest.clearAllMocks();
     mockHappyPath();
@@ -1502,6 +1504,10 @@ describe("payroll dashboard route smoke", () => {
       path.join(process.cwd(), "scripts/ui-route-smoke-gate.js"),
       "utf8",
     );
+    const payrollSmokeWrapper = readFileSync(
+      path.join(process.cwd(), "scripts/payroll-browser-smoke.js"),
+      "utf8",
+    );
     const packageJson = JSON.parse(
       readFileSync(path.join(process.cwd(), "package.json"), "utf8"),
     ) as {
@@ -1522,9 +1528,11 @@ describe("payroll dashboard route smoke", () => {
       "payroll-setup",
     ];
 
+    expect(payrollSmokeCommand).toBe("node scripts/payroll-browser-smoke.js");
+
     for (const routeId of implementedRouteIds) {
       expect(smokeScript).toContain(`id: "${routeId}"`);
-      expect(payrollSmokeCommand).toContain(`--route ${routeId}`);
+      expect(payrollSmokeWrapper).toContain(`"${routeId}"`);
     }
 
     const unsupportedRouteIds = ["payroll-presence"];
@@ -1533,6 +1541,7 @@ describe("payroll dashboard route smoke", () => {
     for (const routeId of unsupportedRouteIds) {
       expect(payrollSmokeCommand).not.toContain(`--route ${routeId}`);
       expect(smokeScript).not.toContain(`id: "${routeId}"`);
+      expect(payrollSmokeWrapper).not.toContain(`"${routeId}"`);
     }
 
     for (const unsupportedPath of unsupportedPaths) {

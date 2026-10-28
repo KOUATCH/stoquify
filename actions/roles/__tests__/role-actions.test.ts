@@ -4,7 +4,9 @@ import createRole from "@/actions/roles/createRole"
 import getOrgRoles from "@/actions/roles/getOrgRoles"
 import { getRoleById } from "@/actions/roles/getRoleById"
 import { updateRole } from "@/actions/roles/updateRole"
+import { requireFreshAuth, FreshAuthRequiredError } from "@/lib/security/auth-session"
 import { requirePermission } from "@/lib/security/rbac"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import {
   createOrganizationRole,
   getOrganizationRoleById,
@@ -12,8 +14,26 @@ import {
   updateOrganizationRole,
 } from "@/services/roles/role.service"
 
+jest.mock("@/lib/security/auth-session", () => {
+  class MockFreshAuthRequiredError extends Error {
+    constructor(message = "Fresh authentication required") {
+      super(message)
+      this.name = "FreshAuthRequiredError"
+    }
+  }
+
+  return {
+    FreshAuthRequiredError: MockFreshAuthRequiredError,
+    requireFreshAuth: jest.fn(),
+  }
+})
+
 jest.mock("@/lib/security/rbac", () => ({
   requirePermission: jest.fn(),
+}))
+
+jest.mock("@/services/modules/module-entitlement.service", () => ({
+  observeModuleAccess: jest.fn(),
 }))
 
 jest.mock("@/services/roles/role.service", () => ({
@@ -27,7 +47,9 @@ jest.mock("next/cache", () => ({
   revalidatePath: jest.fn(),
 }))
 
+const mockRequireFreshAuth = requireFreshAuth as jest.Mock
 const mockRequirePermission = requirePermission as jest.Mock
+const mockObserveModuleAccess = observeModuleAccess as jest.Mock
 const mockCreateOrganizationRole = createOrganizationRole as jest.Mock
 const mockGetOrganizationRoleById = getOrganizationRoleById as jest.Mock
 const mockListOrganizationRoles = listOrganizationRoles as jest.Mock
@@ -43,7 +65,11 @@ function rbacContext(permissions: string[]) {
 }
 
 beforeEach(() => {
+  mockRequireFreshAuth.mockReset()
+  mockRequireFreshAuth.mockResolvedValue({ claims: { lastAuthAt: Date.now() } })
   mockRequirePermission.mockReset()
+  mockObserveModuleAccess.mockReset()
+  mockObserveModuleAccess.mockResolvedValue({ allowed: true })
   mockCreateOrganizationRole.mockReset()
   mockGetOrganizationRoleById.mockReset()
   mockListOrganizationRoles.mockReset()
@@ -91,6 +117,28 @@ describe("role actions service boundary", () => {
     })
 
     expect(result.success).toBe(false)
+    expect(mockRequireFreshAuth).toHaveBeenCalledTimes(1)
+    expect(mockCreateOrganizationRole).not.toHaveBeenCalled()
+  })
+
+  it("requires fresh authentication before role writes", async () => {
+    mockRequireFreshAuth.mockRejectedValue(new FreshAuthRequiredError())
+
+    const result = await createRole({
+      name: "Cashier",
+      description: "POS role",
+      permissions: ["dashboard.read"],
+      organizationId: "org-1",
+    })
+
+    expect(result).toEqual(expect.objectContaining({
+      success: false,
+      data: null,
+      error: "Fresh authentication required",
+      status: 403,
+      code: "FRESH_AUTH_REQUIRED",
+    }))
+    expect(mockRequirePermission).not.toHaveBeenCalled()
     expect(mockCreateOrganizationRole).not.toHaveBeenCalled()
   })
 
@@ -143,6 +191,19 @@ describe("role actions service boundary", () => {
       id: "role-1",
       data: roleInput,
     })
+    expect(mockRequireFreshAuth).toHaveBeenCalledTimes(2)
+    expect(mockObserveModuleAccess).toHaveBeenCalledWith(expect.objectContaining({
+      moduleSlug: "settings",
+      surface: "actions/roles/createRole.ts",
+      accessIntent: "write",
+      mode: "observe",
+    }))
+    expect(mockObserveModuleAccess).toHaveBeenCalledWith(expect.objectContaining({
+      moduleSlug: "settings",
+      surface: "actions/roles/updateRole.ts",
+      accessIntent: "write",
+      mode: "observe",
+    }))
     expect(revalidatePath).toHaveBeenCalledWith("/dashboard/settings/roles")
   })
 

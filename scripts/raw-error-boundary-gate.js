@@ -151,7 +151,7 @@ function migrationOrderForFile(file) {
   return 8
 }
 
-function classifyFinding(file, pattern, context) {
+function classifyFinding(file, pattern, context, sourceLine = "") {
   if (isTestOrMockPath(file)) {
     return {
       allowed: true,
@@ -174,6 +174,28 @@ function classifyFinding(file, pattern, context) {
     }
   }
 
+
+  if (pattern === "THROW_ERROR" && isPrismaControlFlowRethrow(sourceLine)) {
+    return {
+      allowed: true,
+      severity: "allowed",
+      classification: "ALLOWED_PRISMA_CONTROL_FLOW",
+      migrationOrder: 0,
+      reason: "Reviewed Prisma uniqueness control flow is rethrown for an immediate idempotency replay boundary.",
+      replacement: "Keep the rethrow adjacent to an explicit P2002 check and normalize all other errors.",
+    }
+  }
+
+  if (pattern === "THROW_ERROR" && isTypedApplicationErrorRethrow(context)) {
+    return {
+      allowed: true,
+      severity: "allowed",
+      classification: "TYPED_APPLICATION_ERROR_RETHROW",
+      migrationOrder: 0,
+      reason: "Typed domain/application errors are already safe canonical errors and may be rethrown for caller-boundary handling.",
+      replacement: "Keep typed application errors explicit and normalize only unknown errors at the boundary.",
+    }
+  }
   if (file.startsWith("lib/error-handling/")) {
     return {
       allowed: true,
@@ -219,6 +241,24 @@ function classifyFinding(file, pattern, context) {
   }
 }
 
+function isTypedApplicationErrorRethrow(context) {
+  return (
+    context.includes("error instanceof ApplicationError") ||
+    context.includes("error instanceof AgentReleaseControlError") ||
+    context.includes("error instanceof AgentReconcilerInvocationError") ||
+    context.includes("error instanceof HistoryCursorError") ||
+    context.includes("error instanceof BusinessRuleError") ||
+    context.includes("error instanceof ForbiddenError") ||
+    context.includes("error instanceof ConflictError") ||
+    context.includes("error instanceof NotFoundError")
+  )
+}
+function isPrismaControlFlowRethrow(sourceLine) {
+  return /\bif\s*\(\s*isPrismaCode\s*\(\s*error\s*,\s*["']P2002["']\s*\)\s*\)\s*throw\s+error\b/.test(
+    sourceLine,
+  )
+}
+
 function isNextControlFlowRethrow(context) {
   return (
     context.includes("isNextControlFlowError(error)") ||
@@ -242,7 +282,7 @@ function scanFile(root, filePath) {
 
       const trimmed = line.trim()
       const context = contextWindow(lines, index)
-      const classification = classifyFinding(file, pattern.name, context)
+      const classification = classifyFinding(file, pattern.name, context, trimmed)
 
       findings.push({
         file,
@@ -520,3 +560,4 @@ module.exports = {
   scanRoot,
   summarize,
 }
+

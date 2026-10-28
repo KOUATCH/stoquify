@@ -5,9 +5,12 @@ import {
   LedgerPostingBatchStatus,
   PayrollDeclarationStatus,
   PayrollPaymentBatchStatus,
+  PayrollAttendanceSnapshotStatus,
+  PayrollEmployeeStatus,
   PayrollPeriodStatus,
   PayrollRunStatus,
   PayrollRunType,
+  PayrollSalaryChangeStatus,
   PostingRuleAmountSource,
   PostingRuleLineSide,
   Prisma,
@@ -65,6 +68,7 @@ import {
   approveAndPostPayrollRun,
   calculatePayrollRun,
   getPayrollRunWorkbenchData,
+  freezeAttendanceSnapshot,
   preparePayrollDeclarations,
 } from "../payroll-control.service";
 
@@ -111,6 +115,9 @@ function buildTx() {
       findFirst: jest.fn(),
       create: jest.fn(),
     },
+    payrollSalaryChangeRequest: {
+      findMany: jest.fn().mockResolvedValue([]),
+    },
     journal: {
       findFirst: jest.fn(),
     },
@@ -131,6 +138,7 @@ function buildTx() {
       create: jest.fn(),
     },
     businessEvent: {
+      findMany: jest.fn().mockResolvedValue([]),
       findUnique: jest.fn(),
       create: jest.fn(),
       update: jest.fn(),
@@ -367,12 +375,239 @@ const cnpsGoldenCalculationOutput = {
   netPayableAmount: "95800.00",
 };
 
+function attendanceCertification(
+  overrides: {
+    unresolved?: Partial<
+      Record<
+        | "timeEntryCount"
+        | "leaveRequestCount"
+        | "overtimeRequestCount"
+        | "correctionCount",
+        number
+      >
+    >;
+    totals?: Partial<{
+      scheduledMinutes: number;
+      workedMinutes: number;
+      overtimeMinutes: number;
+      absenceMinutes: number;
+      leaveMinutes: number;
+    }>;
+  } = {},
+) {
+  const totals = {
+    scheduledMinutes: 9600,
+    workedMinutes: 9200,
+    overtimeMinutes: 120,
+    absenceMinutes: 0,
+    leaveMinutes: 400,
+    ...overrides.totals,
+  };
+
+  return {
+    kind: "STOQUIFY_HRIS_TIME_LEAVE_ATTENDANCE_CERTIFICATION",
+    version: 1,
+    sourceSystem: "hris-attendance",
+    sourceRecordId: "attendance-period-employee-1",
+    sourceRevision: 1,
+    policy: {
+      countryCode: "CM",
+      policyVersion: "CM-COMPANY-2026.1",
+      countryPolicyHash: "sha256:country-time-policy",
+      companyPolicyHash: "sha256:company-time-policy",
+      leavePolicyHash: "sha256:leave-policy",
+      overtimePolicyHash: "sha256:overtime-policy",
+      scheduleHash: "sha256:schedule",
+      holidayCalendarHash: "sha256:holiday-calendar",
+      effectiveFrom: "2026-01-01T00:00:00.000Z",
+      effectiveTo: null,
+      verificationStatus: "REVIEWED",
+      reviewedById: "policy-reviewer-1",
+      reviewEvidenceHash: "sha256:policy-review",
+    },
+    evidence: {
+      attendanceImportHash: "sha256:attendance-import",
+      leaveBalanceSnapshotHash: "sha256:leave-balance",
+      approvedLeaveRequestHashes: ["sha256:leave-request"],
+      approvedOvertimeRequestHashes: ["sha256:overtime-request"],
+    },
+    approval: {
+      preparedById: "attendance-preparer-1",
+      approvedById: "hr-approver-1",
+      approvalEvidenceHash: "sha256:attendance-approval",
+    },
+    unresolved: {
+      timeEntryCount: 0,
+      leaveRequestCount: 0,
+      overtimeRequestCount: 0,
+      correctionCount: 0,
+      ...overrides.unresolved,
+    },
+    totals,
+  };
+}
+
+function calculationAttendance(overrides: Record<string, unknown> = {}) {
+  const row = {
+    id: "attendance-1",
+    sourceHash: "sha256:attendance-source",
+    scheduledMinutes: 9600,
+    workedMinutes: 9600,
+    overtimeMinutes: 0,
+    absenceMinutes: 0,
+    leaveMinutes: 0,
+    frozenById: "hr-approver-1",
+    frozenAt: new Date("2026-06-30T12:00:00.000Z"),
+    correctedFromId: null,
+    ...overrides,
+  };
+
+  return {
+    ...row,
+    metadata: {
+      sourcePayload: attendanceCertification({
+        totals: {
+          scheduledMinutes: Number(row.scheduledMinutes),
+          workedMinutes: Number(row.workedMinutes),
+          overtimeMinutes: Number(row.overtimeMinutes),
+          absenceMinutes: Number(row.absenceMinutes),
+          leaveMinutes: Number(row.leaveMinutes),
+        },
+      }),
+    },
+  };
+}
+
+function hrisReadyEmployees<T extends Record<string, any>>(employees: T[]) {
+  return employees.map((employee) => {
+    const contracts = (employee.contracts ?? []).map(
+      (contract: Record<string, any>) => {
+        const activationBusinessEventId =
+          contract.activatedBusinessEventId ??
+          `contract-activation-${contract.id}`;
+        const signedDocumentHash =
+          contract.signedDocumentHash ?? `sha256:contract-${contract.id}`;
+        return {
+          effectiveFrom:
+            contract.effectiveFrom ?? new Date("2026-01-01T00:00:00.000Z"),
+          effectiveTo: contract.effectiveTo ?? null,
+          ...contract,
+          signedDocumentHash,
+          activatedBusinessEventId: activationBusinessEventId,
+          metadata: {
+            ...(contract.metadata ?? {}),
+            hrisContractApproval: {
+              version: 1,
+              pending: null,
+              latest: {
+                status: "APPROVED",
+                requestId: `contract-request-${contract.id}`,
+                requestEvidenceHash: `sha256:contract-request-${contract.id}`,
+                approvalEvidenceHash: `sha256:contract-approval-${contract.id}`,
+                activationBusinessEventId,
+              },
+            },
+            hrisDocumentEvidence: {
+              version: 1,
+              pending: null,
+              current: {
+                status: "APPROVED",
+                artifactHash: signedDocumentHash,
+                malwareScanEvidenceHash: `sha256:malware-${contract.id}`,
+                approvalEvidenceHash: `sha256:document-approval-${contract.id}`,
+                approvalBusinessEventId: `document-approval-${contract.id}`,
+              },
+            },
+          },
+        };
+      },
+    );
+    const activeContractId = contracts[0]?.id ?? null;
+    const rubriqueAssignments = (employee.rubriqueAssignments ?? []).map(
+      (assignment: Record<string, any>) => ({
+        rubriqueId: assignment.rubriqueId ?? assignment.rubrique?.id,
+        effectiveFrom:
+          assignment.effectiveFrom ?? new Date("2026-01-01T00:00:00.000Z"),
+        effectiveTo: assignment.effectiveTo ?? null,
+        ...assignment,
+        metadata:
+          assignment.approvalBusinessEventId && assignment.evidenceDocumentHash
+            ? {
+                ...(assignment.metadata ?? {}),
+                hrisCompensationApproval: {
+                  version: 1,
+                  status: "APPROVED",
+                  requestBusinessEventId: `compensation-request-${assignment.id}`,
+                  approvalEvidenceHash: `sha256:compensation-approval-${assignment.id}`,
+                  approvalBusinessEventId: assignment.approvalBusinessEventId,
+                  activeContractId,
+                },
+              }
+            : assignment.metadata,
+      }),
+    );
+    const paymentDestinationHash = employee.paymentDestinationHash ?? null;
+    const destinationRequestId = `destination-request-${employee.id}`;
+    const paymentDestinationChangeRequests =
+      employee.paymentDestinationChangeRequests ??
+      (paymentDestinationHash
+        ? [
+            {
+              id: destinationRequestId,
+              status: "APPLIED",
+              paymentDestinationHash,
+              evidenceDocumentHash: `sha256:destination-request-${employee.id}`,
+              approvalEvidenceHash: `sha256:destination-approval-${employee.id}`,
+              requestBusinessEventId: `destination-request-event-${employee.id}`,
+              approvalBusinessEventId: `destination-approval-event-${employee.id}`,
+              appliedBusinessEventId: `destination-applied-event-${employee.id}`,
+              requestedById: employee.id,
+              approvedById: "payroll-approver-1",
+              appliedById: "payroll-operator-1",
+              appliedAt: new Date("2026-06-20T12:00:00.000Z"),
+            },
+          ]
+        : []);
+    const employeeMetadata = employee.metadata ?? {};
+
+    return {
+      ...employee,
+      contracts,
+      rubriqueAssignments,
+      paymentDestinationChangeRequests,
+      metadata: {
+        ...employeeMetadata,
+        hrSourceData: {
+          sourceSystem: "hris-core",
+          sourceRecordId: employee.id,
+          sourceHash: `sha256:identity-${employee.id}`,
+          updatedAt: "2026-06-20T10:00:00.000Z",
+        },
+        ...(paymentDestinationHash
+          ? {
+              approvedPaymentDestinationEvidence: {
+                requestId: destinationRequestId,
+                paymentDestinationHash,
+                evidenceDocumentHash: `sha256:destination-request-${employee.id}`,
+                approvalEvidenceHash: `sha256:destination-approval-${employee.id}`,
+                requestBusinessEventId: `destination-request-event-${employee.id}`,
+                approvalBusinessEventId: `destination-approval-event-${employee.id}`,
+                appliedBusinessEventId: `destination-applied-event-${employee.id}`,
+              },
+            }
+          : {}),
+      },
+    };
+  });
+}
+
 type MockCountryPackOverrides = {
   pensionValue?: Record<string, unknown>;
   familyAllowanceValue?: Record<string, unknown>;
   occupationalRiskValue?: Record<string, unknown>;
   employerRulesValue?: Record<string, unknown>;
   incomeTaxRulesValue?: Record<string, unknown>;
+  incomeTaxCapabilityStatus?: string;
   leaveValue?: Record<string, unknown>;
   overtimeValue?: Record<string, unknown>;
   compensationBenefitValue?: Record<string, unknown>;
@@ -412,6 +647,9 @@ function mockCountryPack(overrides: MockCountryPackOverrides = {}) {
       ...incomeTaxRulesResolution.value,
       ...overrides.incomeTaxRulesValue,
     },
+    capabilityStatus:
+      overrides.incomeTaxCapabilityStatus ??
+      incomeTaxRulesResolution.capabilityStatus,
   };
   const leave = {
     ...leaveResolution,
@@ -540,7 +778,9 @@ function countryPackProvenanceFixture(overrides: Record<string, unknown> = {}) {
     resolutionHash: "sha256:country-pack",
     statutoryScenarioCoverageHash: "sha256:statutory-scenario-coverage",
     statutoryScenarioCoverageStatus: "READY",
-    reviewEvidenceSourceHashes: ["sha256:cm-irpp-period-reviewed-review-evidence"],
+    reviewEvidenceSourceHashes: [
+      "sha256:cm-irpp-period-reviewed-review-evidence",
+    ],
     legalRefs: ["CM_DGI_CGI_2025"],
     roundingPolicyHash: payrollRoundingPolicy.roundingPolicyHash,
     yearToDatePolicyHash: payrollYearToDatePolicy.ytdPolicyHash,
@@ -562,6 +802,10 @@ function payrollRunFixture(
     statutoryScenarioCoverage: payrollStatutoryScenarioCoverageMetadata,
     statutoryScenarioCoverageHash:
       payrollStatutoryScenarioCoverageMetadata.coverageHash,
+    hrisPayrollReadinessHash: "sha256:hris-payroll-readiness",
+    payrollInputReadinessHash: "sha256:payroll-input-readiness",
+    payrollEngineInputHashes: ["sha256:payroll-engine-input-employee-1"],
+    payrollEngineInputSnapshotHash: "sha256:payroll-engine-input-snapshot",
     ...payrollYearToDateMetadata,
   },
 ) {
@@ -618,7 +862,8 @@ function payrollRunFixture(
           countryPackResolutionHash: "sha256:country-pack",
           countryPackCapabilityStatus: "SUPPORTED",
           countryPackProvenance: countryPackProvenanceFixture().provenance,
-          countryPackProvenanceHash: countryPackProvenanceFixture().provenanceHash,
+          countryPackProvenanceHash:
+            countryPackProvenanceFixture().provenanceHash,
           yearToDatePolicyHash: payrollYearToDatePolicy.ytdPolicyHash,
           grossAmount: "100000.00",
           taxableBaseAmount: "100000.00",
@@ -649,6 +894,10 @@ function payrollCorrectionRunFixture() {
     statutoryScenarioCoverage: payrollStatutoryScenarioCoverageMetadata,
     statutoryScenarioCoverageHash:
       payrollStatutoryScenarioCoverageMetadata.coverageHash,
+    hrisPayrollReadinessHash: "sha256:hris-payroll-readiness",
+    payrollInputReadinessHash: "sha256:payroll-input-readiness",
+    payrollEngineInputHashes: ["sha256:payroll-engine-input-employee-1"],
+    payrollEngineInputSnapshotHash: "sha256:payroll-engine-input-snapshot",
     ...payrollYearToDateMetadata,
     correction: {
       originalRunId: "original-run-1",
@@ -699,7 +948,8 @@ function payrollCorrectionRunFixture() {
           countryPackResolutionHash: "sha256:country-pack",
           countryPackCapabilityStatus: "SUPPORTED",
           countryPackProvenance: countryPackProvenanceFixture().provenance,
-          countryPackProvenanceHash: countryPackProvenanceFixture().provenanceHash,
+          countryPackProvenanceHash:
+            countryPackProvenanceFixture().provenanceHash,
           yearToDatePolicyHash: payrollYearToDatePolicy.ytdPolicyHash,
           grossAmount: "-10000.00",
           taxableBaseAmount: "-10000.00",
@@ -845,7 +1095,7 @@ function mockRecoveryPolicyCalculationTx(
   tx.payrollRun.findFirst.mockResolvedValue(null);
   tx.payrollPeriod.findFirst.mockResolvedValue(payrollPeriod);
   tx.payrollRun.count.mockResolvedValue(0);
-  tx.payrollEmployee.findMany.mockResolvedValue([
+  tx.payrollEmployee.findMany.mockResolvedValue(hrisReadyEmployees([
     {
       id: "employee-1",
       displayName: "Ada Payroll",
@@ -857,15 +1107,7 @@ function mockRecoveryPolicyCalculationTx(
           currency: "XAF",
         },
       ],
-      attendanceSnapshots: [
-        {
-          id: "attendance-1",
-          scheduledMinutes: 9600,
-          workedMinutes: 9600,
-          leaveMinutes: 0,
-          overtimeMinutes: 0,
-        },
-      ],
+      attendanceSnapshots: [calculationAttendance()],
       rubriqueAssignments: [
         {
           id: "assign-recovery-policy",
@@ -891,7 +1133,7 @@ function mockRecoveryPolicyCalculationTx(
         },
       ],
     },
-  ]);
+  ]));
 }
 describe("payroll control service", () => {
   beforeEach(() => {
@@ -915,6 +1157,126 @@ describe("payroll control service", () => {
     });
     mockedGetActivePostingRule.mockResolvedValue(payrollPostingRule());
     mockCountryPack();
+  });
+
+  it("freezes attendance with source-hash evidence and an audit trail", async () => {
+    const tx = buildTx();
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
+    tx.payrollPeriod.findFirst.mockResolvedValue(payrollPeriod);
+    tx.payrollEmployee.findFirst.mockResolvedValue({
+      id: "employee-1",
+      organizationId: "org-1",
+      status: PayrollEmployeeStatus.ACTIVE,
+      deletedAt: null,
+    });
+    tx.payrollAttendanceSnapshot.findFirst.mockResolvedValue(null);
+    tx.payrollAttendanceSnapshot.create.mockImplementation(
+      async ({ data }: { data: any }) => ({ id: "attendance-1", ...data }),
+    );
+    tx.payrollPeriod.update.mockResolvedValue({
+      id: "period-1",
+      status: PayrollPeriodStatus.INPUTS_LOCKED,
+    });
+    tx.auditLog.create.mockResolvedValue({ id: "audit-1" });
+
+    const result = await freezeAttendanceSnapshot({
+      organizationId: "org-1",
+      actorPermissions: ["payroll.attendance.freeze"],
+      payrollPeriodId: "period-1",
+      employeeId: "employee-1",
+      scheduledMinutes: 9600,
+      workedMinutes: 9200,
+      overtimeMinutes: 120,
+      absenceMinutes: 0,
+      leaveMinutes: 400,
+      sourcePayload: attendanceCertification(),
+      frozenById: "hr-approver-1",
+      idempotencyKey: "attendance-freeze-key-1",
+    });
+
+    expect(result.created).toBe(true);
+    expect(tx.payrollAttendanceSnapshot.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          status: PayrollAttendanceSnapshotStatus.FROZEN,
+          sourceHash: expect.stringMatching(/^sha256:/),
+          metadata: expect.objectContaining({
+            sourcePayload: expect.objectContaining({
+              kind: "STOQUIFY_HRIS_TIME_LEAVE_ATTENDANCE_CERTIFICATION",
+              approval: expect.objectContaining({
+                approvalEvidenceHash: "sha256:attendance-approval",
+              }),
+            }),
+          }),
+        }),
+      }),
+    );
+    expect(mockedRecordBusinessEventInTx).toHaveBeenCalledWith(
+      tx,
+      expect.objectContaining({
+        eventType: "attendance.period.frozen",
+        documentHash: expect.stringMatching(/^sha256:/),
+        payload: expect.objectContaining({
+          sourceHash: expect.stringMatching(/^sha256:/),
+          overtimeMinutes: 120,
+          leaveMinutes: 400,
+        }),
+      }),
+    );
+    expect(tx.auditLog.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          action: "PAYROLL_ATTENDANCE_SNAPSHOT_FROZEN",
+        }),
+      }),
+    );
+  });
+
+  it("blocks payroll attendance freeze while time or leave inputs remain unapproved", async () => {
+    const tx = buildTx();
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
+    tx.payrollPeriod.findFirst.mockResolvedValue(payrollPeriod);
+
+    await expect(
+      freezeAttendanceSnapshot({
+        organizationId: "org-1",
+        actorPermissions: ["payroll.attendance.freeze"],
+        payrollPeriodId: "period-1",
+        employeeId: "employee-1",
+        scheduledMinutes: 9600,
+        workedMinutes: 9200,
+        overtimeMinutes: 120,
+        absenceMinutes: 0,
+        leaveMinutes: 400,
+        sourcePayload: attendanceCertification({
+          unresolved: { leaveRequestCount: 1 },
+        }),
+        frozenById: "hr-approver-1",
+      }),
+    ).rejects.toThrow("HRIS_TIME_INPUT_UNAPPROVED");
+
+    expect(tx.payrollEmployee.findFirst).not.toHaveBeenCalled();
+    expect(tx.payrollAttendanceSnapshot.create).not.toHaveBeenCalled();
+  });
+
+  it("requires the canonical attendance freeze permission", async () => {
+    await expect(
+      freezeAttendanceSnapshot({
+        organizationId: "org-1",
+        actorPermissions: [],
+        payrollPeriodId: "period-1",
+        employeeId: "employee-1",
+        scheduledMinutes: 9600,
+        workedMinutes: 9200,
+        overtimeMinutes: 120,
+        absenceMinutes: 0,
+        leaveMinutes: 400,
+        sourcePayload: attendanceCertification(),
+        frozenById: "hr-approver-1",
+      }),
+    ).rejects.toThrow("Missing permission for payroll attendance freeze");
+
+    expect(mockDb.$transaction).not.toHaveBeenCalled();
   });
 
   it("calculates a payroll run from frozen attendance and pins country-pack provenance", async () => {
@@ -981,29 +1343,23 @@ describe("payroll control service", () => {
         ],
       },
     ]);
-    tx.payrollEmployee.findMany.mockResolvedValue([
-      {
-        id: "employee-1",
-        displayName: "Ada Payroll",
-        paymentDestinationHash: "dest-hash",
-        contracts: [
-          {
-            id: "contract-1",
-            baseSalary: new Prisma.Decimal("100000.00"),
-            currency: "XAF",
-          },
-        ],
-        attendanceSnapshots: [
-          {
-            id: "attendance-1",
-            scheduledMinutes: 9600,
-            workedMinutes: 9600,
-            leaveMinutes: 0,
-            overtimeMinutes: 0,
-          },
-        ],
-      },
-    ]);
+    tx.payrollEmployee.findMany.mockResolvedValue(
+      hrisReadyEmployees([
+        {
+          id: "employee-1",
+          displayName: "Ada Payroll",
+          paymentDestinationHash: "dest-hash",
+          contracts: [
+            {
+              id: "contract-1",
+              baseSalary: new Prisma.Decimal("100000.00"),
+              currency: "XAF",
+            },
+          ],
+          attendanceSnapshots: [calculationAttendance()],
+        },
+      ]),
+    );
     tx.payrollRun.create.mockImplementation(
       async ({ data }: { data: any }) => ({
         id: "run-1",
@@ -1067,6 +1423,40 @@ describe("payroll control service", () => {
             yearToDateAccumulatorHashes: expect.arrayContaining([
               expect.stringMatching(/^sha256:/),
             ]),
+            payrollInputReadinessHash: expect.stringMatching(/^sha256:/),
+            hrisPayrollReadinessHash: expect.stringMatching(/^sha256:/),
+            payrollInputReadiness: expect.objectContaining({
+              kind: "AQSTOQFLOW_PAYROLL_INPUT_READINESS_VERDICT",
+              status: "READY",
+              blockerCount: 0,
+              hrisPayrollReadinessHash: expect.stringMatching(/^sha256:/),
+              hrisPayrollReadiness: expect.objectContaining({
+                kind: "STOQUIFY_HRIS_PAYROLL_READINESS_EXPORT",
+                status: "READY",
+                employeeProofs: [
+                  expect.objectContaining({
+                    employeeId: "employee-1",
+                    sourceSnapshotHash: expect.stringMatching(/^sha256:/),
+                    proofHash: expect.stringMatching(/^sha256:/),
+                  }),
+                ],
+              }),
+              verdictHash: expect.stringMatching(/^sha256:/),
+              evidence: expect.objectContaining({
+                employeeIds: ["employee-1"],
+                contractIds: ["contract-1"],
+                attendanceSnapshotIds: ["attendance-1"],
+                attendanceSourceHashes: ["sha256:attendance-source"],
+                attendanceCertificationHashes: [
+                  expect.stringMatching(/^sha256:/),
+                ],
+                paymentDestinationHashes: ["dest-hash"],
+              }),
+            }),
+            payrollEngineInputSnapshotHash: expect.stringMatching(/^sha256:/),
+            payrollEngineInputHashes: expect.arrayContaining([
+              expect.stringMatching(/^sha256:/),
+            ]),
           }),
           lines: expect.objectContaining({
             create: [
@@ -1076,6 +1466,31 @@ describe("payroll control service", () => {
                 attendanceSnapshotId: "attendance-1",
                 calculationSnapshot: expect.objectContaining({
                   ...cnpsGoldenCalculationOutput,
+                  payrollInputReadinessHash: expect.stringMatching(/^sha256:/),
+                  payrollEngineInputHash: expect.stringMatching(/^sha256:/),
+                  payrollEngineInput: expect.objectContaining({
+                    kind: "AQSTOQFLOW_PAYROLL_CERTIFIED_ENGINE_INPUT",
+                    payrollInputReadinessHash:
+                      expect.stringMatching(/^sha256:/),
+                    hrisPayrollReadinessExportHash:
+                      expect.stringMatching(/^sha256:/),
+                    hrisEmployeeProofHash: expect.stringMatching(/^sha256:/),
+                    hrisSourceSnapshotHash: expect.stringMatching(/^sha256:/),
+                    employeeId: "employee-1",
+                    contract: expect.objectContaining({
+                      id: "contract-1",
+                      baseSalary: "100000.00",
+                      currency: "XAF",
+                    }),
+                    attendance: expect.objectContaining({
+                      id: "attendance-1",
+                      sourceHash: "sha256:attendance-source",
+                      certificationHash: expect.stringMatching(/^sha256:/),
+                      scheduledMinutes: 9600,
+                      workedMinutes: 9600,
+                    }),
+                    paymentDestinationHash: "dest-hash",
+                  }),
                   countryCode: "CM",
                   countryPackVersion: "CM-2026.1",
                   countryPackSchemaVersion: "country-pack.v1",
@@ -1085,7 +1500,8 @@ describe("payroll control service", () => {
                     packVersion: "CM-2026.1",
                     schemaVersion: "country-pack.v1",
                     resolutionHash: expect.stringMatching(/^sha256:/),
-                    statutoryScenarioCoverageHash: expect.stringMatching(/^sha256:/),
+                    statutoryScenarioCoverageHash:
+                      expect.stringMatching(/^sha256:/),
                   }),
                   countryPackProvenanceHash: expect.stringMatching(/^sha256:/),
                   roundingPolicy: expect.objectContaining({
@@ -1146,7 +1562,8 @@ describe("payroll control service", () => {
                   componentMapping: expect.objectContaining({
                     reviewDefault: "BLOCK_UNTIL_REVIEWED_FIXTURES",
                     roundingPolicyHash: expect.stringMatching(/^sha256:/),
-                    yearToDateAccumulatorHash: expect.stringMatching(/^sha256:/),
+                    yearToDateAccumulatorHash:
+                      expect.stringMatching(/^sha256:/),
                     reviewStatus: "BLOCKED_REQUIRES_EXPERT_REVIEW",
                     taxableBaseAmount: "100000.00",
                     incomeTaxWithholdingAmount: "0.00",
@@ -1176,7 +1593,10 @@ describe("payroll control service", () => {
                 ruleProvenance: expect.objectContaining({
                   packVersion: "CM-2026.1",
                   roundingPolicyHash: expect.stringMatching(/^sha256:/),
-                  roundingPolicy: expect.objectContaining({ mode: "HALF_UP", scale: 2 }),
+                  roundingPolicy: expect.objectContaining({
+                    mode: "HALF_UP",
+                    scale: 2,
+                  }),
                   yearToDatePolicyHash: expect.stringMatching(/^sha256:/),
 
                   legalProvenance: expect.arrayContaining([
@@ -1202,7 +1622,10 @@ describe("payroll control service", () => {
         payload: expect.objectContaining({
           countryPackSchemaVersion: "country-pack.v1",
           roundingPolicyHash: expect.stringMatching(/^sha256:/),
-          roundingPolicy: expect.objectContaining({ mode: "HALF_UP", scale: 2 }),
+          roundingPolicy: expect.objectContaining({
+            mode: "HALF_UP",
+            scale: 2,
+          }),
           yearToDatePolicy: expect.objectContaining({
             kind: "AQSTOQFLOW_PAYROLL_YEAR_TO_DATE_POLICY",
             periodStart: "2026-01-01T00:00:00.000Z",
@@ -1210,6 +1633,16 @@ describe("payroll control service", () => {
           }),
           yearToDatePolicyHash: expect.stringMatching(/^sha256:/),
           yearToDateAccumulatorHashes: expect.arrayContaining([
+            expect.stringMatching(/^sha256:/),
+          ]),
+          payrollInputReadinessHash: expect.stringMatching(/^sha256:/),
+          payrollInputReadiness: expect.objectContaining({
+            status: "READY",
+            blockerCodes: [],
+            verdictHash: expect.stringMatching(/^sha256:/),
+          }),
+          payrollEngineInputSnapshotHash: expect.stringMatching(/^sha256:/),
+          payrollEngineInputHashes: expect.arrayContaining([
             expect.stringMatching(/^sha256:/),
           ]),
           countryPackCapabilityStatus: "REQUIRES_EXPERT_REVIEW",
@@ -1238,6 +1671,350 @@ describe("payroll control service", () => {
     );
   });
 
+  it("blocks payroll calculation when frozen attendance source evidence is missing", async () => {
+    const tx = buildTx();
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
+    tx.organization.findFirst.mockResolvedValue({
+      country: "CM",
+      accountingSettings: {
+        countryPack: null,
+        taxRegime: null,
+        roundingMode: "HALF_UP",
+        roundingScale: 2,
+        payrollCnpsFamilyAllowanceSector: "GENERAL",
+        payrollCnpsOccupationalRiskGroup: "A",
+      },
+    });
+    tx.payrollRun.findFirst.mockResolvedValue(null);
+    tx.payrollPeriod.findFirst.mockResolvedValue(payrollPeriod);
+    tx.payrollRun.count.mockResolvedValue(0);
+    tx.payrollEmployee.findMany.mockResolvedValue(
+      hrisReadyEmployees([
+        {
+          id: "employee-1",
+          displayName: "Ada Payroll",
+          paymentDestinationHash: "dest-hash",
+          contracts: [
+            {
+              id: "contract-1",
+              baseSalary: new Prisma.Decimal("100000.00"),
+              currency: "XAF",
+            },
+          ],
+          attendanceSnapshots: [calculationAttendance({ sourceHash: "" })],
+        },
+      ]),
+    );
+
+    await expect(
+      calculatePayrollRun({
+        organizationId: "org-1",
+        payrollPeriodId: "period-1",
+        preparedById: "preparer-1",
+        idempotencyKey: "calc-key-missing-attendance-source",
+        runDate: "2026-06-30",
+      }),
+    ).rejects.toThrow(
+      "Employee Ada Payroll has no frozen attendance source evidence.",
+    );
+
+    expect(tx.payrollRun.create).not.toHaveBeenCalled();
+    expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled();
+  });
+
+  it("blocks legacy frozen attendance without an HRIS certification manifest", async () => {
+    const tx = buildTx();
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
+    tx.organization.findFirst.mockResolvedValue({
+      country: "CM",
+      accountingSettings: {
+        countryPack: null,
+        taxRegime: null,
+        roundingMode: "HALF_UP",
+        roundingScale: 2,
+        payrollCnpsFamilyAllowanceSector: "GENERAL",
+        payrollCnpsOccupationalRiskGroup: "A",
+      },
+    });
+    tx.payrollRun.findFirst.mockResolvedValue(null);
+    tx.payrollPeriod.findFirst.mockResolvedValue(payrollPeriod);
+    tx.payrollEmployee.findMany.mockResolvedValue(
+      hrisReadyEmployees([
+        {
+          id: "employee-1",
+          displayName: "Ada Payroll",
+          paymentDestinationHash: "dest-hash",
+          contracts: [
+            {
+              id: "contract-1",
+              baseSalary: new Prisma.Decimal("100000.00"),
+              currency: "XAF",
+            },
+          ],
+          attendanceSnapshots: [
+            {
+              ...calculationAttendance(),
+              metadata: null,
+            },
+          ],
+        },
+      ]),
+    );
+
+    await expect(
+      calculatePayrollRun({
+        organizationId: "org-1",
+        payrollPeriodId: "period-1",
+        preparedById: "preparer-1",
+        idempotencyKey: "calc-key-legacy-attendance",
+        runDate: "2026-06-30",
+      }),
+    ).rejects.toThrow("PAYROLL_INPUT_ATTENDANCE_CERTIFICATION_MISSING");
+
+    expect(tx.payrollRun.create).not.toHaveBeenCalled();
+    expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled();
+  });
+
+  it("blocks payroll calculation when the country pack is unsupported at input readiness", async () => {
+    mockCountryPack({ incomeTaxCapabilityStatus: "UNSUPPORTED" });
+    const tx = buildTx();
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
+    tx.organization.findFirst.mockResolvedValue({
+      country: "CM",
+      accountingSettings: {
+        countryPack: null,
+        taxRegime: null,
+        roundingMode: "HALF_UP",
+        roundingScale: 2,
+        payrollCnpsFamilyAllowanceSector: "GENERAL",
+        payrollCnpsOccupationalRiskGroup: "A",
+      },
+    });
+    tx.payrollRun.findFirst.mockResolvedValue(null);
+    tx.payrollPeriod.findFirst.mockResolvedValue(payrollPeriod);
+
+    await expect(
+      calculatePayrollRun({
+        organizationId: "org-1",
+        payrollPeriodId: "period-1",
+        preparedById: "preparer-1",
+        idempotencyKey: "calc-key-unsupported-country-pack",
+        runDate: "2026-06-30",
+      }),
+    ).rejects.toThrow("PAYROLL_INPUT_COUNTRY_PACK_UNSUPPORTED");
+
+    expect(tx.payrollSalaryChangeRequest.findMany).not.toHaveBeenCalled();
+    expect(tx.payrollEmployee.findMany).not.toHaveBeenCalled();
+    expect(tx.payrollRun.create).not.toHaveBeenCalled();
+    expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled();
+  });
+
+  it("blocks payroll calculation when an active employee has no contract at input readiness", async () => {
+    const tx = buildTx();
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
+    tx.organization.findFirst.mockResolvedValue({
+      country: "CM",
+      accountingSettings: {
+        countryPack: null,
+        taxRegime: null,
+        roundingMode: "HALF_UP",
+        roundingScale: 2,
+        payrollCnpsFamilyAllowanceSector: "GENERAL",
+        payrollCnpsOccupationalRiskGroup: "A",
+      },
+    });
+    tx.payrollRun.findFirst.mockResolvedValue(null);
+    tx.payrollPeriod.findFirst.mockResolvedValue(payrollPeriod);
+    tx.payrollEmployee.findMany.mockResolvedValue(
+      hrisReadyEmployees([
+        {
+          id: "employee-1",
+          displayName: "Ada Payroll",
+          paymentDestinationHash: "dest-hash",
+          contracts: [],
+          attendanceSnapshots: [calculationAttendance()],
+        },
+      ]),
+    );
+
+    await expect(
+      calculatePayrollRun({
+        organizationId: "org-1",
+        payrollPeriodId: "period-1",
+        preparedById: "preparer-1",
+        idempotencyKey: "calc-key-missing-contract",
+        runDate: "2026-06-30",
+      }),
+    ).rejects.toThrow("PAYROLL_INPUT_CONTRACT_MISSING");
+
+    expect(tx.payrollRun.findMany).not.toHaveBeenCalled();
+    expect(tx.payrollRun.create).not.toHaveBeenCalled();
+    expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled();
+  });
+
+  it("blocks payroll calculation when attendance is not frozen at input readiness", async () => {
+    const tx = buildTx();
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
+    tx.organization.findFirst.mockResolvedValue({
+      country: "CM",
+      accountingSettings: {
+        countryPack: null,
+        taxRegime: null,
+        roundingMode: "HALF_UP",
+        roundingScale: 2,
+        payrollCnpsFamilyAllowanceSector: "GENERAL",
+        payrollCnpsOccupationalRiskGroup: "A",
+      },
+    });
+    tx.payrollRun.findFirst.mockResolvedValue(null);
+    tx.payrollPeriod.findFirst.mockResolvedValue(payrollPeriod);
+    tx.payrollEmployee.findMany.mockResolvedValue(
+      hrisReadyEmployees([
+        {
+          id: "employee-1",
+          displayName: "Ada Payroll",
+          paymentDestinationHash: "dest-hash",
+          contracts: [
+            {
+              id: "contract-1",
+              baseSalary: new Prisma.Decimal("100000.00"),
+              currency: "XAF",
+            },
+          ],
+          attendanceSnapshots: [],
+        },
+      ]),
+    );
+
+    await expect(
+      calculatePayrollRun({
+        organizationId: "org-1",
+        payrollPeriodId: "period-1",
+        preparedById: "preparer-1",
+        idempotencyKey: "calc-key-unfrozen-attendance",
+        runDate: "2026-06-30",
+      }),
+    ).rejects.toThrow("PAYROLL_INPUT_ATTENDANCE_MISSING");
+
+    expect(tx.payrollRun.findMany).not.toHaveBeenCalled();
+    expect(tx.payrollRun.create).not.toHaveBeenCalled();
+    expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled();
+  });
+
+  it("blocks payroll calculation when payment destination is missing at input readiness", async () => {
+    const tx = buildTx();
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
+    tx.organization.findFirst.mockResolvedValue({
+      country: "CM",
+      accountingSettings: {
+        countryPack: null,
+        taxRegime: null,
+        roundingMode: "HALF_UP",
+        roundingScale: 2,
+        payrollCnpsFamilyAllowanceSector: "GENERAL",
+        payrollCnpsOccupationalRiskGroup: "A",
+      },
+    });
+    tx.payrollRun.findFirst.mockResolvedValue(null);
+    tx.payrollPeriod.findFirst.mockResolvedValue(payrollPeriod);
+    tx.payrollEmployee.findMany.mockResolvedValue(
+      hrisReadyEmployees([
+        {
+          id: "employee-1",
+          displayName: "Ada Payroll",
+          paymentDestinationHash: null,
+          contracts: [
+            {
+              id: "contract-1",
+              baseSalary: new Prisma.Decimal("100000.00"),
+              currency: "XAF",
+            },
+          ],
+          attendanceSnapshots: [calculationAttendance()],
+        },
+      ]),
+    );
+
+    await expect(
+      calculatePayrollRun({
+        organizationId: "org-1",
+        payrollPeriodId: "period-1",
+        preparedById: "preparer-1",
+        idempotencyKey: "calc-key-missing-payment-destination",
+        runDate: "2026-06-30",
+      }),
+    ).rejects.toThrow("PAYROLL_INPUT_PAYMENT_DESTINATION_MISSING");
+
+    expect(tx.payrollRun.findMany).not.toHaveBeenCalled();
+    expect(tx.payrollRun.create).not.toHaveBeenCalled();
+    expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled();
+  });
+
+  it("blocks payroll calculation when active employees share an approved payment destination", async () => {
+    const tx = buildTx();
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
+    tx.organization.findFirst.mockResolvedValue({
+      country: "CM",
+      accountingSettings: {
+        countryPack: null,
+        taxRegime: null,
+        roundingMode: "HALF_UP",
+        roundingScale: 2,
+        payrollCnpsFamilyAllowanceSector: "GENERAL",
+        payrollCnpsOccupationalRiskGroup: "A",
+      },
+    });
+    tx.payrollRun.findFirst.mockResolvedValue(null);
+    tx.payrollPeriod.findFirst.mockResolvedValue(payrollPeriod);
+    tx.payrollEmployee.findMany.mockResolvedValue(
+      hrisReadyEmployees([
+        {
+          id: "employee-1",
+          displayName: "Ada Payroll",
+          paymentDestinationHash: "shared-destination-hash",
+          contracts: [
+            {
+              id: "contract-1",
+              baseSalary: new Prisma.Decimal("100000.00"),
+              currency: "XAF",
+            },
+          ],
+          attendanceSnapshots: [calculationAttendance({ id: "attendance-1" })],
+        },
+        {
+          id: "employee-2",
+          displayName: "Grace Payroll",
+          paymentDestinationHash: "shared-destination-hash",
+          contracts: [
+            {
+              id: "contract-2",
+              baseSalary: new Prisma.Decimal("120000.00"),
+              currency: "XAF",
+            },
+          ],
+          attendanceSnapshots: [
+            calculationAttendance({
+              id: "attendance-2",
+              sourceHash: "sha256:attendance-source-2",
+            }),
+          ],
+        },
+      ]),
+    );
+
+    await expect(
+      calculatePayrollRun({
+        organizationId: "org-1",
+        payrollPeriodId: "period-1",
+        preparedById: "preparer-1",
+        idempotencyKey: "calc-key-duplicate-destination",
+        runDate: "2026-06-30",
+      }),
+    ).rejects.toThrow("PAYROLL_INPUT_PAYMENT_DESTINATION_DUPLICATE");
+
+    expect(tx.payrollRun.create).not.toHaveBeenCalled();
+    expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled();
+  });
   it("blocks payroll calculation when tenant rounding mode is not certified", async () => {
     const tx = buildTx();
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
@@ -1268,6 +2045,47 @@ describe("payroll control service", () => {
     );
     expect(tx.payrollEmployee.findMany).not.toHaveBeenCalled();
   });
+
+  it.each([PayrollRunStatus.CALCULATED, PayrollRunStatus.POSTED])(
+    "blocks ordinary recalculation after the payroll input snapshot is sealed (%s)",
+    async (sealedStatus) => {
+      const tx = buildTx();
+      mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
+      tx.payrollRun.findFirst
+        .mockResolvedValueOnce(null)
+        .mockResolvedValueOnce({
+          id: "sealed-run-1",
+          runNumber: "PAY-20260630-0001",
+          status: sealedStatus,
+          documentHash: "sha256:sealed-run-doc",
+          evidenceHash: "sha256:sealed-run-evidence",
+          calculationHash: "sha256:sealed-run-calc",
+          attendanceSnapshotHash: "sha256:sealed-attendance",
+        });
+      tx.payrollPeriod.findFirst.mockResolvedValue({
+        ...payrollPeriod,
+        status: PayrollPeriodStatus.CALCULATED,
+      });
+
+      await expect(
+        calculatePayrollRun({
+          organizationId: "org-1",
+          payrollPeriodId: "period-1",
+          preparedById: "preparer-1",
+          idempotencyKey: "calc-key-after-snapshot-sealed",
+          runDate: "2026-06-30",
+        }),
+      ).rejects.toThrow("PAYROLL_INPUT_SNAPSHOT_ALREADY_SEALED");
+
+      expect(tx.organization.findFirst).not.toHaveBeenCalled();
+      expect(tx.payrollSalaryChangeRequest.findMany).not.toHaveBeenCalled();
+      expect(tx.payrollEmployee.findMany).not.toHaveBeenCalled();
+      expect(tx.payrollRun.findMany).not.toHaveBeenCalled();
+      expect(tx.payrollRun.create).not.toHaveBeenCalled();
+      expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled();
+    },
+  );
+
   it("calculates correction runs as deltas against posted original register lines", async () => {
     const tx = buildTx();
     const correctionPeriod = {
@@ -1350,29 +2168,23 @@ describe("payroll control service", () => {
       .mockResolvedValueOnce(originalRun);
     tx.payrollPeriod.findFirst.mockResolvedValue(correctionPeriod);
     tx.payrollRun.count.mockResolvedValue(0);
-    tx.payrollEmployee.findMany.mockResolvedValue([
-      {
-        id: "employee-1",
-        displayName: "Ada Payroll",
-        paymentDestinationHash: "dest-hash",
-        contracts: [
-          {
-            id: "contract-1",
-            baseSalary: new Prisma.Decimal("100000.00"),
-            currency: "XAF",
-          },
-        ],
-        attendanceSnapshots: [
-          {
-            id: "attendance-1",
-            scheduledMinutes: 9600,
-            workedMinutes: 9600,
-            leaveMinutes: 0,
-            overtimeMinutes: 0,
-          },
-        ],
-      },
-    ]);
+    tx.payrollEmployee.findMany.mockResolvedValue(
+      hrisReadyEmployees([
+        {
+          id: "employee-1",
+          displayName: "Ada Payroll",
+          paymentDestinationHash: "dest-hash",
+          contracts: [
+            {
+              id: "contract-1",
+              baseSalary: new Prisma.Decimal("100000.00"),
+              currency: "XAF",
+            },
+          ],
+          attendanceSnapshots: [calculationAttendance()],
+        },
+      ]),
+    );
     tx.payrollRun.create.mockImplementation(
       async ({ data }: { data: any }) => ({
         id: "run-1",
@@ -1410,6 +2222,21 @@ describe("payroll control service", () => {
     expect(createData.netPayableAmount.toFixed(2)).toBe("9580.00");
     expect(createData.metadata).toEqual(
       expect.objectContaining({
+        payrollInputReadinessHash: expect.stringMatching(/^sha256:/),
+        payrollInputReadiness: expect.objectContaining({
+          kind: "AQSTOQFLOW_PAYROLL_INPUT_READINESS_VERDICT",
+          status: "READY",
+          evidence: expect.objectContaining({
+            employeeIds: ["employee-1"],
+            contractIds: ["contract-1"],
+            attendanceSnapshotIds: ["attendance-1"],
+            attendanceSourceHashes: ["sha256:attendance-source"],
+          }),
+        }),
+        payrollEngineInputSnapshotHash: expect.stringMatching(/^sha256:/),
+        payrollEngineInputHashes: expect.arrayContaining([
+          expect.stringMatching(/^sha256:/),
+        ]),
         correction: expect.objectContaining({
           originalRunId: "original-run-1",
           originalRunNumber: "PAY-20260531-0001",
@@ -1447,7 +2274,18 @@ describe("payroll control service", () => {
             declarationLiabilityAmount: "1715.00",
           }),
           roundingPolicyHash: expect.stringMatching(/^sha256:/),
-          roundingPolicy: expect.objectContaining({ mode: "HALF_UP", scale: 2 }),
+          roundingPolicy: expect.objectContaining({
+            mode: "HALF_UP",
+            scale: 2,
+          }),
+          payrollEngineInputHash: expect.stringMatching(/^sha256:/),
+          payrollEngineInput: expect.objectContaining({
+            kind: "AQSTOQFLOW_PAYROLL_CERTIFIED_ENGINE_INPUT",
+            employeeId: "employee-1",
+            attendance: expect.objectContaining({
+              sourceHash: "sha256:attendance-source",
+            }),
+          }),
           correctionContext: expect.objectContaining({
             originalRunId: "original-run-1",
             originalLineId: "original-line-1",
@@ -1488,6 +2326,15 @@ describe("payroll control service", () => {
           originalRunDocumentHash: "sha256:original-run",
           originalRunEvidenceHash: "sha256:original-evidence",
           correctionEvidenceHash: expect.stringMatching(/^sha256:/),
+          payrollInputReadinessHash: expect.stringMatching(/^sha256:/),
+          payrollInputReadiness: expect.objectContaining({
+            status: "READY",
+            verdictHash: expect.stringMatching(/^sha256:/),
+          }),
+          payrollEngineInputSnapshotHash: expect.stringMatching(/^sha256:/),
+          payrollEngineInputHashes: expect.arrayContaining([
+            expect.stringMatching(/^sha256:/),
+          ]),
           grossAmount: "10000.00",
           netPayableAmount: "9580.00",
         }),
@@ -1701,57 +2548,52 @@ describe("payroll control service", () => {
     tx.payrollRun.findFirst.mockResolvedValue(null);
     tx.payrollPeriod.findFirst.mockResolvedValue(payrollPeriod);
     tx.payrollRun.count.mockResolvedValue(0);
-    tx.payrollEmployee.findMany.mockResolvedValue([
-      {
-        id: "employee-1",
-        displayName: "Ada Payroll",
-        paymentDestinationHash: "dest-hash",
-        contracts: [
-          {
-            id: "contract-1",
-            baseSalary: new Prisma.Decimal("100000.00"),
-            currency: "XAF",
-          },
-        ],
-        attendanceSnapshots: [
-          {
-            id: "attendance-1",
-            scheduledMinutes: 9600,
-            workedMinutes: 9600,
-            leaveMinutes: 0,
-            overtimeMinutes: 480,
-          },
-        ],
-        rubriqueAssignments: [
-          {
-            id: "assign-transport",
-            amount: new Prisma.Decimal("10000.00"),
-            rateBps: null,
-            quantity: null,
-            currency: "XAF",
-            approvalBusinessEventId: "approval-transport",
-            evidenceDocumentHash: "transport-proof-hash",
-            rubrique: {
-              id: "rubrique-transport",
-              code: "TRANSPORT",
-              label: "Transport allowance",
-              payslipLabel: "Transport allowance",
-              kind: "EARNING",
-              valueType: "FIXED_AMOUNT",
-              status: "ACTIVE",
-              taxableBase: true,
-              socialBase: true,
-              employerCharge: false,
+    tx.payrollEmployee.findMany.mockResolvedValue(
+      hrisReadyEmployees([
+        {
+          id: "employee-1",
+          displayName: "Ada Payroll",
+          paymentDestinationHash: "dest-hash",
+          contracts: [
+            {
+              id: "contract-1",
+              baseSalary: new Prisma.Decimal("100000.00"),
+              currency: "XAF",
             },
-          },
-          {
-            id: "assign-loan",
-            amount: new Prisma.Decimal("5000.00"),
-            rateBps: null,
-            quantity: null,
-            currency: "XAF",
-            approvalBusinessEventId: "approval-loan",
-            evidenceDocumentHash: "loan-proof-hash",
+          ],
+          attendanceSnapshots: [
+            calculationAttendance({ overtimeMinutes: 480 }),
+          ],
+          rubriqueAssignments: [
+            {
+              id: "assign-transport",
+              amount: new Prisma.Decimal("10000.00"),
+              rateBps: null,
+              quantity: null,
+              currency: "XAF",
+              approvalBusinessEventId: "approval-transport",
+              evidenceDocumentHash: "transport-proof-hash",
+              rubrique: {
+                id: "rubrique-transport",
+                code: "TRANSPORT",
+                label: "Transport allowance",
+                payslipLabel: "Transport allowance",
+                kind: "EARNING",
+                valueType: "FIXED_AMOUNT",
+                status: "ACTIVE",
+                taxableBase: true,
+                socialBase: true,
+                employerCharge: false,
+              },
+            },
+            {
+              id: "assign-loan",
+              amount: new Prisma.Decimal("5000.00"),
+              rateBps: null,
+              quantity: null,
+              currency: "XAF",
+              approvalBusinessEventId: "approval-loan",
+              evidenceDocumentHash: "loan-proof-hash",
             metadata: {
               recoveryPolicyRequired: true,
               recoveryPolicyType: "LOAN",
@@ -1762,43 +2604,44 @@ describe("payroll control service", () => {
               recoveryCapProofHash: "sha256:loan-cap-proof",
               netPayFloorAmount: "20000.00",
             },
-            rubrique: {
-              id: "rubrique-loan",
-              code: "LOAN",
-              label: "Loan deduction",
-              payslipLabel: "Loan repayment",
-              kind: "DEDUCTION",
-              valueType: "FIXED_AMOUNT",
-              status: "ACTIVE",
-              taxableBase: false,
-              socialBase: false,
-              employerCharge: false,
+              rubrique: {
+                id: "rubrique-loan",
+                code: "LOAN",
+                label: "Loan deduction",
+                payslipLabel: "Loan repayment",
+                kind: "DEDUCTION",
+                valueType: "FIXED_AMOUNT",
+                status: "ACTIVE",
+                taxableBase: false,
+                socialBase: false,
+                employerCharge: false,
+              },
             },
-          },
-          {
-            id: "assign-health",
-            amount: null,
-            rateBps: 500,
-            quantity: null,
-            currency: "XAF",
-            approvalBusinessEventId: "approval-health",
-            evidenceDocumentHash: "health-proof-hash",
-            rubrique: {
-              id: "rubrique-health",
-              code: "HEALTH",
-              label: "Health benefit",
-              payslipLabel: "Health benefit",
-              kind: "EMPLOYER_CHARGE",
-              valueType: "RATE_BPS",
-              status: "ACTIVE",
-              taxableBase: false,
-              socialBase: false,
-              employerCharge: true,
+            {
+              id: "assign-health",
+              amount: null,
+              rateBps: 500,
+              quantity: null,
+              currency: "XAF",
+              approvalBusinessEventId: "approval-health",
+              evidenceDocumentHash: "health-proof-hash",
+              rubrique: {
+                id: "rubrique-health",
+                code: "HEALTH",
+                label: "Health benefit",
+                payslipLabel: "Health benefit",
+                kind: "EMPLOYER_CHARGE",
+                valueType: "RATE_BPS",
+                status: "ACTIVE",
+                taxableBase: false,
+                socialBase: false,
+                employerCharge: true,
+              },
             },
-          },
-        ],
-      },
-    ]);
+          ],
+        },
+      ]),
+    );
     tx.payrollRun.create.mockImplementation(
       async ({ data }: { data: any }) => ({
         id: "run-1",
@@ -1938,55 +2781,49 @@ describe("payroll control service", () => {
     tx.payrollRun.findFirst.mockResolvedValue(null);
     tx.payrollPeriod.findFirst.mockResolvedValue(payrollPeriod);
     tx.payrollRun.count.mockResolvedValue(0);
-    tx.payrollEmployee.findMany.mockResolvedValue([
-      {
-        id: "employee-1",
-        displayName: "Ada Payroll",
-        paymentDestinationHash: "dest-hash",
-        contracts: [
-          {
-            id: "contract-1",
-            baseSalary: new Prisma.Decimal("100000.00"),
-            currency: "XAF",
-          },
-        ],
-        attendanceSnapshots: [
-          {
-            id: "attendance-1",
-            scheduledMinutes: 9600,
-            workedMinutes: 9600,
-            leaveMinutes: 0,
-            overtimeMinutes: 0,
-          },
-        ],
-        rubriqueAssignments: [
-          {
-            id: "assign-health-formula",
-            amount: null,
-            rateBps: null,
-            quantity: null,
-            currency: "XAF",
-            approvalBusinessEventId: "approval-health-formula",
-            evidenceDocumentHash: "health-formula-proof-hash",
-            rubrique: {
-              id: "rubrique-health-formula",
-              code: "HEALTH_FORMULA",
-              label: "Formula health benefit",
-              payslipLabel: "Formula health benefit",
-              kind: "EMPLOYER_CHARGE",
-              valueType: "FORMULA_REFERENCE",
-              status: "ACTIVE",
-              taxableBase: false,
-              socialBase: false,
-              employerCharge: true,
-              countryCode: "CM",
-              statutoryParameterPath: "payroll.compensation.benefits",
-              countryPackVersion: "CM-2026.1",
+    tx.payrollEmployee.findMany.mockResolvedValue(
+      hrisReadyEmployees([
+        {
+          id: "employee-1",
+          displayName: "Ada Payroll",
+          paymentDestinationHash: "dest-hash",
+          contracts: [
+            {
+              id: "contract-1",
+              baseSalary: new Prisma.Decimal("100000.00"),
+              currency: "XAF",
             },
-          },
-        ],
-      },
-    ]);
+          ],
+          attendanceSnapshots: [calculationAttendance()],
+          rubriqueAssignments: [
+            {
+              id: "assign-health-formula",
+              amount: null,
+              rateBps: null,
+              quantity: null,
+              currency: "XAF",
+              approvalBusinessEventId: "approval-health-formula",
+              evidenceDocumentHash: "health-formula-proof-hash",
+              rubrique: {
+                id: "rubrique-health-formula",
+                code: "HEALTH_FORMULA",
+                label: "Formula health benefit",
+                payslipLabel: "Formula health benefit",
+                kind: "EMPLOYER_CHARGE",
+                valueType: "FORMULA_REFERENCE",
+                status: "ACTIVE",
+                taxableBase: false,
+                socialBase: false,
+                employerCharge: true,
+                countryCode: "CM",
+                statutoryParameterPath: "payroll.compensation.benefits",
+                countryPackVersion: "CM-2026.1",
+              },
+            },
+          ],
+        },
+      ]),
+    );
     tx.payrollRun.create.mockImplementation(
       async ({ data }: { data: any }) => ({
         id: "run-1",
@@ -2080,55 +2917,49 @@ describe("payroll control service", () => {
     tx.payrollRun.findFirst.mockResolvedValue(null);
     tx.payrollPeriod.findFirst.mockResolvedValue(payrollPeriod);
     tx.payrollRun.count.mockResolvedValue(0);
-    tx.payrollEmployee.findMany.mockResolvedValue([
-      {
-        id: "employee-1",
-        displayName: "Ada Payroll",
-        paymentDestinationHash: "dest-hash",
-        contracts: [
-          {
-            id: "contract-1",
-            baseSalary: new Prisma.Decimal("100000.00"),
-            currency: "XAF",
-          },
-        ],
-        attendanceSnapshots: [
-          {
-            id: "attendance-1",
-            scheduledMinutes: 9600,
-            workedMinutes: 9600,
-            leaveMinutes: 0,
-            overtimeMinutes: 0,
-          },
-        ],
-        rubriqueAssignments: [
-          {
-            id: "assign-formula-missing-path",
-            amount: null,
-            rateBps: null,
-            quantity: null,
-            currency: "XAF",
-            approvalBusinessEventId: "approval-formula-missing-path",
-            evidenceDocumentHash: "formula-proof-hash",
-            rubrique: {
-              id: "rubrique-formula-missing-path",
-              code: "FORMULA_ALLOWANCE",
-              label: "Formula allowance",
-              payslipLabel: "Formula allowance",
-              kind: "EARNING",
-              valueType: "FORMULA_REFERENCE",
-              status: "ACTIVE",
-              taxableBase: true,
-              socialBase: true,
-              employerCharge: false,
-              countryCode: "CM",
-              statutoryParameterPath: null,
-              countryPackVersion: "CM-2026.1",
+    tx.payrollEmployee.findMany.mockResolvedValue(
+      hrisReadyEmployees([
+        {
+          id: "employee-1",
+          displayName: "Ada Payroll",
+          paymentDestinationHash: "dest-hash",
+          contracts: [
+            {
+              id: "contract-1",
+              baseSalary: new Prisma.Decimal("100000.00"),
+              currency: "XAF",
             },
-          },
-        ],
-      },
-    ]);
+          ],
+          attendanceSnapshots: [calculationAttendance()],
+          rubriqueAssignments: [
+            {
+              id: "assign-formula-missing-path",
+              amount: null,
+              rateBps: null,
+              quantity: null,
+              currency: "XAF",
+              approvalBusinessEventId: "approval-formula-missing-path",
+              evidenceDocumentHash: "formula-proof-hash",
+              rubrique: {
+                id: "rubrique-formula-missing-path",
+                code: "FORMULA_ALLOWANCE",
+                label: "Formula allowance",
+                payslipLabel: "Formula allowance",
+                kind: "EARNING",
+                valueType: "FORMULA_REFERENCE",
+                status: "ACTIVE",
+                taxableBase: true,
+                socialBase: true,
+                employerCharge: false,
+                countryCode: "CM",
+                statutoryParameterPath: null,
+                countryPackVersion: "CM-2026.1",
+              },
+            },
+          ],
+        },
+      ]),
+    );
 
     await expect(
       calculatePayrollRun({
@@ -2145,7 +2976,7 @@ describe("payroll control service", () => {
     expect(tx.payrollRun.create).not.toHaveBeenCalled();
     expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled();
   });
-  it("blocks payroll calculation when an active rubrique has no approval history", async () => {
+  it("blocks active rubriques without approval history at the HRIS readiness gate", async () => {
     const tx = buildTx();
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
     tx.organization.findFirst.mockResolvedValue({
@@ -2162,52 +2993,46 @@ describe("payroll control service", () => {
     tx.payrollRun.findFirst.mockResolvedValue(null);
     tx.payrollPeriod.findFirst.mockResolvedValue(payrollPeriod);
     tx.payrollRun.count.mockResolvedValue(0);
-    tx.payrollEmployee.findMany.mockResolvedValue([
-      {
-        id: "employee-1",
-        displayName: "Ada Payroll",
-        paymentDestinationHash: "dest-hash",
-        contracts: [
-          {
-            id: "contract-1",
-            baseSalary: new Prisma.Decimal("100000.00"),
-            currency: "XAF",
-          },
-        ],
-        attendanceSnapshots: [
-          {
-            id: "attendance-1",
-            scheduledMinutes: 9600,
-            workedMinutes: 9600,
-            leaveMinutes: 0,
-            overtimeMinutes: 0,
-          },
-        ],
-        rubriqueAssignments: [
-          {
-            id: "assign-unapproved",
-            amount: new Prisma.Decimal("10000.00"),
-            rateBps: null,
-            quantity: null,
-            currency: "XAF",
-            approvalBusinessEventId: null,
-            evidenceDocumentHash: "allowance-proof-hash",
-            rubrique: {
-              id: "rubrique-unapproved",
-              code: "ALLOWANCE",
-              label: "Allowance",
-              payslipLabel: "Allowance",
-              kind: "EARNING",
-              valueType: "FIXED_AMOUNT",
-              status: "ACTIVE",
-              taxableBase: true,
-              socialBase: true,
-              employerCharge: false,
+    tx.payrollEmployee.findMany.mockResolvedValue(
+      hrisReadyEmployees([
+        {
+          id: "employee-1",
+          displayName: "Ada Payroll",
+          paymentDestinationHash: "dest-hash",
+          contracts: [
+            {
+              id: "contract-1",
+              baseSalary: new Prisma.Decimal("100000.00"),
+              currency: "XAF",
             },
-          },
-        ],
-      },
-    ]);
+          ],
+          attendanceSnapshots: [calculationAttendance()],
+          rubriqueAssignments: [
+            {
+              id: "assign-unapproved",
+              amount: new Prisma.Decimal("10000.00"),
+              rateBps: null,
+              quantity: null,
+              currency: "XAF",
+              approvalBusinessEventId: null,
+              evidenceDocumentHash: "allowance-proof-hash",
+              rubrique: {
+                id: "rubrique-unapproved",
+                code: "ALLOWANCE",
+                label: "Allowance",
+                payslipLabel: "Allowance",
+                kind: "EARNING",
+                valueType: "FIXED_AMOUNT",
+                status: "ACTIVE",
+                taxableBase: true,
+                socialBase: true,
+                employerCharge: false,
+              },
+            },
+          ],
+        },
+      ]),
+    );
 
     await expect(
       calculatePayrollRun({
@@ -2217,13 +3042,12 @@ describe("payroll control service", () => {
         idempotencyKey: "calc-key-unapproved-rubrique",
         runDate: "2026-06-30",
       }),
-    ).rejects.toThrow(
-      "Payroll rubrique ALLOWANCE requires approval history before calculation.",
-    );
+    ).rejects.toThrow("HRIS_PAYROLL_COMPENSATION_APPROVAL_PROOF_MISSING");
 
     expect(tx.payrollRun.create).not.toHaveBeenCalled();
     expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled();
   });
+
   it("blocks deduction/recovery rubriques without evidence proof", async () => {
     const tx = buildTx();
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
@@ -2241,7 +3065,7 @@ describe("payroll control service", () => {
     tx.payrollRun.findFirst.mockResolvedValue(null);
     tx.payrollPeriod.findFirst.mockResolvedValue(payrollPeriod);
     tx.payrollRun.count.mockResolvedValue(0);
-    tx.payrollEmployee.findMany.mockResolvedValue([
+    tx.payrollEmployee.findMany.mockResolvedValue(hrisReadyEmployees([
       {
         id: "employee-1",
         displayName: "Ada Payroll",
@@ -2253,15 +3077,7 @@ describe("payroll control service", () => {
             currency: "XAF",
           },
         ],
-        attendanceSnapshots: [
-          {
-            id: "attendance-1",
-            scheduledMinutes: 9600,
-            workedMinutes: 9600,
-            leaveMinutes: 0,
-            overtimeMinutes: 0,
-          },
-        ],
+        attendanceSnapshots: [calculationAttendance()],
         rubriqueAssignments: [
           {
             id: "assign-loan-missing-evidence",
@@ -2286,7 +3102,7 @@ describe("payroll control service", () => {
           },
         ],
       },
-    ]);
+    ]));
 
     await expect(
       calculatePayrollRun({
@@ -2297,7 +3113,7 @@ describe("payroll control service", () => {
         runDate: "2026-06-30",
       }),
     ).rejects.toThrow(
-      "Payroll deduction/recovery rubrique LOAN requires evidence document proof before calculation.",
+      "HRIS_PAYROLL_COMPENSATION_APPROVAL_PROOF_MISSING",
     );
 
     expect(tx.payrollRun.create).not.toHaveBeenCalled();
@@ -2393,6 +3209,7 @@ describe("payroll control service", () => {
     expect(tx.payrollRun.create).not.toHaveBeenCalled();
     expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled();
   });
+
   it("blocks ordinary payroll runs that would create negative net payable", async () => {
     const tx = buildTx();
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
@@ -2410,7 +3227,7 @@ describe("payroll control service", () => {
     tx.payrollRun.findFirst.mockResolvedValue(null);
     tx.payrollPeriod.findFirst.mockResolvedValue(payrollPeriod);
     tx.payrollRun.count.mockResolvedValue(0);
-    tx.payrollEmployee.findMany.mockResolvedValue([
+    tx.payrollEmployee.findMany.mockResolvedValue(hrisReadyEmployees([
       {
         id: "employee-1",
         displayName: "Ada Payroll",
@@ -2422,15 +3239,7 @@ describe("payroll control service", () => {
             currency: "XAF",
           },
         ],
-        attendanceSnapshots: [
-          {
-            id: "attendance-1",
-            scheduledMinutes: 9600,
-            workedMinutes: 9600,
-            leaveMinutes: 0,
-            overtimeMinutes: 0,
-          },
-        ],
+        attendanceSnapshots: [calculationAttendance()],
         rubriqueAssignments: [
           {
             id: "assign-recovery-over-net",
@@ -2455,7 +3264,7 @@ describe("payroll control service", () => {
           },
         ],
       },
-    ]);
+    ]));
 
     await expect(
       calculatePayrollRun({
@@ -2471,6 +3280,215 @@ describe("payroll control service", () => {
 
     expect(tx.payrollRun.create).not.toHaveBeenCalled();
     expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled();
+  });
+
+  it("blocks active rubriques without evidence at the HRIS readiness gate", async () => {
+    const tx = buildTx();
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
+    tx.organization.findFirst.mockResolvedValue({
+      country: "CM",
+      accountingSettings: {
+        countryPack: null,
+        taxRegime: null,
+        roundingMode: "HALF_UP",
+        roundingScale: 2,
+        payrollCnpsFamilyAllowanceSector: "GENERAL",
+        payrollCnpsOccupationalRiskGroup: "A",
+      },
+    });
+    tx.payrollRun.findFirst.mockResolvedValue(null);
+    tx.payrollPeriod.findFirst.mockResolvedValue(payrollPeriod);
+    tx.payrollRun.count.mockResolvedValue(0);
+    tx.payrollEmployee.findMany.mockResolvedValue(
+      hrisReadyEmployees([
+        {
+          id: "employee-1",
+          displayName: "Ada Payroll",
+          paymentDestinationHash: "dest-hash",
+          contracts: [
+            {
+              id: "contract-1",
+              baseSalary: new Prisma.Decimal("100000.00"),
+              currency: "XAF",
+            },
+          ],
+          attendanceSnapshots: [calculationAttendance()],
+          rubriqueAssignments: [
+            {
+              id: "assign-missing-evidence",
+              amount: new Prisma.Decimal("10000.00"),
+              rateBps: null,
+              quantity: null,
+              currency: "XAF",
+              approvalBusinessEventId: "approval-allowance",
+              evidenceDocumentHash: null,
+              rubrique: {
+                id: "rubrique-missing-evidence",
+                code: "ALLOWANCE",
+                label: "Allowance",
+                payslipLabel: "Allowance",
+                kind: "EARNING",
+                valueType: "FIXED_AMOUNT",
+                status: "ACTIVE",
+                taxableBase: true,
+                socialBase: true,
+                employerCharge: false,
+              },
+            },
+          ],
+        },
+      ]),
+    );
+
+    await expect(
+      calculatePayrollRun({
+        organizationId: "org-1",
+        payrollPeriodId: "period-1",
+        preparedById: "preparer-1",
+        idempotencyKey: "calc-key-rubrique-missing-evidence",
+        runDate: "2026-06-30",
+      }),
+    ).rejects.toThrow("HRIS_PAYROLL_COMPENSATION_APPROVAL_PROOF_MISSING");
+
+    expect(tx.payrollRun.create).not.toHaveBeenCalled();
+    expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled();
+  });
+
+  it("blocks payroll calculation when salary changes are still open for the run period", async () => {
+    const tx = buildTx();
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
+    tx.organization.findFirst.mockResolvedValue({
+      country: "CM",
+      accountingSettings: {
+        countryPack: null,
+        taxRegime: null,
+        roundingMode: "HALF_UP",
+        roundingScale: 2,
+        payrollCnpsFamilyAllowanceSector: "GENERAL",
+        payrollCnpsOccupationalRiskGroup: "A",
+      },
+    });
+    tx.payrollRun.findFirst.mockResolvedValue(null);
+    tx.payrollPeriod.findFirst.mockResolvedValue(payrollPeriod);
+    tx.payrollSalaryChangeRequest.findMany.mockResolvedValue([
+      {
+        id: "salary-change-1",
+        employeeId: "employee-1",
+        status: PayrollSalaryChangeStatus.REQUESTED,
+      },
+    ]);
+
+    await expect(
+      calculatePayrollRun({
+        organizationId: "org-1",
+        payrollPeriodId: "period-1",
+        preparedById: "preparer-1",
+        idempotencyKey: "calc-key-open-salary-change",
+        runDate: "2026-06-30",
+      }),
+    ).rejects.toThrow("PAYROLL_INPUT_COMPENSATION_STALE");
+
+    expect(tx.payrollEmployee.findMany).not.toHaveBeenCalled();
+    expect(tx.payrollRun.create).not.toHaveBeenCalled();
+    expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled();
+  });
+  it("blocks payroll calculation when an effective lifecycle request is still open", async () => {
+    const tx = buildTx();
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
+    tx.organization.findFirst.mockResolvedValue({
+      country: "CM",
+      accountingSettings: {
+        countryPack: null,
+        taxRegime: null,
+        roundingMode: "HALF_UP",
+        roundingScale: 2,
+        payrollCnpsFamilyAllowanceSector: "GENERAL",
+        payrollCnpsOccupationalRiskGroup: "A",
+      },
+    });
+    tx.payrollRun.findFirst.mockResolvedValue(null);
+    tx.payrollPeriod.findFirst.mockResolvedValue(payrollPeriod);
+    tx.businessEvent.findMany.mockResolvedValue([
+      {
+        id: "lifecycle-request-1",
+        eventType: "hris.employee.lifecycle.requested",
+        sourceId: "employee-1",
+        occurredAt: new Date("2026-06-15T00:00:00.000Z"),
+        payload: {
+          employeeId: "employee-1",
+          type: "TERMINATE",
+          effectiveAt: "2026-06-30T00:00:00.000Z",
+        },
+      },
+    ]);
+
+    await expect(
+      calculatePayrollRun({
+        organizationId: "org-1",
+        payrollPeriodId: "period-1",
+        preparedById: "preparer-1",
+        idempotencyKey: "calc-key-open-lifecycle",
+        runDate: "2026-06-30",
+      }),
+    ).rejects.toThrow("PAYROLL_INPUT_LIFECYCLE_PENDING");
+
+    expect(tx.payrollEmployee.findMany).not.toHaveBeenCalled();
+    expect(tx.payrollRun.create).not.toHaveBeenCalled();
+    expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled();
+  });
+  it("does not treat an applied lifecycle request as open payroll input", async () => {
+    const tx = buildTx();
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
+    tx.organization.findFirst.mockResolvedValue({
+      country: "CM",
+      accountingSettings: {
+        countryPack: null,
+        taxRegime: null,
+        roundingMode: "HALF_UP",
+        roundingScale: 2,
+        payrollCnpsFamilyAllowanceSector: "GENERAL",
+        payrollCnpsOccupationalRiskGroup: "A",
+      },
+    });
+    tx.payrollRun.findFirst.mockResolvedValue(null);
+    tx.payrollPeriod.findFirst.mockResolvedValue(payrollPeriod);
+    tx.businessEvent.findMany.mockResolvedValue([
+      {
+        id: "lifecycle-request-closed",
+        eventType: "hris.employee.lifecycle.requested",
+        sourceId: "employee-1",
+        occurredAt: new Date("2026-06-15T00:00:00.000Z"),
+        payload: {
+          employeeId: "employee-1",
+          type: "TERMINATE",
+          effectiveAt: "2026-06-30T00:00:00.000Z",
+        },
+      },
+      {
+        id: "lifecycle-applied-1",
+        eventType: "hris.employee.lifecycle.applied",
+        sourceId: "employee-1",
+        occurredAt: new Date("2026-06-16T00:00:00.000Z"),
+        payload: {
+          employeeId: "employee-1",
+          requestId: "lifecycle-request-closed",
+          type: "TERMINATE",
+        },
+      },
+    ]);
+    tx.payrollEmployee.findMany.mockResolvedValue(hrisReadyEmployees([]));
+
+    await expect(
+      calculatePayrollRun({
+        organizationId: "org-1",
+        payrollPeriodId: "period-1",
+        preparedById: "preparer-1",
+        idempotencyKey: "calc-key-applied-lifecycle",
+        runDate: "2026-06-30",
+      }),
+    ).rejects.toThrow("PAYROLL_INPUT_ACTIVE_EMPLOYEE_MISSING");
+
+    expect(tx.payrollEmployee.findMany).toHaveBeenCalled();
   });
   it("blocks Cameroon payroll calculation when CNPS tenant classification is missing", async () => {
     const tx = buildTx();
@@ -2522,29 +3540,23 @@ describe("payroll control service", () => {
     });
     tx.payrollRun.findFirst.mockResolvedValue(null);
     tx.payrollPeriod.findFirst.mockResolvedValue(payrollPeriod);
-    tx.payrollEmployee.findMany.mockResolvedValue([
-      {
-        id: "employee-1",
-        displayName: "Ada Payroll",
-        paymentDestinationHash: "dest-hash",
-        contracts: [
-          {
-            id: "contract-1",
-            baseSalary: new Prisma.Decimal("100000.00"),
-            currency: "XAF",
-          },
-        ],
-        attendanceSnapshots: [
-          {
-            id: "attendance-1",
-            scheduledMinutes: 9600,
-            workedMinutes: 9600,
-            leaveMinutes: 0,
-            overtimeMinutes: 0,
-          },
-        ],
-      },
-    ]);
+    tx.payrollEmployee.findMany.mockResolvedValue(
+      hrisReadyEmployees([
+        {
+          id: "employee-1",
+          displayName: "Ada Payroll",
+          paymentDestinationHash: "dest-hash",
+          contracts: [
+            {
+              id: "contract-1",
+              baseSalary: new Prisma.Decimal("100000.00"),
+              currency: "XAF",
+            },
+          ],
+          attendanceSnapshots: [calculationAttendance()],
+        },
+      ]),
+    );
 
     await expect(
       calculatePayrollRun({
@@ -2771,7 +3783,10 @@ describe("payroll control service", () => {
         payload: expect.objectContaining({
           countryPackSchemaVersion: "country-pack.v1",
           roundingPolicyHash: expect.stringMatching(/^sha256:/),
-          roundingPolicy: expect.objectContaining({ mode: "HALF_UP", scale: 2 }),
+          roundingPolicy: expect.objectContaining({
+            mode: "HALF_UP",
+            scale: 2,
+          }),
           countryPackCapabilityStatus: "SUPPORTED",
           legalProvenanceHash: expect.stringMatching(/^sha256:/),
           componentRegisterProofHash: expect.stringMatching(/^sha256:/),
@@ -3001,6 +4016,10 @@ describe("payroll control service", () => {
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
     tx.payrollRun.findFirst.mockResolvedValue({
       ...payrollRunFixture(PayrollRunStatus.POSTED, {
+        hrisPayrollReadinessHash: "sha256:hris-payroll-readiness",
+        payrollInputReadinessHash: "sha256:payroll-input-readiness",
+        payrollEngineInputHashes: ["sha256:payroll-engine-input-employee-1"],
+        payrollEngineInputSnapshotHash: "sha256:payroll-engine-input-snapshot",
         countryPackStatus: { legalProvenance: cnpsLegalProvenance },
         roundingPolicy: payrollRoundingPolicy,
         roundingPolicyHash: payrollRoundingPolicy.roundingPolicyHash,
@@ -3056,6 +4075,13 @@ describe("payroll control service", () => {
             deductionRecoveryProofHash: "sha256:deduction-recovery-run-proof",
             deductionRecoveryProofHashes: expect.arrayContaining(["sha256:deduction-recovery-line-proof"]),
             deductionRecoveryAmount: "5000.00",
+            hrisPayrollReadinessHash: "sha256:hris-payroll-readiness",
+            payrollInputReadinessHash: "sha256:payroll-input-readiness",
+            payrollEngineInputHashes: [
+              "sha256:payroll-engine-input-employee-1",
+            ],
+            payrollEngineInputSnapshotHash:
+              "sha256:payroll-engine-input-snapshot",
             payrollComponentMapping: expect.objectContaining({
               taxableBaseAmount: "100000.00",
               incomeTaxWithholdingAmount: "0.00",
@@ -3074,13 +4100,21 @@ describe("payroll control service", () => {
               declarationAmount: "17150.00",
               countryPackRegisterProofHash: expect.stringMatching(/^sha256:/),
               countryPackRegisterProofStatus: "MATCHED",
-              statutoryScenarioCoverageHash: "sha256:statutory-scenario-coverage",
+              statutoryScenarioCoverageHash:
+                "sha256:statutory-scenario-coverage",
               payrollComponentMappingStatus: "BLOCKED_REQUIRES_EXPERT_REVIEW",
               yearToDatePolicyHash: "sha256:ytd-policy",
               yearToDateAccumulatorHashes: ["sha256:ytd-accumulator"],
               deductionRecoveryProofHash: "sha256:deduction-recovery-run-proof",
               deductionRecoveryProofHashes: expect.arrayContaining(["sha256:deduction-recovery-line-proof"]),
               deductionRecoveryAmount: "5000.00",
+              hrisPayrollReadinessHash: "sha256:hris-payroll-readiness",
+              payrollInputReadinessHash: "sha256:payroll-input-readiness",
+              payrollEngineInputHashes: [
+                "sha256:payroll-engine-input-employee-1",
+              ],
+              payrollEngineInputSnapshotHash:
+                "sha256:payroll-engine-input-snapshot",
             }),
           }),
         }),
@@ -3103,10 +4137,48 @@ describe("payroll control service", () => {
           deductionRecoveryProofHash: "sha256:deduction-recovery-run-proof",
           deductionRecoveryProofHashes: expect.arrayContaining(["sha256:deduction-recovery-line-proof"]),
           deductionRecoveryAmount: "5000.00",
+          hrisPayrollReadinessHash: "sha256:hris-payroll-readiness",
+          payrollInputReadinessHash: "sha256:payroll-input-readiness",
+          payrollEngineInputHashes: ["sha256:payroll-engine-input-employee-1"],
+          payrollEngineInputSnapshotHash:
+            "sha256:payroll-engine-input-snapshot",
         }),
       }),
     );
   });
+
+  it("blocks declaration preparation when certified input proof is missing", async () => {
+    const tx = buildTx();
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
+    tx.payrollRun.findFirst.mockResolvedValue({
+      ...payrollRunFixture(PayrollRunStatus.POSTED, {
+        countryPackStatus: { legalProvenance: cnpsLegalProvenance },
+        roundingPolicy: payrollRoundingPolicy,
+        roundingPolicyHash: payrollRoundingPolicy.roundingPolicyHash,
+        statutoryScenarioCoverage: payrollStatutoryScenarioCoverageMetadata,
+        statutoryScenarioCoverageHash:
+          payrollStatutoryScenarioCoverageMetadata.coverageHash,
+        payrollInputReadinessHash: "sha256:payroll-input-readiness",
+        payrollEngineInputHashes: ["sha256:payroll-engine-input-employee-1"],
+        payrollEngineInputSnapshotHash: "sha256:payroll-engine-input-snapshot",
+        ...payrollYearToDateMetadata,
+      }),
+      declarations: [],
+    });
+
+    await expect(
+      preparePayrollDeclarations({
+        organizationId: "org-1",
+        payrollRunId: "run-1",
+        preparedById: "payroll-controller-1",
+        idempotencyKey: "declaration-key-missing-certified-input-proof",
+      }),
+    ).rejects.toThrow("certified HRIS input readiness");
+
+    expect(tx.payrollDeclaration.create).not.toHaveBeenCalled();
+    expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled();
+  });
+
   it("blocks declaration preparation when country-pack register proof is missing", async () => {
     const tx = buildTx();
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx));

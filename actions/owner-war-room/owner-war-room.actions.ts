@@ -30,6 +30,12 @@ const getOwnerWarRoom = protect<unknown, OwnerWarRoomData>(
     permission: "dashboard.read",
     auditResource: "KontavaOwnerWarRoom",
     auditAllowed: true,
+    module: {
+      moduleSlug: "dashboard",
+      surface: "actions/owner-war-room/owner-war-room.actions.ts",
+      accessIntent: "read",
+      mode: "observe",
+    },
   },
   async (input, ctx) => {
     const parsed = asOwnerWarRoomInput(input)
@@ -38,6 +44,8 @@ const getOwnerWarRoom = protect<unknown, OwnerWarRoomData>(
       organizationId: ctx.orgId,
       actorId: ctx.userId,
       actorPermissions: ctx.permissions,
+      actorRoleCodes: ctx.roles.map((role) => role.code),
+      isSuperUser: ctx.isSuperUser,
     })
   },
 )

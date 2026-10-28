@@ -5,6 +5,8 @@ import {
   type Prisma,
 } from "@prisma/client"
 import { db } from "@/prisma/db"
+import { queueWhatsAppReceiptDeliveryInTx } from "@/services/communication/whatsapp-receipt-outbox.service"
+import { sendWhatsAppReceipt } from "@/services/communication/whatsapp-receipt.provider"
 import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
 import { moneyToNumber } from "./money"
 import {
@@ -15,6 +17,15 @@ import {
   type ReceiptLocale,
   type SendReceiptServiceInput,
 } from "./pos.schemas"
+import {
+  normalizeReceiptDestination,
+  receiptDeliveryProviderMethod,
+  type DeliverableReceiptChannel,
+} from "./receipt-channels"
+import {
+  assertPublicReceiptAccessToken,
+  issuePublicReceiptAccessToken,
+} from "./public-receipt-token-registry.service"
 
 export type ReceiptDeliveryStatus = "PENDING" | "SENT" | "FAILED" | "SKIPPED"
 
@@ -23,6 +34,7 @@ export type ReceiptLegalDeliveryStatus =
   | "CERTIFIED"
   | "ALLOWED_WITH_STATUS"
   | "BLOCKED_UNTIL_CERTIFIED"
+  | "PENDING_REGULATORY_PROCESSING"
   | "REQUIRES_EXPERT_REVIEW"
 
 export type ReceiptCertificationStatus = {
@@ -45,6 +57,8 @@ export type ReceiptCertificationStatus = {
   legalDeliveryStatus: ReceiptLegalDeliveryStatus
   legalDeliveryBlocked: boolean
   legalDeliveryBlockReason: string | null
+  fiscalizationRequestId?: string | null
+  regulatoryProcessingStatus?: string
 }
 
 export type SalesReceiptPayload = {
@@ -52,8 +66,8 @@ export type SalesReceiptPayload = {
     id: string
     orderNumber: string
     customerName: string
-    customerEmail: string
-    customerPhone: string
+    customerEmail?: string
+    customerPhone?: string
     total: number
     subtotal: number
     tax: number
@@ -112,6 +126,7 @@ export type ReceiptDeliveryResult = {
   status: ReceiptDeliveryStatus
   destination?: string
   providerReference?: string
+  destinationHash?: string
   retryable: boolean
   message: string
   digitalReceiptUrl: string
@@ -121,6 +136,8 @@ export type ReceiptDeliveryProviderInput = {
   receipt: SalesReceiptPayload
   destination?: string
   locale: ReceiptLocale
+  organizationId: string
+  userId: string
 }
 
 export interface ReceiptDeliveryProvider {
@@ -144,11 +161,11 @@ class StubReceiptDeliveryProvider implements ReceiptDeliveryProvider {
   }
 
   async sendWhatsAppReceipt(input: ReceiptDeliveryProviderInput): Promise<ReceiptDeliveryResult> {
-    return this.pending("WHATSAPP", input)
+    return sendWhatsAppReceipt(input)
   }
 
   private async pending(
-    channel: Exclude<ReceiptChannel, "NONE">,
+    channel: DeliverableReceiptChannel,
     input: ReceiptDeliveryProviderInput,
   ): Promise<ReceiptDeliveryResult> {
     return {
@@ -169,18 +186,15 @@ function displayName(firstName?: string | null, lastName?: string | null, fallba
   return [firstName, lastName].filter(Boolean).join(" ") || fallback || "Cashier"
 }
 
-function digitalReceiptUrl(salesOrderId: string) {
+function digitalReceiptUrl(salesOrderId: string, receiptToken?: string | null) {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "")
-  return baseUrl ? `${baseUrl}/digital-receipt/${salesOrderId}` : `/digital-receipt/${salesOrderId}`
-}
+  const encodedSalesOrderId = encodeURIComponent(salesOrderId)
+  if (!receiptToken) return ""
 
-function normalizePhoneNumber(raw?: string | null) {
-  if (!raw) return null
-  const trimmed = raw.trim()
-  const digits = trimmed.replace(/[^\d]/g, "")
-
-  if (digits.length < 8) return null
-  return `+${digits}`
+  const tokenQuery = `?token=${encodeURIComponent(receiptToken)}`
+  return baseUrl
+    ? `${baseUrl}/digital-receipt/${encodedSalesOrderId}${tokenQuery}`
+    : `/digital-receipt/${encodedSalesOrderId}${tokenQuery}`
 }
 
 function tenderLabel(method: string) {
@@ -200,11 +214,20 @@ function certificationPolicyValue(
   return typeof value === "string" ? value : null
 }
 
-function emptyReceiptCertificationStatus(): ReceiptCertificationStatus {
+function emptyReceiptCertificationStatus(
+  request?: {
+    id: string
+    status: string
+    lastErrorMessage: string | null
+  } | null,
+): ReceiptCertificationStatus {
+  const pending = Boolean(request)
   return {
     fiscalDocumentId: null,
     documentType: null,
-    fiscalDocumentStatus: "NOT_CREATED",
+    fiscalDocumentStatus: pending
+      ? "PENDING_REGULATORY_PROCESSING"
+      : "NOT_CREATED",
     submissionId: null,
     submissionStatus: null,
     authorityChannel: null,
@@ -218,9 +241,13 @@ function emptyReceiptCertificationStatus(): ReceiptCertificationStatus {
     countryCode: null,
     countryPackVersion: null,
     countryPackVerificationStatus: null,
-    legalDeliveryStatus: "NOT_CREATED",
+    legalDeliveryStatus: pending
+      ? "PENDING_REGULATORY_PROCESSING"
+      : "NOT_CREATED",
     legalDeliveryBlocked: false,
-    legalDeliveryBlockReason: null,
+    legalDeliveryBlockReason: request?.lastErrorMessage ?? null,
+    fiscalizationRequestId: request?.id ?? null,
+    regulatoryProcessingStatus: request?.status ?? "NOT_REQUESTED",
   }
 }
 
@@ -286,7 +313,32 @@ async function getReceiptCertificationStatus(
     orderBy: { createdAt: "desc" },
   })
 
-  if (!fiscalDocument) return emptyReceiptCertificationStatus()
+  if (!fiscalDocument) {
+    if (!("businessEventOutbox" in db)) {
+      return emptyReceiptCertificationStatus()
+    }
+
+    const request = await db.businessEventOutbox.findFirst({
+      where: {
+        organizationId,
+        channel: "FISCALIZATION",
+        businessEvent: {
+          is: {
+            sourceType: "POS_SALE",
+            sourceId: salesOrderId,
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        status: true,
+        lastErrorMessage: true,
+      },
+    })
+
+    return emptyReceiptCertificationStatus(request)
+  }
 
   const submission = fiscalDocument.submissions[0] ?? null
   const legalDelivery = resolveReceiptLegalDeliveryStatus({
@@ -319,7 +371,27 @@ function cleanJson(input: Record<string, unknown>): Prisma.JsonObject {
   return Object.fromEntries(Object.entries(input).filter(([, value]) => value !== undefined)) as Prisma.JsonObject
 }
 
-async function findSalesReceipt(salesOrderId: string, organizationId?: string): Promise<SalesReceiptPayload> {
+function optionalStringField(source: unknown, key: string) {
+  if (!isRecord(source)) return null
+  const value = source[key]
+  return typeof value === "string" ? value : null
+}
+
+type FindSalesReceiptOptions = {
+  includeCustomerContact?: boolean
+  receiptAccessToken?: string | null
+  issuePublicReceiptToken?: boolean
+}
+
+async function findSalesReceipt(
+  salesOrderId: string,
+  organizationId?: string,
+  options: FindSalesReceiptOptions = {},
+): Promise<SalesReceiptPayload> {
+  const includeCustomerContact = options.includeCustomerContact !== false
+  const privatePersonSelect = includeCustomerContact ? { email: true } : {}
+  const privateCustomerSelect = includeCustomerContact ? { email: true, phone: true, currentBalance: true } : {}
+
   const sale = await db.salesOrder.findFirst({
     where: {
       id: salesOrderId,
@@ -363,7 +435,7 @@ async function findSalesReceipt(salesOrderId: string, organizationId?: string): 
             select: {
               firstName: true,
               lastName: true,
-              email: true,
+              ...privatePersonSelect,
             },
           },
         },
@@ -372,17 +444,15 @@ async function findSalesReceipt(salesOrderId: string, organizationId?: string): 
         select: {
           firstName: true,
           lastName: true,
-          email: true,
+          ...privatePersonSelect,
         },
       },
       customer: {
         select: {
           id: true,
           name: true,
-          email: true,
-          phone: true,
           preferredLocale: true,
-          currentBalance: true,
+          ...privateCustomerSelect,
         },
       },
       lines: {
@@ -421,19 +491,40 @@ async function findSalesReceipt(salesOrderId: string, organizationId?: string): 
 
   const locale = (sale.customer?.preferredLocale || sale.organization.defaultLocale || "EN") as ReceiptLocale
   const cashier = sale.session?.user
-    ? displayName(sale.session.user.firstName, sale.session.user.lastName, sale.session.user.email)
-    : displayName(sale.createdBy?.firstName, sale.createdBy?.lastName, sale.createdBy?.email)
+    ? displayName(sale.session.user.firstName, sale.session.user.lastName, optionalStringField(sale.session.user, "email"))
+    : displayName(sale.createdBy?.firstName, sale.createdBy?.lastName, optionalStringField(sale.createdBy, "email"))
   const primaryPayment = sale.payments[0]
   const firstTaxRate = sale.lines.find((line) => moneyToNumber(line.taxRate) > 0)?.taxRate
   const certification = await getReceiptCertificationStatus(sale.organization.id, sale.id)
+  let receiptAccessToken = options.receiptAccessToken ?? null
+
+  if (!receiptAccessToken && options.issuePublicReceiptToken !== false) {
+    try {
+      const issuedToken = await issuePublicReceiptAccessToken({
+        organizationId: sale.organization.id,
+        salesOrderId: sale.id,
+      })
+      receiptAccessToken = issuedToken.token
+    } catch (error) {
+      if (error instanceof BusinessRuleError) {
+        receiptAccessToken = null
+      } else {
+        throw new BusinessRuleError("Receipt access token could not be issued safely.")
+      }
+    }
+  }
 
   return {
     receipt: {
       id: sale.id,
       orderNumber: sale.orderNumber,
       customerName: sale.customer.name,
-      customerEmail: sale.customer.email || "",
-      customerPhone: sale.customer.phone || "",
+      ...(includeCustomerContact
+        ? {
+            customerEmail: optionalStringField(sale.customer, "email") || "",
+            customerPhone: optionalStringField(sale.customer, "phone") || "",
+          }
+        : {}),
       total: moneyToNumber(sale.total),
       subtotal: moneyToNumber(sale.subtotal),
       tax: moneyToNumber(sale.taxAmount),
@@ -484,7 +575,7 @@ async function findSalesReceipt(salesOrderId: string, organizationId?: string): 
       phone: sale.location.phone || "",
     },
     generatedAt: new Date().toISOString(),
-    digitalReceiptUrl: digitalReceiptUrl(sale.id),
+    digitalReceiptUrl: digitalReceiptUrl(sale.id, receiptAccessToken),
   }
 }
 
@@ -505,6 +596,7 @@ async function recordDeliveryAudit(
         status: result.status,
         destination: result.destination,
         providerReference: result.providerReference,
+        destinationHash: result.destinationHash,
         retryable: result.retryable,
         message: result.message,
         orderNumber: receipt.receipt.orderNumber,
@@ -519,18 +611,33 @@ export async function getSalesReceipt(rawInput: unknown): Promise<SalesReceiptPa
   return findSalesReceipt(input.salesOrderId, input.organizationId)
 }
 
+/**
+ * Produces the private, non-statutory receipt snapshot embedded in the POS
+ * commit result. It deliberately excludes customer contact data and never
+ * issues a bearer-style public receipt token, making the envelope safe to
+ * retain for exact idempotent replay.
+ */
+export async function getPOSSaleCommitReceipt(rawInput: unknown): Promise<SalesReceiptPayload> {
+  const input = getSalesReceiptSchema.parse(rawInput)
+  return findSalesReceipt(input.salesOrderId, input.organizationId, {
+    includeCustomerContact: false,
+    issuePublicReceiptToken: false,
+  })
+}
+
 export async function getPublicSalesReceipt(rawInput: unknown): Promise<SalesReceiptPayload> {
   const input = salesReceiptLookupSchema.parse(rawInput)
-  const receipt = await findSalesReceipt(input.salesOrderId)
 
-  return {
-    ...receipt,
-    receipt: {
-      ...receipt.receipt,
-      customerEmail: "",
-      customerPhone: "",
-    },
-  }
+  const access = await assertPublicReceiptAccessToken({
+    token: input.receiptAccessToken,
+    salesOrderId: input.salesOrderId,
+  })
+
+  return findSalesReceipt(input.salesOrderId, access.organizationId, {
+    includeCustomerContact: false,
+    receiptAccessToken: input.receiptAccessToken,
+    issuePublicReceiptToken: false,
+  })
 }
 
 export async function sendReceipt(
@@ -567,31 +674,29 @@ export async function sendReceipt(
     throw new BusinessRuleError(result.message)
   }
 
-  const destination = input.channel === "WHATSAPP"
-    ? normalizePhoneNumber(input.destination || receipt.receipt.customerPhone) || undefined
-    : input.destination
+  const destination = normalizeReceiptDestination(input.channel, input.destination)
 
-  if (input.channel === "WHATSAPP" && !destination) {
-    const result: ReceiptDeliveryResult = {
-      channel: "WHATSAPP",
-      status: "FAILED",
-      retryable: false,
-      message: "A valid customer phone number is required for WhatsApp receipt delivery.",
-      digitalReceiptUrl: receipt.digitalReceiptUrl,
-    }
-    await recordDeliveryAudit(input, receipt, result)
-    throw new BusinessRuleError(result.message)
+  if (input.channel === "WHATSAPP") {
+    return db.$transaction((tx) =>
+      queueWhatsAppReceiptDeliveryInTx(tx, {
+        receipt,
+        destination,
+        locale,
+        organizationId: input.organizationId,
+        userId: input.userId,
+      }),
+    )
   }
 
-  const providerInput = { receipt, destination, locale }
-  const result =
-    input.channel === "WHATSAPP"
-      ? await provider.sendWhatsAppReceipt(providerInput)
-      : input.channel === "SMS"
-        ? await provider.sendSmsReceipt(providerInput)
-        : input.channel === "EMAIL"
-          ? await provider.sendEmailReceipt(providerInput)
-          : await provider.sendPrintReceipt(providerInput)
+  const providerInput = {
+    receipt,
+    destination,
+    locale,
+    organizationId: input.organizationId,
+    userId: input.userId,
+  }
+  const providerMethod = receiptDeliveryProviderMethod(input.channel)
+  const result = await provider[providerMethod](providerInput)
 
   await recordDeliveryAudit(input, receipt, result)
   return result

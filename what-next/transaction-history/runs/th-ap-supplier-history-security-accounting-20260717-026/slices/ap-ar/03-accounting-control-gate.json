@@ -1,0 +1,108 @@
+{
+  "schemaVersion": "1.0",
+  "traceId": "2a6f0aa1-4908-4d38-97c2-455a5428851f",
+  "runId": "th-ap-supplier-history-security-accounting-20260717-026",
+  "sliceId": "ap-ar",
+  "stageId": "03",
+  "skillName": "stoquify-transaction-history-03-accounting-control-gate",
+  "agentType": "Bookkeeper & Controller",
+  "mode": "audit",
+  "status": "PARTIAL",
+  "activeLanes": [
+    "ap"
+  ],
+  "blockedLanes": [],
+  "inputArtifacts": [
+    {
+      "path": "what-next/transaction-history/runs/th-ap-supplier-history-security-accounting-20260717-026/slices/ap-ar/01-architecture-gate.json",
+      "sha256": "sha256:e3b90cd1e75d27a46b3c277aed216cd44a23f8fede2437144c4a0353a636fc70"
+    },
+    {
+      "path": "services/purchasing/ap-control.service.ts",
+      "sha256": "sha256:98499491050baf94f46c94b087f5c7ed3a8e539697262af045956708334f53c4"
+    }
+  ],
+  "inputFingerprint": "sha256:0628f08178fe0441fe22ccbd1a6b429c2bb07b2ea5d278e6dcb799ab117c6979",
+  "allowedEdits": [
+    "what-next/transaction-history/runs/th-ap-supplier-history-security-accounting-20260717-026/slices/ap-ar/03-accounting-control-gate.md",
+    "what-next/transaction-history/runs/th-ap-supplier-history-security-accounting-20260717-026/slices/ap-ar/03-accounting-control-gate.json"
+  ],
+  "observedEdits": [
+    "what-next/transaction-history/runs/th-ap-supplier-history-security-accounting-20260717-026/slices/ap-ar/03-accounting-control-gate.md",
+    "what-next/transaction-history/runs/th-ap-supplier-history-security-accounting-20260717-026/slices/ap-ar/03-accounting-control-gate.json"
+  ],
+  "repository": {
+    "headBefore": "a27cb0328e044304590cecf20c47832df5e834d5",
+    "headAfter": "a27cb0328e044304590cecf20c47832df5e834d5",
+    "dirtyFilesBefore": [
+      "WORKTREE_DIRTY_SEE_TRANSACTION_HISTORY_RUNS"
+    ],
+    "dirtyFilesAfter": [
+      "WORKTREE_DIRTY_SEE_TRANSACTION_HISTORY_RUNS",
+      "what-next/transaction-history/runs/th-ap-supplier-history-security-accounting-20260717-026/"
+    ]
+  },
+  "claims": [
+    {
+      "id": "AP_COMMAND_ACCOUNTING_CONTROLS",
+      "result": "PASS",
+      "evidence": [
+        "services/purchasing/ap-control.service.ts",
+        "services/assurance/assurance-registry.service.ts",
+        "services/accounting/data-trust.service.ts"
+      ]
+    },
+    {
+      "id": "AP_HISTORY_ROLL_FORWARD_TIE_OUT",
+      "result": "GAP",
+      "evidence": [
+        "what-next/transaction-history/runs/th-ap-supplier-history-security-accounting-20260717-026/slices/ap-ar/03-accounting-control-gate.md"
+      ]
+    },
+    {
+      "id": "AP_HISTORY_RECONCILED_CERTIFIED_CLAIM",
+      "result": "GAP",
+      "evidence": [
+        "what-next/transaction-history/runs/th-ap-supplier-history-security-accounting-20260717-026/slices/ap-ar/03-accounting-control-gate.md"
+      ]
+    },
+    {
+      "id": "AR_EXCLUDED_AND_BLOCKED",
+      "result": "NA",
+      "evidence": [
+        "what-next/transaction-history/runs/th-ap-ar-architecture-20260717-025/slices/ap-ar/01-architecture-gate.md"
+      ]
+    }
+  ],
+  "verification": [
+    {
+      "command": "Read services/purchasing/ap-control.service.ts excerpt",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": null
+    },
+    {
+      "command": "rg AP assurance/data-trust/posting evidence",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": null
+    },
+    {
+      "command": "npm test -- services/purchasing/__tests__/ap-control.service.test.ts actions/purchasing/__tests__/ap-control.actions.test.ts \"app/[locale]/(dashboard)/dashboard/purchases/payables/__tests__/page.test.tsx\" --runInBand",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": null
+    }
+  ],
+  "outputs": [],
+  "blockers": [
+    {
+      "severity": "medium",
+      "code": "AP_HISTORY_ACCOUNTING_READ_MODEL_NOT_IMPLEMENTED",
+      "reason": "Current AP command controls do not yet provide a complete supplier/AP transaction-history read model with roll-forward, control-account tie-out, recorded-through cutoff, export parity, and proof-grade source population evidence."
+    }
+  ],
+  "nextEligibleStages": [],
+  "startedAt": "2026-07-17T06:48:08.920059+01:00",
+  "completedAt": "2026-07-17T06:48:08.920059+01:00"
+}

@@ -101,6 +101,7 @@ describe("sidebar information architecture", () => {
       "/dashboard/purchase-orders",
       "/dashboard/purchase-orders/new",
       "/dashboard/purchases",
+      "/dashboard/people",
       "/dashboard/purchases/payables",
       "/dashboard/purchases/suppliers",
       "/dashboard/sales",
@@ -142,8 +143,24 @@ describe("sidebar finance reconciliation permissions", () => {
       expect.objectContaining({
         title: "Reconciliation",
         permission: "payments.reconciliation.read",
+        moduleSlug: "payment_reconciliation",
       }),
     )
+  })
+})
+
+describe("sidebar governed data onboarding ownership", () => {
+  it("exposes exactly one canonical settings-module entry through any readable target", () => {
+    const destinations = sidebarLinks.flatMap((link) => link.dropdownMenu ?? [])
+    const onboarding = destinations.filter((item) => item.href === "/dashboard/settings/data-onboarding")
+
+    expect(onboarding).toHaveLength(1)
+    expect(onboarding[0]).toEqual(expect.objectContaining({
+      title: "Data onboarding",
+      moduleSlug: "settings",
+      permissionMode: "any",
+      permissions: ["customers.read", "purchases.suppliers.read", "inventory.items.read"],
+    }))
   })
 })
 
@@ -164,11 +181,13 @@ describe("sidebar HR and payroll visibility", () => {
       expect.objectContaining({ title: "Contracts", href: "/dashboard/payroll/contracts", permission: "payroll.contracts.read" }),
       expect.objectContaining({ title: "Declarations", href: "/dashboard/payroll/declarations", permission: "payroll.command.read" }),
       expect.objectContaining({ title: "Employees", href: "/dashboard/payroll/employees", permission: "payroll.employees.read" }),
+      expect.objectContaining({ title: "My HR", href: "/dashboard/people/me", permission: "hris.self_service.read" }),
       expect.objectContaining({ title: "My Payslips", href: "/dashboard/payroll/payslips", permission: "payroll.payslips.self.read" }),
       expect.objectContaining({ title: "Payments", href: "/dashboard/payroll/payments", permission: "payroll.command.read" }),
       expect.objectContaining({ title: "Register", href: "/dashboard/payroll/register", permission: "payroll.reports.read" }),
       expect.objectContaining({ title: "Runs", href: "/dashboard/payroll/runs", permission: "payroll.command.read" }),
       expect.objectContaining({ title: "Setup", href: "/dashboard/payroll/setup", permission: "payroll.runs.calculate" }),
+      expect.objectContaining({ title: "Workforce", href: "/dashboard/people/team", permission: "hris.people.read" }),
     ])
   })
 
@@ -179,6 +198,18 @@ describe("sidebar HR and payroll visibility", () => {
     ]))
   })
 
+  it("exposes the HRIS People workspace through its own permission", () => {
+    const people = sidebarLinks.find((link) => link.title === "People")
+
+    expect(people).toEqual(
+      expect.objectContaining({
+        href: "/dashboard/people",
+        dropdown: false,
+        permission: "hris.people.read",
+      }),
+    )
+  })
+
   it("keeps payroll pages visible for legacy payroll grants", () => {
     const legacyPayrollGrants = ["PAYROLL_READ", "PAYROLL_REPORTS_READ", "EMPLOYEE_SALARY_READ", "PAYROLL_PROCESS"]
     const filtered = filterSidebarLinksByPermission(sidebarLinks, (permission) =>
@@ -186,6 +217,7 @@ describe("sidebar HR and payroll visibility", () => {
     )
     const hrPayroll = filtered.find((link) => link.title === "HR & Payroll")
 
+    expect(filtered.find((link) => link.title === "People")).toBeUndefined()
     expect(hrPayroll?.dropdownMenu?.map((item) => item.href)).toEqual([
       "/dashboard/payroll",
       "/dashboard/payroll/attendance",
@@ -200,6 +232,36 @@ describe("sidebar HR and payroll visibility", () => {
       "/dashboard/payroll/setup",
     ])
   })
+
+  it("keeps the scoped workforce and People routes visible without payroll access", () => {
+    const filtered = filterSidebarLinksByPermission(sidebarLinks, (permission) =>
+      hasRbacPermission(["hris.people.read"], permission),
+    )
+
+    expect(filtered.map((link) => link.title)).toEqual(["HR & Payroll", "People"])
+    expect(filtered.find((link) => link.title === "HR & Payroll")?.dropdownMenu).toEqual([
+      expect.objectContaining({ title: "Workforce", href: "/dashboard/people/team" }),
+    ])
+  })
+})
+
+describe("sidebar inventory loss visibility", () => {
+  it("exposes the real loss-control route through inventory read authority", () => {
+    const inventory = sidebarLinks.find(
+      (link) => link.title === "Inventory",
+    )
+    const lossControl = inventory?.dropdownMenu?.find(
+      (item) =>
+        item.href === "/dashboard/inventory/loss-control",
+    )
+
+    expect(lossControl).toEqual(
+      expect.objectContaining({
+        title: "Loss Control",
+        permission: "inventory.levels.read",
+      }),
+    )
+  })
 })
 
 describe("sidebar filtering and route matching", () => {
@@ -213,8 +275,53 @@ describe("sidebar filtering and route matching", () => {
       expect.objectContaining({ title: "Payables", href: "/dashboard/finance/payables" }),
     ])
     expect(filtered.find((link) => link.title === "Purchases")?.dropdownMenu).toEqual([
+      expect.objectContaining({ title: "AP History", href: "/dashboard/purchases/payables/history" }),
       expect.objectContaining({ title: "AP Workbench", href: "/dashboard/purchases/payables" }),
     ])
+  })
+
+  it("surfaces transaction-history destinations in the sidebar", () => {
+    expect(allSidebarHrefs()).toEqual(expect.arrayContaining([
+      "/dashboard/finance/cash-payment-history",
+      "/dashboard/finance/receivables/history",
+      "/dashboard/purchases/payables/history",
+    ]))
+  })
+
+  it.each([
+    "purchasing.ap.invoice.view",
+    "finance.payables.read",
+    "purchases.suppliers.read",
+  ])("shows AP history to an authorized %s user", (permission) => {
+    const filtered = filterSidebarLinksByPermission(
+      sidebarLinks,
+      (candidate) => candidate === permission,
+    )
+
+    expect(filtered.find((link) => link.title === "Purchases")?.dropdownMenu).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          title: "AP History",
+          href: "/dashboard/purchases/payables/history",
+        }),
+      ]),
+    )
+  })
+
+  it("keeps the AP history navigation rule aligned with the route boundary", () => {
+    const purchases = sidebarLinks.find((link) => link.title === "Purchases")
+    const history = purchases?.dropdownMenu?.find(
+      (item) => item.href === "/dashboard/purchases/payables/history",
+    )
+
+    expect(history).toEqual(expect.objectContaining({
+      permissions: [
+        "purchasing.ap.invoice.view",
+        "finance.payables.read",
+        "purchases.suppliers.read",
+      ],
+      permissionMode: "any",
+    }))
   })
 
   it("keeps the default sidebar broad enough for functional testability", () => {
@@ -230,6 +337,7 @@ describe("sidebar filtering and route matching", () => {
       "Finance",
       "HR & Payroll",
       "Inventory",
+      "People",
       "Purchases",
       "Sales",
       "Settings",

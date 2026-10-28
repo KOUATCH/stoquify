@@ -33,6 +33,7 @@ import type {
   DashboardPendingAction,
 } from "@/actions/dashboard/getDashboardData"
 import type { TenantOperatingCommandCard } from "@/services/snapshots/snapshot-contracts"
+import { createOrganizationMoneyFormatter } from "@/lib/i18n/organization-money"
 
 type DashboardCopy = {
   title: string
@@ -197,7 +198,11 @@ export function buildTodaysOperatingTruthModel({
   selectedLocationLabel,
 }: TodaysOperatingTruthInput): TodaysOperatingTruthModel {
   const copy = getDashboardCopy(locale)
-  const currency = dashboard.organization.currency || "XAF"
+  const moneyFormatter = createOrganizationMoneyFormatter({
+    organizationId: dashboard.organization.id,
+    locale,
+    currency: dashboard.organization.currency,
+  })
   const periodLabel = copy.periods[dashboard.period.key]
   const stockRiskCount =
     dashboard.stockHealth.lowStock +
@@ -206,8 +211,8 @@ export function buildTodaysOperatingTruthModel({
   const visibleActionCount = dashboard.pendingActions.reduce((sum, action) => sum + action.count, 0)
   const commandCards = dashboard.operatingCommandCards ?? []
   const commandState = summarizeCommandState(commandCards, dashboard.alerts, copy)
-  const revenue = formatCurrency(dashboard.kpis.revenue.current, currency, locale)
-  const cash = formatCurrency(dashboard.kpis.cashCollected.current, currency, locale)
+  const revenue = moneyFormatter.format(dashboard.kpis.revenue.current)
+  const cash = moneyFormatter.format(dashboard.kpis.cashCollected.current)
 
   return {
     brief: {
@@ -248,7 +253,7 @@ export function buildTodaysOperatingTruthModel({
     status: {
       title: copy.statusTitle,
       detail: copy.statusDetail,
-      items: buildStatusItems({ dashboard, copy, currency, locale, dashboardBasePath, stockRiskCount, commandCards }),
+      items: buildStatusItems({ dashboard, copy, moneyFormatter, locale, dashboardBasePath, stockRiskCount, commandCards }),
     },
     actionQueue: {
       title: copy.actionTitle,
@@ -263,7 +268,7 @@ export function buildTodaysOperatingTruthModel({
       emptyMessage: copy.evidenceEmpty,
       events: buildEvidenceEvents({ dashboard, copy, locale, dashboardBasePath }),
     },
-    kpis: buildKpis({ dashboard, copy, currency, locale, dashboardBasePath, stockRiskCount }),
+    kpis: buildKpis({ dashboard, copy, moneyFormatter, locale, dashboardBasePath, stockRiskCount }),
     shortcuts: {
       title: copy.shortcutsTitle,
       detail: copy.shortcutsDetail,
@@ -546,7 +551,7 @@ function getDashboardCopy(locale: string): DashboardCopy {
 function buildStatusItems({
   dashboard,
   copy,
-  currency,
+  moneyFormatter,
   locale,
   dashboardBasePath,
   stockRiskCount,
@@ -554,14 +559,14 @@ function buildStatusItems({
 }: {
   dashboard: DashboardData
   copy: DashboardCopy
-  currency: string
+  moneyFormatter: Intl.NumberFormat
   locale: string
   dashboardBasePath: string
   stockRiskCount: number
   commandCards: TenantOperatingCommandCard[]
 }): StatusStripItem[] {
   if (commandCards.length > 0) {
-    return commandCards.map((card) => commandCardStatusItem({ card, copy, currency, locale, dashboardBasePath }))
+    return commandCards.map((card) => commandCardStatusItem({ card, copy, moneyFormatter, locale, dashboardBasePath }))
   }
 
   const apCount = dashboard.counts.pendingPurchaseOrders
@@ -590,7 +595,7 @@ function buildStatusItems({
     {
       id: "cash",
       label: copy.statuses.cash,
-      value: formatCurrency(dashboard.kpis.cashCollected.current, currency, locale),
+      value: moneyFormatter.format(dashboard.kpis.cashCollected.current),
       detail: copy.statusDetails.cash,
       tone: dashboard.kpis.cashCollected.current > 0 ? "success" : "info",
       icon: CreditCard,
@@ -616,20 +621,20 @@ function buildStatusItems({
 function commandCardStatusItem({
   card,
   copy,
-  currency,
+  moneyFormatter,
   locale,
   dashboardBasePath,
 }: {
   card: TenantOperatingCommandCard
   copy: DashboardCopy
-  currency: string
+  moneyFormatter: Intl.NumberFormat
   locale: string
   dashboardBasePath: string
 }): StatusStripItem {
   return {
     id: card.id,
     label: card.label,
-    value: formatCommandCardValue(card, currency, locale, copy),
+    value: formatCommandCardValue(card, moneyFormatter, locale, copy),
     detail: card.detail,
     tone: commandCardTone(card),
     icon: commandCardIcon(card.id),
@@ -671,13 +676,13 @@ function commandCardProofState(card: TenantOperatingCommandCard): ProofBadgeStat
 
 function formatCommandCardValue(
   card: TenantOperatingCommandCard,
-  currency: string,
+  moneyFormatter: Intl.NumberFormat,
   locale: string,
   copy: DashboardCopy,
 ) {
   if (card.value === null || card.value === undefined || card.value === "") return copy.notAvailable
   if (typeof card.value === "string") return card.value
-  if (card.valueFormat === "currency") return formatCurrency(card.value, currency, locale)
+  if (card.valueFormat === "currency") return moneyFormatter.format(card.value)
   return formatNumber(card.value, locale)
 }
 
@@ -804,14 +809,14 @@ function buildEvidenceEvents({
 function buildKpis({
   dashboard,
   copy,
-  currency,
+  moneyFormatter,
   locale,
   dashboardBasePath,
   stockRiskCount,
 }: {
   dashboard: DashboardData
   copy: DashboardCopy
-  currency: string
+  moneyFormatter: Intl.NumberFormat
   locale: string
   dashboardBasePath: string
   stockRiskCount: number
@@ -821,7 +826,7 @@ function buildKpis({
   return [
     metricKpi({
       label: copy.kpis.revenue,
-      value: formatCurrency(dashboard.kpis.revenue.current, currency, locale),
+      value: moneyFormatter.format(dashboard.kpis.revenue.current),
       detail: copy.kpiDetails.revenue,
       metric: dashboard.kpis.revenue,
       locale,
@@ -845,7 +850,7 @@ function buildKpis({
     },
     metricKpi({
       label: copy.kpis.cash,
-      value: formatCurrency(dashboard.kpis.cashCollected.current, currency, locale),
+      value: moneyFormatter.format(dashboard.kpis.cashCollected.current),
       detail: copy.kpiDetails.cash,
       metric: dashboard.kpis.cashCollected,
       locale,
@@ -1071,13 +1076,6 @@ function formatNumber(value: number, locale: string) {
   }).format(value)
 }
 
-function formatCurrency(value: number, currency: string, locale: string) {
-  return new Intl.NumberFormat(locale, {
-    style: "currency",
-    currency,
-    maximumFractionDigits: currency === "XAF" ? 0 : 2,
-  }).format(value)
-}
 
 function formatDateTime(value: string, locale: string) {
   return new Intl.DateTimeFormat(locale, {

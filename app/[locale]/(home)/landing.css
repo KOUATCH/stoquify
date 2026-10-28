@@ -8,45 +8,46 @@
  */
 
 .landing-root {
-  /* Semantic surfaces */
-  --color-canvas: #06111f;
-  --color-chrome: #071827;
-  --color-surface-deep: #0a1d2d;
-  --color-surface-panel: #102b3b;
-  --color-surface-panel-raised: #16394b;
-  --color-surface-panel-hover: #1f4c61;
-  --color-surface-soft: #081724;
-  --color-surface-paper: #0d2231;
-  --color-surface-tint: #14374a;
+  /* Semantic surfaces: shared with the canonical dashboard contract. */
+  --color-canvas: var(--product-canvas);
+  --color-chrome: var(--product-chrome);
+  --color-surface-deep: var(--product-chrome);
+  --color-surface-panel: var(--product-surface);
+  --color-surface-panel-raised: var(--product-surface-raised);
+  --color-surface-panel-hover: color-mix(in srgb, var(--product-surface-raised) 82%, var(--product-border));
+  --color-surface-soft: var(--product-canvas);
+  --color-surface-paper: var(--product-surface);
+  --color-surface-tint: var(--product-surface-warm);
 
   /* Semantic borders */
-  --color-border-subtle: #17364a;
-  --color-border-muted: #2d6682;
-  --color-border-strong: #4ba6c9;
-  --color-paper-border: #224b62;
+  --color-border-subtle: var(--product-border-subtle);
+  --color-border-muted: var(--product-border);
+  --color-border-strong: color-mix(in srgb, var(--product-border) 74%, var(--product-text-soft));
+  --color-paper-border: var(--product-border-subtle);
 
   /* Brand and accents */
-  --color-brand: #25d56f;
-  --color-brand-hover: #17bc5b;
-  --color-brand-soft: rgba(37, 213, 111, 0.16);
-  --color-brand-glow: rgba(37, 213, 111, 0.32);
-  --color-editorial: #25d56f;
-  --color-warm: #f2c66d;
-  --color-spruce: #55d7ff;
+  --color-brand: var(--product-brand);
+  --color-brand-action: var(--product-brand-action);
+  --color-brand-hover: var(--product-brand-action-hover);
+  --color-brand-soft: var(--product-brand-soft);
+  --color-brand-glow: var(--product-brand-glow);
+  --color-editorial: var(--product-gold);
+  --color-warm: var(--product-warm);
+  --color-spruce: var(--product-spruce);
 
   /* Semantic status */
-  --color-success: #25d56f;
-  --color-warning: #f2c66d;
-  --color-danger: #ef6f6c;
-  --color-info: #55d7ff;
+  --color-success: var(--product-success);
+  --color-warning: var(--product-warning);
+  --color-danger: var(--product-danger);
+  --color-info: var(--product-info);
 
   /* Text */
-  --color-text-primary: #f7faf8;
-  --color-text-secondary: #d3ddd8;
-  --color-text-tertiary: #a9b8b2;
-  --color-text-muted: #7e9189;
-  --color-text-on-paper: #eef7f2;
-  --color-text-on-paper-muted: #aec1b8;
+  --color-text-primary: var(--product-text);
+  --color-text-secondary: var(--product-text-muted);
+  --color-text-tertiary: var(--product-text-soft);
+  --color-text-muted: var(--product-text-faint);
+  --color-text-on-paper: var(--product-text);
+  --color-text-on-paper-muted: var(--product-text-soft);
 
   /* Legacy aliases used throughout components/landing */
   --ink-0: var(--color-canvas);
@@ -58,7 +59,7 @@
   --rule-2: var(--color-border-muted);
   --rule-3: var(--color-border-strong);
   --accent: var(--color-brand);
-  --accent-hi: #8fdfff;
+  --accent-hi: var(--product-brand-strong);
   --accent-glow: var(--color-brand-glow);
   --signal-up: var(--color-success);
   --signal-warn: var(--color-warning);
@@ -72,8 +73,8 @@
   --text-faint: var(--color-text-tertiary);
   --text-dim: var(--color-text-muted);
   --num: var(--color-text-primary);
-  --num-pos: #70f2a6;
-  --num-neg: #ff9b9b;
+  --num-pos: var(--color-success);
+  --num-neg: var(--color-danger);
   --paper-0: var(--color-surface-soft);
   --paper-1: var(--color-surface-paper);
   --paper-rule: var(--color-paper-border);
@@ -97,7 +98,7 @@
   border: 1px solid color-mix(in srgb, var(--color-border-subtle) 82%, transparent);
   background:
     linear-gradient(145deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.018)),
-    rgba(8, 25, 39, 0.86);
+    color-mix(in srgb, var(--color-surface-panel) 88%, transparent);
   box-shadow: 0 24px 70px rgba(2, 8, 23, 0.24);
   -webkit-backdrop-filter: blur(14px);
   backdrop-filter: blur(14px);
@@ -105,10 +106,8 @@
 
 .landing-root .landing-hero {
   background:
-    radial-gradient(circle at 64% 5%, rgba(85, 215, 255, 0.34), transparent 20rem),
-    radial-gradient(circle at 86% 42%, rgba(37, 213, 111, 0.2), transparent 24rem),
-    linear-gradient(135deg, rgba(85, 215, 255, 0.12), transparent 34rem),
-    linear-gradient(315deg, rgba(37, 213, 111, 0.1), transparent 30rem),
+    linear-gradient(135deg, color-mix(in srgb, var(--color-brand) 11%, transparent), transparent 34rem),
+    linear-gradient(315deg, color-mix(in srgb, var(--color-editorial) 10%, transparent), transparent 30rem),
     var(--color-canvas);
 }
 
@@ -135,7 +134,7 @@
   height: 11rem;
   pointer-events: none;
   background:
-    linear-gradient(90deg, rgba(85, 215, 255, 0.2), transparent 36%, rgba(37, 213, 111, 0.16)),
+    linear-gradient(90deg, color-mix(in srgb, var(--color-brand) 16%, transparent), transparent 36%, color-mix(in srgb, var(--color-editorial) 12%, transparent)),
     linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent);
   opacity: 0.72;
 }
@@ -148,6 +147,12 @@
   border-color: var(--color-border-strong);
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.24);
   transform: translateY(-4px);
+}
+
+.landing-root .workflow-card-light:hover {
+  border-color: #2362c9;
+  box-shadow: 0 26px 65px rgba(34, 56, 46, 0.14);
+  transform: translateY(-3px);
 }
 
 .landing-root .gallery-shot img {
@@ -258,8 +263,8 @@
   border-radius: inherit;
   padding: 1px;
   background: linear-gradient(135deg,
-    rgba(106, 162, 255, 0.34),
-    rgba(103, 215, 249, 0.13) 30%,
+    color-mix(in srgb, var(--color-brand) 34%, transparent),
+    color-mix(in srgb, var(--color-info) 13%, transparent) 30%,
     transparent 60%);
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,

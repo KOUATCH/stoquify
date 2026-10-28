@@ -43,7 +43,6 @@ export type LocationManagementRow = {
   stockTransfersInCount: number
   stockTransfersOutCount: number
   goodsReceiptsCount: number
-  productionBatchesCount: number
   serialNumbersCount: number
   totalStockOnHand: number
   totalStockAvailable: number
@@ -172,7 +171,6 @@ export async function getLocationManagementDataForOrg(
             transfersFrom: true,
             transfersTo: true,
             goodsReceipts: true,
-            productionBatches: true,
             serialNumbers: true,
           },
         },
@@ -274,7 +272,6 @@ export async function getLocationManagementDataForOrg(
         stockTransfersInCount: location._count.transfersTo,
         stockTransfersOutCount: location._count.transfersFrom,
         goodsReceiptsCount: location._count.goodsReceipts,
-        productionBatchesCount: location._count.productionBatches,
         serialNumbersCount: location._count.serialNumbers,
         totalStockOnHand: Number(inventory?._sum.quantityOnHand ?? 0),
         totalStockAvailable: Number(inventory?._sum.quantityAvailable ?? 0),

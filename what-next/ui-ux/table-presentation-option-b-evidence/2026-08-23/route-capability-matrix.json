@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-23",
+  "phase": "0_BROWSER_EVIDENCE_GATE",
+  "decision": "BLOCK",
+  "browser": {
+    "surface": "approved_in_app_browser",
+    "attempts": 3,
+    "sessionsCreated": 0,
+    "blocker": "Browser runtime exited during startup before a session or page binding was available. Requested rerun diagnostic: windows sandbox failed: helper_unknown_error: setup refresh had errors."
+  },
+  "viewports": [375, 768, 1280, 1536],
+  "locales": ["en", "fr"],
+  "capabilities": [
+    "toolbar_layout",
+    "responsive_priority",
+    "horizontal_overflow",
+    "accessible_naming",
+    "sorting",
+    "keyboard",
+    "search",
+    "functional_filters",
+    "date_range",
+    "result_range",
+    "pagination",
+    "robust_states",
+    "zoom_reflow",
+    "automated_accessibility"
+  ],
+  "routes": [
+    { "path": "/en/dashboard/purchases/suppliers", "archetype": "master_reference", "status": "blocked_before_navigation" },
+    { "path": "/en/dashboard/payroll/compensation", "archetype": "transaction_work_queue", "status": "blocked_before_navigation" },
+    { "path": "/en/dashboard/payroll/employees", "archetype": "transaction_work_queue", "status": "blocked_before_navigation" },
+    { "path": "/en/dashboard/people", "archetype": "transaction_work_queue", "status": "blocked_before_navigation" },
+    { "path": "/en/dashboard/purchase-orders", "archetype": "transaction_work_queue", "status": "blocked_before_navigation" },
+    { "path": "/en/dashboard/inventory/brands", "archetype": "master_reference", "status": "blocked_before_navigation" },
+    { "path": "/en/dashboard/inventory/units", "archetype": "master_reference", "status": "blocked_before_navigation" },
+    { "path": "/en/dashboard/accounting/reports/trial-balance", "archetype": "finance_statement", "status": "blocked_before_navigation" },
+    { "path": "/en/dashboard/inventory/movements", "archetype": "analytical_high_volume", "status": "blocked_before_navigation" },
+    { "path": "/en/dashboard/pos", "archetype": "transaction_work_queue", "status": "blocked_before_navigation" },
+    { "path": null, "routeSelection": "representative_active_evidence_or_audit_route", "archetype": "evidence_audit", "status": "blocked_before_selection" }
+  ],
+  "evidence": {
+    "screenshots": [],
+    "keyboardResults": [],
+    "accessibilityResults": [],
+    "sensitiveDataCaptured": false
+  },
+  "phase1Authorized": false
+}

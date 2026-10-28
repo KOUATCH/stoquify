@@ -234,7 +234,11 @@ const payrollCalculationScenarioReviewEvidenceSchema = z.object({
 const payrollCalculationScenarioSchema = z.object({
   input: z.record(z.unknown()),
   expectedOutput: z.record(z.unknown()),
-  reviewStatus: z.enum(["EXPERT_REVIEWED", "REGULATOR_CONFIRMED"]),
+  reviewStatus: z.enum([
+    "SOURCE_CHECKED",
+    "EXPERT_REVIEWED",
+    "REGULATOR_CONFIRMED",
+  ]),
   reviewEvidence: payrollCalculationScenarioReviewEvidenceSchema.optional(),
   notes: z.string().optional(),
 });

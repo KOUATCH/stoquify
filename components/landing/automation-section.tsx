@@ -10,7 +10,7 @@ export function AutomationSection() {
   const t = useTranslations("landing.automation")
 
   return (
-    <section className="section-divider bg-[var(--ink-0)] px-6 py-20 lg:px-8">
+    <section id="automation" className="section-divider scroll-mt-20 bg-[var(--ink-0)] px-6 py-20 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <div className="eyebrow mb-4">{t("eyebrow")}</div>
         <h2 className="display max-w-4xl text-4xl text-[var(--text-hi)] sm:text-5xl">{t("title")}</h2>

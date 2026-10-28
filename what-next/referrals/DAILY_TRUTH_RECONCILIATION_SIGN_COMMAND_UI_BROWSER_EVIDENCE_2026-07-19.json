@@ -1,0 +1,338 @@
+{
+  "kind": "DAILY_TRUTH_RECONCILIATION_SIGN_COMMAND_UI_BROWSER_EVIDENCE",
+  "contractVersion": "1.0",
+  "checkedAt": "2026-07-19T14:35:59.622Z",
+  "status": "PASS",
+  "operationMode": "AUTHORIZED_REVERSIBLE_LOCAL_E2E",
+  "authorization": {
+    "explicitlyAuthorized": true,
+    "scope": "Slice 24 reconciliation sign-off command browser certification only"
+  },
+  "scope": {
+    "organizationId": "org_payroll_e2e_local",
+    "disposableRunId": "recon_referral_sign_ui_e2e_local_mrrwc85n_14368",
+    "businessDate": "2025-01-15T12:00:00.000Z",
+    "baseUrl": "http://127.0.0.1:3012"
+  },
+  "checks": [
+    {
+      "stage": "read-only-en-desktop",
+      "actor": "checker-without-sign-permission",
+      "locale": "en",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "ok": true,
+      "finalPath": "/en/dashboard/manager-action-center",
+      "targetProviderVisible": false,
+      "expectedTargetProviderVisible": false,
+      "commandVisible": false,
+      "expectedCommandVisible": false,
+      "dialogVisible": false,
+      "expectedDialogVisible": false,
+      "passwordInputEmptyAtCapture": null,
+      "passwordInputFocused": null,
+      "keyboardFocusReturned": null,
+      "accessibility": {
+        "seriousOrCriticalViolationCount": 0,
+        "violations": []
+      },
+      "layout": {
+        "rootSelector": "main",
+        "horizontalOverflow": false,
+        "clipped": [],
+        "overlaps": [],
+        "inspectedElementCount": 11,
+        "scrollable": false
+      },
+      "pageErrors": [],
+      "failedRequests": [],
+      "cancelledRequests": [],
+      "screenshot": "what-next/referrals/screenshots/daily-truth-reconciliation-sign-command-ui-2026-07-19/read-only-en-desktop.png"
+    },
+    {
+      "stage": "available-en-desktop-dialog",
+      "actor": "checker-with-sign-permission",
+      "locale": "en",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "ok": true,
+      "finalPath": "/en/dashboard/manager-action-center",
+      "targetProviderVisible": true,
+      "expectedTargetProviderVisible": true,
+      "commandVisible": true,
+      "expectedCommandVisible": true,
+      "dialogVisible": true,
+      "expectedDialogVisible": true,
+      "passwordInputEmptyAtCapture": true,
+      "passwordInputFocused": true,
+      "keyboardFocusReturned": true,
+      "accessibility": {
+        "seriousOrCriticalViolationCount": 0,
+        "violations": []
+      },
+      "layout": {
+        "rootSelector": "[role=\"dialog\"]",
+        "horizontalOverflow": false,
+        "clipped": [],
+        "overlaps": [],
+        "inspectedElementCount": 4,
+        "scrollable": false
+      },
+      "pageErrors": [],
+      "failedRequests": [],
+      "cancelledRequests": [],
+      "screenshot": "what-next/referrals/screenshots/daily-truth-reconciliation-sign-command-ui-2026-07-19/available-en-desktop-dialog.png"
+    },
+    {
+      "stage": "available-fr-desktop-dialog",
+      "actor": "checker-with-sign-permission",
+      "locale": "fr",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "ok": true,
+      "finalPath": "/fr/dashboard/manager-action-center",
+      "targetProviderVisible": true,
+      "expectedTargetProviderVisible": true,
+      "commandVisible": true,
+      "expectedCommandVisible": true,
+      "dialogVisible": true,
+      "expectedDialogVisible": true,
+      "passwordInputEmptyAtCapture": true,
+      "passwordInputFocused": true,
+      "keyboardFocusReturned": null,
+      "accessibility": {
+        "seriousOrCriticalViolationCount": 0,
+        "violations": []
+      },
+      "layout": {
+        "rootSelector": "[role=\"dialog\"]",
+        "horizontalOverflow": false,
+        "clipped": [],
+        "overlaps": [],
+        "inspectedElementCount": 4,
+        "scrollable": false
+      },
+      "pageErrors": [],
+      "failedRequests": [],
+      "cancelledRequests": [],
+      "screenshot": "what-next/referrals/screenshots/daily-truth-reconciliation-sign-command-ui-2026-07-19/available-fr-desktop-dialog.png"
+    },
+    {
+      "stage": "available-en-mobile-dialog",
+      "actor": "checker-with-sign-permission",
+      "locale": "en",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "ok": true,
+      "finalPath": "/en/dashboard/manager-action-center",
+      "targetProviderVisible": true,
+      "expectedTargetProviderVisible": true,
+      "commandVisible": true,
+      "expectedCommandVisible": true,
+      "dialogVisible": true,
+      "expectedDialogVisible": true,
+      "passwordInputEmptyAtCapture": true,
+      "passwordInputFocused": true,
+      "keyboardFocusReturned": null,
+      "accessibility": {
+        "seriousOrCriticalViolationCount": 0,
+        "violations": []
+      },
+      "layout": {
+        "rootSelector": "[role=\"dialog\"]",
+        "horizontalOverflow": false,
+        "clipped": [],
+        "overlaps": [],
+        "inspectedElementCount": 4,
+        "scrollable": true
+      },
+      "pageErrors": [],
+      "failedRequests": [],
+      "cancelledRequests": [],
+      "screenshot": "what-next/referrals/screenshots/daily-truth-reconciliation-sign-command-ui-2026-07-19/available-en-mobile-dialog.png"
+    },
+    {
+      "stage": "available-fr-mobile-dialog",
+      "actor": "checker-with-sign-permission",
+      "locale": "fr",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "ok": true,
+      "finalPath": "/fr/dashboard/manager-action-center",
+      "targetProviderVisible": true,
+      "expectedTargetProviderVisible": true,
+      "commandVisible": true,
+      "expectedCommandVisible": true,
+      "dialogVisible": true,
+      "expectedDialogVisible": true,
+      "passwordInputEmptyAtCapture": true,
+      "passwordInputFocused": true,
+      "keyboardFocusReturned": null,
+      "accessibility": {
+        "seriousOrCriticalViolationCount": 0,
+        "violations": []
+      },
+      "layout": {
+        "rootSelector": "[role=\"dialog\"]",
+        "horizontalOverflow": false,
+        "clipped": [],
+        "overlaps": [],
+        "inspectedElementCount": 4,
+        "scrollable": true
+      },
+      "pageErrors": [],
+      "failedRequests": [],
+      "cancelledRequests": [],
+      "screenshot": "what-next/referrals/screenshots/daily-truth-reconciliation-sign-command-ui-2026-07-19/available-fr-mobile-dialog.png"
+    },
+    {
+      "stage": "signed-en-desktop",
+      "actor": "checker-with-sign-permission",
+      "locale": "en",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "ok": true,
+      "finalPath": "/en/dashboard/manager-action-center",
+      "targetRunStatus": "SIGNED",
+      "targetProviderVisibleAfterRefresh": false,
+      "dialogVisible": false,
+      "accessibility": {
+        "seriousOrCriticalViolationCount": 0,
+        "violations": []
+      },
+      "layout": {
+        "rootSelector": "main",
+        "horizontalOverflow": false,
+        "clipped": [],
+        "overlaps": [],
+        "inspectedElementCount": 14,
+        "scrollable": false
+      },
+      "pageErrors": [],
+      "failedRequests": [],
+      "cancelledRequests": [
+        {
+          "url": "/en/dashboard/manager-action-center",
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "/en/dashboard/manager-action-center",
+          "error": "net::ERR_ABORTED"
+        },
+        {
+          "url": "/en/dashboard/manager-action-center?_rsc=Eebgq1Zq3YRNuGKT",
+          "error": "net::ERR_ABORTED"
+        }
+      ],
+      "screenshot": "what-next/referrals/screenshots/daily-truth-reconciliation-sign-command-ui-2026-07-19/signed-en-desktop.png"
+    }
+  ],
+  "durableEvidence": {
+    "run": {
+      "id": "recon_referral_sign_ui_e2e_local_mrrwc85n_14368",
+      "status": "SIGNED",
+      "makerActorId": "usr_payroll_e2e_local",
+      "checkerActorId": "usr_payroll_e2e_requester_local",
+      "makerCheckerDistinct": true,
+      "signedAt": "2026-07-19T14:35:45.439Z",
+      "certificateHash": "b53494ba704e5e085d1d610a52f4fd6bb677a61795854a2e5666b845888e2b9e",
+      "sourceVersionHash": "sha256:d608e18140a31915d4ee8d92a1b4b848a09db2ede9f28d48105636a3bc22f5dd"
+    },
+    "ledgerAudits": [
+      {
+        "id": "cmrrwej4z001dmaowjbryy6df",
+        "action": "PAYMENT_RECONCILIATION_RUN_SIGN",
+        "actorId": "usr_payroll_e2e_requester_local",
+        "createdAt": "2026-07-19T14:35:45.635Z"
+      }
+    ],
+    "businessEvents": [
+      {
+        "id": "cmrrwej6k001fmaowqmovc9sn",
+        "eventType": "payment.reconciliation.signed",
+        "actorId": "usr_payroll_e2e_requester_local",
+        "sourceType": "PAYMENT_RECONCILIATION",
+        "sourceId": "recon_referral_sign_ui_e2e_local_mrrwc85n_14368",
+        "occurredAt": "2026-07-19T14:35:45.689Z",
+        "recordedAt": "2026-07-19T14:35:45.692Z",
+        "outboxMessages": [
+          {
+            "eventName": "payment.reconciliation.signed",
+            "status": "PENDING"
+          }
+        ],
+        "outboxCount": 1
+      }
+    ],
+    "auditActionCounts": {
+      "AUTH_STEP_UP_SUCCEEDED": 3,
+      "OPERATING_ACCESS_SCOPE_ALLOWED": 54,
+      "PAYMENT_RECONCILIATION_SIGN_CONTROL": 2,
+      "PERMISSION_GRANTED": 30
+    }
+  },
+  "retainedAppendOnlyEvidence": {
+    "intentionallyRetained": true,
+    "rationale": "Product audit, ledger-audit, business-event, and outbox rows are append-only historical evidence; disposable operational rows are removed."
+  },
+  "restoration": {
+    "verified": true,
+    "restoredAfterCapture": true,
+    "roleState": {
+      "baselineHash": "sha256:b0d037f4725670da68a8ef873a2c6c8bc918d9f1dcf8765bc6773c476b4f895f",
+      "restoredHash": "sha256:b0d037f4725670da68a8ef873a2c6c8bc918d9f1dcf8765bc6773c476b4f895f",
+      "exactPreflightMatch": true,
+      "temporaryRoleRemoved": true
+    },
+    "signerSessionAssurance": {
+      "sessionCount": 2,
+      "baselineHash": "sha256:5d66a22875da79aad0b3d002c6bf7efc778bac58ea259ee5473fe7f9d53222ff",
+      "restoredHash": "sha256:5d66a22875da79aad0b3d002c6bf7efc778bac58ea259ee5473fe7f9d53222ff",
+      "exactPreflightMatch": true
+    },
+    "tenantPackage": {
+      "baselineHash": "sha256:7aa29cb13c96514bf7026a8106fe6c85e4d5cc28e132e95104308116da43776f",
+      "restoredHash": "sha256:7aa29cb13c96514bf7026a8106fe6c85e4d5cc28e132e95104308116da43776f",
+      "exactPreflightMatch": true,
+      "updatedAtRestored": true
+    },
+    "disposableOperationalNamespace": {
+      "role": 0,
+      "fiscalYear": 0,
+      "period": 0,
+      "ledgerAccounts": 0,
+      "rail": 0,
+      "provider": 0,
+      "settlement": 0,
+      "providerEvent": 0,
+      "run": 0,
+      "clean": true
+    },
+    "appendOnlyEvidenceRetained": {
+      "businessEventCount": 1,
+      "ledgerAuditCount": 1
+    }
+  },
+  "redaction": {
+    "passwordSaved": false,
+    "passwordScreenshotted": false,
+    "sessionIdsSaved": false,
+    "sessionTokensSaved": false,
+    "cookieValuesSaved": false,
+    "assuranceValuesSaved": false,
+    "opaqueHashesOnlyForMutableBaselines": true
+  },
+  "failure": null
+}

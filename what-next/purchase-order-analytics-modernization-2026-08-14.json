@@ -1,0 +1,52 @@
+{
+  "date": "2026-08-14",
+  "status": "implemented",
+  "scope": "purchase-order-analytics-only",
+  "route": "/dashboard/purchase-orders/analytics",
+  "permission": "purchases.orders.read",
+  "module": "purchasing",
+  "accessIntent": "read",
+  "tenantScopeSource": "authenticated-rbac-context",
+  "mutationsAdded": false,
+  "schemaChanges": false,
+  "databaseProceduresAdded": false,
+  "analytics": [
+    "ordered-value",
+    "average-order-value",
+    "open-goods-commitment",
+    "receipt-progress",
+    "overdue-exposure",
+    "approval-cycle-average-median-p90",
+    "on-time-delivery",
+    "completion-rate",
+    "supplier-concentration",
+    "monthly-trend",
+    "status-mix",
+    "supplier-performance",
+    "location-performance",
+    "item-performance",
+    "open-order-aging",
+    "exception-watchlist",
+    "data-quality-coverage"
+  ],
+  "verification": {
+    "focusedJest": { "status": "pass", "suites": 4, "tests": 6 },
+    "focusedTypeScript": { "status": "pass" },
+    "targetedEslint": { "status": "pass" },
+    "prismaValidate": { "status": "pass" },
+    "serviceBoundary": { "status": "pass", "activeViolations": 0 },
+    "inventoryBoundary": { "status": "pass", "activeViolations": 0 },
+    "purchasingApGate": { "status": "pass", "readyChecks": 11, "blockers": 0 },
+    "mutationSourceScan": { "status": "pass" },
+    "repositoryTypecheck": {
+      "status": "inconclusive",
+      "reason": "exceeded execution limits twice without diagnostics"
+    },
+    "moduleSurfaceInventory": {
+      "status": "heuristic-warning",
+      "navigationDetected": true,
+      "routeAccessContractTest": "pass",
+      "note": "Shared purchase-order access wrapper is not recognized by the inventory scanner."
+    }
+  }
+}

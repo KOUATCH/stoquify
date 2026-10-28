@@ -10,9 +10,11 @@ import type { CountryPack } from "./schemas";
 const VERIFIED_ON = "2026-06-11";
 const VERIFIED_BY =
   "Codex regulatory source pass; legal-owner approval required before statutory publication";
-const CNPS_REGULATOR_CONFIRMED_ON = "2026-06-26";
-const CNPS_REGULATOR_CONFIRMED_BY =
-  "Official CNPS-published contribution decree and employer-rules source review; regulator source URLs recorded in legal references";
+const CNPS_SOURCE_CHECKED_ON = "2026-06-26";
+const CNPS_SOURCE_CHECKED_BY =
+  "Official CNPS-published contribution decree and employer-rules source review; qualified independent approval required before production use";
+const CNPS_CAPABILITY_STATUS = "SUPPORTED_DRAFT" as const;
+const CNPS_VERIFICATION_STATUS = "SOURCE_CHECKED" as const;
 const CNPS_PENSION_REVIEW_TOPICS = [
   "pensionContributionRates",
   "pensionContributionCeiling",
@@ -62,7 +64,7 @@ const cameroonCountryPackUnsealed: CountryPack = {
     capabilityMatrix: {
       "taxes.vat": "SUPPORTED",
       "taxes.filing": "SUPPORTED",
-      "payroll.cnps": "SUPPORTED",
+      "payroll.cnps": CNPS_CAPABILITY_STATUS,
       "payroll.irpp": "REQUIRES_EXPERT_REVIEW",
       "identifiers.niu": "SUPPORTED",
       "identifiers.rccm": "PARTIALLY_SUPPORTED",
@@ -351,9 +353,9 @@ const cameroonCountryPackUnsealed: CountryPack = {
             legalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
             effectiveFrom: "2026-01-01",
             effectiveTo: null,
-            verifiedOn: CNPS_REGULATOR_CONFIRMED_ON,
-            verifiedBy: CNPS_REGULATOR_CONFIRMED_BY,
-            verificationStatus: "REGULATOR_CONFIRMED",
+            verifiedOn: CNPS_SOURCE_CHECKED_ON,
+            verifiedBy: CNPS_SOURCE_CHECKED_BY,
+            verificationStatus: CNPS_VERIFICATION_STATUS,
           },
         ],
         pensionRatesBps: [
@@ -369,9 +371,9 @@ const cameroonCountryPackUnsealed: CountryPack = {
             legalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
             effectiveFrom: "2026-01-01",
             effectiveTo: null,
-            verifiedOn: CNPS_REGULATOR_CONFIRMED_ON,
-            verifiedBy: CNPS_REGULATOR_CONFIRMED_BY,
-            verificationStatus: "REGULATOR_CONFIRMED",
+            verifiedOn: CNPS_SOURCE_CHECKED_ON,
+            verifiedBy: CNPS_SOURCE_CHECKED_BY,
+            verificationStatus: CNPS_VERIFICATION_STATUS,
           },
         ],
         occupationalRiskRatesBps: [
@@ -387,9 +389,9 @@ const cameroonCountryPackUnsealed: CountryPack = {
             legalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
             effectiveFrom: "2026-01-01",
             effectiveTo: null,
-            verifiedOn: CNPS_REGULATOR_CONFIRMED_ON,
-            verifiedBy: CNPS_REGULATOR_CONFIRMED_BY,
-            verificationStatus: "REGULATOR_CONFIRMED",
+            verifiedOn: CNPS_SOURCE_CHECKED_ON,
+            verifiedBy: CNPS_SOURCE_CHECKED_BY,
+            verificationStatus: CNPS_VERIFICATION_STATUS,
           },
         ],
         employerRules: [
@@ -402,9 +404,9 @@ const cameroonCountryPackUnsealed: CountryPack = {
             legalRef: "CM_CNPS_EMPLOYER_RULES",
             effectiveFrom: "2026-01-01",
             effectiveTo: null,
-            verifiedOn: CNPS_REGULATOR_CONFIRMED_ON,
-            verifiedBy: CNPS_REGULATOR_CONFIRMED_BY,
-            verificationStatus: "REGULATOR_CONFIRMED",
+            verifiedOn: CNPS_SOURCE_CHECKED_ON,
+            verifiedBy: CNPS_SOURCE_CHECKED_BY,
+            verificationStatus: CNPS_VERIFICATION_STATUS,
           },
         ],
       },
@@ -761,12 +763,12 @@ const cameroonCountryPackUnsealed: CountryPack = {
           totalPensionContributionAmount: "63000.00",
           currency: "XAF",
         },
-        reviewStatus: "REGULATOR_CONFIRMED",
+        reviewStatus: CNPS_VERIFICATION_STATUS,
         reviewEvidence: {
-          reviewedBy: CNPS_REGULATOR_CONFIRMED_BY,
-          reviewedOn: CNPS_REGULATOR_CONFIRMED_ON,
+          reviewedBy: CNPS_SOURCE_CHECKED_BY,
+          reviewedOn: CNPS_SOURCE_CHECKED_ON,
           legalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
-          sourceEvidenceHash: "sha256:cm-cnps-regulator-confirmed-2026",
+          sourceEvidenceHash: "sha256:1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
           coveredReviewTopics: [...CNPS_PENSION_REVIEW_TOPICS],
         },
         notes:
@@ -802,12 +804,12 @@ const cameroonCountryPackUnsealed: CountryPack = {
           familyAllowanceContributionAmount: "7000.00",
           currency: "XAF",
         },
-        reviewStatus: "REGULATOR_CONFIRMED",
+        reviewStatus: CNPS_VERIFICATION_STATUS,
         reviewEvidence: {
-          reviewedBy: CNPS_REGULATOR_CONFIRMED_BY,
-          reviewedOn: CNPS_REGULATOR_CONFIRMED_ON,
+          reviewedBy: CNPS_SOURCE_CHECKED_BY,
+          reviewedOn: CNPS_SOURCE_CHECKED_ON,
           legalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
-          sourceEvidenceHash: "sha256:cm-cnps-regulator-confirmed-2026",
+          sourceEvidenceHash: "sha256:1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
           coveredReviewTopics: [...CNPS_FAMILY_ALLOWANCE_REVIEW_TOPICS],
         },
         notes:
@@ -843,12 +845,12 @@ const cameroonCountryPackUnsealed: CountryPack = {
           familyAllowanceContributionAmount: "5650.00",
           currency: "XAF",
         },
-        reviewStatus: "REGULATOR_CONFIRMED",
+        reviewStatus: CNPS_VERIFICATION_STATUS,
         reviewEvidence: {
-          reviewedBy: CNPS_REGULATOR_CONFIRMED_BY,
-          reviewedOn: CNPS_REGULATOR_CONFIRMED_ON,
+          reviewedBy: CNPS_SOURCE_CHECKED_BY,
+          reviewedOn: CNPS_SOURCE_CHECKED_ON,
           legalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
-          sourceEvidenceHash: "sha256:cm-cnps-regulator-confirmed-2026",
+          sourceEvidenceHash: "sha256:1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
           coveredReviewTopics: [...CNPS_FAMILY_ALLOWANCE_REVIEW_TOPICS],
         },
         notes:
@@ -884,12 +886,12 @@ const cameroonCountryPackUnsealed: CountryPack = {
           familyAllowanceContributionAmount: "3700.00",
           currency: "XAF",
         },
-        reviewStatus: "REGULATOR_CONFIRMED",
+        reviewStatus: CNPS_VERIFICATION_STATUS,
         reviewEvidence: {
-          reviewedBy: CNPS_REGULATOR_CONFIRMED_BY,
-          reviewedOn: CNPS_REGULATOR_CONFIRMED_ON,
+          reviewedBy: CNPS_SOURCE_CHECKED_BY,
+          reviewedOn: CNPS_SOURCE_CHECKED_ON,
           legalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
-          sourceEvidenceHash: "sha256:cm-cnps-regulator-confirmed-2026",
+          sourceEvidenceHash: "sha256:1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
           coveredReviewTopics: [...CNPS_FAMILY_ALLOWANCE_REVIEW_TOPICS],
         },
         notes:
@@ -926,12 +928,12 @@ const cameroonCountryPackUnsealed: CountryPack = {
           occupationalRiskContributionAmount: "1750.00",
           currency: "XAF",
         },
-        reviewStatus: "REGULATOR_CONFIRMED",
+        reviewStatus: CNPS_VERIFICATION_STATUS,
         reviewEvidence: {
-          reviewedBy: CNPS_REGULATOR_CONFIRMED_BY,
-          reviewedOn: CNPS_REGULATOR_CONFIRMED_ON,
+          reviewedBy: CNPS_SOURCE_CHECKED_BY,
+          reviewedOn: CNPS_SOURCE_CHECKED_ON,
           legalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
-          sourceEvidenceHash: "sha256:cm-cnps-regulator-confirmed-2026",
+          sourceEvidenceHash: "sha256:1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
           coveredReviewTopics: [...CNPS_OCCUPATIONAL_RISK_REVIEW_TOPICS],
         },
         notes:
@@ -968,12 +970,12 @@ const cameroonCountryPackUnsealed: CountryPack = {
           occupationalRiskContributionAmount: "2500.00",
           currency: "XAF",
         },
-        reviewStatus: "REGULATOR_CONFIRMED",
+        reviewStatus: CNPS_VERIFICATION_STATUS,
         reviewEvidence: {
-          reviewedBy: CNPS_REGULATOR_CONFIRMED_BY,
-          reviewedOn: CNPS_REGULATOR_CONFIRMED_ON,
+          reviewedBy: CNPS_SOURCE_CHECKED_BY,
+          reviewedOn: CNPS_SOURCE_CHECKED_ON,
           legalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
-          sourceEvidenceHash: "sha256:cm-cnps-regulator-confirmed-2026",
+          sourceEvidenceHash: "sha256:1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
           coveredReviewTopics: [...CNPS_OCCUPATIONAL_RISK_REVIEW_TOPICS],
         },
         notes:
@@ -1010,12 +1012,12 @@ const cameroonCountryPackUnsealed: CountryPack = {
           occupationalRiskContributionAmount: "5000.00",
           currency: "XAF",
         },
-        reviewStatus: "REGULATOR_CONFIRMED",
+        reviewStatus: CNPS_VERIFICATION_STATUS,
         reviewEvidence: {
-          reviewedBy: CNPS_REGULATOR_CONFIRMED_BY,
-          reviewedOn: CNPS_REGULATOR_CONFIRMED_ON,
+          reviewedBy: CNPS_SOURCE_CHECKED_BY,
+          reviewedOn: CNPS_SOURCE_CHECKED_ON,
           legalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
-          sourceEvidenceHash: "sha256:cm-cnps-regulator-confirmed-2026",
+          sourceEvidenceHash: "sha256:1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
           coveredReviewTopics: [...CNPS_OCCUPATIONAL_RISK_REVIEW_TOPICS],
         },
         notes:

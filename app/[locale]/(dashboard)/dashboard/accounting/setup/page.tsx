@@ -9,6 +9,7 @@ import {
   markAccountingSetupReadyAction,
   updateAccountingSettingsAction,
 } from "@/actions/accounting/settings.actions"
+import { checkPermission } from "@/config/useAuth"
 import {
   AccountingMessage,
   AccountingPageShell,
@@ -16,6 +17,7 @@ import {
   AccountingStatCard,
   accountingDate,
 } from "../_components/accounting-ui"
+import { routeByKey, withAccountingSurfaceAccess } from "../accounting-route-access"
 
 type SetupData = {
   settings: {
@@ -41,7 +43,9 @@ function resultPath(locale: string, ok: boolean, text: string) {
   return `/${locale}/dashboard/accounting/setup?${key}=${encodeURIComponent(text)}`
 }
 
-export default async function AccountingSetupPage({ params, searchParams }: PageProps) {
+async function AccountingSetupPageImpl({ params, searchParams }: PageProps) {
+  await checkPermission("accounting.setup.manage")
+
   const { locale } = await params
   const resolvedSearchParams = searchParams ? await searchParams : {}
   const setupResponse = await getAccountingSetupDataAction({})
@@ -202,7 +206,7 @@ export default async function AccountingSetupPage({ params, searchParams }: Page
               }
             >
               <div className="overflow-x-auto">
-                <table className="w-full min-w-[560px] text-sm">
+                <table className="dashboard-table-base w-full min-w-[560px] text-sm">
                   <thead className="border-b border-[var(--dash-border-subtle)] text-left text-xs uppercase text-[var(--dash-text-faint)]">
                     <tr>
                       <th className="px-4 py-3">Code</th>
@@ -235,7 +239,7 @@ export default async function AccountingSetupPage({ params, searchParams }: Page
               }
             >
               <div className="overflow-x-auto">
-                <table className="w-full min-w-[620px] text-sm">
+                <table className="dashboard-table-base w-full min-w-[620px] text-sm">
                   <thead className="border-b border-[var(--dash-border-subtle)] text-left text-xs uppercase text-[var(--dash-text-faint)]">
                     <tr>
                       <th className="px-4 py-3">Period</th>
@@ -273,3 +277,19 @@ export default async function AccountingSetupPage({ params, searchParams }: Page
   )
 }
 
+
+
+
+export default async function AccountingRoutePage(props: any = {}) {
+  const surface = routeByKey("accounting-setup")
+
+  if (!surface) {
+    throw new Error("Missing accounting route surface definition: accounting-setup")
+  }
+
+  return withAccountingSurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => AccountingSetupPageImpl(props),
+  })
+}

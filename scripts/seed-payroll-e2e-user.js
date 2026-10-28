@@ -4,6 +4,39 @@ const { createHash } = require("crypto")
 const { existsSync, readFileSync } = require("fs")
 const { resolve } = require("path")
 const argon2 = require("argon2")
+
+function bootstrapExpandEnvValue(value) {
+  return value.replace(/\${([A-Za-z_][A-Za-z0-9_]*)}/g, (_, key) => process.env[key] || "")
+}
+
+function bootstrapPrismaEnv() {
+  for (const envPath of [resolve(process.cwd(), ".env.local"), resolve(process.cwd(), ".env")]) {
+    if (!existsSync(envPath)) continue
+
+    for (const line of readFileSync(envPath, "utf8").split(/\r?\n/)) {
+      const trimmed = line.trim()
+      if (!trimmed || trimmed.startsWith("#")) continue
+
+      const match = trimmed.match(/^([A-Za-z_][A-Za-z0-9_]*)=(.*)$/)
+      if (!match || process.env[match[1]] !== undefined) continue
+
+      let value = match[2].trim()
+      if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+        value = value.slice(1, -1)
+      }
+      process.env[match[1]] = bootstrapExpandEnvValue(value).replace(/\\n/g, "\n")
+    }
+  }
+
+  for (const key of ["DATABASE_URL", "DIRECT_URL"]) {
+    if (process.env[key]?.includes("${")) {
+      process.env[key] = bootstrapExpandEnvValue(process.env[key])
+    }
+  }
+}
+
+bootstrapPrismaEnv()
+
 const {
   AccountingPeriodStatus,
   AccountingPostingPurpose,
@@ -47,6 +80,10 @@ const {
   PrismaClient,
 } = require("@prisma/client")
 
+function expandEnvValue(value) {
+  return value.replace(/\${([A-Za-z_][A-Za-z0-9_]*)}/g, (_, key) => process.env[key] || "")
+}
+
 function loadLocalEnv() {
   for (const envPath of [resolve(process.cwd(), ".env.local"), resolve(process.cwd(), ".env")]) {
     if (!existsSync(envPath)) continue
@@ -62,16 +99,47 @@ function loadLocalEnv() {
       if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
         value = value.slice(1, -1)
       }
-      process.env[match[1]] = value
-        .replace(/\${([A-Za-z_][A-Za-z0-9_]*)}/g, (_, key) => process.env[key] || "")
-        .replace(/\\n/g, "\n")
+      process.env[match[1]] = expandEnvValue(value).replace(/\\n/g, "\n")
+    }
+  }
+
+  for (const key of ["DATABASE_URL", "DIRECT_URL"]) {
+    if (process.env[key]?.includes("${")) {
+      process.env[key] = expandEnvValue(process.env[key])
     }
   }
 }
 
 loadLocalEnv()
 
-const prisma = new PrismaClient()
+function normalizePrismaDatasourceUrl(rawUrl) {
+  if (!rawUrl) return rawUrl
+
+  const trimmed = String(rawUrl).trim()
+  if (!trimmed) return trimmed
+  if (trimmed.startsWith("prisma://") || trimmed.startsWith("prisma+postgres://")) return trimmed
+  if (trimmed.startsWith("postgres://") || trimmed.startsWith("postgresql://")) {
+    return "prisma+postgres://" + trimmed.slice(trimmed.indexOf("://") + 3)
+  }
+
+  return trimmed
+}
+
+function resolvePrismaDatasourceUrl(env = process.env) {
+  const candidate = expandEnvValue(String(env.DATABASE_URL || env.DIRECT_URL || "").trim())
+  if (!candidate) return candidate
+  return normalizePrismaDatasourceUrl(candidate)
+}
+
+function createPrismaClient(env = process.env) {
+  const databaseUrl = resolvePrismaDatasourceUrl(env)
+  return databaseUrl ? new PrismaClient({ datasources: { db: { url: databaseUrl } } }) : new PrismaClient()
+}
+
+const resolvedDatasourceUrl = resolvePrismaDatasourceUrl()
+if (resolvedDatasourceUrl) process.env.DATABASE_URL = resolvedDatasourceUrl
+
+const prisma = createPrismaClient(process.env)
 
 const DEMO_ONLY_NOTICE =
   "Demo-only payroll browser fixture. This is not production payroll backfill and must not be used for statutory truth."
@@ -89,9 +157,17 @@ const REQUESTED_MODULES = ["payroll", "accounting"]
 const DEMO_MOBILE_MONEY_PROVIDER = process.env.AQSTOQFLOW_E2E_MOBILE_MONEY_PROVIDER || ["MTN", "MOMO"].join("_")
 const PAYROLL_SMOKE_PERMISSIONS = [
   "dashboard.read",
+  "hris.people.manage",
+  "hris.people.read",
+  "hris.self_service.read",
+  "hris.self_service.request",
   "payments.reconciliation.read",
   "payments.reconciliation.match",
   "payments.reconciliation.exception.resolve",
+  "accounting.close.read",
+  "accounting.close.run",
+  "accounting.close.export",
+  "accounting.close.accountant.review",
   "payroll.read",
   "payroll.command.read",
   "payroll.payment_destination.read",
@@ -318,6 +394,14 @@ async function seedAccountingPeriods(tx, organizationId) {
   )
 
   return { accountingPeriod, unpaidAccountingPeriod }
+}
+
+async function seedAccountingCloseFixtures(tx, organizationId) {
+  const { accountingPeriod } = await seedAccountingPeriods(tx, organizationId)
+  return {
+    fiscalYearId: accountingPeriod.fiscalYearId,
+    accountingPeriodId: accountingPeriod.id,
+  }
 }
 
 async function seedPayrollFixtures(tx, organizationId, userId, requesterUserId, now) {
@@ -1600,6 +1684,7 @@ async function main() {
     })
 
     await upsertAccountingSettings(tx, organization.id, now)
+    const closeFixtures = await seedAccountingCloseFixtures(tx, organization.id)
     const fixtures = await seedPayrollFixtures(tx, organization.id, user.id, requesterUser.id, now)
 
     return {
@@ -1614,7 +1699,7 @@ async function main() {
       permissions: role.permissions,
       requesterPermissions: requesterRole.permissions,
       revokedSessionCount: revokedSessionResult.count,
-      fixtures,
+      fixtures: { ...fixtures, ...closeFixtures },
       warning: DEMO_ONLY_NOTICE,
     }
   })
@@ -1624,11 +1709,19 @@ async function main() {
   console.log("Provisioned local payroll browser smoke data. Auth state remains local at playwright/.auth/payroll.json.")
 }
 
-main()
-  .catch((error) => {
-    console.error(error instanceof Error ? error.message : error)
-    process.exitCode = 1
-  })
-  .finally(async () => {
-    await prisma.$disconnect()
-  })
+if (require.main === module) {
+  main()
+    .catch((error) => {
+      console.error(error instanceof Error ? error.message : error)
+      process.exitCode = 1
+    })
+    .finally(async () => {
+      await prisma.$disconnect()
+    })
+}
+
+module.exports = {
+  assertLocalSeedAllowed,
+  normalizePrismaDatasourceUrl,
+  resolvePrismaDatasourceUrl,
+}

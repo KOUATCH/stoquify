@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "1.0.0",
+  "artifactId": "STOQUIFY-POS-G1-CONTRACT-APPROVAL-REGISTER-20260817",
+  "status": "OPEN_NO_APPROVALS",
+  "contractArtifactId": "STOQUIFY-POS-G1-CONTRACT-FREEZE-0.2.0-20260817",
+  "contractVersion": "0.2.0",
+  "contractPath": "docs/pos-enterprise-grade-audit/EXECUTION_06_G1_CONTRACT_FREEZE_V0_2_0.json",
+  "contractSha256": "11434eb3e1af1826516426e90d2d53a2faa47ade361d91191b5f3e0c950a36db",
+  "decisionApprovals": [],
+  "sourceEvidenceAssessments": [
+    {
+      "sourcePath": "docs/Compliance/Complaince authorization validation.docx",
+      "sourceSha256": "cdca6c7d2bf6513b84301713e529cfea9d6dc8f218a4acdb8d51bc538d626f3f",
+      "sourceBytes": 464884,
+      "sourceLastWriteTimeUtc": "2026-08-18T03:10:28.3890841Z",
+      "sourceStableAcrossCompleteReads": true,
+      "assessmentPath": "docs/pos-enterprise-grade-audit/evidence/migration-certification/2026-08-18/compliance-authorization-document-validation.json",
+      "assessmentGeneratedAt": "2026-08-18T04:44:09.8632269Z",
+      "ooxmlDigitalSignatureParts": 0,
+      "embeddedSignatureLikeMediaCount": 2,
+      "identityConflictCount": 2,
+      "classification": "UNVERIFIED_IDENTITY_AND_SCOPE_DECLARATION_ONLY",
+      "approvalCredit": 0,
+      "status": "REJECTED_AS_AUTHENTIC_APPROVAL_EVIDENCE",
+      "reason": "Two unlabelled handwritten-image bytes are present, but no OOXML digital-signature part, certificate, immutable fresh-authenticated approval, reliable image-to-identity mapping, or binding to the frozen contract hash and a specific D-01 through D-11 decision exists."
+    }
+  ],
+  "decisionApprovalRecordSchema": {
+    "decisionId": "D-01 through D-11",
+    "selectedOption": "Exact selectedOption from the frozen contract",
+    "rationale": "Accountable decision rationale",
+    "approvalStatus": "APPROVED",
+    "effectiveVersion": "Version in which the decision takes effect",
+    "reviewOrExpiryAt": "ISO-8601 timestamp",
+    "evidenceLinks": ["One or more durable evidence references"],
+    "affectedCapabilities": ["One or more affected capability identifiers"],
+    "rollbackOrDisablePolicy": "Fail-closed rollback or disable policy",
+    "approvals": [
+      {
+        "accountableApprover": "Real accountable identity",
+        "approverRole": "Exact requiredApproverRoles value",
+        "authorityReference": "Identity-provider or authority record reference",
+        "freshAuthenticatedAt": "ISO-8601 timestamp",
+        "approvedAt": "ISO-8601 timestamp no more than ten minutes after fresh authentication",
+        "signatureReference": "Externally verifiable detached-signature reference",
+        "signatureEvidenceSha256": "64-character lowercase SHA-256"
+      }
+    ]
+  },
+  "instructions": [
+    "Do not edit the frozen contract after its SHA-256 is recorded here.",
+    "Add one decision record per D-01 through D-11 and one authenticated approval entry for every required role.",
+    "Each decision record must repeat the exact selectedOption from the frozen contract.",
+    "Each approval must be completed within ten minutes of fresh authentication and reference externally verifiable signature evidence.",
+    "Typed names and locally invented signature references are not acceptable evidence."
+  ]
+}

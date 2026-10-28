@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-08-17T11:43:04.156Z",
+  "gate": "G0_BASELINE_FINAL_REASSESSMENT",
+  "status": "PASS_DEVELOPMENT_G0_PRODUCTION_BLOCKED",
+  "releaseAuthorized": false,
+  "statutoryCertified": false,
+  "candidate": {
+    "branch": "codex/pos-g0-release-20260817",
+    "baseCommit": "35b4cc6a06a50ee11de5bfce6b04993e38bd589a",
+    "priorImplementationCommit": "a4ce23a",
+    "repairImplementationCommit": "d7f2e691a5d0f1f53dd27d1ff7885032968e196f",
+    "evidenceReaderCommit": "bdad7bbe05f4d7b622281ec1bf74669cf00c1ec4",
+    "originalDirtyWorktreePreserved": true
+  },
+  "checks": [
+    { "id": "additive_schema_repair", "status": "PASS" },
+    { "id": "new_restore_preflight", "status": "PASS", "tableCount": 0 },
+    { "id": "fresh_restore_replay", "status": "PASS", "finishedMigrations": 67 },
+    { "id": "final_target_replay", "status": "PASS", "finishedMigrations": 67 },
+    { "id": "canonical_schema_fingerprint", "status": "PASS", "columnCount": 3442, "constraintCount": 3011, "indexCount": 965 },
+    { "id": "native_prisma_status", "status": "PASS", "migrations": 67 },
+    { "id": "postgres_pos_certification", "status": "PASS", "passed": 3 },
+    { "id": "synthetic_tenant_fixture", "status": "PASS" },
+    { "id": "authenticated_edge_en_fr", "status": "PASS", "passed": 3, "protectedRouteVisits": 12 },
+    { "id": "prisma_validate", "status": "PASS" },
+    { "id": "prisma_generate", "status": "PASS", "version": "6.19.3" },
+    { "id": "typecheck", "status": "PASS" },
+    { "id": "focused_tests", "status": "PASS", "suites": 7, "passed": 67 },
+    { "id": "service_boundary_fail_mode", "status": "PASS", "activeViolations": 0 },
+    { "id": "kontava_static_release_gate", "status": "PASS", "blockers": 0 },
+    { "id": "production_build", "status": "PASS_WITH_ENVIRONMENT_ADVISORIES" },
+    { "id": "production_migration_risk_gate", "status": "BLOCKED", "riskFindings": 13, "blockers": ["destructive_sql_is_exact_hash_approved"] }
+  ],
+  "databaseBoundary": {
+    "host": "localhost",
+    "port": 5432,
+    "database": "stoquify_dev_migrated_20260814",
+    "targetSchema": "codex_pos_commit_result_cert_20260817",
+    "restoreSchema": "codex_pos_commit_result_restore_20260817_r2",
+    "preservedPartialRestoreSchema": "codex_pos_commit_result_restore_20260817",
+    "publicDataAccessed": false,
+    "publicSchemaMutated": false,
+    "realDataUsed": false,
+    "originalShippedMigrationFilesModified": false
+  },
+  "browserBoundary": {
+    "browser": "Microsoft Edge 151.0.4129.86",
+    "operatingSystem": "Microsoft Windows 10.0.26200.9168",
+    "locales": ["en", "fr"],
+    "freshCredentialAuthentication": true,
+    "storageStateRetainedAsEvidence": false
+  },
+  "browserArtifact": {
+    "path": "docs/pos-enterprise-grade-audit/evidence/migration-certification/2026-08-17-r2/authenticated-edge-report.html",
+    "sha256": "fcb109ac5e434c032846cbb3b133b7c8615dc09df923b26caaaa83738c596036",
+    "containsAuthStorageState": false
+  },
+  "productionBlockers": [
+    "The historical accounting/auth bridge has 13 destructive SQL findings without exact-hash maker-checker approval.",
+    "The operator/checker authentication attestation is not signed evidence.",
+    "Product and controller identities/roles are not qualified evidence for production or statutory certification.",
+    "No dated qualified-human Cameroon country-pack and fiscal review is bound to this candidate.",
+    "Physical receipt printer, drawer kick, barcode scanner, payment terminal, customer display, offline device, electronic tender, and statutory fiscal output remain uncertified."
+  ]
+}

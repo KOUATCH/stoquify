@@ -1,0 +1,171 @@
+{
+  "schemaVersion": "1.0.0",
+  "artifactId": "STOQUIFY-G1-UNRESOLVED-AUTHORITY-APPROVAL-BLOCKERS-20260819",
+  "generatedAt": "2026-08-19T12:03:41.909Z",
+  "status": "BLOCKED_ON_GOVERNANCE_INPUT",
+  "g1Status": "BLOCKED_0_OF_11",
+  "productionAuthorized": false,
+  "contractSha256": "11434eb3e1af1826516426e90d2d53a2faa47ade361d91191b5f3e0c950a36db",
+  "summary": {
+    "technicalChecksPassed": 13,
+    "technicalChecksRequired": 13,
+    "approvedDecisions": 0,
+    "requiredDecisions": 11,
+    "completedRoleObligations": 0,
+    "requiredRoleObligations": 33,
+    "uniqueRolesWithoutVerifiedAuthority": 17,
+    "verifiedApprovers": 0,
+    "candidateOrConflictingNames": 6
+  },
+  "candidateNames": [
+    {
+      "name": "SANGO MALO",
+      "classification": "NOT_RELEVANT_TO_G1",
+      "documentaryAssertion": "Migration operator; Database administrator / engineering lead",
+      "stableSubjectId": null,
+      "verifiedG1Role": null,
+      "authorityReference": null,
+      "sourcePath": "docs/Compliance/Complaince authorization validation.docx",
+      "sourceSha256": "cdca6c7d2bf6513b84301713e529cfea9d6dc8f218a4acdb8d51bc538d626f3f",
+      "conflict": "A separate Maker field names Tamen Marceline.",
+      "mayEnterLiveG1Register": false,
+      "resolutionAction": "Keep separate from G1. If used for migration governance, obtain authoritative identity, exact migration authority and artifact-bound maker evidence."
+    },
+    {
+      "name": "MAXIMILLIANO BONGA",
+      "classification": "NOT_RELEVANT_TO_G1",
+      "documentaryAssertion": "Migration checker; Database administrator / engineering lead",
+      "stableSubjectId": null,
+      "verifiedG1Role": null,
+      "authorityReference": null,
+      "sourcePath": "docs/Compliance/Complaince authorization validation.docx",
+      "sourceSha256": "cdca6c7d2bf6513b84301713e529cfea9d6dc8f218a4acdb8d51bc538d626f3f",
+      "conflict": "A separate Checker field names Yonga Springfield.",
+      "mayEnterLiveG1Register": false,
+      "resolutionAction": "Keep separate from G1. If used for migration governance, prove identity, independent checker authority and artifact-bound checker evidence."
+    },
+    {
+      "name": "Tamen Marceline",
+      "classification": "CONFLICTING_IDENTITY_OR_ROLE",
+      "documentaryAssertion": "Maker",
+      "stableSubjectId": null,
+      "verifiedG1Role": null,
+      "authorityReference": null,
+      "sourcePath": "docs/Compliance/Complaince authorization validation.docx",
+      "sourceSha256": "cdca6c7d2bf6513b84301713e529cfea9d6dc8f218a4acdb8d51bc538d626f3f",
+      "conflict": "Conflicts with the SANGO MALO migration-maker proposal; neither image is reliably bound to either person.",
+      "mayEnterLiveG1Register": false,
+      "resolutionAction": "Resolve only through an authoritative identity and appointment source; do not map either image to this name."
+    },
+    {
+      "name": "Yonga Springfield",
+      "classification": "CONFLICTING_IDENTITY_OR_ROLE",
+      "documentaryAssertion": "Checker",
+      "stableSubjectId": null,
+      "verifiedG1Role": null,
+      "authorityReference": null,
+      "sourcePath": "docs/Compliance/Complaince authorization validation.docx",
+      "sourceSha256": "cdca6c7d2bf6513b84301713e529cfea9d6dc8f218a4acdb8d51bc538d626f3f",
+      "conflict": "Conflicts with the MAXIMILLIANO BONGA migration-checker proposal; neither image is reliably bound to either person.",
+      "mayEnterLiveG1Register": false,
+      "resolutionAction": "Resolve only through an authoritative identity and appointment source; do not map either image to this name."
+    },
+    {
+      "name": "KOUATCHOUA MARK",
+      "classification": "MENTIONED_UNVERIFIED",
+      "documentaryAssertion": "Product approver; Product Owner or Financial Controller",
+      "stableSubjectId": null,
+      "verifiedG1Role": null,
+      "authorityReference": null,
+      "sourcePath": "docs/Compliance/Complaince authorization validation.docx",
+      "sourceSha256": "cdca6c7d2bf6513b84301713e529cfea9d6dc8f218a4acdb8d51bc538d626f3f",
+      "conflict": "The role is ambiguous. DOCX creator and last-modifier metadata proves package authorship only.",
+      "mayEnterLiveG1Register": false,
+      "resolutionAction": "Governance must prove a stable subject ID and unambiguous Product owner or Financial controller appointment, scope, dates and SoD result."
+    },
+    {
+      "name": "KOUATCHOUA MARCELINE",
+      "classification": "MENTIONED_UNVERIFIED",
+      "documentaryAssertion": "Controller approver; SYSTEM ADMINISTRATION",
+      "stableSubjectId": null,
+      "verifiedG1Role": null,
+      "authorityReference": null,
+      "sourcePath": "docs/Compliance/Complaince authorization validation.docx",
+      "sourceSha256": "cdca6c7d2bf6513b84301713e529cfea9d6dc8f218a4acdb8d51bc538d626f3f",
+      "conflict": "SYSTEM ADMINISTRATION does not prove Financial controller, Accounting owner or Treasury owner authority.",
+      "mayEnterLiveG1Register": false,
+      "resolutionAction": "Governance and finance must provide a stable identity and explicit financial authority appointment, or designate a qualified replacement."
+    }
+  ],
+  "roleCoverage": [
+    {"role":"Product owner","obligations":4,"verifiedAuthorities":0,"classification":"MISSING_REQUIRED_APPROVER","owner":"Governance roster owner","resolutionAction":"Appoint and verify the real Product owner using a stable subject ID, dated scope and SoD result."},
+    {"role":"Financial controller","obligations":5,"verifiedAuthorities":0,"classification":"MISSING_REQUIRED_APPROVER","owner":"Governance and finance owner","resolutionAction":"Appoint and verify a Financial controller; SYSTEM ADMINISTRATION and ambiguous DOCX labels do not qualify."},
+    {"role":"Payments owner","obligations":2,"verifiedAuthorities":0,"classification":"MISSING_REQUIRED_APPROVER","owner":"Payments governance owner","resolutionAction":"Appoint and verify the accountable payments decision owner."},
+    {"role":"Retail operations owner","obligations":5,"verifiedAuthorities":0,"classification":"MISSING_REQUIRED_APPROVER","owner":"Retail governance owner","resolutionAction":"Appoint and verify the retail operations authority for POS operating policies."},
+    {"role":"POS architect","obligations":1,"verifiedAuthorities":0,"classification":"MISSING_REQUIRED_APPROVER","owner":"Technology governance owner","resolutionAction":"Appoint and verify the accountable POS architecture authority."},
+    {"role":"Security owner","obligations":2,"verifiedAuthorities":0,"classification":"MISSING_REQUIRED_APPROVER","owner":"Security governance owner","resolutionAction":"Appoint and verify the security authority; ordinary system-administration access is insufficient."},
+    {"role":"Treasury owner","obligations":2,"verifiedAuthorities":0,"classification":"MISSING_REQUIRED_APPROVER","owner":"Treasury governance owner","resolutionAction":"Appoint and verify the treasury authority for provider settlement and reconciliation boundaries."},
+    {"role":"Risk owner","obligations":2,"verifiedAuthorities":0,"classification":"MISSING_REQUIRED_APPROVER","owner":"Risk governance owner","resolutionAction":"Appoint and verify the risk acceptance authority."},
+    {"role":"QA owner","obligations":1,"verifiedAuthorities":0,"classification":"MISSING_REQUIRED_APPROVER","owner":"Engineering quality governance owner","resolutionAction":"Appoint and verify the owner of the support-matrix evidence decision."},
+    {"role":"Support owner","obligations":2,"verifiedAuthorities":0,"classification":"MISSING_REQUIRED_APPROVER","owner":"Customer support governance owner","resolutionAction":"Appoint and verify the supportability and escalation owner."},
+    {"role":"Qualified Cameroon country-pack reviewer","obligations":1,"verifiedAuthorities":0,"classification":"MISSING_REQUIRED_APPROVER","owner":"Country-pack governance owner","resolutionAction":"Name a real qualified reviewer and return dated qualification, scope and independence evidence."},
+    {"role":"SRE owner","obligations":1,"verifiedAuthorities":0,"classification":"MISSING_REQUIRED_APPROVER","owner":"Reliability governance owner","resolutionAction":"Appoint and verify the SRE authority for SLO and error-budget claims."},
+    {"role":"Order-to-cash product owner","obligations":1,"verifiedAuthorities":0,"classification":"MISSING_REQUIRED_APPROVER","owner":"Order-to-cash governance owner","resolutionAction":"Appoint and verify the end-to-end O2C process owner."},
+    {"role":"Qualified accounting reviewer","obligations":1,"verifiedAuthorities":0,"classification":"MISSING_REQUIRED_APPROVER","owner":"Accounting governance owner","resolutionAction":"Name a real qualified reviewer and return dated qualification and scope evidence."},
+    {"role":"Inventory controller","obligations":1,"verifiedAuthorities":0,"classification":"MISSING_REQUIRED_APPROVER","owner":"Inventory governance owner","resolutionAction":"Appoint and verify the inventory control authority."},
+    {"role":"Fulfillment owner","obligations":1,"verifiedAuthorities":0,"classification":"MISSING_REQUIRED_APPROVER","owner":"Fulfillment governance owner","resolutionAction":"Appoint and verify the fulfillment process authority."},
+    {"role":"Accounting owner","obligations":1,"verifiedAuthorities":0,"classification":"MISSING_REQUIRED_APPROVER","owner":"Accounting governance owner","resolutionAction":"Appoint and verify the accounting policy owner for stock and COGS recognition."}
+  ],
+  "decisionBlockers": [
+    {"decisionId":"D-01","status":"OPEN_0_OF_3","roles":["Product owner","Financial controller","Payments owner"],"resolution":"Verify all three authorities and obtain three artifact-bound approvals."},
+    {"decisionId":"D-02","status":"OPEN_0_OF_3","roles":["Retail operations owner","POS architect","Security owner"],"resolution":"Verify all three authorities and obtain three artifact-bound approvals."},
+    {"decisionId":"D-03","status":"OPEN_0_OF_3","roles":["Payments owner","Treasury owner","Security owner"],"resolution":"Verify all three authorities and obtain three artifact-bound approvals."},
+    {"decisionId":"D-04","status":"OPEN_0_OF_3","roles":["Product owner","Risk owner","Retail operations owner"],"resolution":"Verify all three authorities and obtain three artifact-bound approvals."},
+    {"decisionId":"D-05","status":"OPEN_0_OF_3","roles":["Retail operations owner","QA owner","Support owner"],"resolution":"Verify all three authorities and obtain three artifact-bound approvals."},
+    {"decisionId":"D-06","status":"OPEN_0_OF_3","roles":["Financial controller","Retail operations owner","Risk owner"],"resolution":"Verify all three authorities and obtain three artifact-bound approvals."},
+    {"decisionId":"D-07","status":"OPEN_0_OF_3","roles":["Product owner","Financial controller","Qualified Cameroon country-pack reviewer"],"resolution":"Verify accountable and qualified authorities and obtain three artifact-bound approvals."},
+    {"decisionId":"D-08","status":"OPEN_0_OF_3","roles":["SRE owner","Product owner","Support owner"],"resolution":"Verify all three authorities and obtain three artifact-bound approvals."},
+    {"decisionId":"D-09","status":"OPEN_0_OF_3","roles":["Financial controller","Order-to-cash product owner","Qualified accounting reviewer"],"resolution":"Verify accountable and qualified authorities and obtain three artifact-bound approvals."},
+    {"decisionId":"D-10","status":"OPEN_0_OF_3","roles":["Inventory controller","Fulfillment owner","Accounting owner"],"resolution":"Verify all three authorities and obtain three artifact-bound approvals."},
+    {"decisionId":"D-11","status":"OPEN_0_OF_3","roles":["Financial controller","Treasury owner","Retail operations owner"],"resolution":"Verify all three authorities and obtain three artifact-bound approvals."}
+  ],
+  "systemCapabilityGaps": [
+    {
+      "gap":"CANONICAL_G1_AUTHORITY_ROSTER_NOT_EVIDENCED",
+      "impact":"The repository cannot prove which real person holds each exact G1 authority.",
+      "resolution":"Governance must name and authorize the canonical roster source."
+    },
+    {
+      "gap":"CONTROLLED_G1_APPROVAL_WORKFLOW_NOT_CONFIGURED",
+      "impact":"There is no proven workflow producing stable identity, deliberate intent, fresh auth, immutable export and verifier evidence for G1.",
+      "resolution":"Authorize an existing organization-controlled workflow or explicitly authorize the bounded app-native pilot."
+    },
+    {
+      "gap":"GENERIC_AUTHORITY_APPROVAL_EVIDENCE_MODELS_ABSENT",
+      "impact":"Existing RBAC and Workflow Assurance incidents do not model governance appointments, approval requests, evidence envelopes or independent verification.",
+      "resolution":"Only after governance authorization, implement additive tenant-scoped authority/approval/evidence contracts."
+    },
+    {
+      "gap":"APPROVAL_VALIDATOR_DOES_NOT_RESOLVE_EXTERNAL_EVIDENCE",
+      "impact":"The current G1 script checks field shape and timing but does not resolve authority references, rehash evidence, validate tenant/subject binding, qualification, SoD, expiry or verifier independence.",
+      "resolution":"Require independent pre-import verification and later add a provider-neutral verification adapter if authorized."
+    }
+  ],
+  "governancePrerequisites": [
+    "Name the organizational owner and source of the canonical authority roster.",
+    "Approve stable G1 authority codes, role scopes and bounded delegation rules.",
+    "Confirm real people for all 17 roles using stable subject IDs and dated appointments.",
+    "Approve permitted and prohibited same-person/multi-role combinations and independent-verifier rules.",
+    "Define accepted qualification evidence for Cameroon and accounting reviewers.",
+    "Approve evidence retention, redaction, canonicalization, immutable export and verification policies.",
+    "Decide whether each decision uses internal attestation or external e-signature evidence.",
+    "Approve fresh-authentication assurance levels, MFA expectations and recovery rules."
+  ],
+  "nextPermittedStep": "Complete governance prerequisites, authorize the controlled approval workflow, verify all 33 role assignments, then collect and independently verify the 33 approvals.",
+  "prohibitedNextSteps": [
+    "Do not insert candidate names into the live register.",
+    "Do not map the two signature-like images to any person.",
+    "Do not generate approval timestamps, references or evidence hashes without real events and bytes.",
+    "Do not assess G2 as eligible or claim G1 passed."
+  ]
+}

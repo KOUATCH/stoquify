@@ -1,47 +1,52 @@
 "use server"
 
-import { revalidatePath, revalidateTag } from "next/cache"
+import { revalidatePath, revalidateTag } from "next/cache";
 
-import { requirePermission } from "@/lib/security/rbac"
-import { BusinessRuleError } from "@/services/_shared/action-errors"
+import { requirePermission } from "@/lib/security/rbac";
+import { BusinessRuleError } from "@/services/_shared/action-errors";
 import {
-  BulkStatusUpdateSchema,
-  ClonePurchaseOrderSchema,
-  CreatePurchaseOrderSchema,
-  POAnalyticsSchema,
-  ReceiveItemsSchema,
-  UpdatePurchaseOrderSchema,
-  type PurchaseOrderStatus,
-} from "@/services/purchase-order/purchase-order.schemas"
+    BulkStatusUpdateSchema,
+    ClonePurchaseOrderSchema,
+    CreatePurchaseOrderSchema,
+    POAnalyticsSchema,
+    ReceiveItemsSchema,
+    ResolveGoodsReceiptInspectionSchema,
+    UpdatePurchaseOrderSchema,
+    type PurchaseOrderStatus,
+} from "@/services/purchase-order/purchase-order.schemas";
 import {
-  approvePurchaseOrder as approvePurchaseOrderService,
-  bulkUpdateStatus,
-  cancelPurchaseOrder as cancelPurchaseOrderService,
-  clonePurchaseOrder as clonePurchaseOrderService,
-  closePurchaseOrder as closePurchaseOrderService,
-  createPurchaseOrder as createPurchaseOrderService,
-  deletePurchaseOrder as deletePurchaseOrderService,
-  exportToCSV,
-  getAnalytics,
-  getGoodsReceipts,
-  getPurchaseOrderById,
-  getRequiringAttention,
-  getStatusHistory,
-  getSummary,
-  listPurchaseOrders,
-  receiveItems as receiveItemsService,
-  searchLocations as searchPurchaseOrderLocations,
-  submitPurchaseOrder as submitPurchaseOrderService,
-  updatePurchaseOrder as updatePurchaseOrderService,
-} from "@/services/purchase-order/purchase-order.service"
+    approvePurchaseOrder as approvePurchaseOrderService,
+    bulkUpdateStatus,
+    cancelPurchaseOrder as cancelPurchaseOrderService,
+    clonePurchaseOrder as clonePurchaseOrderService,
+    closePurchaseOrder as closePurchaseOrderService,
+    createPurchaseOrder as createPurchaseOrderService,
+    deletePurchaseOrder as deletePurchaseOrderService,
+    exportToCSV,
+    getAnalytics,
+    getGoodsReceipts,
+    getPurchaseOrderById,
+    getPurchaseOrderCurrency,
+    getRequiringAttention,
+    getStatusHistory,
+    getSummary,
+    listPurchaseOrders,
+    receiveItems as receiveItemsService,
+    resolveGoodsReceiptInspection as resolveGoodsReceiptInspectionService,
+    searchLocations as searchPurchaseOrderLocations,
+    submitPurchaseOrder as submitPurchaseOrderService,
+    updatePurchaseOrder as updatePurchaseOrderService,
+} from "@/services/purchase-order/purchase-order.service";
+import { projectPurchaseOrderForActor } from "@/services/purchase-order/purchase-order-capabilities";
 import type {
-  CreatePurchaseOrderPayload,
-  GoodsReceiptPayload as ClientGoodsReceiptPayload,
-  PurchaseOrderFilters,
-  PurchaseOrderResponse,
-  PurchaseOrderWithRelations,
-  UpdatePurchaseOrderDTO,
-} from "@/types/purchase-orders-system-types"
+    GoodsReceiptPayload as ClientGoodsReceiptPayload,
+    GoodsReceiptInspectionResolutionPayload,
+    CreatePurchaseOrderPayload,
+    PurchaseOrderFilters,
+    PurchaseOrderResponse,
+    PurchaseOrderWithRelations,
+    UpdatePurchaseOrderDTO,
+} from "@/types/purchase-orders-system-types";
 
 export type GoodsReceiptPayload = ClientGoodsReceiptPayload
 
@@ -62,21 +67,20 @@ function revalidatePurchaseOrderWorkflow(organizationId: string, id?: string) {
 async function scopedOrg(
   requestedOrganizationId: string | undefined,
   permission = "purchases.orders.read",
-  options?: { resourceId?: string; auditAllowed?: boolean },
+  options?: { resource?: string; resourceId?: string; auditAllowed?: boolean },
 ) {
   const ctx = await requirePermission(permission, {
-    resource: "PurchaseOrder",
+    resource: options?.resource ?? "PurchaseOrder",
     resourceId: options?.resourceId,
     auditAllowed: options?.auditAllowed,
   })
   if (requestedOrganizationId && requestedOrganizationId !== ctx.orgId) {
     throw new BusinessRuleError("You do not have access to this organization")
   }
-  return { orgId: ctx.orgId, userId: ctx.userId }
+  return { orgId: ctx.orgId, userId: ctx.userId, permissions: ctx.permissions }
 }
 
 function permissionForBulkStatus(status: PurchaseOrderStatus) {
-  if (status === "APPROVED") return "purchases.orders.approve"
   if (status === "CANCELLED") return "purchases.orders.cancel"
   return "purchases.orders.update"
 }
@@ -114,9 +118,14 @@ export async function getOrgPurchaseOrders(
   _filters: Partial<PurchaseOrderFilters> = {},
 ): Promise<PurchaseOrderResponse<PurchaseOrderWithRelations[]>> {
   try {
-    const { orgId } = await scopedOrg(organizationId, "purchases.orders.read")
-    const purchaseOrders = await listPurchaseOrders(orgId)
-    return response(purchaseOrders as PurchaseOrderWithRelations[])
+    const actor = await scopedOrg(organizationId, "purchases.orders.read")
+    const [purchaseOrders, currency] = await Promise.all([
+      listPurchaseOrders(actor.orgId),
+      getPurchaseOrderCurrency(actor.orgId),
+    ])
+    return response(
+      purchaseOrders.map((order) => projectPurchaseOrderForActor(order, actor, currency)) as PurchaseOrderWithRelations[],
+    )
   } catch (error) {
     return { success: false, data: [], error: error instanceof Error ? error.message : "Failed to fetch purchase orders" }
   }
@@ -129,8 +138,12 @@ export async function getOrgPurchaseOrderBYLocationId(organizationId: string, lo
 }
 
 export async function getOrgPurchaseOrderById(id: string, organizationId?: string) {
-  const { orgId } = await scopedOrg(organizationId, "purchases.orders.read", { resourceId: id })
-  return getPurchaseOrderById(id, orgId)
+  const actor = await scopedOrg(organizationId, "purchases.orders.read", { resourceId: id })
+  const [order, currency] = await Promise.all([
+    getPurchaseOrderById(id, actor.orgId),
+    getPurchaseOrderCurrency(actor.orgId),
+  ])
+  return projectPurchaseOrderForActor(order, actor, currency)
 }
 
 export async function createPurchaseOrder(
@@ -236,8 +249,12 @@ export async function receiveItems(payload: GoodsReceiptPayload): Promise<Purcha
       purchaseOrderId: payload.id,
       organizationId: orgId,
       receivedById: userId,
+      idempotencyKey: payload.idempotencyKey,
       locationId: payload.locationId,
       notes: payload.notes,
+      inspectionOutcome: payload.inspectionOutcome,
+      inspectionReason: payload.inspectionReason,
+      inspectionEvidenceNotes: payload.inspectionEvidenceNotes,
       items: payload.items,
     })
     const result = await receiveItemsService(parsed)
@@ -247,13 +264,50 @@ export async function receiveItems(payload: GoodsReceiptPayload): Promise<Purcha
     revalidatePath("/[locale]/dashboard/inventory", "page")
     return response(
       result.purchaseOrder as PurchaseOrderWithRelations,
-      `Items received successfully. Goods receipt ${result.receiptNumber} created.`,
+      result.receiptStatus === "HELD"
+        ? `Goods receipt ${result.receiptNumber} recorded and held pending inspection resolution.`
+        : `Items received successfully. Goods receipt ${result.receiptNumber} created.`,
     )
   } catch (error) {
     return {
       success: false,
       data: null as unknown as PurchaseOrderWithRelations,
       error: error instanceof Error ? error.message : "Failed to receive items",
+    }
+  }
+}
+
+export async function resolveGoodsReceiptInspection(payload: GoodsReceiptInspectionResolutionPayload) {
+  try {
+    const { orgId, userId } = await scopedOrg(payload.organizationId, "purchases.orders.receive", {
+      resource: "GoodsReceipt",
+      resourceId: payload.goodsReceiptId,
+      auditAllowed: true,
+    })
+    const parsed = ResolveGoodsReceiptInspectionSchema.parse({
+      goodsReceiptId: payload.goodsReceiptId,
+      organizationId: orgId,
+      resolvedById: userId,
+      decision: payload.decision,
+      reason: payload.reason,
+      idempotencyKey: payload.idempotencyKey,
+    })
+    const result = await resolveGoodsReceiptInspectionService(parsed)
+    revalidatePurchaseOrderWorkflow(orgId, result.purchaseOrderId)
+    revalidateTag("inventory")
+    revalidateTag(`inventory-${orgId}`)
+    revalidatePath("/[locale]/dashboard/inventory", "page")
+    return response(
+      result,
+      result.decision === "ACCEPT"
+        ? `Goods receipt ${result.receiptNumber} released to inventory.`
+        : `Goods receipt ${result.receiptNumber} rejected and kept unavailable.`,
+    )
+  } catch (error) {
+    return {
+      success: false,
+      data: null,
+      error: error instanceof Error ? error.message : "Failed to resolve goods receipt inspection",
     }
   }
 }
@@ -274,6 +328,12 @@ export async function bulkUpdatePurchaseOrderStatus(params: {
   toStatus: PurchaseOrderStatus
   reason?: string
 }): Promise<PurchaseOrderResponse<{ updated: string[]; failed: { id: string; error: string }[] }>> {
+  if (params.toStatus === "APPROVED") {
+    throw new BusinessRuleError(
+      "Purchase orders cannot be approved in bulk. Use the canonical approval workflow for each order.",
+    )
+  }
+
   const { orgId } = await scopedOrg(params.organizationId, permissionForBulkStatus(params.toStatus), {
     auditAllowed: true,
   })

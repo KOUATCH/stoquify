@@ -506,6 +506,13 @@ describe("payroll setup actions", () => {
         code: "FORBIDDEN",
       }),
     );
+    expect(mockRequirePermission).toHaveBeenCalledWith(
+      "payroll.runs.calculate",
+      {
+        resource: "PayrollSeedBackfillDryRunPlan",
+        auditAllowed: false,
+      },
+    );
     expect(mockGetPayrollSetupReadiness).not.toHaveBeenCalled();
     expect(mockGeneratePayrollSeedBackfillDryRunPlan).not.toHaveBeenCalled();
     expect(mockGetPayrollSetupEvidenceReadModel).not.toHaveBeenCalled();

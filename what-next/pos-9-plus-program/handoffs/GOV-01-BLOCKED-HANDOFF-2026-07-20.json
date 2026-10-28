@@ -1,0 +1,29 @@
+{
+  "version": "GOV-01-HANDOFF-2026-07-20",
+  "status": "BLOCKED",
+  "from": "stoquify-pos-9plus-program-orchestrator",
+  "to": "Human product/control decision owners",
+  "scope": "Decision approval and design-contract freeze only",
+  "requiredApprovals": [
+    "D-01 STORE_CREDIT",
+    "D-02 physical active-session boundary",
+    "D-07 launch-country/currency/fiscal/language scope"
+  ],
+  "requiredContracts": [
+    "G1 tender/accounting truth contract",
+    "G2 session/drawer invariant contract",
+    "G5 entitlement/tenant/access contract"
+  ],
+  "prohibited": [
+    "provider implementation",
+    "offline implementation",
+    "release certification",
+    "product code changes before approvals"
+  ],
+  "rollback": "Documentation-only; preserve prior register versions.",
+  "nextDispatchAfterApproval": [
+    "HON-01",
+    "SEC-01",
+    "SH-01"
+  ]
+}

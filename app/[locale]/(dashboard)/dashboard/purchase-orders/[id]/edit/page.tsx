@@ -1,10 +1,8 @@
-import { ModernEditPurchaseOrderForm } from "@/components/purchase-orders/ModernEditPurchaseOrderForm"
-import { getAuthenticatedUser } from "@/config/useAuth"
-import {
-  getPurchaseOrderById,
-  getPurchaseOrderFormOptions,
-} from "@/services/purchase-order/purchase-order.service"
 import { notFound } from "next/navigation"
+
+import { ModernEditPurchaseOrderForm } from "@/components/purchase-orders/ModernEditPurchaseOrderForm"
+import { getPurchaseOrderById, getPurchaseOrderFormOptions } from "@/services/purchase-order/purchase-order.service"
+import { routeByKey, withPurchaseOrdersSurfaceAccess } from "../../purchase-orders-route-access"
 
 interface PurchaseOrderEditPageProps {
   params: Promise<{
@@ -14,27 +12,41 @@ interface PurchaseOrderEditPageProps {
 }
 
 export default async function PurchaseOrderEditPage({ params }: PurchaseOrderEditPageProps) {
-  const { id } = await params
-  const user = await getAuthenticatedUser()
+  const { id, locale } = await params
 
-  if (!id || !user?.organizationId) {
+  if (!id) {
     notFound()
   }
 
-  const purchaseOrder = await getPurchaseOrderById(id, user.organizationId).catch(() => null)
-  if (!purchaseOrder || purchaseOrder.status !== "DRAFT") {
-    notFound()
+  const surface = routeByKey("purchase-orders-edit")
+
+  if (!surface) {
+    throw new Error("Missing purchase orders route surface definition: purchase-orders-edit")
   }
 
-  const options = await getPurchaseOrderFormOptions(user.organizationId)
+  return withPurchaseOrdersSurfaceAccess({
+    params: Promise.resolve({ locale }),
+    surface,
+    permissionOptions: {
+      resourceId: id,
+    },
+    onAllowed: async (ctx) => {
+      const purchaseOrder = await getPurchaseOrderById(id, ctx.orgId).catch(() => null)
+      if (!purchaseOrder || purchaseOrder.status !== "DRAFT") {
+        notFound()
+      }
 
-  return (
-    <ModernEditPurchaseOrderForm
-      purchaseOrder={purchaseOrder}
-      suppliers={options.suppliers}
-      locations={options.locations}
-      items={options.items}
-      organizationId={user.organizationId}
-    />
-  )
+      const options = await getPurchaseOrderFormOptions(ctx.orgId)
+
+      return (
+        <ModernEditPurchaseOrderForm
+          purchaseOrder={purchaseOrder}
+          suppliers={options.suppliers}
+          locations={options.locations}
+          items={options.items}
+          organizationId={ctx.orgId}
+        />
+      )
+    },
+  })
 }

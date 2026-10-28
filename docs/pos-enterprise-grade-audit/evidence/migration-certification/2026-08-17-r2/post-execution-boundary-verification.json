@@ -1,0 +1,34 @@
+{
+  "observedAt": "2026-08-17T11:43:04.156Z",
+  "database": "stoquify_dev_migrated_20260814",
+  "publicDataAccessed": false,
+  "realDataUsed": false,
+  "schemas": {
+    "codex_pos_commit_result_restore_20260817": {
+      "schemaPresent": true,
+      "tableCount": 81,
+      "migrationHistory": { "total": 8, "finished": 7, "unresolved": 1 },
+      "disposition": "preserved_partial_restore_not_reset_or_dropped"
+    },
+    "codex_pos_commit_result_restore_20260817_r2": {
+      "schemaPresent": true,
+      "tableCount": 191,
+      "migrationHistory": { "total": 67, "finished": 67, "unresolved": 0 },
+      "disposition": "fresh_restore_replay_complete"
+    },
+    "codex_pos_commit_result_cert_20260817": {
+      "schemaPresent": true,
+      "tableCount": 191,
+      "migrationHistory": { "total": 67, "finished": 67, "unresolved": 0 },
+      "disposition": "final_target_replay_complete_synthetic_only"
+    }
+  },
+  "syntheticFixture": {
+    "organizationCount": 1,
+    "locationCount": 1,
+    "terminalCount": 1,
+    "drawerCount": 1,
+    "activeSessionCount": 1,
+    "userCount": 1
+  }
+}

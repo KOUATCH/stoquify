@@ -1,0 +1,843 @@
+{
+  "artifact": {
+    "title": "Stoquify Enterprise Sales-to-Cash Readiness",
+    "artifactDate": "2026-08-16",
+    "executedAt": "2026-08-17T05:17:00+02:00",
+    "scope": "Repository audit and target-state design only",
+    "overallStatus": "BLOCKED",
+    "confidence": "HIGH_FOR_LOCAL_REPOSITORY_TRUTH_LOW_FOR_PRODUCTION",
+    "productionCertification": false,
+    "legalCertification": false,
+    "accountingCertification": false,
+    "pciCertification": false,
+    "accessibilityCertification": false
+  },
+  "verdict": {
+    "summary": "The immediate online cash-sale kernel is materially implemented and locally verified, but the enterprise sales-to-cash system is not production-ready.",
+    "strengths": [
+      "The authoritative POS commit transaction owns sale completion, payment rows, stock issue, cash-session totals, accounting postings, audit, events, and outbox creation in one database transaction.",
+      "Accounting posting kernels are source-linked, balanced, idempotent, open-period aware, and connected to close invalidation.",
+      "Inventory stock events are organization- and location-scoped, idempotent, version-checked, valuation-aware, and source-linked.",
+      "Refund and void paths preserve history through compensating records.",
+      "Offline ingestion and replay have device, signature, ordering, payload-conflict, idempotency, provisional-receipt, and operator-resolution controls.",
+      "Provider-event ingestion, statement import, suspense, matching, and reconciliation infrastructure exists independently of POS."
+    ],
+    "releaseBlockers": [
+      "Electronic POS tenders are marked PAID from operator-entered references without a provider-authoritative authorization, capture, unknown, settlement, reversal, dispute, or chargeback lifecycle.",
+      "Online POS has no tenant-scoped clientCommitId result registry, so a response-loss retry cannot deterministically return the original committed result.",
+      "A completed sale does not synchronously bind an immutable receipt/fiscal-source document; fiscal materialization is asynchronous and production worker, authority, and delivery proof are absent.",
+      "Delivery/on-account order-to-cash lacks authoritative reservation, fulfillment, goods-issue, partial-delivery, invoice, AR, and correction state machines.",
+      "POS route, navigation, read actions, write actions, offline actions, and seeded roles use inconsistent permission and module-entitlement contracts.",
+      "Business-day statement, blind tender declaration, manager sign-off, X/Z reporting, statement posting, and accounting-close handoff are not complete authoritative aggregates.",
+      "PostgreSQL concurrency, provider sandbox/live, fiscal authority, hardware, browser, multi-terminal, and operational recovery evidence is absent or incomplete."
+    ]
+  },
+  "evidenceBoundary": {
+    "localEvidence": [
+      "Current dirty worktree source and Prisma schema",
+      "Existing repository audit and evidence artifacts",
+      "Graphify component, action, app, hook, type, and service graphs",
+      "Focused TypeScript, Prisma, Jest, and static/runtime gate results",
+      "Dated official product and security documentation"
+    ],
+    "notProductionProof": [
+      "No production database, logs, traces, provider credentials, or provider statements were inspected.",
+      "No production receipt signing secret or fiscal authority was exercised.",
+      "No legal or statutory conclusion was made for a country pack.",
+      "No PCI DSS assessment, penetration test, accessibility audit, disaster recovery exercise, or load test was performed.",
+      "No browser/hardware/offline multi-device field test was performed.",
+      "The audited worktree contained user-owned uncommitted changes and therefore is not a release commit certification."
+    ],
+    "dirtyWorktreePreserved": true,
+    "applicationFilesModifiedByThisRun": false,
+    "artifactsCreatedByThisRun": [
+      "what-next/STOQUIFY_ENTERPRISE_SALES_TO_CASH_AUDIT_AND_MODERNIZATION_2026-08-16.md",
+      "what-next/STOQUIFY_ENTERPRISE_SALES_TO_CASH_READINESS_2026-08-16.json"
+    ]
+  },
+  "authoritativeOwners": [
+    {
+      "transition": "Immediate online POS sale finalization",
+      "currentOwner": "services/pos/pos.service.ts::commitPOSSale",
+      "status": "IMPLEMENTED_NOT_PRODUCTION_PROVEN",
+      "duplicateFinalizerFound": false
+    },
+    {
+      "transition": "Offline POS replay into the online finalizer",
+      "currentOwner": "services/pos/offline-sync.service.ts -> commitPOSSale",
+      "status": "IMPLEMENTED_NOT_PRODUCTION_PROVEN",
+      "duplicateFinalizerFound": false
+    },
+    {
+      "transition": "POS stock issue and valuation",
+      "currentOwner": "services/inventory/inventory-stock-event.service.ts::postPOSStockIssue",
+      "status": "IMPLEMENTED_NOT_PRODUCTION_PROVEN"
+    },
+    {
+      "transition": "Sale, payment, refund, and void ledger posting",
+      "currentOwner": "services/accounting/postings",
+      "status": "IMPLEMENTED_NOT_PRODUCTION_PROVEN"
+    },
+    {
+      "transition": "Fiscal document materialization",
+      "currentOwner": "services/compliance/fiscalization-outbox.service.ts -> createFiscalDocumentFromPostedSource",
+      "status": "PARTIAL_ASYNC_AND_NOT_AUTHORITY_PROVEN",
+      "risk": "services/pos/pos.service.ts also contains an unused createPOSFiscalDocumentInTx helper, creating ownership ambiguity."
+    },
+    {
+      "transition": "Electronic tender authorization and capture",
+      "currentOwner": null,
+      "status": "MISSING_FROM_POS"
+    },
+    {
+      "transition": "Delivery/on-account reservation and fulfillment",
+      "currentOwner": null,
+      "status": "MISSING"
+    },
+    {
+      "transition": "Business-day retail statement posting",
+      "currentOwner": null,
+      "status": "MISSING"
+    }
+  ],
+  "workflowReadiness": [
+    {
+      "id": "WF-POS-IMMEDIATE",
+      "name": "Immediate online POS cash sale",
+      "status": "PARTIAL",
+      "implemented": [
+        "Scoped draft cart",
+        "Terminal, session, and drawer validation",
+        "Exact monetary calculation",
+        "Transactional sale completion",
+        "Payment row creation",
+        "Stock issue and valuation",
+        "Sale and payment postings",
+        "Audit, business event, notification, and fiscalization outbox",
+        "Compensating refund and void"
+      ],
+      "gaps": [
+        "No clientCommitId result replay",
+        "No PostgreSQL race proof",
+        "Receipt/fiscal source remains pending after commit",
+        "Browser, hardware, and live operational proof absent"
+      ]
+    },
+    {
+      "id": "WF-POS-ELECTRONIC",
+      "name": "Immediate POS electronic tender",
+      "status": "RISKY",
+      "gaps": [
+        "Manual reference validation is treated as successful payment",
+        "POS Payment rows are created as PAID without provider-owned capture truth",
+        "PaymentTransaction and ProviderEvent state are not connected to POS commit",
+        "Unknown, declined, reversed, disputed, chargeback, and settlement states are incomplete"
+      ]
+    },
+    {
+      "id": "WF-POS-ON-ACCOUNT",
+      "name": "Immediate POS on-account sale",
+      "status": "PARTIAL",
+      "implemented": [
+        "Customer requirement",
+        "Receivable document and customer-ledger creation",
+        "Sale, tax, COGS, and inventory posting"
+      ],
+      "gaps": [
+        "This is an immediate goods issue with AR, not delivery/on-account order fulfillment",
+        "No promise, reservation, partial shipment, delivery evidence, or shipment-based invoicing"
+      ]
+    },
+    {
+      "id": "WF-OTC-DELIVERY",
+      "name": "Delivery/on-account order-to-cash",
+      "status": "MISSING",
+      "gaps": [
+        "SalesOrder status names exist but no authoritative confirm, reserve, pick, ship, deliver, or partial-fulfillment commands were found",
+        "No fulfillment aggregate or delivery document",
+        "No reservation consumption contract",
+        "No fulfillment-triggered COGS and inventory posting",
+        "No delivery-triggered invoice and AR orchestration",
+        "No linked return, credit-note, and goods-issue reversal lifecycle"
+      ]
+    },
+    {
+      "id": "WF-CLOSE",
+      "name": "Shift close, business-day statement, reconciliation, and accounting close",
+      "status": "PARTIAL",
+      "implemented": [
+        "POS session close and variance evidence",
+        "Offline replay/conflict close blockers",
+        "End-of-day readiness read model",
+        "Provider statement import, matching, suspense, and reconciliation",
+        "Accounting close assurance and invalidation"
+      ],
+      "gaps": [
+        "No authoritative business-day aggregate",
+        "No blind tender declaration aggregate",
+        "Branch payment reconciliation is explicitly unsupported in end-of-day readiness",
+        "Manager sign-off is explicitly unsupported in end-of-day readiness",
+        "No governed X/Z report and statement-posting lifecycle"
+      ]
+    }
+  ],
+  "capabilityMatrix": [
+    {
+      "id": "CAP-01",
+      "capability": "Single authoritative online sale finalizer",
+      "status": "IMPLEMENTED",
+      "risk": "MEDIUM",
+      "evidence": [
+        "services/pos/pos.service.ts::commitPOSSale",
+        "actions/pos/tender.actions.ts",
+        "services/pos/offline-sync.service.ts"
+      ]
+    },
+    {
+      "id": "CAP-02",
+      "capability": "Atomic sale, payment, stock, cash, ledger, audit, and outbox commit",
+      "status": "IMPLEMENTED_NOT_PRODUCTION_PROVEN",
+      "risk": "MEDIUM",
+      "evidence": [
+        "services/pos/pos.service.ts",
+        "services/pos/__tests__/pos.service.test.ts"
+      ]
+    },
+    {
+      "id": "CAP-03",
+      "capability": "Tenant-scoped request idempotency and original-result replay",
+      "status": "MISSING",
+      "risk": "CRITICAL",
+      "evidence": [
+        "services/pos/pos.schemas.ts has no clientCommitId",
+        "commitPOSSale result is not stored in a client-result registry"
+      ]
+    },
+    {
+      "id": "CAP-04",
+      "capability": "Provider-authoritative electronic payment lifecycle",
+      "status": "RISKY",
+      "risk": "CRITICAL",
+      "evidence": [
+        "POS creates legacy Payment rows as PAID",
+        "ProviderEvent and PaymentTransaction infrastructure exists but is not used by POS commit"
+      ]
+    },
+    {
+      "id": "CAP-05",
+      "capability": "Provider webhook signature, replay, and redaction controls",
+      "status": "IMPLEMENTED_NOT_LIVE_PROVEN",
+      "risk": "MEDIUM",
+      "evidence": [
+        "services/payments/provider-event.service.ts",
+        "services/payments/__tests__/provider-event.service.test.ts"
+      ]
+    },
+    {
+      "id": "CAP-06",
+      "capability": "Provider statement matching, suspense, and reconciliation",
+      "status": "IMPLEMENTED_NOT_POS_INTEGRATED",
+      "risk": "HIGH",
+      "evidence": [
+        "services/payments",
+        "services/reconciliation",
+        "payment:cash-truth:gate passed"
+      ]
+    },
+    {
+      "id": "CAP-07",
+      "capability": "Immutable receipt and fiscal-source evidence for every completed sale",
+      "status": "PARTIAL",
+      "risk": "CRITICAL",
+      "evidence": [
+        "Fiscalization outbox and FiscalDocument model exist",
+        "commitPOSSale returns fiscalDocument null with PENDING watermark",
+        "services/pos/pos.service.ts::createPOSFiscalDocumentInTx is unused"
+      ]
+    },
+    {
+      "id": "CAP-08",
+      "capability": "Receipt delivery independent from financial completion",
+      "status": "IMPLEMENTED_PARTIAL_CHANNELS",
+      "risk": "MEDIUM",
+      "evidence": [
+        "Post-commit delivery failure does not roll back sale",
+        "WhatsApp outbox is durable",
+        "Print, email, and SMS providers remain placeholders or unavailable"
+      ]
+    },
+    {
+      "id": "CAP-09",
+      "capability": "Public receipt token security",
+      "status": "LOCAL_READY_RELEASE_BLOCKED",
+      "risk": "HIGH",
+      "evidence": [
+        "Signed, expiring, scoped, revocable tokens",
+        "receipt:token:config-gate passed with release enforcement off",
+        "Production signing secret not configured in the audited environment"
+      ]
+    },
+    {
+      "id": "CAP-10",
+      "capability": "Inventory quantity and COGS at physical goods issue",
+      "status": "IMPLEMENTED_FOR_IMMEDIATE_POS",
+      "risk": "MEDIUM",
+      "evidence": [
+        "postPOSStockIssue",
+        "inventory:valuation:truth:gate passed",
+        "inventory stock-event tests passed"
+      ]
+    },
+    {
+      "id": "CAP-11",
+      "capability": "Delivery reservation, partial fulfillment, and goods issue",
+      "status": "MISSING",
+      "risk": "CRITICAL",
+      "evidence": [
+        "Generic reserved quantity fields exist",
+        "No sales fulfillment aggregate or authoritative workflow found"
+      ]
+    },
+    {
+      "id": "CAP-12",
+      "capability": "Balanced, source-linked sale, payment, AR, tax, COGS, inventory, refund, and void postings",
+      "status": "IMPLEMENTED_NOT_MAPPING_CERTIFIED",
+      "risk": "MEDIUM",
+      "evidence": [
+        "services/accounting/postings",
+        "ledger:close-truth:gate passed",
+        "No SYSCOHADA or jurisdiction-specific mapping certification performed"
+      ]
+    },
+    {
+      "id": "CAP-13",
+      "capability": "Provider fees, settlement clearing, and chargeback accounting",
+      "status": "PARTIAL",
+      "risk": "HIGH",
+      "evidence": [
+        "Payment reconciliation models include fees, suspense, and settlement evidence",
+        "POS electronic tender does not create the provider transaction lifecycle"
+      ]
+    },
+    {
+      "id": "CAP-14",
+      "capability": "Compensating refund, void, and return evidence",
+      "status": "PARTIAL",
+      "risk": "HIGH",
+      "evidence": [
+        "POS full refund and void create linked compensating stock/payment/ledger evidence",
+        "Partial refund, delivery return disposition, credit-note, and chargeback lifecycles are incomplete"
+      ]
+    },
+    {
+      "id": "CAP-15",
+      "capability": "Offline signed, ordered, replay-safe, conflict-aware events",
+      "status": "IMPLEMENTED_NOT_FIELD_PROVEN",
+      "risk": "HIGH",
+      "evidence": [
+        "offline:pos:replay:gate passed 16/16",
+        "offline-sync tests passed",
+        "No multi-device field or authority proof"
+      ]
+    },
+    {
+      "id": "CAP-16",
+      "capability": "Shift close and counted-cash variance",
+      "status": "IMPLEMENTED_NOT_COMPLETE_EOD",
+      "risk": "HIGH",
+      "evidence": [
+        "POS session and drawer close services",
+        "shift-close tests passed"
+      ]
+    },
+    {
+      "id": "CAP-17",
+      "capability": "Business-day statements, blind declarations, X/Z reports, and sign-off",
+      "status": "MISSING_OR_UNSUPPORTED",
+      "risk": "CRITICAL",
+      "evidence": [
+        "End-of-day readiness explicitly reports branch reconciliation and manager sign-off as UNSUPPORTED",
+        "No BusinessDay, TenderDeclaration, RetailStatement, XReport, or ZReport aggregate found"
+      ]
+    },
+    {
+      "id": "CAP-18",
+      "capability": "Consistent RBAC, module entitlement, fresh authentication, and separation of duties",
+      "status": "PARTIAL",
+      "risk": "CRITICAL",
+      "evidence": [
+        "Refund and void require fresh authentication",
+        "POS route uses OPERATE_POS while commands use pos.use",
+        "Cart and sync actions lack consistent module enforcement",
+        "Module inventory reported 408 surfaces, 292 enforcement candidates, and 79 missing-permission classifications"
+      ]
+    },
+    {
+      "id": "CAP-19",
+      "capability": "Cashier workflow, offline, hardware, privacy, and accessibility UX",
+      "status": "PARTIAL",
+      "risk": "HIGH",
+      "evidence": [
+        "ProfessionalPOSSystem.tsx is 2493 lines",
+        "Offline readiness is not connected to checkout",
+        "Hardware readiness is synthetic",
+        "Mobile cart layout, touch target, focus, privacy, inactivity lock, and handover gaps remain"
+      ]
+    },
+    {
+      "id": "CAP-20",
+      "capability": "Delivery/on-account order-to-cash",
+      "status": "MISSING",
+      "risk": "CRITICAL",
+      "evidence": [
+        "Sales dashboard is analytical",
+        "SalesOrder status enum contains lifecycle labels without command owners",
+        "No delivery, fulfillment, partial invoice, or linked correction orchestration found"
+      ]
+    }
+  ],
+  "targetDecisions": [
+    {
+      "id": "ADR-SALES-01",
+      "decision": "Keep commitPOSSale as the only immediate-sale finalizer and make offline replay call it.",
+      "rationale": "Prevents divergent accounting, inventory, receipt, audit, and reconciliation kernels."
+    },
+    {
+      "id": "ADR-SALES-02",
+      "decision": "Introduce a separate delivery/on-account orchestration aggregate that reuses inventory, accounting, receipt, payment, and reconciliation kernels.",
+      "rationale": "Delivery sales require promise, reservation, fulfillment, goods issue, invoice, AR, and partial-state semantics that do not belong in immediate POS."
+    },
+    {
+      "id": "ADR-SALES-03",
+      "decision": "Add a tenant-scoped POS client-result registry keyed by organizationId, terminalId, and clientCommitId with a canonical request hash and immutable result envelope.",
+      "rationale": "A retry after an unknown response must return the original outcome and reject a conflicting payload."
+    },
+    {
+      "id": "ADR-SALES-04",
+      "decision": "Require provider-authoritative state before an electronic tender can complete a sale; UNKNOWN and PENDING are non-success states.",
+      "rationale": "Operator-entered references cannot prove authorization or capture."
+    },
+    {
+      "id": "ADR-SALES-05",
+      "decision": "Bind an immutable fiscal-source snapshot and idempotency key at sale commit, while legal-number assignment and authority submission remain country-pack-governed asynchronous steps.",
+      "rationale": "Receipt delivery may fail independently, but completed-sale source truth must never depend on mutable catalog or customer data."
+    },
+    {
+      "id": "ADR-SALES-06",
+      "decision": "Model session close, tender declaration, business-day statement, provider settlement reconciliation, and accounting period close as distinct observable lifecycles.",
+      "rationale": "Operational count, retail posting, external cash proof, and period certification have different evidence and authority."
+    }
+  ],
+  "accountingEvents": [
+    {
+      "event": "Immediate cash sale",
+      "debits": [
+        "Cash on hand",
+        "COGS"
+      ],
+      "credits": [
+        "Revenue",
+        "Tax payable",
+        "Inventory"
+      ]
+    },
+    {
+      "event": "Electronic capture",
+      "debits": [
+        "Provider clearing"
+      ],
+      "credits": [
+        "Revenue",
+        "Tax payable"
+      ],
+      "condition": "Only after provider-authoritative captured/confirmed state"
+    },
+    {
+      "event": "Provider settlement",
+      "debits": [
+        "Bank",
+        "Provider fee expense where applicable"
+      ],
+      "credits": [
+        "Provider clearing"
+      ]
+    },
+    {
+      "event": "On-account invoice",
+      "debits": [
+        "Accounts receivable"
+      ],
+      "credits": [
+        "Revenue",
+        "Tax payable"
+      ]
+    },
+    {
+      "event": "Physical goods issue",
+      "debits": [
+        "COGS"
+      ],
+      "credits": [
+        "Inventory"
+      ]
+    },
+    {
+      "event": "Customer payment",
+      "debits": [
+        "Cash, bank, or provider clearing"
+      ],
+      "credits": [
+        "Accounts receivable"
+      ]
+    },
+    {
+      "event": "Refund, void, return, fee, dispute, or chargeback",
+      "debits": [
+        "Configured correction accounts"
+      ],
+      "credits": [
+        "Configured correction accounts"
+      ],
+      "condition": "Always source-linked compensating records; never mutation of the original journal"
+    }
+  ],
+  "priorityBacklog": {
+    "P0": [
+      {
+        "id": "P0-01",
+        "title": "Tenant-scoped POS clientCommitId result replay",
+        "dependsOn": [],
+        "doneWhen": [
+          "Same key and same canonical request hash returns the immutable original result",
+          "Same key with a different request hash is rejected and audited",
+          "Concurrent PostgreSQL attempts produce one sale, one stock issue, one payment consequence set, and one result",
+          "No destructive migration is used"
+        ]
+      },
+      {
+        "id": "P0-02",
+        "title": "Provider-authoritative electronic tender bridge",
+        "dependsOn": [
+          "P0-01"
+        ],
+        "doneWhen": [
+          "POS creates or references PaymentTransaction rather than trusting an operator reference",
+          "Pending and unknown never complete the sale",
+          "Signed webhooks are idempotent and state-monotonic",
+          "Captured, settled, fee, reversal, dispute, chargeback, and suspense evidence tie to ledger and reconciliation"
+        ]
+      },
+      {
+        "id": "P0-03",
+        "title": "Immutable receipt/fiscal-source materialization",
+        "dependsOn": [
+          "P0-01"
+        ],
+        "doneWhen": [
+          "Every completed sale has an immutable source snapshot and hash before the commit result is returned",
+          "Legal numbering remains asynchronous and country-pack-authorized",
+          "Delivery retries cannot alter financial truth",
+          "The unused synchronous fiscal helper is removed or formally adopted so there is one owner"
+        ]
+      },
+      {
+        "id": "P0-04",
+        "title": "POS access-boundary normalization",
+        "dependsOn": [],
+        "doneWhen": [
+          "Navigation, page, read, write, offline, receipt, refund, void, and close surfaces share documented permission and module contracts",
+          "Fresh authentication and maker-checker rules are explicit for material actions",
+          "Cross-tenant and cross-location negative tests pass",
+          "Cashier seed roles are least privilege"
+        ]
+      },
+      {
+        "id": "P0-05",
+        "title": "Release proof for concurrency, secrets, provider, fiscal worker, and offline close",
+        "dependsOn": [
+          "P0-01",
+          "P0-02",
+          "P0-03",
+          "P0-04"
+        ],
+        "doneWhen": [
+          "PostgreSQL race evidence is green",
+          "Release receipt-token secret gate is green",
+          "Provider sandbox/webhook/statement evidence is green",
+          "Fiscal worker retry and dead-letter drills are green",
+          "Offline conflict prevents false close and has a tested operator resolution"
+        ]
+      }
+    ],
+    "P1": [
+      {
+        "id": "P1-01",
+        "title": "Delivery/on-account order-to-cash aggregate",
+        "dependsOn": [
+          "P0-01",
+          "P0-04"
+        ]
+      },
+      {
+        "id": "P1-02",
+        "title": "Reservation, partial fulfillment, goods issue, and reversal contracts",
+        "dependsOn": [
+          "P1-01"
+        ]
+      },
+      {
+        "id": "P1-03",
+        "title": "Invoice, AR, partial payment, credit-note, and return orchestration",
+        "dependsOn": [
+          "P1-02",
+          "P0-03"
+        ]
+      },
+      {
+        "id": "P1-04",
+        "title": "Business day, blind tender declaration, X/Z report, statement posting, and sign-off",
+        "dependsOn": [
+          "P0-02",
+          "P0-04",
+          "P0-05"
+        ]
+      },
+      {
+        "id": "P1-05",
+        "title": "Cashier recovery, inactivity lock, handover, hardware, offline checkout, privacy, and accessibility",
+        "dependsOn": [
+          "P0-01",
+          "P0-04",
+          "P1-04"
+        ]
+      },
+      {
+        "id": "P1-06",
+        "title": "Currency minor-unit, tax-mode, UOM, batch, serial, and availability contracts",
+        "dependsOn": [
+          "P1-01"
+        ],
+        "note": "Enable only proven combinations; do not imply unsupported capability."
+      }
+    ],
+    "P2": [
+      {
+        "id": "P2-01",
+        "title": "Decompose the oversized POS component and service after contracts are frozen"
+      },
+      {
+        "id": "P2-02",
+        "title": "Add performance budgets, queue SLOs, operational dashboards, and recovery runbooks"
+      },
+      {
+        "id": "P2-03",
+        "title": "Add non-financial analytics only after transaction-truth events are stable"
+      }
+    ],
+    "DEFERRED": [
+      "CRM campaigns",
+      "Loyalty",
+      "Forecasting",
+      "Recommendation engines",
+      "Generic analytics",
+      "Unproven multi-currency",
+      "Unproven inclusive tax",
+      "Unproven POS serial, lot, or UOM selection",
+      "Unproven fiscal certification",
+      "Broad UI beautification"
+    ]
+  },
+  "benchmarkSources": [
+    {
+      "system": "SAP S/4HANA",
+      "reviewedAt": "2026-08-17",
+      "url": "https://help.sap.com/docs/SAP_S4HANA_ON-PREMISE/25a41481f62e469ba0e61015a0d39d20/610fb16c6f8341e0a0725eeb3abb00ed.html",
+      "reusedInvariant": "Sales order, outbound delivery, goods issue, billing, partial fulfillment, and reversal are explicit linked process states."
+    },
+    {
+      "system": "Microsoft Dynamics 365 Commerce",
+      "reviewedAt": "2026-08-17",
+      "url": "https://learn.microsoft.com/en-us/dynamics365/commerce/retail-statements",
+      "reusedInvariant": "Shift close precedes statement calculation/posting; statements create sales, invoices, payment journals, and inventory consequences."
+    },
+    {
+      "system": "Oracle NetSuite",
+      "reviewedAt": "2026-08-17",
+      "url": "https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_N1459773.html",
+      "reusedInvariant": "Sales orders are non-posting; physical fulfillment posts COGS and inventory; invoices post AR and revenue; immediate assured payment uses cash-sale semantics."
+    },
+    {
+      "system": "Odoo",
+      "reviewedAt": "2026-08-17",
+      "url": "https://www.odoo.com/documentation/18.0/applications/sales/point_of_sale.html",
+      "reusedInvariant": "POS session, counted cash, payment method, receipt/invoice, stock movement, correction document, and accounting posting are linked but distinct."
+    }
+  ],
+  "securityReferences": [
+    {
+      "standard": "PCI DSS v4.0.1",
+      "reviewedAt": "2026-08-17",
+      "url": "https://www.pcisecuritystandards.org/document_library/",
+      "use": "Scope minimization, no PAN/CVV/PIN in application logs or evidence, secure payment-provider boundary, and qualified assessment requirement."
+    },
+    {
+      "standard": "OWASP ASVS 5.0.0",
+      "reviewedAt": "2026-08-17",
+      "url": "https://github.com/OWASP/ASVS",
+      "use": "Verification baseline for authorization, authentication freshness, sensitive-data protection, logging, input validation, and API controls."
+    }
+  ],
+  "verification": [
+    {
+      "command": "git status --short",
+      "status": "OBSERVED_DIRTY",
+      "result": "User-owned modified and untracked files were present before artifact creation and were preserved."
+    },
+    {
+      "command": "npm run typecheck",
+      "status": "PASSED",
+      "result": "Exit 0"
+    },
+    {
+      "command": "npm run prisma:validate",
+      "status": "PASSED",
+      "result": "Schema valid; exit 0"
+    },
+    {
+      "command": "npx jest --runTestsByPath <8 focused suites> --runInBand",
+      "status": "PASSED",
+      "result": "8/8 suites and 99/99 tests passed in 40.351 seconds"
+    },
+    {
+      "command": "npm run workflow:assurance:runtime-check",
+      "status": "PASSED",
+      "result": "7/7 runtime tables, 3/3 migration rows, 0 blockers"
+    },
+    {
+      "command": "npm run inventory:valuation:truth:gate",
+      "status": "PASSED_EQUIVALENT_WITH_TEMP_OUTPUT",
+      "result": "6/6 checks, 0 blockers"
+    },
+    {
+      "command": "npm run payment:cash-truth:gate",
+      "status": "PASSED_EQUIVALENT_WITH_TEMP_OUTPUT",
+      "result": "14/14 checks, 0 blockers"
+    },
+    {
+      "command": "npm run ledger:close-truth:gate",
+      "status": "PASSED_EQUIVALENT_WITH_TEMP_OUTPUT",
+      "result": "10/10 checks, 0 blockers"
+    },
+    {
+      "command": "npm run offline:pos:replay:gate",
+      "status": "PASSED_EQUIVALENT_WITH_TEMP_OUTPUT",
+      "result": "16/16 checks, 0 blockers"
+    },
+    {
+      "command": "npm run receipt:token:config-gate",
+      "status": "PASSED_WITH_WARNING",
+      "result": "4/4 checks, 0 blockers, production token secret absent, release enforcement off"
+    },
+    {
+      "command": "npm run module:surface:inventory",
+      "status": "REPORT_COMPLETED_WITH_TEMP_OUTPUT",
+      "result": "408 surfaces, 367 mapped classifications, 292 enforcement-candidate classifications, 79 missing-permission classifications"
+    }
+  ],
+  "successCriteriaAssessment": [
+    {
+      "criterion": "Every material sales transition has one authoritative owner and an explicit state contract",
+      "status": "NOT_MET"
+    },
+    {
+      "criterion": "Immediate POS and delivery/on-account sales are separated without duplicating kernels",
+      "status": "PARTIAL"
+    },
+    {
+      "criterion": "Sale retries return the original result safely",
+      "status": "NOT_MET"
+    },
+    {
+      "criterion": "Electronic payments have provider-owned pending, unknown, captured, and settled semantics",
+      "status": "NOT_MET"
+    },
+    {
+      "criterion": "Every completed sale has immutable receipt/fiscal-source evidence independent of delivery",
+      "status": "NOT_MET"
+    },
+    {
+      "criterion": "Inventory quantity and COGS move at the correct physical event",
+      "status": "MET_FOR_IMMEDIATE_POS_NOT_MET_FOR_DELIVERY"
+    },
+    {
+      "criterion": "All material accounting consequences are balanced and source-linked",
+      "status": "PARTIAL_LOCAL_EVIDENCE_ONLY"
+    },
+    {
+      "criterion": "Refunds, voids, and returns preserve original history",
+      "status": "PARTIAL"
+    },
+    {
+      "criterion": "Shift close, statement posting, reconciliation, and accounting close are distinct and observable",
+      "status": "PARTIAL"
+    },
+    {
+      "criterion": "Offline events are signed, ordered, replay-safe, conflict-aware, and resolvable",
+      "status": "IMPLEMENTED_NOT_FIELD_PROVEN"
+    },
+    {
+      "criterion": "Tenant isolation, RBAC, entitlement, fresh auth, redaction, auditability, and separation of duties are tested",
+      "status": "PARTIAL"
+    },
+    {
+      "criterion": "Final report distinguishes local evidence from production proof and lists unresolved blockers",
+      "status": "MET_BY_THIS_AUDIT"
+    },
+    {
+      "criterion": "Phased plan is executable by future Codex runs without guessing",
+      "status": "MET_BY_THIS_AUDIT"
+    }
+  ],
+  "reviewerDecisionsRequired": [
+    {
+      "reviewer": "Product",
+      "decision": "Confirm immediate-sale versus delivery-order scope, partial fulfillment, invoice timing, and supported tender/channel combinations."
+    },
+    {
+      "reviewer": "Accounting controller",
+      "decision": "Approve event-to-posting rules, clearing/fee/chargeback accounts, tax timing, AR timing, close gates, and correction policy."
+    },
+    {
+      "reviewer": "Inventory controller",
+      "decision": "Approve reservation, availability, goods issue, return disposition, valuation, negative-stock, lot/serial, and UOM policy."
+    },
+    {
+      "reviewer": "Payments and treasury",
+      "decision": "Approve provider state normalization, unknown-payment handling, settlement tolerance, suspense, fees, disputes, and chargebacks."
+    },
+    {
+      "reviewer": "Security",
+      "decision": "Approve payment-data scope, provider webhook trust, RBAC/entitlement map, fresh-auth thresholds, maker-checker policy, redaction, and evidence retention."
+    },
+    {
+      "reviewer": "Country-pack qualified human",
+      "decision": "Approve dated receipt fields, legal numbering, tax timing, fiscal authority workflow, retention, correction, and offline provisional-document rules."
+    },
+    {
+      "reviewer": "Operations and support",
+      "decision": "Approve cashier recovery, offline conflict resolution, shift handover, business-day close, dead-letter ownership, and incident runbooks."
+    },
+    {
+      "reviewer": "Accessibility",
+      "decision": "Verify keyboard, focus, screen-reader, touch-target, contrast, responsive cart, error, recovery, and receipt-delivery workflows."
+    },
+    {
+      "reviewer": "SRE and release",
+      "decision": "Approve SLOs, alerts, provider/fiscal worker health, backups, restore evidence, load limits, rollout, rollback, and production proof."
+    },
+    {
+      "reviewer": "AI governance",
+      "decision": "No AI decision or autonomous financial mutation is required for this sales-to-cash kernel; any future AI assistance must remain evidence-bounded and human-approved."
+    }
+  ]
+}

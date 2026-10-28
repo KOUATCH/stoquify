@@ -1,0 +1,222 @@
+{
+  "schemaVersion": "1.0",
+  "traceId": "3f4866b2-8d5f-4c1d-a9f2-7c69a9a19014",
+  "runId": "th-inventory-history-public-uploadthing-pilot-20260716-014",
+  "sliceId": "foundation-inventory",
+  "stageId": "05",
+  "skillName": "stoquify-transaction-history-05-workbench-ux-contract",
+  "agentType": "UX Architect",
+  "mode": "implement",
+  "status": "PASS",
+  "activeLanes": [
+    "workbench",
+    "inventory"
+  ],
+  "blockedLanes": [],
+  "inputArtifacts": [
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/run-manifest.json",
+      "sha256": "sha256:340877d1cff706bdc6083dc29cef49d7c96df2b539aa9419790eca69249c3fce"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/slices/foundation-inventory/04-read-model-optimizer.json",
+      "sha256": "sha256:59f41b239e7d021652e719e69234d79c75e8051a278d3d8814e6eebc214e3443"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/slices/foundation-inventory/04-read-model-optimizer.md",
+      "sha256": "sha256:f6038d788a8c13d3501a2a248f43684f3dd3d8f4e98f6d0b6ab1a6e0cc9bbe75"
+    },
+    {
+      "path": "docs/skills-life-cycle/stoquify-transaction-history-skill-suite-src/stoquify-transaction-history-05-workbench-ux-contract/SKILL.md",
+      "sha256": "sha256:9edaf7151176a66896dd6cc7c4b954c51c310dfb2e2489aeafae1a751a8c39e6"
+    },
+    {
+      "path": "docs/skills-life-cycle/stoquify-transaction-history-skill-suite-src/stoquify-transaction-history-05-workbench-ux-contract/references/workbench-contract.md",
+      "sha256": "sha256:f34c01e1bdc936b4b450fe369a8863321057ff93bdef561935d5ad268b82b22d"
+    },
+    {
+      "path": "docs/new ideas/STOQUIFY_TRANSACTION_HISTORY_ANALYTICS_AND_SECURITY_PROPOSAL_2026-07-14.md",
+      "sha256": "sha256:0628f08178fe0441fe22ccbd1a6b429c2bb07b2ea5d278e6dcb799ab117c6979"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-foundation-inventory-correction-verify-20260715-006/slices/foundation-inventory/02-security-proof-gate.json",
+      "sha256": "sha256:6bb0621ad7701c5f9cd096acb7be5d9f6803921d0bb179319a69e4c599414739"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/movements/page.tsx",
+      "sha256": "sha256:840bb46ae13303c72923fbca6e82ce13d945208cb13d6902db005b4245e95235"
+    },
+    {
+      "path": "components/inventory/movements/StockMovementDashboard.tsx",
+      "sha256": "sha256:cfaacd168d7697e58db0fc9b6980f6d5c48709bd6d4818541fe47a0feb14c077"
+    },
+    {
+      "path": "actions/inventory/inventoryMovementHistoryActions.ts",
+      "sha256": "sha256:ed695b84c5f17cc10f6511c27fdb48cffbf586c43531f37a1ea2bf23b7b6221d"
+    },
+    {
+      "path": "actions/inventory/inventoryMovementHistoryBackgroundExportActions.ts",
+      "sha256": "sha256:b76d32aeb715ba7c1780ba6bc961da4f488038949245aeef1700f9653caec522"
+    },
+    {
+      "path": "services/inventory/inventory-read.service.ts",
+      "sha256": "sha256:ba56417f90a8fe6fdca38d900f8049803bfbb2fefe7a19a38b65c614abbf3a87"
+    },
+    {
+      "path": "services/inventory/__tests__/inventory-read.service.test.ts",
+      "sha256": "sha256:e1517ec4905ae472d19bb4ead46f23000749131a51add0c65825329f4482f00b"
+    },
+    {
+      "path": "actions/inventory/__tests__/inventoryMovementHistoryActions.test.ts",
+      "sha256": "sha256:53a0a7e603fd71b630514ec4e80dde322c4393b4663405b6b9a7be78215de0ce"
+    }
+  ],
+  "inputFingerprint": "sha256:7cb3b68a9034af6324f00c1ff4cebca1e6540bf2c403df3e6cc8333f94c7a49d",
+  "allowedEdits": [
+    "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/slices/foundation-inventory/05-workbench-ux-contract.json",
+    "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/slices/foundation-inventory/05-workbench-ux-contract.md"
+  ],
+  "observedEdits": [
+    "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/slices/foundation-inventory/05-workbench-ux-contract.json",
+    "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/slices/foundation-inventory/05-workbench-ux-contract.md",
+    "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/run-manifest.json",
+    "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/run-state.json"
+  ],
+  "repository": {
+    "headBefore": "8a406e93b0e798ed6f476ca5d81df37a2aaa38be",
+    "headAfter": "8a406e93b0e798ed6f476ca5d81df37a2aaa38be",
+    "dirtyFilesBefore": [
+      ".env.example",
+      "package.json",
+      "services/inventory/inventory-history-export-artifact-store.ts",
+      "services/inventory/inventory-history-background-export.service.ts",
+      "scripts/inventory-history-export-provider-preflight.js"
+    ],
+    "dirtyFilesAfter": [
+      ".env.example",
+      "package.json",
+      "services/inventory/inventory-history-export-artifact-store.ts",
+      "services/inventory/inventory-history-background-export.service.ts",
+      "scripts/inventory-history-export-provider-preflight.js",
+      "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/slices/foundation-inventory/05-workbench-ux-contract.json",
+      "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/slices/foundation-inventory/05-workbench-ux-contract.md",
+      "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/run-manifest.json",
+      "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/run-state.json"
+    ]
+  },
+  "claims": [
+    {
+      "id": "UX_CMD",
+      "result": "PASS",
+      "evidence": [
+        "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/slices/foundation-inventory/05-workbench-ux-contract.md"
+      ]
+    },
+    {
+      "id": "UX_SCOPE",
+      "result": "PASS",
+      "evidence": [
+        "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/slices/foundation-inventory/05-workbench-ux-contract.md",
+        "components/inventory/movements/StockMovementDashboard.tsx",
+        "services/inventory/inventory-read.service.ts"
+      ]
+    },
+    {
+      "id": "UX_DATA",
+      "result": "PASS",
+      "evidence": [
+        "services/inventory/inventory-read.service.ts",
+        "actions/inventory/inventoryMovementHistoryActions.ts"
+      ]
+    },
+    {
+      "id": "UX_PARITY",
+      "result": "PASS",
+      "evidence": [
+        "services/inventory/__tests__/inventory-read.service.test.ts"
+      ]
+    },
+    {
+      "id": "UX_CURSOR",
+      "result": "PASS",
+      "evidence": [
+        "services/inventory/__tests__/inventory-read.service.test.ts"
+      ]
+    },
+    {
+      "id": "UX_PROOF",
+      "result": "GAP",
+      "evidence": [
+        "what-next/transaction-history/runs/th-foundation-inventory-correction-verify-20260715-006/slices/foundation-inventory/02-security-proof-gate.json",
+        "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/slices/foundation-inventory/05-workbench-ux-contract.md"
+      ]
+    },
+    {
+      "id": "UX_URL",
+      "result": "GAP",
+      "evidence": [
+        "components/inventory/movements/StockMovementDashboard.tsx",
+        "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/slices/foundation-inventory/05-workbench-ux-contract.md"
+      ]
+    },
+    {
+      "id": "UX_STATE_A11Y_I18N_MOBILE",
+      "result": "GAP",
+      "evidence": [
+        "components/inventory/movements/StockMovementDashboard.tsx",
+        "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/slices/foundation-inventory/05-workbench-ux-contract.md"
+      ]
+    },
+    {
+      "id": "UX_EXPORT",
+      "result": "PASS",
+      "evidence": [
+        "actions/inventory/inventoryMovementHistoryActions.ts",
+        "actions/inventory/inventoryMovementHistoryBackgroundExportActions.ts",
+        "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/slices/foundation-inventory/05-workbench-ux-contract.md"
+      ]
+    }
+  ],
+  "verification": [
+    {
+      "command": "Stage05 read-only source inspection and design-artifact contract creation",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/slices/foundation-inventory/05-workbench-ux-contract.md"
+    },
+    {
+      "command": "validate-run-artifacts.mjs --run-dir what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": null
+    }
+  ],
+  "outputs": [
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/slices/foundation-inventory/05-workbench-ux-contract.md",
+      "sha256": "sha256:1aa2ea7f75ab806f15d4b3934602a9cddb726bd2ca4e3f520760f0f6d5ffdb70"
+    }
+  ],
+  "blockers": [
+    {
+      "severity": "medium",
+      "code": "INVENTORY_PROOF_BADGE_CONTRACT_MISSING",
+      "reason": "Stage 02 evidence supports access and fresh-auth boundaries but not a user-facing inventory movement proof-grade subject contract."
+    },
+    {
+      "severity": "medium",
+      "code": "PRODUCT_WORKBENCH_IMPLEMENTATION_PENDING",
+      "reason": "The visible product route still renders the older client-local recent-activity dashboard; Stage 06 must implement the server-owned workbench."
+    },
+    {
+      "severity": "medium",
+      "code": "PUBLIC_UPLOADTHING_STORAGE_PILOT_GO_LIVE_BLOCKER",
+      "reason": "Stage 04 public UploadThing storage remains pilot-only and must be replaced before go-live."
+    }
+  ],
+  "nextEligibleStages": [
+    "06"
+  ],
+  "startedAt": "2026-07-16T05:00:00.000Z",
+  "completedAt": "2026-07-16T05:12:00.000Z"
+}

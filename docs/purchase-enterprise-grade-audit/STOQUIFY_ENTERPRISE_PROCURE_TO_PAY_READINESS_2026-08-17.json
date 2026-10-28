@@ -1,0 +1,142 @@
+{
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-08-17",
+  "scope": "enterprise-procure-to-pay-audit",
+  "decision": {
+    "status": "PARTIALLY_READY",
+    "p0HardeningAuthorized": true,
+    "enterpriseCompleteClaimAllowed": false,
+    "certificationsClaimed": []
+  },
+  "existingStrengths": [
+    "server-owned AP tenant and actor context",
+    "purchase-order maker-checker",
+    "inventory stock-event kernel",
+    "supplier-invoice duplicate, idempotency, match and posting controls",
+    "supplier-bank change maker-checker and fresh authentication",
+    "payment approval, release and outbound reconciliation controls",
+    "business-event, audit, notification and close-invalidation foundations",
+    "token-scoped supplier purchase-order acknowledgement"
+  ],
+  "findings": [
+    {
+      "code": "P2P_RECEIPT_CONCURRENCY",
+      "severity": "CRITICAL",
+      "status": "OPEN",
+      "owner": ["purchasing-engineering", "database-engineering"],
+      "evidence": ["services/purchase-order/purchase-order.service.ts:814", "services/purchase-order/purchase-order.service.ts:867", "services/purchase-order/purchase-order.service.ts:942"],
+      "phase": "P0",
+      "dependencies": [],
+      "acceptanceCriteria": ["parallel receipts cannot exceed ordered quantity", "same idempotency key returns the same receipt", "different payload with the same key is rejected", "PO, receipt and inventory quantities tie"]
+    },
+    {
+      "code": "P2P_DOCUMENT_SEQUENCE",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "owner": ["platform-engineering", "database-engineering"],
+      "evidence": ["services/purchase-order/purchase-order.service.ts:270", "services/purchase-order/purchase-order.service.ts:280"],
+      "phase": "P0",
+      "dependencies": [],
+      "acceptanceCriteria": ["atomic tenant-scoped number allocation", "unique-constraint retry", "real PostgreSQL parallel test"]
+    },
+    {
+      "code": "P2P_GRNI_POLICY_MISSING",
+      "severity": "HIGH",
+      "status": "BLOCKED",
+      "owner": ["accounting-platform", "qualified-accounting-reviewer"],
+      "evidence": ["services/inventory/inventory-stock-event.service.ts:826", "services/inventory/inventory-stock-event.service.ts:843"],
+      "phase": "P0",
+      "dependencies": ["P2P_RECEIPT_CONCURRENCY", "P2P_INSPECTION_MISSING", "P2P_COUNTRY_PACK_REVIEW"],
+      "acceptanceCriteria": ["accepted receipt posts balanced GRNI once", "supplier invoice clears matched GRNI once", "open GRNI ties to accepted uninvoiced receipts", "returns and reversals preserve source links"]
+    },
+    {
+      "code": "P2P_INSPECTION_MISSING",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "owner": ["inventory-operations", "inventory-engineering"],
+      "evidence": ["prisma/schema.prisma:1697", "services/purchase-order/purchase-order.service.ts:814"],
+      "phase": "P0",
+      "dependencies": ["P2P_RECEIPT_CONCURRENCY"],
+      "acceptanceCriteria": ["arrival, quarantine, accepted and rejected quantities balance", "only accepted quantity becomes available", "inspection evidence is immutable"]
+    },
+    {
+      "code": "P2P_MATCH_EXCEPTION_MISSING",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "owner": ["ap-controls", "product-engineering"],
+      "evidence": ["services/purchasing/ap-control.service.ts:1213", "services/purchasing/ap-control.service.ts:1275"],
+      "phase": "P0",
+      "dependencies": [],
+      "acceptanceCriteria": ["exact matching remains default", "policy version, reason, evidence, requester, independent approver and expiry persist", "source PO and receipt facts are not modified"]
+    },
+    {
+      "code": "P2P_RETURN_CREDIT_MISSING",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "owner": ["purchasing-engineering", "ap-controls", "accounting-platform"],
+      "evidence": ["prisma/schema.prisma"],
+      "phase": "P0",
+      "dependencies": ["P2P_GRNI_POLICY_MISSING", "P2P_DOCUMENT_EVIDENCE"],
+      "acceptanceCriteria": ["return before and after invoice is source-linked", "supplier credit evidence is captured, not invented", "original posted documents remain immutable", "inventory, GRNI, AP and close tie"]
+    },
+    {
+      "code": "P2P_DOCUMENT_EVIDENCE",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "owner": ["platform-engineering", "application-security", "records-governance"],
+      "evidence": ["components/purchase-orders", "prisma/schema.prisma"],
+      "phase": "P0",
+      "dependencies": [],
+      "acceptanceCriteria": ["immutable artifacts with hashes and versions", "MIME, size and malware controls", "encrypted storage and signed downloads", "redaction, retention and delivery audit"]
+    },
+    {
+      "code": "P2P_OPERATOR_SURFACE",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "owner": ["product", "frontend-engineering", "ap-controls"],
+      "evidence": ["actions/purchasing/ap-control.actions.ts:74", "actions/purchasing/ap-control.actions.ts:98", "components/purchasing/APControlWorkbench.tsx"],
+      "phase": "P0",
+      "dependencies": ["P2P_MATCH_EXCEPTION_MISSING", "P2P_DOCUMENT_EVIDENCE"],
+      "acceptanceCriteria": ["protected role workbenches invoke service-owned commands", "denied, stale, blocked, conflict and retry states are tested", "client values never become business truth"]
+    },
+    {
+      "code": "P2P_COUNTRY_PACK_REVIEW",
+      "severity": "RELEASE_BLOCKER",
+      "status": "BLOCKED",
+      "owner": ["country-pack-owner", "qualified-accounting-reviewer"],
+      "evidence": ["services/purchasing/ap-control.service.ts", "services/inventory/inventory-stock-event.service.ts:843"],
+      "phase": "P0_RELEASE",
+      "dependencies": [],
+      "acceptanceCriteria": ["versioned effective-dated policy", "qualified approval evidence", "missing mapping creates a visible blocker", "no hardcoded account or tax rule"]
+    },
+    {
+      "code": "INVENTORY_BOUNDARY_VIOLATION",
+      "severity": "RELEASE_BLOCKER",
+      "status": "OPEN",
+      "owner": ["inventory-engineering"],
+      "evidence": ["scripts/supplier-po-ack-e2e-fixture.js:195", "docs/purchase-enterprise-grade-audit/evidence/inventory-boundary-readiness.json"],
+      "phase": "P0",
+      "dependencies": [],
+      "acceptanceCriteria": ["inventory boundary fail gate reports zero active violations"]
+    }
+  ],
+  "verification": [
+    {"name": "purchasing-ap-consolidation", "status": "PASS", "result": "11/11 checks; 0 blockers"},
+    {"name": "ap-fraud-control", "status": "PASS", "result": "9/9 checks"},
+    {"name": "inventory-boundary", "status": "FAIL", "result": "1 active violation"},
+    {"name": "service-boundary", "status": "PASS", "result": "0 active violations"},
+    {"name": "workflow-assurance-runtime", "status": "PASS", "result": "7/7 tables; 3/3 migrations"},
+    {"name": "prisma-validate", "status": "PASS"},
+    {"name": "typecheck", "status": "PASS"},
+    {"name": "audit-focused-jest", "status": "PASS", "result": "6 suites; 50 tests"},
+    {"name": "attached-prompt-exact-jest-path-set", "status": "PASS", "result": "6 suites; 45 tests"}
+  ],
+  "nonGoals": [
+    "runtime implementation",
+    "wholesale ERP clone",
+    "unrelated module redesign",
+    "autonomous AI accounting",
+    "real supplier payment or provider activation",
+    "hardcoded country-specific accounting or statutory rules"
+  ]
+}

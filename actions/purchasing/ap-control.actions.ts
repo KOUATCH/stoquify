@@ -5,17 +5,25 @@ import { revalidatePath } from "next/cache"
 import { protect } from "@/services/_shared/protect"
 import {
   approveSupplierBankChangeWithControls,
+  approveSupplierInvoice,
+  approveSupplierPaymentWithControls,
   getAPWorkbenchData,
-  postSupplierInvoice,
+  prepareSupplierInvoice,
   releaseSupplierPaymentWithControls,
+  requestSupplierInvoiceMatchException,
   requestSupplierBankChange,
+  reviewSupplierInvoiceMatchException,
   type APWorkbenchData,
 } from "@/services/purchasing/ap-control.service"
 import {
   approveSupplierBankChangeInputSchema,
+  approveSupplierInvoiceInputSchema,
+  approveSupplierPaymentInputSchema,
   postSupplierInvoiceInputSchema,
   releaseSupplierPaymentInputSchema,
+  requestSupplierInvoiceMatchExceptionInputSchema,
   requestSupplierBankChangeInputSchema,
+  reviewSupplierInvoiceMatchExceptionInputSchema,
 } from "@/services/purchasing/ap-control.schemas"
 
 export type { APWorkbenchData }
@@ -48,7 +56,7 @@ export async function getAPWorkbenchAction(input: unknown = {}) {
   return getWorkbench(input)
 }
 
-const postInvoice = protect<unknown, Awaited<ReturnType<typeof postSupplierInvoice>>>(
+const prepareInvoice = protect<unknown, Awaited<ReturnType<typeof prepareSupplierInvoice>>>(
   {
     permission: "purchasing.ap.invoice.post",
     auditResource: "SupplierInvoice",
@@ -59,16 +67,91 @@ const postInvoice = protect<unknown, Awaited<ReturnType<typeof postSupplierInvoi
       ...asRecord(input),
       organizationId: ctx.orgId,
       createdById: ctx.userId,
+      approvedById: undefined,
+    })
+    const result = await prepareSupplierInvoice(parsed)
+    revalidateAPPaths()
+    return result
+  },
+)
+
+export async function prepareSupplierInvoiceAction(input: unknown) {
+  return prepareInvoice(input)
+}
+
+const approveAndPostInvoice = protect<unknown, Awaited<ReturnType<typeof approveSupplierInvoice>>>(
+  {
+    permission: "purchasing.ap.invoice.post",
+    auditResource: "SupplierInvoice",
+    freshAuth: true,
+    tenantGuard: "handler-derived",
+  },
+  async (input, ctx) => {
+    const raw = asRecord(input) as { supplierInvoiceId?: unknown }
+    const parsed = approveSupplierInvoiceInputSchema.parse({
+      organizationId: ctx.orgId,
+      supplierInvoiceId: raw.supplierInvoiceId,
       approvedById: ctx.userId,
     })
-    const result = await postSupplierInvoice(parsed)
+    const result = await approveSupplierInvoice(parsed)
     revalidateAPPaths()
     return result
   },
 )
 
 export async function postSupplierInvoiceAction(input: unknown) {
-  return postInvoice(input)
+  return approveAndPostInvoice(input)
+}
+
+const requestMatchException = protect<
+  unknown,
+  Awaited<ReturnType<typeof requestSupplierInvoiceMatchException>>
+>(
+  {
+    permission: "purchasing.ap.invoice.post",
+    auditResource: "SupplierInvoiceMatchException",
+    tenantGuard: "handler-derived",
+  },
+  async (input, ctx) => {
+    const parsed = requestSupplierInvoiceMatchExceptionInputSchema.parse({
+      ...asRecord(input),
+      organizationId: ctx.orgId,
+      requestedById: ctx.userId,
+    })
+    const result = await requestSupplierInvoiceMatchException(parsed)
+    revalidateAPPaths()
+    return result
+  },
+)
+
+export async function requestSupplierInvoiceMatchExceptionAction(input: unknown) {
+  return requestMatchException(input)
+}
+
+const reviewMatchException = protect<
+  unknown,
+  Awaited<ReturnType<typeof reviewSupplierInvoiceMatchException>>
+>(
+  {
+    permission: "purchasing.ap.match.review",
+    auditResource: "SupplierInvoiceMatchException",
+    freshAuth: true,
+    tenantGuard: "handler-derived",
+  },
+  async (input, ctx) => {
+    const parsed = reviewSupplierInvoiceMatchExceptionInputSchema.parse({
+      ...asRecord(input),
+      organizationId: ctx.orgId,
+      reviewedById: ctx.userId,
+    })
+    const result = await reviewSupplierInvoiceMatchException(parsed)
+    revalidateAPPaths()
+    return result
+  },
+)
+
+export async function reviewSupplierInvoiceMatchExceptionAction(input: unknown) {
+  return reviewMatchException(input)
 }
 
 const requestBankChange = protect<unknown, Awaited<ReturnType<typeof requestSupplierBankChange>>>(
@@ -121,6 +204,34 @@ export async function approveSupplierBankChangeAction(input: unknown) {
   return approveBankChange(input)
 }
 
+const approvePayment = protect<unknown, Awaited<ReturnType<typeof approveSupplierPaymentWithControls>>>(
+  {
+    permission: "purchasing.ap.payment.approve",
+    auditResource: "SupplierPayment",
+    freshAuth: true,
+    tenantGuard: "handler-derived",
+  },
+  async (input, ctx) => {
+    const parsed = approveSupplierPaymentInputSchema.parse({
+      ...asRecord(input),
+      organizationId: ctx.orgId,
+      approvedById: ctx.userId,
+    })
+    const result = await approveSupplierPaymentWithControls(parsed, {
+      organizationId: ctx.orgId,
+      actorId: ctx.userId,
+      actorPermissions: ctx.permissions,
+      lastAuthAt: Date.now(),
+    })
+    revalidateAPPaths()
+    return result
+  },
+)
+
+export async function approveSupplierPaymentAction(input: unknown) {
+  return approvePayment(input)
+}
+
 const releasePayment = protect<unknown, Awaited<ReturnType<typeof releaseSupplierPaymentWithControls>>>(
   {
     permission: "purchasing.ap.payment.release",
@@ -129,10 +240,22 @@ const releasePayment = protect<unknown, Awaited<ReturnType<typeof releaseSupplie
     tenantGuard: "handler-derived",
   },
   async (input, ctx) => {
+    const raw = asRecord(input) as {
+      supplierPaymentId?: unknown
+      paymentDate?: unknown
+      idempotencyKey?: unknown
+      documentHash?: unknown
+      evidenceHash?: unknown
+      notes?: unknown
+    }
     const parsed = releaseSupplierPaymentInputSchema.parse({
-      ...asRecord(input),
       organizationId: ctx.orgId,
-      approvedById: ctx.userId,
+      supplierPaymentId: raw.supplierPaymentId,
+      paymentDate: raw.paymentDate,
+      idempotencyKey: raw.idempotencyKey,
+      documentHash: raw.documentHash,
+      evidenceHash: raw.evidenceHash,
+      notes: raw.notes,
       releasedById: ctx.userId,
     })
     const result = await releaseSupplierPaymentWithControls(parsed, {

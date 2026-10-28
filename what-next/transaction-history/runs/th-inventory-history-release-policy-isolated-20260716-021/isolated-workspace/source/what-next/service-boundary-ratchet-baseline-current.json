@@ -1,0 +1,74 @@
+{
+  "root": "E:\\ohada saas\\newStockFlow\\aqstoqflow",
+  "scanDirs": [
+    "app",
+    "actions",
+    "components",
+    "hooks"
+  ],
+  "findings": [
+    {
+      "file": "actions/inventory/__tests__/inventoryMovementActions.test.ts",
+      "line": 29,
+      "category": "DIRECT_DB_IMPORT",
+      "snippet": "jest.mock(\"@/prisma/db\", () => ({",
+      "allowed": true,
+      "severity": "allowed",
+      "classification": "TEST_OR_MOCK_ONLY",
+      "migrationOrder": 0,
+      "reason": "Tests and mocks may import or stub persistence boundaries."
+    },
+    {
+      "file": "actions/locations/__tests__/org-list-actions.test.ts",
+      "line": 4,
+      "category": "DIRECT_DB_IMPORT",
+      "snippet": "import { db } from \"@/prisma/db\"",
+      "allowed": true,
+      "severity": "allowed",
+      "classification": "TEST_OR_MOCK_ONLY",
+      "migrationOrder": 0,
+      "reason": "Tests and mocks may import or stub persistence boundaries."
+    },
+    {
+      "file": "actions/payroll/__tests__/payroll-control.actions.test.ts",
+      "line": 2,
+      "category": "PRISMA_CLIENT_IMPORT",
+      "snippet": "import { PaymentMethod } from \"@prisma/client\"",
+      "allowed": true,
+      "severity": "allowed",
+      "classification": "TEST_OR_MOCK_ONLY",
+      "migrationOrder": 0,
+      "reason": "Tests and mocks may import or stub persistence boundaries."
+    },
+    {
+      "file": "actions/__tests__/legacy-rbac-auth-actions.test.ts",
+      "line": 11,
+      "category": "DIRECT_DB_IMPORT",
+      "snippet": "jest.mock(\"@/prisma/db\", () => ({",
+      "allowed": true,
+      "severity": "allowed",
+      "classification": "TEST_OR_MOCK_ONLY",
+      "migrationOrder": 0,
+      "reason": "Tests and mocks may import or stub persistence boundaries."
+    },
+    {
+      "file": "actions/__tests__/legacy-rbac-auth-actions.test.ts",
+      "line": 66,
+      "category": "DIRECT_DB_IMPORT",
+      "snippet": "import { db } from \"@/prisma/db\"",
+      "allowed": true,
+      "severity": "allowed",
+      "classification": "TEST_OR_MOCK_ONLY",
+      "migrationOrder": 0,
+      "reason": "Tests and mocks may import or stub persistence boundaries."
+    }
+  ],
+  "summary": {
+    "activeViolationCount": 0,
+    "allowedFindingCount": 5,
+    "totalFindings": 5,
+    "byClassification": {},
+    "bySeverity": {}
+  },
+  "ratchet": null
+}

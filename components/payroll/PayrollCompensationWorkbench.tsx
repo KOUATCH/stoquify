@@ -1,3 +1,5 @@
+"use client"
+
 import Link from "next/link"
 import type { LucideIcon } from "lucide-react"
 import {
@@ -14,6 +16,11 @@ import {
 import type { CompensationWorkflowResult } from "@/actions/payroll/payroll-compensation.actions"
 import { localizePath } from "@/i18n/routing"
 import type { Locale } from "@/types/bilingual"
+import {
+  HrPayrollTableControls,
+  HrPayrollTablePagination,
+  useHrPayrollTable,
+} from "@/components/hr-payroll/HrPayrollTableControls"
 
 type Props = {
   data: CompensationWorkflowResult | null
@@ -103,10 +110,44 @@ function provenanceLabel(value: string | null | undefined) {
 }
 
 export default function PayrollCompensationWorkbench({ data, error, locale }: Props) {
+  const salaryChangeRows = data?.salaryChanges ?? []
+  const rubriqueTable = useHrPayrollTable({
+    rows: data?.rubriques ?? [],
+    searchText: (rubrique) => JSON.stringify(rubrique),
+    dateValue: () => data?.asOf,
+    sortOptions: [
+      { key: "rubrique", label: "Rubrique", value: (rubrique) => rubrique.code },
+      { key: "kind", label: "Kind", value: (rubrique) => rubrique.kind },
+      { key: "country", label: "Country", value: (rubrique) => rubrique.countryCode },
+      { key: "status", label: "Status", value: (rubrique) => rubrique.status },
+    ],
+  })
+  const assignmentTable = useHrPayrollTable({
+    rows: data?.assignments ?? [],
+    searchText: (assignment) => JSON.stringify(assignment),
+    dateValue: (assignment) => assignment.effectiveFrom,
+    sortOptions: [
+      { key: "employee", label: "Employee", value: (assignment) => assignment.employeeNumber },
+      { key: "rubrique", label: "Rubrique", value: (assignment) => assignment.rubriqueCode },
+      { key: "effective", label: "Effective date", value: (assignment) => assignment.effectiveFrom },
+      { key: "amount", label: "Amount", value: (assignment) => Number(assignment.amount) },
+      { key: "status", label: "Status", value: (assignment) => assignment.status },
+    ],
+  })
+  const salaryChangeTable = useHrPayrollTable({
+    rows: salaryChangeRows,
+    searchText: (change) => JSON.stringify(change),
+    dateValue: (change) => change.effectiveFrom,
+    sortOptions: [
+      { key: "employee", label: "Employee", value: (change) => change.employeeNumber },
+      { key: "effective", label: "Effective date", value: (change) => change.effectiveFrom },
+      { key: "amount", label: "Proposed salary", value: (change) => Number(change.proposedBaseSalary) },
+      { key: "status", label: "Status", value: (change) => change.status },
+    ],
+  })
+
   if (error) return <ErrorPanel message={error} />
   if (!data) return <EmptyState />
-
-  const salaryChangeRows = data.salaryChanges
   const hasRedaction = data.summary.redactedSalaryChanges > 0 || data.assignments.some((assignment) => assignment.redactions.length > 0)
 
   return (
@@ -144,7 +185,8 @@ export default function PayrollCompensationWorkbench({ data, error, locale }: Pr
           <Landmark className="h-4 w-4 text-cyan-200" aria-hidden="true" />
           <h2 className="text-sm font-semibold text-white">Rubrique catalog</h2>
         </div>
-        <div className="overflow-x-auto">
+        <HrPayrollTableControls table={rubriqueTable} locale={locale} tableLabel="rubrique catalog" />
+        <div className="dashboard-data-table dashboard-table-shell overflow-x-auto">
           <table className="min-w-[1180px] w-full table-fixed border-collapse text-left text-sm">
             <thead className="border-b border-white/10 text-xs uppercase tracking-normal text-slate-400">
               <tr>
@@ -157,8 +199,8 @@ export default function PayrollCompensationWorkbench({ data, error, locale }: Pr
               </tr>
             </thead>
             <tbody className="divide-y divide-white/10">
-              {data.rubriques.length ? (
-                data.rubriques.map((rubrique) => (
+              {rubriqueTable.rows.length ? (
+                rubriqueTable.rows.map((rubrique) => (
                   <tr key={rubrique.id} className="align-top">
                     <td className="px-4 py-3">
                       <p className="break-words font-semibold text-white">{rubrique.code}</p>
@@ -202,13 +244,15 @@ export default function PayrollCompensationWorkbench({ data, error, locale }: Pr
             </tbody>
           </table>
         </div>
+        <HrPayrollTablePagination table={rubriqueTable} locale={locale} />
       </section>
 
       <section className="rounded-lg border border-white/10 bg-white/[0.05]">
         <div className="border-b border-white/10 px-4 py-3">
           <h2 className="text-sm font-semibold text-white">Employee assignments</h2>
         </div>
-        <div className="overflow-x-auto">
+        <HrPayrollTableControls table={assignmentTable} locale={locale} tableLabel="employee compensation assignments" />
+        <div className="dashboard-data-table dashboard-table-shell overflow-x-auto">
           <table className="min-w-[980px] w-full table-fixed border-collapse text-left text-sm">
             <thead className="border-b border-white/10 text-xs uppercase tracking-normal text-slate-400">
               <tr>
@@ -221,8 +265,8 @@ export default function PayrollCompensationWorkbench({ data, error, locale }: Pr
               </tr>
             </thead>
             <tbody className="divide-y divide-white/10">
-              {data.assignments.length ? (
-                data.assignments.map((assignment) => (
+              {assignmentTable.rows.length ? (
+                assignmentTable.rows.map((assignment) => (
                   <tr key={assignment.id} className="align-top">
                     <td className="px-4 py-3">
                       <p className="break-words font-semibold text-white">{assignment.employeeNumber}</p>
@@ -254,6 +298,7 @@ export default function PayrollCompensationWorkbench({ data, error, locale }: Pr
             </tbody>
           </table>
         </div>
+        <HrPayrollTablePagination table={assignmentTable} locale={locale} />
       </section>
 
       <section className="rounded-lg border border-white/10 bg-white/[0.05]">
@@ -261,7 +306,8 @@ export default function PayrollCompensationWorkbench({ data, error, locale }: Pr
           <Scale className="h-4 w-4 text-cyan-200" aria-hidden="true" />
           <h2 className="text-sm font-semibold text-white">Salary change queue</h2>
         </div>
-        <div className="overflow-x-auto">
+        <HrPayrollTableControls table={salaryChangeTable} locale={locale} tableLabel="salary change requests" />
+        <div className="dashboard-data-table dashboard-table-shell overflow-x-auto">
           <table className="min-w-[1180px] w-full table-fixed border-collapse text-left text-sm">
             <thead className="border-b border-white/10 text-xs uppercase tracking-normal text-slate-400">
               <tr>
@@ -275,8 +321,8 @@ export default function PayrollCompensationWorkbench({ data, error, locale }: Pr
               </tr>
             </thead>
             <tbody className="divide-y divide-white/10">
-              {salaryChangeRows.length ? (
-                salaryChangeRows.map((change) => (
+              {salaryChangeTable.rows.length ? (
+                salaryChangeTable.rows.map((change) => (
                   <tr key={change.id} className="align-top">
                     <td className="px-4 py-3">
                       <p className="break-words font-semibold text-white">{change.employeeNumber}</p>
@@ -315,6 +361,7 @@ export default function PayrollCompensationWorkbench({ data, error, locale }: Pr
             </tbody>
           </table>
         </div>
+        <HrPayrollTablePagination table={salaryChangeTable} locale={locale} />
       </section>
     </main>
   )

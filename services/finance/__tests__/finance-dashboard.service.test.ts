@@ -26,8 +26,14 @@ const mockDb = db as any
 const mockGetTenantOperatingSnapshot = getTenantOperatingSnapshot as jest.Mock
 
 function resetFinanceMocks() {
-  mockDb.organization.findFirst.mockResolvedValue({ id: "org-1", name: "Demo OHADA SMB", currency: "XAF" })
-  mockDb.location.findMany.mockResolvedValue([{ id: "loc-1", name: "Main", code: "MAIN" }])
+  mockDb.organization.findFirst.mockResolvedValue({
+    id: "org-1",
+    name: "Demo OHADA SMB",
+    currency: "XAF",
+  })
+  mockDb.location.findMany.mockResolvedValue([
+    { id: "loc-1", name: "Main", code: "MAIN" },
+  ])
   mockDb.salesOrder.findMany.mockResolvedValue([])
   mockDb.purchaseOrder.findMany.mockResolvedValue([])
   mockDb.expense.findMany.mockResolvedValue([])
@@ -44,7 +50,8 @@ function payrollForecastMetrics(overrides: Record<string, unknown> = {}) {
     status: "AUTHORITATIVE",
     authoritative: true,
     reasonCode: "PAYROLL_FORECAST_SOURCE_LINKED",
-    message: "Upcoming payroll obligations are backed by payroll, payment, declaration, and ledger proof.",
+    message:
+      "Upcoming payroll obligations are backed by payroll, payment, declaration, and ledger proof.",
     horizonStart: "2026-06-01T00:00:00.000Z",
     horizonEnd: "2026-06-30T23:59:59.999Z",
     upcomingNetPayAmount: 125000,
@@ -56,6 +63,9 @@ function payrollForecastMetrics(overrides: Record<string, unknown> = {}) {
     declarationCount: 1,
     sourceLinkCount: 2,
     evidenceHashCount: 4,
+    certifiedInputRunCount: 1,
+    certifiedInputProofHashCount: 4,
+    registerToLedgerRunCount: 1,
     nextPayDate: "2026-06-25T00:00:00.000Z",
     nextDeclarationDueDate: "2026-06-28T00:00:00.000Z",
     personLevelAmountsRedacted: true,
@@ -83,7 +93,7 @@ function tenantOperatingSnapshot(overrides: Record<string, unknown> = {}) {
     },
     sourceHash: "sha256:tenant-payroll-forecast",
     generatedAt: "2026-06-15T12:00:00.000Z",
-    sourceModules: ["payroll", "payments", "accounting", "finance"],
+    sourceModules: ["hris", "payroll", "payments", "accounting", "finance"],
     metrics: {
       payrollFinanceForecast: payrollForecastMetrics(),
     },
@@ -100,7 +110,11 @@ describe("finance dashboard payroll forecast proof", () => {
   })
 
   it("surfaces authoritative aggregate payroll forecast proof for finance cash planning", async () => {
-    const result = await getFinanceDashboard({ organizationId: "org-1", view: "cash-flow", period: "mtd" })
+    const result = await getFinanceDashboard({
+      organizationId: "org-1",
+      view: "cash-flow",
+      period: "mtd",
+    })
 
     expect(result.payrollForecast).toMatchObject({
       status: "AUTHORITATIVE",
@@ -108,10 +122,21 @@ describe("finance dashboard payroll forecast proof", () => {
       scope: "TENANT_AGGREGATE",
       locationAllocated: false,
       totalUpcomingAmount: 170000,
+      certifiedInputRunCount: 1,
+      certifiedInputProofHashCount: 4,
+      registerToLedgerRunCount: 1,
       sourceHash: "sha256:tenant-payroll-forecast",
-      redactions: [expect.objectContaining({ field: "payroll.personLevelAmounts" })],
+      redactions: [
+        expect.objectContaining({ field: "payroll.personLevelAmounts" }),
+      ],
       personLevelAmountsRedacted: true,
     })
+    expect(result.payrollForecast).not.toHaveProperty(
+      "hrisPayrollReadinessHash",
+    )
+    expect(result.payrollForecast).not.toHaveProperty(
+      "payrollEngineInputHashes",
+    )
     expect(result.alerts).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -129,36 +154,48 @@ describe("finance dashboard payroll forecast proof", () => {
   })
 
   it("keeps blocked declaration proof specific and routes finance action to payroll declarations", async () => {
-    mockGetTenantOperatingSnapshot.mockResolvedValue(tenantOperatingSnapshot({
-      status: "blocked",
-      uiState: "blocked",
-      evidenceGrade: "blocked",
-      metrics: {
-        payrollFinanceForecast: payrollForecastMetrics({
-          status: "NON_AUTHORITATIVE",
-          authoritative: false,
-          reasonCode: "PAYROLL_FORECAST_PROOF_INCOMPLETE",
-          message: "Upcoming payroll obligations are withheld because declaration proof is incomplete.",
-          upcomingNetPayAmount: 0,
-          upcomingStatutoryLiabilityAmount: 0,
-          totalUpcomingAmount: 0,
-          blockerCodes: ["PAYROLL_FORECAST_DECLARATION_PROOF_MISSING"],
-        }),
-      },
-      blockers: [
-        {
-          id: "tenant-payroll-finance-forecast-declaration-proof-missing",
-          severity: "high",
-          gate: "payroll_finance_forecast",
-          title: "Payroll declaration proof is missing",
-          detail: "Upcoming statutory liability is withheld until declaration evidence is complete.",
-          sourceTables: ["payroll_declarations", "payroll_declaration_evidence"],
-          nextAction: "Open payroll declarations and attach source-register-backed declaration evidence.",
+    mockGetTenantOperatingSnapshot.mockResolvedValue(
+      tenantOperatingSnapshot({
+        status: "blocked",
+        uiState: "blocked",
+        evidenceGrade: "blocked",
+        metrics: {
+          payrollFinanceForecast: payrollForecastMetrics({
+            status: "NON_AUTHORITATIVE",
+            authoritative: false,
+            reasonCode: "PAYROLL_FORECAST_PROOF_INCOMPLETE",
+            message:
+              "Upcoming payroll obligations are withheld because declaration proof is incomplete.",
+            upcomingNetPayAmount: 0,
+            upcomingStatutoryLiabilityAmount: 0,
+            totalUpcomingAmount: 0,
+            blockerCodes: ["PAYROLL_FORECAST_DECLARATION_PROOF_MISSING"],
+          }),
         },
-      ],
-    }))
+        blockers: [
+          {
+            id: "tenant-payroll-finance-forecast-declaration-proof-missing",
+            severity: "high",
+            gate: "payroll_finance_forecast",
+            title: "Payroll declaration proof is missing",
+            detail:
+              "Upcoming statutory liability is withheld until declaration evidence is complete.",
+            sourceTables: [
+              "payroll_declarations",
+              "payroll_declaration_evidence",
+            ],
+            nextAction:
+              "Open payroll declarations and attach source-register-backed declaration evidence.",
+          },
+        ],
+      }),
+    )
 
-    const result = await getFinanceDashboard({ organizationId: "org-1", view: "cash-flow", period: "mtd" })
+    const result = await getFinanceDashboard({
+      organizationId: "org-1",
+      view: "cash-flow",
+      period: "mtd",
+    })
 
     expect(result.payrollForecast).toMatchObject({
       status: "NON_AUTHORITATIVE",
@@ -193,7 +230,9 @@ describe("finance dashboard payroll forecast proof", () => {
       reasonCode: "PAYROLL_MODULE_NOT_ENTITLED",
       totalUpcomingAmount: 0,
       blockerCodes: ["PAYROLL_FORECAST_MODULE_NOT_ENTITLED"],
-      redactions: [expect.objectContaining({ field: "payroll.personLevelAmounts" })],
+      redactions: [
+        expect.objectContaining({ field: "payroll.personLevelAmounts" }),
+      ],
     })
     expect(mockGetTenantOperatingSnapshot).not.toHaveBeenCalled()
   })

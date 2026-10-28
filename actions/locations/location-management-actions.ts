@@ -5,6 +5,7 @@ import { assertCanUseOrganization, requirePermission } from "@/lib/security/rbac
 import { safeLoggedActionErrorMessage } from "@/actions/_shared/safe-action-responses"
 import { assertActiveOrganization } from "@/services/_shared/assert-active-organization"
 import { BusinessRuleError, getPrismaKnownRequest, getPrismaKnownRequestField } from "@/services/_shared/action-errors"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import {
   archiveLocationForManagement,
   createLocationForManagement,
@@ -30,6 +31,11 @@ type ActionResult<T> = {
   success: boolean
   data?: T
   error?: string
+}
+
+type LocationActionAccess = {
+  organizationId: string
+  ctx: Awaited<ReturnType<typeof requirePermission>>
 }
 
 const ACTIONABLE_ERROR_MESSAGES = new Set([
@@ -88,7 +94,7 @@ function getValidationMessage(input: unknown) {
 async function assertOrganizationAccess(
   organizationId: string,
   options: { permission: string; resource: string; resourceId?: string; auditAllowed?: boolean },
-) {
+): Promise<LocationActionAccess> {
   const requestedOrganizationId = cleanText(organizationId)
 
   if (!requestedOrganizationId) {
@@ -102,7 +108,23 @@ async function assertOrganizationAccess(
   })
   await assertCanUseOrganization(ctx, requestedOrganizationId)
 
-  return assertActiveOrganization(requestedOrganizationId)
+  return {
+    organizationId: await assertActiveOrganization(requestedOrganizationId),
+    ctx,
+  }
+}
+
+async function observeSettingsLocationAccess(access: LocationActionAccess, accessIntent: "read" | "write") {
+  await observeModuleAccess({
+    organizationId: access.organizationId,
+    userId: access.ctx.userId,
+    actorPermissions: access.ctx.permissions,
+    moduleSlug: "settings",
+    surfaceType: "action",
+    surface: "actions/locations/location-management-actions.ts",
+    accessIntent,
+    mode: "observe",
+  })
 }
 
 function revalidateLocationPaths() {
@@ -116,11 +138,12 @@ export async function getLocationManagementData(
   organizationId: string,
 ): Promise<ActionResult<LocationManagementData>> {
   try {
-    const scopedOrganizationId = await assertOrganizationAccess(organizationId, {
+    const access = await assertOrganizationAccess(organizationId, {
       permission: "locations.read",
       resource: "Location",
     })
-    const data = await getLocationManagementDataForOrg(scopedOrganizationId)
+    await observeSettingsLocationAccess(access, "read")
+    const data = await getLocationManagementDataForOrg(access.organizationId)
 
     return {
       success: true,
@@ -144,18 +167,19 @@ export async function createManagedLocation(
   input: LocationManagementInput,
 ): Promise<ActionResult<LocationManagementRow>> {
   try {
-    const scopedOrganizationId = await assertOrganizationAccess(organizationId, {
+    const access = await assertOrganizationAccess(organizationId, {
       permission: "locations.create",
       resource: "Location",
       auditAllowed: true,
     })
+    await observeSettingsLocationAccess(access, "write")
     const parsed = getValidationMessage(input)
 
     if (!parsed.success) {
       return { success: false, error: parsed.error }
     }
 
-    const row = await createLocationForManagement(scopedOrganizationId, parsed.data)
+    const row = await createLocationForManagement(access.organizationId, parsed.data)
     revalidateLocationPaths()
 
     return { success: true, data: row }
@@ -179,7 +203,7 @@ export async function updateManagedLocation(
 ): Promise<ActionResult<LocationManagementRow>> {
   try {
     const scopedLocationId = cleanText(locationId)
-    const scopedOrganizationId = await assertOrganizationAccess(organizationId, {
+    const access = await assertOrganizationAccess(organizationId, {
       permission: "locations.update",
       resource: "Location",
       ...(scopedLocationId ? { resourceId: scopedLocationId } : {}),
@@ -189,6 +213,7 @@ export async function updateManagedLocation(
     if (!scopedLocationId) {
       return { success: false, error: "Location not found" }
     }
+    await observeSettingsLocationAccess(access, "write")
 
     const parsed = getValidationMessage(input)
 
@@ -196,7 +221,7 @@ export async function updateManagedLocation(
       return { success: false, error: parsed.error }
     }
 
-    const row = await updateLocationForManagement(scopedOrganizationId, scopedLocationId, parsed.data)
+    const row = await updateLocationForManagement(access.organizationId, scopedLocationId, parsed.data)
     revalidateLocationPaths()
 
     return { success: true, data: row }
@@ -219,7 +244,7 @@ export async function archiveManagedLocation(
 ): Promise<ActionResult<{ id: string }>> {
   try {
     const scopedLocationId = cleanText(locationId)
-    const scopedOrganizationId = await assertOrganizationAccess(organizationId, {
+    const access = await assertOrganizationAccess(organizationId, {
       permission: "locations.delete",
       resource: "Location",
       ...(scopedLocationId ? { resourceId: scopedLocationId } : {}),
@@ -229,8 +254,9 @@ export async function archiveManagedLocation(
     if (!scopedLocationId) {
       return { success: false, error: "Location not found" }
     }
+    await observeSettingsLocationAccess(access, "write")
 
-    const data = await archiveLocationForManagement(scopedOrganizationId, scopedLocationId)
+    const data = await archiveLocationForManagement(access.organizationId, scopedLocationId)
     revalidateLocationPaths()
 
     return { success: true, data }

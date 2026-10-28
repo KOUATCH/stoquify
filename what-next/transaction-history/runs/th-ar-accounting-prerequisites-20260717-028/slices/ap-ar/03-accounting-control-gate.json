@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "1.0",
+  "traceId": "fa477981-2269-4f6c-9a9a-5a5cd41c41e2",
+  "runId": "th-ar-accounting-prerequisites-20260717-028",
+  "sliceId": "ap-ar",
+  "stageId": "03",
+  "skillName": "stoquify-transaction-history-03-accounting-control-gate",
+  "agentType": "Bookkeeper & Controller",
+  "mode": "audit",
+  "status": "BLOCKED",
+  "activeLanes": [],
+  "blockedLanes": [
+    "ar"
+  ],
+  "inputArtifacts": [
+    {
+      "path": "docs/new ideas/STOQUIFY_TRANSACTION_HISTORY_ANALYTICS_AND_SECURITY_PROPOSAL_2026-07-14.md",
+      "sha256": "sha256:0628f08178fe0441fe22ccbd1a6b429c2bb07b2ea5d278e6dcb799ab117c6979"
+    }
+  ],
+  "inputFingerprint": "sha256:0628f08178fe0441fe22ccbd1a6b429c2bb07b2ea5d278e6dcb799ab117c6979",
+  "allowedEdits": [
+    "what-next/transaction-history/runs/th-ar-accounting-prerequisites-20260717-028/slices/ap-ar/03-accounting-control-gate.md",
+    "what-next/transaction-history/runs/th-ar-accounting-prerequisites-20260717-028/slices/ap-ar/03-accounting-control-gate.json"
+  ],
+  "observedEdits": [
+    "what-next/transaction-history/runs/th-ar-accounting-prerequisites-20260717-028/slices/ap-ar/03-accounting-control-gate.md",
+    "what-next/transaction-history/runs/th-ar-accounting-prerequisites-20260717-028/slices/ap-ar/03-accounting-control-gate.json"
+  ],
+  "repository": {
+    "headBefore": "a27cb0328e044304590cecf20c47832df5e834d5",
+    "headAfter": "a27cb0328e044304590cecf20c47832df5e834d5",
+    "dirtyFilesBefore": [
+      "WORKTREE_DIRTY_SEE_TRANSACTION_HISTORY_RUNS"
+    ],
+    "dirtyFilesAfter": [
+      "what-next/transaction-history/runs/th-ar-accounting-prerequisites-20260717-028/"
+    ]
+  },
+  "claims": [
+    {
+      "id": "AR_FOUNDATION_MODELS_EXIST",
+      "result": "PASS",
+      "evidence": [
+        "prisma/schema.prisma",
+        "services/accounting/postings/post-sale.ts",
+        "services/accounting/postings/post-payment.ts",
+        "services/accounting/postings/post-refund.ts",
+        "services/accounting/customer-ledger.service.ts"
+      ]
+    },
+    {
+      "id": "AR_OPEN_ITEM_ALLOCATION_PREREQUISITES",
+      "result": "GAP",
+      "evidence": [
+        "what-next/transaction-history/runs/th-ar-accounting-prerequisites-20260717-028/slices/ap-ar/03-accounting-control-gate.md"
+      ]
+    },
+    {
+      "id": "AR_HISTORY_READ_MODEL_ELIGIBILITY",
+      "result": "GAP",
+      "evidence": [
+        "what-next/transaction-history/runs/th-ar-accounting-prerequisites-20260717-028/slices/ap-ar/03-accounting-control-gate.md"
+      ]
+    }
+  ],
+  "verification": [
+    {
+      "command": "rg AR/customer ledger, receivable, posting, refund, allocation, and permission evidence",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": null
+    },
+    {
+      "command": "Read customer ledger, receivables route, post-sale, post-payment, POS ledger, and customer analytics excerpts",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": null
+    }
+  ],
+  "outputs": [],
+  "blockers": [
+    {
+      "severity": "high",
+      "code": "AR_OPEN_ITEM_ALLOCATION_ENGINE_MISSING",
+      "reason": "No service-owned receipt-to-open-item allocation model with partial/multi-item settlement, idempotency, reversal, and correction was found."
+    },
+    {
+      "severity": "high",
+      "code": "AR_HISTORY_ACCOUNTING_PREREQUISITES_NOT_PASSED",
+      "reason": "Current customer ledger and receivables surfaces do not prove complete AR roll-forward, aging basis, settlement state, export parity, or control-account tie-out."
+    }
+  ],
+  "nextEligibleStages": [],
+  "startedAt": "2026-07-17T06:48:08.9200590+01:00",
+  "completedAt": "2026-07-17T06:48:08.9200590+01:00"
+}

@@ -33,3 +33,4 @@ This folder centralizes module-related planning, architecture, packaging, entitl
 - `docs/planning/`
 - `docs/architecture/decisions/`
 - `docs/UI/UX/skill-suite/aqstoqflow-uiux-06-module-normalization/`
+

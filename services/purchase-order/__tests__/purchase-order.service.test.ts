@@ -5,6 +5,8 @@ import {
 } from "@/services/events/business-event.service"
 import {
   approvePurchaseOrder,
+  bulkUpdateStatus,
+  closePurchaseOrder,
   deletePurchaseOrder,
   updatePurchaseOrder,
 } from "../purchase-order.service"
@@ -14,6 +16,9 @@ jest.mock("@/prisma/db", () => ({
   db: {
     $transaction: jest.fn(),
     purchaseOrder: {
+      findFirst: jest.fn(),
+    },
+    goodsReceipt: {
       findFirst: jest.fn(),
     },
     supplier: {
@@ -40,6 +45,9 @@ jest.mock("@/services/events/business-event.service", () => ({
 const mockDb = db as unknown as {
   $transaction: jest.Mock
   purchaseOrder: {
+    findFirst: jest.Mock
+  }
+  goodsReceipt: {
     findFirst: jest.Mock
   }
   supplier: {
@@ -157,6 +165,66 @@ beforeEach(() => {
 })
 
 describe("purchase-order.service controls", () => {
+  it("blocks order completion while a tenant-scoped receipt is held for inspection", async () => {
+    mockDb.goodsReceipt.findFirst.mockResolvedValue({ receiptNumber: "GR-000009" })
+
+    await expect(closePurchaseOrder("po-1", "org-1")).rejects.toThrow(
+      "Purchase order cannot be completed while goods receipt GR-000009 is held for inspection.",
+    )
+
+    expect(mockDb.goodsReceipt.findFirst).toHaveBeenCalledWith({
+      where: {
+        purchaseOrderId: "po-1",
+        organizationId: "org-1",
+        status: "HELD",
+        deletedAt: null,
+      },
+      select: { receiptNumber: true },
+    })
+    expect(mockDb.purchaseOrder.findFirst).not.toHaveBeenCalled()
+  })
+
+  it("rejects bulk approval before opening a transaction", async () => {
+    await expect(
+      bulkUpdateStatus({
+        organizationId: "org-1",
+        purchaseOrderIds: ["po-1"],
+        toStatus: "APPROVED",
+      }),
+    ).rejects.toThrow(
+      "Purchase orders cannot be approved in bulk. Use the canonical approval workflow for each order.",
+    )
+
+    expect(mockDb.$transaction).not.toHaveBeenCalled()
+  })
+
+  it("keeps valid non-approval bulk transitions available", async () => {
+    const tx = {
+      purchaseOrder: {
+        findMany: jest.fn().mockResolvedValue([{ id: "po-1", status: "SUBMITTED" }]),
+        update: jest.fn().mockResolvedValue({ id: "po-1", status: "CANCELLED" }),
+      },
+    }
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
+
+    const result = await bulkUpdateStatus({
+      organizationId: "org-1",
+      purchaseOrderIds: ["po-1"],
+      toStatus: "CANCELLED",
+      reason: "No longer required",
+    })
+
+    expect(result).toEqual({ updated: ["po-1"], failed: [] })
+    expect(tx.purchaseOrder.update).toHaveBeenCalledWith({
+      where: { id: "po-1" },
+      data: {
+        status: "CANCELLED",
+        updatedAt: expect.any(Date),
+        notes: { set: "No longer required" },
+      },
+    })
+  })
+
   it("rejects self approval before updating the purchase order", async () => {
     mockDb.purchaseOrder.findFirst.mockResolvedValue(purchaseOrder({ createdById: "buyer-1" }))
 

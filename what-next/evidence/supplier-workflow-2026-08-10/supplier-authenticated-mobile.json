@@ -1,0 +1,127 @@
+{
+  "status": "PASS",
+  "checkedAt": "2026-08-10T14:32:55.447Z",
+  "project": "supplier-authenticated-mobile",
+  "viewport": "mobile",
+  "scenarios": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "createdSupplierId": "cmsnbwyuu0233makoax8hiia7",
+  "fixture": {
+    "source": "scripts/supplier-e2e-fixture.js",
+    "productionBackfill": false,
+    "organizationId": "org_supplier_e2e_local",
+    "foreignOrganizationId": "org_supplier_e2e_foreign",
+    "lifecycleSupplierId": "supplier_supplier_e2e_archive_mobile"
+  },
+  "results": [
+    {
+      "surface": "list",
+      "viewport": "mobile",
+      "path": "/en/dashboard/purchases/suppliers",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/purchases/suppliers",
+      "screenshot": "what-next/evidence/supplier-workflow-2026-08-10/list-mobile.png",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 412,
+        "documentWidth": 412,
+        "bodyWidth": 412,
+        "hasDocumentOverflow": false,
+        "clippedActions": [],
+        "overlappingActions": []
+      }
+    },
+    {
+      "surface": "mutation-dialog",
+      "viewport": "mobile",
+      "path": "/en/dashboard/purchases/suppliers",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/purchases/suppliers",
+      "screenshot": "what-next/evidence/supplier-workflow-2026-08-10/mutation-dialog-mobile.png",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 412,
+        "documentWidth": 412,
+        "bodyWidth": 412,
+        "hasDocumentOverflow": false,
+        "clippedActions": [],
+        "overlappingActions": []
+      }
+    },
+    {
+      "surface": "create-page",
+      "viewport": "mobile",
+      "path": "/en/dashboard/purchases/suppliers/create",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/purchases/suppliers/create",
+      "screenshot": "what-next/evidence/supplier-workflow-2026-08-10/create-page-mobile.png",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 412,
+        "documentWidth": 412,
+        "bodyWidth": 412,
+        "hasDocumentOverflow": false,
+        "clippedActions": [],
+        "overlappingActions": []
+      }
+    },
+    {
+      "surface": "detail-page",
+      "viewport": "mobile",
+      "path": "/en/dashboard/purchases/suppliers/cmsnbwyuu0233makoax8hiia7",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/purchases/suppliers/cmsnbwyuu0233makoax8hiia7",
+      "screenshot": "what-next/evidence/supplier-workflow-2026-08-10/detail-page-mobile.png",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 412,
+        "documentWidth": 412,
+        "bodyWidth": 412,
+        "hasDocumentOverflow": false,
+        "clippedActions": [],
+        "overlappingActions": []
+      }
+    },
+    {
+      "surface": "edit-page",
+      "viewport": "mobile",
+      "path": "/en/dashboard/purchases/suppliers/cmsnbwyuu0233makoax8hiia7/edit",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/purchases/suppliers/cmsnbwyuu0233makoax8hiia7/edit",
+      "screenshot": "what-next/evidence/supplier-workflow-2026-08-10/edit-page-mobile.png",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 412,
+        "documentWidth": 412,
+        "bodyWidth": 412,
+        "hasDocumentOverflow": false,
+        "clippedActions": [],
+        "overlappingActions": []
+      }
+    },
+    {
+      "surface": "history-page",
+      "viewport": "mobile",
+      "path": "/en/dashboard/purchases/payables/history",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/purchases/payables/history?supplierId=cmsnbwyuu0233makoax8hiia7",
+      "screenshot": "what-next/evidence/supplier-workflow-2026-08-10/history-page-mobile.png",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 412,
+        "documentWidth": 412,
+        "bodyWidth": 412,
+        "hasDocumentOverflow": false,
+        "clippedActions": [],
+        "overlappingActions": []
+      }
+    }
+  ]
+}

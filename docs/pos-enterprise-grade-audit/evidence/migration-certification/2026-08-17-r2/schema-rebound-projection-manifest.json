@@ -1,0 +1,815 @@
+{
+  "observedAt": "2026-08-17T10:52:20.318Z",
+  "sourceMigrationDirectory": "prisma/migrations",
+  "originalRepositoryMigrationsModified": false,
+  "publicSchemaAccessed": false,
+  "realDataUsed": false,
+  "restoreProjection": [
+    {
+      "migration": "20260528124341_refine_item_barcode",
+      "sourceSha256": "038f2cd31f028f9725ac5ec4d91ace9bed34ab05de98bf0600162118aaaa1eb2",
+      "projectionSha256": "038f2cd31f028f9725ac5ec4d91ace9bed34ab05de98bf0600162118aaaa1eb2",
+      "changed": false
+    },
+    {
+      "migration": "20260611120000_payment_provider_reference_uniqueness",
+      "sourceSha256": "e61d8f02ef48e9034cda93f6a5b7259be0a099d4861dadd25faab530dbe84eb2",
+      "projectionSha256": "e61d8f02ef48e9034cda93f6a5b7259be0a099d4861dadd25faab530dbe84eb2",
+      "changed": false
+    },
+    {
+      "migration": "20260611130000_accounting_auth_baseline_bridge",
+      "sourceSha256": "f7de8dc7ace0a5e063cdb7ecd9527e77807b7f872e474546819e9fca13a273d4",
+      "projectionSha256": "dfd79be5c141d9df474363f57ca98936a689069111318d7062bbb13cb58297a8",
+      "changed": true
+    },
+    {
+      "migration": "20260618154500_repair_accounting_source_links",
+      "sourceSha256": "aa11c0dd1e5f24a7cb9c49d900572f4f07244d4a19d3b4b6b6089effe1fe1643",
+      "projectionSha256": "437f0da1a7514201a43b3dcf8386de15b14f5facab9e672a8c209280e1461324",
+      "changed": true
+    },
+    {
+      "migration": "20260618160000_payroll_foundation_bridge",
+      "sourceSha256": "77c4c1bbd5618e5d01d7416e2f304014890a843785280ccca8aeb0c8c1f4ada8",
+      "projectionSha256": "555309dc066e1869d1161b82e424026478a7c4329c91163571f1454ccb048b13",
+      "changed": true
+    },
+    {
+      "migration": "20260618161000_ap_stock_count_foundation_bridge",
+      "sourceSha256": "b6c29029961c7080ff75cf1dbd7f918f2b4c4335befe487dcc89ce2d325ccacc",
+      "projectionSha256": "2d4b7c8204a13d9db7f823ac3558f1190e60cda956fb5148dd47e6d6eaacaff8",
+      "changed": true
+    },
+    {
+      "migration": "20260619120000_backfill_purchase_receive_permission",
+      "sourceSha256": "f64f6e4ade970f347c4db26e8dd14252e081862500a5070b45e72e8a4387dd40",
+      "projectionSha256": "f64f6e4ade970f347c4db26e8dd14252e081862500a5070b45e72e8a4387dd40",
+      "changed": false
+    },
+    {
+      "migration": "20260621102500_workflow_assurance_schema_scope_bridge",
+      "sourceSha256": "8487ca74d522a0861b924959b6fcf474c29b3f258d9ee03230fa1a00238ca0ac",
+      "projectionSha256": "8487ca74d522a0861b924959b6fcf474c29b3f258d9ee03230fa1a00238ca0ac",
+      "changed": false
+    },
+    {
+      "migration": "20260621103000_workflow_assurance_registry_foundation",
+      "sourceSha256": "ba6bc0fca858e4a9b599c30ccd32f288235857a736d6c6afc186e8e54f79f473",
+      "projectionSha256": "b6705376d9fd671445913a0ff2077fc5bbe16f5e72f9f62058e46a4046ef69c2",
+      "changed": true
+    },
+    {
+      "migration": "20260621113000_workflow_assurance_incident_spine",
+      "sourceSha256": "cfa1cb1cb7242c9717e8aeedc95c7424591aa78b799ea381d2bd40c199bf1664",
+      "projectionSha256": "4409c88ca68b6e6afbf0aa9a9c33083ec8d7b6bd0c1a68af743fbad941d0ff2a",
+      "changed": true
+    },
+    {
+      "migration": "20260625110000_payroll_kernel_immutability",
+      "sourceSha256": "d3bb80305c4d130c7533bdee5a75dd88da3da103ca885f7d14dc73b7167ee8d4",
+      "projectionSha256": "61924187409621aff2b68590f3c52e78a9dcbdfc08f78b011510b16cf977a83b",
+      "changed": true
+    },
+    {
+      "migration": "20260626093000_payroll_compensation_approval",
+      "sourceSha256": "69e379301a592e4fc126f72688b550d2c842bb74de785de01a732b60cc9a65e2",
+      "projectionSha256": "69e379301a592e4fc126f72688b550d2c842bb74de785de01a732b60cc9a65e2",
+      "changed": false
+    },
+    {
+      "migration": "20260626103000_payroll_payment_evidence_readiness",
+      "sourceSha256": "3a75598e7fe3bdddce1ba6c4248cb08b1cd89966dbff0381d915903fa7aa0c61",
+      "projectionSha256": "3a75598e7fe3bdddce1ba6c4248cb08b1cd89966dbff0381d915903fa7aa0c61",
+      "changed": false
+    },
+    {
+      "migration": "20260626123000_payroll_cnps_country_pack_expansion",
+      "sourceSha256": "da6c26b20c8572648ea6d82da2e8c4b6b71ee0b82c6ed1181d1b27a351a092a6",
+      "projectionSha256": "da6c26b20c8572648ea6d82da2e8c4b6b71ee0b82c6ed1181d1b27a351a092a6",
+      "changed": false
+    },
+    {
+      "migration": "20260626133000_payroll_declaration_lifecycle_evidence",
+      "sourceSha256": "326c7a82dab1b64179bb72b422eb380affcbe1a648612eeb042384b2e7dc3a7f",
+      "projectionSha256": "326c7a82dab1b64179bb72b422eb380affcbe1a648612eeb042384b2e7dc3a7f",
+      "changed": false
+    },
+    {
+      "migration": "20260626143000_payroll_payment_reconciliation_lifecycle",
+      "sourceSha256": "b3fbfc15e09fd15c0692397004f22746f1dee8d865fa5d0ed411c133ec3bc900",
+      "projectionSha256": "b3fbfc15e09fd15c0692397004f22746f1dee8d865fa5d0ed411c133ec3bc900",
+      "changed": false
+    },
+    {
+      "migration": "20260628123000_payroll_employee_balance_lifecycle",
+      "sourceSha256": "afc488a800240f9869faedca30229fda44ff834225839051dfbf12e8b11c8d8a",
+      "projectionSha256": "afc488a800240f9869faedca30229fda44ff834225839051dfbf12e8b11c8d8a",
+      "changed": false
+    },
+    {
+      "migration": "20260630090000_payment_reconciliation_foundation",
+      "sourceSha256": "51c342aaa93f3bc909376ecfa6359840e6fca9ad29e15cd4b18c964dc99006e5",
+      "projectionSha256": "51c342aaa93f3bc909376ecfa6359840e6fca9ad29e15cd4b18c964dc99006e5",
+      "changed": false
+    },
+    {
+      "migration": "20260630100000_payment_reconciliation_inbox_worker_leases",
+      "sourceSha256": "176825a859d1bbc7b59a2bfa03028412f2a2de8c34a581b3b8ad5e0a122781ba",
+      "projectionSha256": "176825a859d1bbc7b59a2bfa03028412f2a2de8c34a581b3b8ad5e0a122781ba",
+      "changed": false
+    },
+    {
+      "migration": "20260703110000_public_receipt_access_tokens",
+      "sourceSha256": "9995dbadcf429d5f91bccf38916caf6a6ab9b6a019ed1bf60ad6ec089dfc0cd5",
+      "projectionSha256": "9995dbadcf429d5f91bccf38916caf6a6ab9b6a019ed1bf60ad6ec089dfc0cd5",
+      "changed": false
+    },
+    {
+      "migration": "20260711133000_public_identity_abuse_limits",
+      "sourceSha256": "748b70b86ceb9ccf7baa26e8b0bb0e376e74b9b0a3c71f1edd808cff4ad6003a",
+      "projectionSha256": "748b70b86ceb9ccf7baa26e8b0bb0e376e74b9b0a3c71f1edd808cff4ad6003a",
+      "changed": false
+    },
+    {
+      "migration": "20260714194500_inventory_history_accounting_time_controls",
+      "sourceSha256": "049b406cd57426bb88907adbbfa942d8a947b7cfb4560721443077e260f24b2f",
+      "projectionSha256": "049b406cd57426bb88907adbbfa942d8a947b7cfb4560721443077e260f24b2f",
+      "changed": false
+    },
+    {
+      "migration": "20260714203000_session_assurance",
+      "sourceSha256": "7749562cb493cd22b902ee6da6e6e892b19dcfa5e7d9ba2463027d5d0497ca1c",
+      "projectionSha256": "7749562cb493cd22b902ee6da6e6e892b19dcfa5e7d9ba2463027d5d0497ca1c",
+      "changed": false
+    },
+    {
+      "migration": "20260715090000_inventory_correction_reversal_lineage",
+      "sourceSha256": "57e00140dd9bc166f843ed1c7860b111680094ff8b6496be01c03a22fb12cb01",
+      "projectionSha256": "57e00140dd9bc166f843ed1c7860b111680094ff8b6496be01c03a22fb12cb01",
+      "changed": false
+    },
+    {
+      "migration": "20260718100000_branch_daily_close_review_foundation",
+      "sourceSha256": "04e1ee62359c19a6cd7837de8ac50cdb8be002f3f971dd617cf984f1da728895",
+      "projectionSha256": "04e1ee62359c19a6cd7837de8ac50cdb8be002f3f971dd617cf984f1da728895",
+      "changed": false
+    },
+    {
+      "migration": "20260718130000_branch_daily_close_sign_off_foundation",
+      "sourceSha256": "ba8c880bdde4c432cf8171f4da91716ce8738a0e2639cf6dcf6758f613fd1984",
+      "projectionSha256": "ba8c880bdde4c432cf8171f4da91716ce8738a0e2639cf6dcf6758f613fd1984",
+      "changed": false
+    },
+    {
+      "migration": "20260719190000_hris_org_manager_scope_foundation",
+      "sourceSha256": "c98cf2582149563f50e9e160bc4ca8d3da0fc4344d96c293e93ad35f1ae07f6c",
+      "projectionSha256": "c98cf2582149563f50e9e160bc4ca8d3da0fc4344d96c293e93ad35f1ae07f6c",
+      "changed": false
+    },
+    {
+      "migration": "20260719203000_workflow_assurance_stable_case_identity",
+      "sourceSha256": "e9894bd07229e9aa6587bf4e2b347d32e72594af3b0c1994e757d9907ee8cc52",
+      "projectionSha256": "e9894bd07229e9aa6587bf4e2b347d32e72594af3b0c1994e757d9907ee8cc52",
+      "changed": false
+    },
+    {
+      "migration": "20260720090000_close_assurance_schema_foundation",
+      "sourceSha256": "984adb5c65459abdc51e2b045d5705117eb4f38e1d6d7d896417027d71f63f59",
+      "projectionSha256": "984adb5c65459abdc51e2b045d5705117eb4f38e1d6d7d896417027d71f63f59",
+      "changed": false
+    },
+    {
+      "migration": "20260720130000_cash_shortage_policy_governance",
+      "sourceSha256": "2367aac9571cb9528a32b7cf582a46d305c8e664daaf647c15c0cccbaa1fad65",
+      "projectionSha256": "2367aac9571cb9528a32b7cf582a46d305c8e664daaf647c15c0cccbaa1fad65",
+      "changed": false
+    },
+    {
+      "migration": "20260720210000_workflow_assurance_multi_finding_persistence",
+      "sourceSha256": "5042dbf9b233a276ea36cc20731f046fff080d9ffd6ffe507b96ddfdf07ffca7",
+      "projectionSha256": "5042dbf9b233a276ea36cc20731f046fff080d9ffd6ffe507b96ddfdf07ffca7",
+      "changed": false
+    },
+    {
+      "migration": "20260722143000_agent_runtime_phase_1_foundation",
+      "sourceSha256": "5a22d11b335bf15dd1769b79fa5a07efc3f78627880485c525a48f9600bf390d",
+      "projectionSha256": "5a22d11b335bf15dd1769b79fa5a07efc3f78627880485c525a48f9600bf390d",
+      "changed": false
+    },
+    {
+      "migration": "20260722150000_agent_runtime_tenant_consistency",
+      "sourceSha256": "7634fcb772582a9d581d268c07b62295bbc53a202ed9a4a439b63c81c4ef6969",
+      "projectionSha256": "7634fcb772582a9d581d268c07b62295bbc53a202ed9a4a439b63c81c4ef6969",
+      "changed": false
+    },
+    {
+      "migration": "20260722153000_agent_runtime_incident_cascade_consistency",
+      "sourceSha256": "ad5cada3a97f032961ed003105cff2c57e68217da98d4074a0bd3ff962d827a5",
+      "projectionSha256": "ad5cada3a97f032961ed003105cff2c57e68217da98d4074a0bd3ff962d827a5",
+      "changed": false
+    },
+    {
+      "migration": "20260722160000_agent_runtime_phase_2a_provenance",
+      "sourceSha256": "cb651642fe43c85d9fade50bc478ef12603177aa909de77a2ef9c1345e820be5",
+      "projectionSha256": "cb651642fe43c85d9fade50bc478ef12603177aa909de77a2ef9c1345e820be5",
+      "changed": false
+    },
+    {
+      "migration": "20260722161000_agent_runtime_phase_2a_operational_controls",
+      "sourceSha256": "70107bb5daa7ef48932a046762dc60df50a862a99ac18385faba38f1b0090860",
+      "projectionSha256": "70107bb5daa7ef48932a046762dc60df50a862a99ac18385faba38f1b0090860",
+      "changed": false
+    },
+    {
+      "migration": "20260722162000_agent_runtime_tenant_scoped_correlation",
+      "sourceSha256": "e79f44b59182bb4030dc166ee8f639b54c4541350b5075e87a7b9d2d6c7b52a6",
+      "projectionSha256": "e79f44b59182bb4030dc166ee8f639b54c4541350b5075e87a7b9d2d6c7b52a6",
+      "changed": false
+    },
+    {
+      "migration": "20260723100000_agent_runtime_release_control",
+      "sourceSha256": "7d519b52e75dbbf1f9e66e503ab9da36a7338972f5c08e68acd839da8124d4a4",
+      "projectionSha256": "7d519b52e75dbbf1f9e66e503ab9da36a7338972f5c08e68acd839da8124d4a4",
+      "changed": false
+    },
+    {
+      "migration": "20260724100000_agent_runtime_release_hardening",
+      "sourceSha256": "f7f896f4e2c40717a3fb5bed3f6cb90e68dfc4ee31868f74bd99cb64eabfd9a9",
+      "projectionSha256": "f7f896f4e2c40717a3fb5bed3f6cb90e68dfc4ee31868f74bd99cb64eabfd9a9",
+      "changed": false
+    },
+    {
+      "migration": "20260724113000_agent_runtime_retirement_alert_dead_letter",
+      "sourceSha256": "94e2aac5dc4adce330ba5ebc6e222da75a95bb6d840028ecd2329f02927ee827",
+      "projectionSha256": "94e2aac5dc4adce330ba5ebc6e222da75a95bb6d840028ecd2329f02927ee827",
+      "changed": false
+    },
+    {
+      "migration": "20260724193000_agent_reconciler_invocation_ledger",
+      "sourceSha256": "266e3c093a83ba9746528fb7cf0f00c3181d2d219a18524d55fbcb37b8c89982",
+      "projectionSha256": "266e3c093a83ba9746528fb7cf0f00c3181d2d219a18524d55fbcb37b8c89982",
+      "changed": false
+    },
+    {
+      "migration": "20260726140000_business_event_foundation_bridge",
+      "sourceSha256": "62c534a5d0abda2d256ff28cfa82017593375fea4fa776f9d5e907653fe3299e",
+      "projectionSha256": "f020e87eb4bfd16e9b02b1c270459ed5cfd40544894e4c8e39c6107bd6194de8",
+      "changed": true
+    },
+    {
+      "migration": "20260726143000_regulatory_isolation_outbox",
+      "sourceSha256": "c23c4c444fdcdd557ab2812303d1b2088fc65a36639978387c0d76a45b3c3429",
+      "projectionSha256": "c23c4c444fdcdd557ab2812303d1b2088fc65a36639978387c0d76a45b3c3429",
+      "changed": false
+    },
+    {
+      "migration": "20260726190000_retire_production_bom_capability",
+      "sourceSha256": "fa4a24be13f95181a5097e981a75622c0e0f567fbd79e3c787c02349f9fb207b",
+      "projectionSha256": "0b45ccd78a72146d5005ca806b921470ba9412864d78977a8da56ef070dada69",
+      "changed": true
+    },
+    {
+      "migration": "20260726213000_hris_operational_time_management",
+      "sourceSha256": "be3d3730df5ea422eb7ec64433ca23ddc7da5afa32d499fe33bf37de3226b03e",
+      "projectionSha256": "be3d3730df5ea422eb7ec64433ca23ddc7da5afa32d499fe33bf37de3226b03e",
+      "changed": false
+    },
+    {
+      "migration": "20260727090000_accountant_access_portfolio",
+      "sourceSha256": "f69df65a35857670a87cb47bba3cabe021c8bdb9c5b756e816d58dc3e5fff55f",
+      "projectionSha256": "f69df65a35857670a87cb47bba3cabe021c8bdb9c5b756e816d58dc3e5fff55f",
+      "changed": false
+    },
+    {
+      "migration": "20260727110000_offline_pos_sync_foundation",
+      "sourceSha256": "83e5571556c387d8e01836a378baae3daea043d4360ebe95a82b4507aede290a",
+      "projectionSha256": "83e5571556c387d8e01836a378baae3daea043d4360ebe95a82b4507aede290a",
+      "changed": false
+    },
+    {
+      "migration": "20260727110100_offline_pos_sync_foundation_reconciliation",
+      "sourceSha256": "46388bec0af9f7598659c986bb28c5b2231e6eca94b17c83146f158f188e4349",
+      "projectionSha256": "46388bec0af9f7598659c986bb28c5b2231e6eca94b17c83146f158f188e4349",
+      "changed": false
+    },
+    {
+      "migration": "20260727143000_country_adapter_pilot_foundation",
+      "sourceSha256": "abc8c3e882463207ed7bb1614237698cd28bee814ae2d6786effe6dfe9b89ca4",
+      "projectionSha256": "abc8c3e882463207ed7bb1614237698cd28bee814ae2d6786effe6dfe9b89ca4",
+      "changed": false
+    },
+    {
+      "migration": "20260727170000_ai_copilot_proposal_guardrails",
+      "sourceSha256": "021be1108498dd7cddac0502b8901f3600312a8c2701a1be84ec3af846e2d41c",
+      "projectionSha256": "021be1108498dd7cddac0502b8901f3600312a8c2701a1be84ec3af846e2d41c",
+      "changed": false
+    },
+    {
+      "migration": "20260728100000_pos_cash_shortage_checkpoint_persistence",
+      "sourceSha256": "090c173b773a9eb33fff780489df45470c9e0028f114058add97598ff844bd06",
+      "projectionSha256": "090c173b773a9eb33fff780489df45470c9e0028f114058add97598ff844bd06",
+      "changed": false
+    },
+    {
+      "migration": "20260730150000_organization_onboarding_entitlement_bridge",
+      "sourceSha256": "4d7e4017b27c956ffe39647f0c4c74dee2dde03cb1284e525926b4ed8b045411",
+      "projectionSha256": "e48aa41902466b8e9de54cd9e38e9725b165551b6f86d3c38abbcb493d067fd7",
+      "changed": true
+    },
+    {
+      "migration": "20260730160000_pos_sales_dependency_entitlement",
+      "sourceSha256": "8cab33b4b4b2da46cf896703d5c13451a2e1015b382b9a3f658ee28cee4e0f28",
+      "projectionSha256": "8cab33b4b4b2da46cf896703d5c13451a2e1015b382b9a3f658ee28cee4e0f28",
+      "changed": false
+    },
+    {
+      "migration": "20260801153000_certified_fiscal_evidence_immutability",
+      "sourceSha256": "380c4bb6e7fbf252e626af06ed5286ff706dc7312de19a9d96e580b448d50812",
+      "projectionSha256": "727400c428ae69c0b4cc8a5350b48bbff49db92b8e74e4d688c6f900d00a0c10",
+      "changed": true
+    },
+    {
+      "migration": "20260808120000_customer_settlement_allocation_foundation",
+      "sourceSha256": "33e11ec31c4c9e3ddca8ab7004fcefc4950e37caf559037abf32bb7c606ea81c",
+      "projectionSha256": "33e11ec31c4c9e3ddca8ab7004fcefc4950e37caf559037abf32bb7c606ea81c",
+      "changed": false
+    },
+    {
+      "migration": "20260808133000_customer_settlement_compensating_reversal_foundation",
+      "sourceSha256": "3eed50d1c697abbe30492208f46361fa312b6f67c2195e40faa65bbcaaeebea5",
+      "projectionSha256": "3eed50d1c697abbe30492208f46361fa312b6f67c2195e40faa65bbcaaeebea5",
+      "changed": false
+    },
+    {
+      "migration": "20260809100000_customer_receivable_document_foundation",
+      "sourceSha256": "f5e4f34f6b0a7fc9389ec07131330def4aa645fc4d30dc19b9c944fda130e84c",
+      "projectionSha256": "f5e4f34f6b0a7fc9389ec07131330def4aa645fc4d30dc19b9c944fda130e84c",
+      "changed": false
+    },
+    {
+      "migration": "20260809113000_customer_statement_snapshot_foundation",
+      "sourceSha256": "481552cace90e7c698d7ace818e9d0b9d0c5396365be30cc143728f0693161f9",
+      "projectionSha256": "481552cace90e7c698d7ace818e9d0b9d0c5396365be30cc143728f0693161f9",
+      "changed": false
+    },
+    {
+      "migration": "20260809130000_customer_statement_external_access",
+      "sourceSha256": "e8f2cc7fe9144ee80f3b02c1c29c5959bb6e72ce764535e1676923710837ed97",
+      "projectionSha256": "e8f2cc7fe9144ee80f3b02c1c29c5959bb6e72ce764535e1676923710837ed97",
+      "changed": false
+    },
+    {
+      "migration": "20260809143000_customer_statement_delivery_referral",
+      "sourceSha256": "02aed2acc3b18fe5fbe637a6956b7d9b0867e2a90a5e7ce071faee6bd92fb46a",
+      "projectionSha256": "02aed2acc3b18fe5fbe637a6956b7d9b0867e2a90a5e7ce071faee6bd92fb46a",
+      "changed": false
+    },
+    {
+      "migration": "20260809160000_accountant_client_invite_onboarding",
+      "sourceSha256": "f1067b08aefdec02a1038767ca525bcd3ffc178008a31a18fbbf2d6667f303f6",
+      "projectionSha256": "f1067b08aefdec02a1038767ca525bcd3ffc178008a31a18fbbf2d6667f303f6",
+      "changed": false
+    },
+    {
+      "migration": "20260809170000_referral_accounting_source_types",
+      "sourceSha256": "0790760cb0ed07251063090db06bfd315f525039d9398cc0efbd03da8b11d41e",
+      "projectionSha256": "0790760cb0ed07251063090db06bfd315f525039d9398cc0efbd03da8b11d41e",
+      "changed": false
+    },
+    {
+      "migration": "20260809180000_accounting_enum_completion",
+      "sourceSha256": "0af908e64697c07e333be28871443871701be407922861cd5aa06569d10b4440",
+      "projectionSha256": "0af908e64697c07e333be28871443871701be407922861cd5aa06569d10b4440",
+      "changed": false
+    },
+    {
+      "migration": "20260815120000_supplier_po_acknowledgement_pilot",
+      "sourceSha256": "e9b39340c701cd72f17e9975ae8350744f91a5ba8e6d66c4b6fe9b72bde14e58",
+      "projectionSha256": "e9b39340c701cd72f17e9975ae8350744f91a5ba8e6d66c4b6fe9b72bde14e58",
+      "changed": false
+    },
+    {
+      "migration": "20260815130000_governed_master_data_onboarding",
+      "sourceSha256": "c537521fae39bca626a4bdc3dd8a03459f55822733af5dd9ea79cc7209dbd140",
+      "projectionSha256": "c537521fae39bca626a4bdc3dd8a03459f55822733af5dd9ea79cc7209dbd140",
+      "changed": false
+    },
+    {
+      "migration": "20260815143000_pos_customer_location_scope",
+      "sourceSha256": "d73978d768c1214b0df818831f8e78189fa83c97e496eed5b66c0b097c6fc7d8",
+      "projectionSha256": "d73978d768c1214b0df818831f8e78189fa83c97e496eed5b66c0b097c6fc7d8",
+      "changed": false
+    },
+    {
+      "migration": "20260817120000_pos_commit_result_registry",
+      "sourceSha256": "6e943e192c9d7c01a1e0ad5f5a5443a4317d5d44b893ec792321f77de727c1c6",
+      "projectionSha256": "6e943e192c9d7c01a1e0ad5f5a5443a4317d5d44b893ec792321f77de727c1c6",
+      "changed": false
+    }
+  ],
+  "targetProjection": [
+    {
+      "migration": "20260528124341_refine_item_barcode",
+      "sourceSha256": "038f2cd31f028f9725ac5ec4d91ace9bed34ab05de98bf0600162118aaaa1eb2",
+      "projectionSha256": "038f2cd31f028f9725ac5ec4d91ace9bed34ab05de98bf0600162118aaaa1eb2",
+      "changed": false
+    },
+    {
+      "migration": "20260611120000_payment_provider_reference_uniqueness",
+      "sourceSha256": "e61d8f02ef48e9034cda93f6a5b7259be0a099d4861dadd25faab530dbe84eb2",
+      "projectionSha256": "e61d8f02ef48e9034cda93f6a5b7259be0a099d4861dadd25faab530dbe84eb2",
+      "changed": false
+    },
+    {
+      "migration": "20260611130000_accounting_auth_baseline_bridge",
+      "sourceSha256": "f7de8dc7ace0a5e063cdb7ecd9527e77807b7f872e474546819e9fca13a273d4",
+      "projectionSha256": "242ae52b8a674b0e08da530e698e90ac9e52b4804cb2fffeec5d4bd9fca45ad6",
+      "changed": true
+    },
+    {
+      "migration": "20260618154500_repair_accounting_source_links",
+      "sourceSha256": "aa11c0dd1e5f24a7cb9c49d900572f4f07244d4a19d3b4b6b6089effe1fe1643",
+      "projectionSha256": "ad6e06d67dba1197194058246afb784525d735bd74520a29fb795bb134cb76bf",
+      "changed": true
+    },
+    {
+      "migration": "20260618160000_payroll_foundation_bridge",
+      "sourceSha256": "77c4c1bbd5618e5d01d7416e2f304014890a843785280ccca8aeb0c8c1f4ada8",
+      "projectionSha256": "e47fd67926d1b1502db8b3e787373ca2a1aef1e86d60c2df530af136ce417eeb",
+      "changed": true
+    },
+    {
+      "migration": "20260618161000_ap_stock_count_foundation_bridge",
+      "sourceSha256": "b6c29029961c7080ff75cf1dbd7f918f2b4c4335befe487dcc89ce2d325ccacc",
+      "projectionSha256": "e2d7e88f3fe3c8780dae7fb8bc220bb0d1e3d8d11a784ae64e45c68c38d44dd1",
+      "changed": true
+    },
+    {
+      "migration": "20260619120000_backfill_purchase_receive_permission",
+      "sourceSha256": "f64f6e4ade970f347c4db26e8dd14252e081862500a5070b45e72e8a4387dd40",
+      "projectionSha256": "f64f6e4ade970f347c4db26e8dd14252e081862500a5070b45e72e8a4387dd40",
+      "changed": false
+    },
+    {
+      "migration": "20260621102500_workflow_assurance_schema_scope_bridge",
+      "sourceSha256": "8487ca74d522a0861b924959b6fcf474c29b3f258d9ee03230fa1a00238ca0ac",
+      "projectionSha256": "8487ca74d522a0861b924959b6fcf474c29b3f258d9ee03230fa1a00238ca0ac",
+      "changed": false
+    },
+    {
+      "migration": "20260621103000_workflow_assurance_registry_foundation",
+      "sourceSha256": "ba6bc0fca858e4a9b599c30ccd32f288235857a736d6c6afc186e8e54f79f473",
+      "projectionSha256": "f0c97142aa5de4e6dbcbc0502ed00ea7666fcb4e1295390adbaeb4285ed9831f",
+      "changed": true
+    },
+    {
+      "migration": "20260621113000_workflow_assurance_incident_spine",
+      "sourceSha256": "cfa1cb1cb7242c9717e8aeedc95c7424591aa78b799ea381d2bd40c199bf1664",
+      "projectionSha256": "5f8b3d3d5d047e5acfd15b18e9e9727c51e6e7a8d5bd5ed6954943e15d93a73b",
+      "changed": true
+    },
+    {
+      "migration": "20260625110000_payroll_kernel_immutability",
+      "sourceSha256": "d3bb80305c4d130c7533bdee5a75dd88da3da103ca885f7d14dc73b7167ee8d4",
+      "projectionSha256": "ce8d00731123ad95c403bfd7de6b039dc2cf243be827ae82f5573a2777d52cb5",
+      "changed": true
+    },
+    {
+      "migration": "20260626093000_payroll_compensation_approval",
+      "sourceSha256": "69e379301a592e4fc126f72688b550d2c842bb74de785de01a732b60cc9a65e2",
+      "projectionSha256": "69e379301a592e4fc126f72688b550d2c842bb74de785de01a732b60cc9a65e2",
+      "changed": false
+    },
+    {
+      "migration": "20260626103000_payroll_payment_evidence_readiness",
+      "sourceSha256": "3a75598e7fe3bdddce1ba6c4248cb08b1cd89966dbff0381d915903fa7aa0c61",
+      "projectionSha256": "3a75598e7fe3bdddce1ba6c4248cb08b1cd89966dbff0381d915903fa7aa0c61",
+      "changed": false
+    },
+    {
+      "migration": "20260626123000_payroll_cnps_country_pack_expansion",
+      "sourceSha256": "da6c26b20c8572648ea6d82da2e8c4b6b71ee0b82c6ed1181d1b27a351a092a6",
+      "projectionSha256": "da6c26b20c8572648ea6d82da2e8c4b6b71ee0b82c6ed1181d1b27a351a092a6",
+      "changed": false
+    },
+    {
+      "migration": "20260626133000_payroll_declaration_lifecycle_evidence",
+      "sourceSha256": "326c7a82dab1b64179bb72b422eb380affcbe1a648612eeb042384b2e7dc3a7f",
+      "projectionSha256": "326c7a82dab1b64179bb72b422eb380affcbe1a648612eeb042384b2e7dc3a7f",
+      "changed": false
+    },
+    {
+      "migration": "20260626143000_payroll_payment_reconciliation_lifecycle",
+      "sourceSha256": "b3fbfc15e09fd15c0692397004f22746f1dee8d865fa5d0ed411c133ec3bc900",
+      "projectionSha256": "b3fbfc15e09fd15c0692397004f22746f1dee8d865fa5d0ed411c133ec3bc900",
+      "changed": false
+    },
+    {
+      "migration": "20260628123000_payroll_employee_balance_lifecycle",
+      "sourceSha256": "afc488a800240f9869faedca30229fda44ff834225839051dfbf12e8b11c8d8a",
+      "projectionSha256": "afc488a800240f9869faedca30229fda44ff834225839051dfbf12e8b11c8d8a",
+      "changed": false
+    },
+    {
+      "migration": "20260630090000_payment_reconciliation_foundation",
+      "sourceSha256": "51c342aaa93f3bc909376ecfa6359840e6fca9ad29e15cd4b18c964dc99006e5",
+      "projectionSha256": "51c342aaa93f3bc909376ecfa6359840e6fca9ad29e15cd4b18c964dc99006e5",
+      "changed": false
+    },
+    {
+      "migration": "20260630100000_payment_reconciliation_inbox_worker_leases",
+      "sourceSha256": "176825a859d1bbc7b59a2bfa03028412f2a2de8c34a581b3b8ad5e0a122781ba",
+      "projectionSha256": "176825a859d1bbc7b59a2bfa03028412f2a2de8c34a581b3b8ad5e0a122781ba",
+      "changed": false
+    },
+    {
+      "migration": "20260703110000_public_receipt_access_tokens",
+      "sourceSha256": "9995dbadcf429d5f91bccf38916caf6a6ab9b6a019ed1bf60ad6ec089dfc0cd5",
+      "projectionSha256": "9995dbadcf429d5f91bccf38916caf6a6ab9b6a019ed1bf60ad6ec089dfc0cd5",
+      "changed": false
+    },
+    {
+      "migration": "20260711133000_public_identity_abuse_limits",
+      "sourceSha256": "748b70b86ceb9ccf7baa26e8b0bb0e376e74b9b0a3c71f1edd808cff4ad6003a",
+      "projectionSha256": "748b70b86ceb9ccf7baa26e8b0bb0e376e74b9b0a3c71f1edd808cff4ad6003a",
+      "changed": false
+    },
+    {
+      "migration": "20260714194500_inventory_history_accounting_time_controls",
+      "sourceSha256": "049b406cd57426bb88907adbbfa942d8a947b7cfb4560721443077e260f24b2f",
+      "projectionSha256": "049b406cd57426bb88907adbbfa942d8a947b7cfb4560721443077e260f24b2f",
+      "changed": false
+    },
+    {
+      "migration": "20260714203000_session_assurance",
+      "sourceSha256": "7749562cb493cd22b902ee6da6e6e892b19dcfa5e7d9ba2463027d5d0497ca1c",
+      "projectionSha256": "7749562cb493cd22b902ee6da6e6e892b19dcfa5e7d9ba2463027d5d0497ca1c",
+      "changed": false
+    },
+    {
+      "migration": "20260715090000_inventory_correction_reversal_lineage",
+      "sourceSha256": "57e00140dd9bc166f843ed1c7860b111680094ff8b6496be01c03a22fb12cb01",
+      "projectionSha256": "57e00140dd9bc166f843ed1c7860b111680094ff8b6496be01c03a22fb12cb01",
+      "changed": false
+    },
+    {
+      "migration": "20260718100000_branch_daily_close_review_foundation",
+      "sourceSha256": "04e1ee62359c19a6cd7837de8ac50cdb8be002f3f971dd617cf984f1da728895",
+      "projectionSha256": "04e1ee62359c19a6cd7837de8ac50cdb8be002f3f971dd617cf984f1da728895",
+      "changed": false
+    },
+    {
+      "migration": "20260718130000_branch_daily_close_sign_off_foundation",
+      "sourceSha256": "ba8c880bdde4c432cf8171f4da91716ce8738a0e2639cf6dcf6758f613fd1984",
+      "projectionSha256": "ba8c880bdde4c432cf8171f4da91716ce8738a0e2639cf6dcf6758f613fd1984",
+      "changed": false
+    },
+    {
+      "migration": "20260719190000_hris_org_manager_scope_foundation",
+      "sourceSha256": "c98cf2582149563f50e9e160bc4ca8d3da0fc4344d96c293e93ad35f1ae07f6c",
+      "projectionSha256": "c98cf2582149563f50e9e160bc4ca8d3da0fc4344d96c293e93ad35f1ae07f6c",
+      "changed": false
+    },
+    {
+      "migration": "20260719203000_workflow_assurance_stable_case_identity",
+      "sourceSha256": "e9894bd07229e9aa6587bf4e2b347d32e72594af3b0c1994e757d9907ee8cc52",
+      "projectionSha256": "e9894bd07229e9aa6587bf4e2b347d32e72594af3b0c1994e757d9907ee8cc52",
+      "changed": false
+    },
+    {
+      "migration": "20260720090000_close_assurance_schema_foundation",
+      "sourceSha256": "984adb5c65459abdc51e2b045d5705117eb4f38e1d6d7d896417027d71f63f59",
+      "projectionSha256": "984adb5c65459abdc51e2b045d5705117eb4f38e1d6d7d896417027d71f63f59",
+      "changed": false
+    },
+    {
+      "migration": "20260720130000_cash_shortage_policy_governance",
+      "sourceSha256": "2367aac9571cb9528a32b7cf582a46d305c8e664daaf647c15c0cccbaa1fad65",
+      "projectionSha256": "2367aac9571cb9528a32b7cf582a46d305c8e664daaf647c15c0cccbaa1fad65",
+      "changed": false
+    },
+    {
+      "migration": "20260720210000_workflow_assurance_multi_finding_persistence",
+      "sourceSha256": "5042dbf9b233a276ea36cc20731f046fff080d9ffd6ffe507b96ddfdf07ffca7",
+      "projectionSha256": "5042dbf9b233a276ea36cc20731f046fff080d9ffd6ffe507b96ddfdf07ffca7",
+      "changed": false
+    },
+    {
+      "migration": "20260722143000_agent_runtime_phase_1_foundation",
+      "sourceSha256": "5a22d11b335bf15dd1769b79fa5a07efc3f78627880485c525a48f9600bf390d",
+      "projectionSha256": "5a22d11b335bf15dd1769b79fa5a07efc3f78627880485c525a48f9600bf390d",
+      "changed": false
+    },
+    {
+      "migration": "20260722150000_agent_runtime_tenant_consistency",
+      "sourceSha256": "7634fcb772582a9d581d268c07b62295bbc53a202ed9a4a439b63c81c4ef6969",
+      "projectionSha256": "7634fcb772582a9d581d268c07b62295bbc53a202ed9a4a439b63c81c4ef6969",
+      "changed": false
+    },
+    {
+      "migration": "20260722153000_agent_runtime_incident_cascade_consistency",
+      "sourceSha256": "ad5cada3a97f032961ed003105cff2c57e68217da98d4074a0bd3ff962d827a5",
+      "projectionSha256": "ad5cada3a97f032961ed003105cff2c57e68217da98d4074a0bd3ff962d827a5",
+      "changed": false
+    },
+    {
+      "migration": "20260722160000_agent_runtime_phase_2a_provenance",
+      "sourceSha256": "cb651642fe43c85d9fade50bc478ef12603177aa909de77a2ef9c1345e820be5",
+      "projectionSha256": "cb651642fe43c85d9fade50bc478ef12603177aa909de77a2ef9c1345e820be5",
+      "changed": false
+    },
+    {
+      "migration": "20260722161000_agent_runtime_phase_2a_operational_controls",
+      "sourceSha256": "70107bb5daa7ef48932a046762dc60df50a862a99ac18385faba38f1b0090860",
+      "projectionSha256": "70107bb5daa7ef48932a046762dc60df50a862a99ac18385faba38f1b0090860",
+      "changed": false
+    },
+    {
+      "migration": "20260722162000_agent_runtime_tenant_scoped_correlation",
+      "sourceSha256": "e79f44b59182bb4030dc166ee8f639b54c4541350b5075e87a7b9d2d6c7b52a6",
+      "projectionSha256": "e79f44b59182bb4030dc166ee8f639b54c4541350b5075e87a7b9d2d6c7b52a6",
+      "changed": false
+    },
+    {
+      "migration": "20260723100000_agent_runtime_release_control",
+      "sourceSha256": "7d519b52e75dbbf1f9e66e503ab9da36a7338972f5c08e68acd839da8124d4a4",
+      "projectionSha256": "7d519b52e75dbbf1f9e66e503ab9da36a7338972f5c08e68acd839da8124d4a4",
+      "changed": false
+    },
+    {
+      "migration": "20260724100000_agent_runtime_release_hardening",
+      "sourceSha256": "f7f896f4e2c40717a3fb5bed3f6cb90e68dfc4ee31868f74bd99cb64eabfd9a9",
+      "projectionSha256": "f7f896f4e2c40717a3fb5bed3f6cb90e68dfc4ee31868f74bd99cb64eabfd9a9",
+      "changed": false
+    },
+    {
+      "migration": "20260724113000_agent_runtime_retirement_alert_dead_letter",
+      "sourceSha256": "94e2aac5dc4adce330ba5ebc6e222da75a95bb6d840028ecd2329f02927ee827",
+      "projectionSha256": "94e2aac5dc4adce330ba5ebc6e222da75a95bb6d840028ecd2329f02927ee827",
+      "changed": false
+    },
+    {
+      "migration": "20260724193000_agent_reconciler_invocation_ledger",
+      "sourceSha256": "266e3c093a83ba9746528fb7cf0f00c3181d2d219a18524d55fbcb37b8c89982",
+      "projectionSha256": "266e3c093a83ba9746528fb7cf0f00c3181d2d219a18524d55fbcb37b8c89982",
+      "changed": false
+    },
+    {
+      "migration": "20260726140000_business_event_foundation_bridge",
+      "sourceSha256": "62c534a5d0abda2d256ff28cfa82017593375fea4fa776f9d5e907653fe3299e",
+      "projectionSha256": "40509b869753a4aeeb76f3ef4e2e37d91501ee4d33cc364115e19fb0738220ff",
+      "changed": true
+    },
+    {
+      "migration": "20260726143000_regulatory_isolation_outbox",
+      "sourceSha256": "c23c4c444fdcdd557ab2812303d1b2088fc65a36639978387c0d76a45b3c3429",
+      "projectionSha256": "c23c4c444fdcdd557ab2812303d1b2088fc65a36639978387c0d76a45b3c3429",
+      "changed": false
+    },
+    {
+      "migration": "20260726190000_retire_production_bom_capability",
+      "sourceSha256": "fa4a24be13f95181a5097e981a75622c0e0f567fbd79e3c787c02349f9fb207b",
+      "projectionSha256": "5e4d9058b660e4c9ccb27716b2c381c999e51a26d275ee537b2b817d5f72d9f4",
+      "changed": true
+    },
+    {
+      "migration": "20260726213000_hris_operational_time_management",
+      "sourceSha256": "be3d3730df5ea422eb7ec64433ca23ddc7da5afa32d499fe33bf37de3226b03e",
+      "projectionSha256": "be3d3730df5ea422eb7ec64433ca23ddc7da5afa32d499fe33bf37de3226b03e",
+      "changed": false
+    },
+    {
+      "migration": "20260727090000_accountant_access_portfolio",
+      "sourceSha256": "f69df65a35857670a87cb47bba3cabe021c8bdb9c5b756e816d58dc3e5fff55f",
+      "projectionSha256": "f69df65a35857670a87cb47bba3cabe021c8bdb9c5b756e816d58dc3e5fff55f",
+      "changed": false
+    },
+    {
+      "migration": "20260727110000_offline_pos_sync_foundation",
+      "sourceSha256": "83e5571556c387d8e01836a378baae3daea043d4360ebe95a82b4507aede290a",
+      "projectionSha256": "83e5571556c387d8e01836a378baae3daea043d4360ebe95a82b4507aede290a",
+      "changed": false
+    },
+    {
+      "migration": "20260727110100_offline_pos_sync_foundation_reconciliation",
+      "sourceSha256": "46388bec0af9f7598659c986bb28c5b2231e6eca94b17c83146f158f188e4349",
+      "projectionSha256": "46388bec0af9f7598659c986bb28c5b2231e6eca94b17c83146f158f188e4349",
+      "changed": false
+    },
+    {
+      "migration": "20260727143000_country_adapter_pilot_foundation",
+      "sourceSha256": "abc8c3e882463207ed7bb1614237698cd28bee814ae2d6786effe6dfe9b89ca4",
+      "projectionSha256": "abc8c3e882463207ed7bb1614237698cd28bee814ae2d6786effe6dfe9b89ca4",
+      "changed": false
+    },
+    {
+      "migration": "20260727170000_ai_copilot_proposal_guardrails",
+      "sourceSha256": "021be1108498dd7cddac0502b8901f3600312a8c2701a1be84ec3af846e2d41c",
+      "projectionSha256": "021be1108498dd7cddac0502b8901f3600312a8c2701a1be84ec3af846e2d41c",
+      "changed": false
+    },
+    {
+      "migration": "20260728100000_pos_cash_shortage_checkpoint_persistence",
+      "sourceSha256": "090c173b773a9eb33fff780489df45470c9e0028f114058add97598ff844bd06",
+      "projectionSha256": "090c173b773a9eb33fff780489df45470c9e0028f114058add97598ff844bd06",
+      "changed": false
+    },
+    {
+      "migration": "20260730150000_organization_onboarding_entitlement_bridge",
+      "sourceSha256": "4d7e4017b27c956ffe39647f0c4c74dee2dde03cb1284e525926b4ed8b045411",
+      "projectionSha256": "6566045b7de128c8e6f59a7686e66fde3a9e910afb9eaf7abe1c9848e567835c",
+      "changed": true
+    },
+    {
+      "migration": "20260730160000_pos_sales_dependency_entitlement",
+      "sourceSha256": "8cab33b4b4b2da46cf896703d5c13451a2e1015b382b9a3f658ee28cee4e0f28",
+      "projectionSha256": "8cab33b4b4b2da46cf896703d5c13451a2e1015b382b9a3f658ee28cee4e0f28",
+      "changed": false
+    },
+    {
+      "migration": "20260801153000_certified_fiscal_evidence_immutability",
+      "sourceSha256": "380c4bb6e7fbf252e626af06ed5286ff706dc7312de19a9d96e580b448d50812",
+      "projectionSha256": "768188f60b1ebbe6558b675948e40545b76879215da5b01e8e6ec8b1c963023f",
+      "changed": true
+    },
+    {
+      "migration": "20260808120000_customer_settlement_allocation_foundation",
+      "sourceSha256": "33e11ec31c4c9e3ddca8ab7004fcefc4950e37caf559037abf32bb7c606ea81c",
+      "projectionSha256": "33e11ec31c4c9e3ddca8ab7004fcefc4950e37caf559037abf32bb7c606ea81c",
+      "changed": false
+    },
+    {
+      "migration": "20260808133000_customer_settlement_compensating_reversal_foundation",
+      "sourceSha256": "3eed50d1c697abbe30492208f46361fa312b6f67c2195e40faa65bbcaaeebea5",
+      "projectionSha256": "3eed50d1c697abbe30492208f46361fa312b6f67c2195e40faa65bbcaaeebea5",
+      "changed": false
+    },
+    {
+      "migration": "20260809100000_customer_receivable_document_foundation",
+      "sourceSha256": "f5e4f34f6b0a7fc9389ec07131330def4aa645fc4d30dc19b9c944fda130e84c",
+      "projectionSha256": "f5e4f34f6b0a7fc9389ec07131330def4aa645fc4d30dc19b9c944fda130e84c",
+      "changed": false
+    },
+    {
+      "migration": "20260809113000_customer_statement_snapshot_foundation",
+      "sourceSha256": "481552cace90e7c698d7ace818e9d0b9d0c5396365be30cc143728f0693161f9",
+      "projectionSha256": "481552cace90e7c698d7ace818e9d0b9d0c5396365be30cc143728f0693161f9",
+      "changed": false
+    },
+    {
+      "migration": "20260809130000_customer_statement_external_access",
+      "sourceSha256": "e8f2cc7fe9144ee80f3b02c1c29c5959bb6e72ce764535e1676923710837ed97",
+      "projectionSha256": "e8f2cc7fe9144ee80f3b02c1c29c5959bb6e72ce764535e1676923710837ed97",
+      "changed": false
+    },
+    {
+      "migration": "20260809143000_customer_statement_delivery_referral",
+      "sourceSha256": "02aed2acc3b18fe5fbe637a6956b7d9b0867e2a90a5e7ce071faee6bd92fb46a",
+      "projectionSha256": "02aed2acc3b18fe5fbe637a6956b7d9b0867e2a90a5e7ce071faee6bd92fb46a",
+      "changed": false
+    },
+    {
+      "migration": "20260809160000_accountant_client_invite_onboarding",
+      "sourceSha256": "f1067b08aefdec02a1038767ca525bcd3ffc178008a31a18fbbf2d6667f303f6",
+      "projectionSha256": "f1067b08aefdec02a1038767ca525bcd3ffc178008a31a18fbbf2d6667f303f6",
+      "changed": false
+    },
+    {
+      "migration": "20260809170000_referral_accounting_source_types",
+      "sourceSha256": "0790760cb0ed07251063090db06bfd315f525039d9398cc0efbd03da8b11d41e",
+      "projectionSha256": "0790760cb0ed07251063090db06bfd315f525039d9398cc0efbd03da8b11d41e",
+      "changed": false
+    },
+    {
+      "migration": "20260809180000_accounting_enum_completion",
+      "sourceSha256": "0af908e64697c07e333be28871443871701be407922861cd5aa06569d10b4440",
+      "projectionSha256": "0af908e64697c07e333be28871443871701be407922861cd5aa06569d10b4440",
+      "changed": false
+    },
+    {
+      "migration": "20260815120000_supplier_po_acknowledgement_pilot",
+      "sourceSha256": "e9b39340c701cd72f17e9975ae8350744f91a5ba8e6d66c4b6fe9b72bde14e58",
+      "projectionSha256": "e9b39340c701cd72f17e9975ae8350744f91a5ba8e6d66c4b6fe9b72bde14e58",
+      "changed": false
+    },
+    {
+      "migration": "20260815130000_governed_master_data_onboarding",
+      "sourceSha256": "c537521fae39bca626a4bdc3dd8a03459f55822733af5dd9ea79cc7209dbd140",
+      "projectionSha256": "c537521fae39bca626a4bdc3dd8a03459f55822733af5dd9ea79cc7209dbd140",
+      "changed": false
+    },
+    {
+      "migration": "20260815143000_pos_customer_location_scope",
+      "sourceSha256": "d73978d768c1214b0df818831f8e78189fa83c97e496eed5b66c0b097c6fc7d8",
+      "projectionSha256": "d73978d768c1214b0df818831f8e78189fa83c97e496eed5b66c0b097c6fc7d8",
+      "changed": false
+    },
+    {
+      "migration": "20260817120000_pos_commit_result_registry",
+      "sourceSha256": "6e943e192c9d7c01a1e0ad5f5a5443a4317d5d44b893ec792321f77de727c1c6",
+      "projectionSha256": "6e943e192c9d7c01a1e0ad5f5a5443a4317d5d44b893ec792321f77de727c1c6",
+      "changed": false
+    }
+  ]
+}

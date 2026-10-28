@@ -1,9 +1,10 @@
 "use server";
 
-import { getAuthenticatedUser } from "@/config/useAuth";
 import { safeSuccessActionErrorResult } from "@/actions/_shared/safe-action-responses";
+import { requirePermission } from "@/lib/security/rbac";
 import { createLocationForManagement } from "@/services/location/location.service";
 import { LocationManagementSchema, type LocationManagementInput } from "@/services/location/location.schemas";
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service";
 import { revalidatePath } from "next/cache";
 
 type CreateLocationData = Omit<LocationManagementInput, "type"> & {
@@ -12,15 +13,10 @@ type CreateLocationData = Omit<LocationManagementInput, "type"> & {
 
 const createLocation = async (data: CreateLocationData) => {
   try {
-    const user = await getAuthenticatedUser();
-
-    if (!user?.organizationId) {
-      return {
-        error: "Authentication required or organization not found for user.",
-        success: false,
-        data: null,
-      };
-    }
+    const ctx = await requirePermission("locations.create", {
+      resource: "Location",
+      auditAllowed: true,
+    });
 
     const parsed = LocationManagementSchema.safeParse(data);
 
@@ -32,7 +28,18 @@ const createLocation = async (data: CreateLocationData) => {
       };
     }
 
-    const newLocation = await createLocationForManagement(user.organizationId, parsed.data);
+    const newLocation = await createLocationForManagement(ctx.orgId, parsed.data);
+
+    await observeModuleAccess({
+      organizationId: ctx.orgId,
+      userId: ctx.userId,
+      actorPermissions: ctx.permissions,
+      moduleSlug: "settings",
+      surfaceType: "action",
+      surface: "actions/locations/createLocation.ts",
+      accessIntent: "write",
+      mode: "observe",
+    });
 
     revalidatePath("/dashboard/settings/locations");
     revalidatePath("/[locale]/dashboard/settings/locations", "page");

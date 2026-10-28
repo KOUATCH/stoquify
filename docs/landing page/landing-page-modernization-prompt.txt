@@ -1,0 +1,79 @@
+Landing Page Modernization Prompt
+
+Canonical project input: user request in Codex on 2026-07-17.
+
+Prompt:
+
+Inspect the current landing page and rewrite/redesign its presentation so it reflects the platform's latest strategic orientation, value proposition, and enterprise-grade ambition.
+
+The current landing-page messaging does not properly communicate what the platform has become. It should no longer feel like a generic POS, stock, or accounting tool. It should present the platform as a modern OHADA/SYSCOHADA-ready retail operating system: POS, inventory, payments, reconciliation, accounting, compliance, payroll, audit evidence, business intelligence, and operational control working together as one trusted system.
+
+Please perform a professional landing-page modernization pass.
+
+Scope:
+
+1. Inspect The Current Landing Page
+   - Review the existing landing page route, components, copy, layout, sections, calls to action, and visual hierarchy.
+   - Identify where the current messaging is outdated, weak, generic, unclear, or misaligned with the platform's current direction.
+   - Preserve useful design patterns and components where they still fit.
+
+2. Reframe The Core Positioning
+   - Present the platform as a complete business operating system for serious retail and SMB operators.
+   - Emphasize ledger-first trust, OHADA/SYSCOHADA readiness, operational control, auditability, compliance, payments, inventory truth, payroll, reconciliation, and decision intelligence.
+   - Avoid vague startup language, generic SaaS slogans, and shallow marketing claims.
+   - Make the message attractive, credible, modern, and enterprise-grade.
+
+3. Improve All Landing Page Sections
+   Update or redesign the wording and presentation for:
+   - Hero section.
+   - Main headline and supporting copy.
+   - Primary and secondary calls to action.
+   - Platform overview.
+   - Core modules/features.
+   - Business outcomes.
+   - Trust, compliance, and auditability.
+   - Payment/reconciliation story.
+   - POS and inventory story.
+   - Accounting and close-assurance story.
+   - Payroll/compliance story if present.
+   - Target customer segments.
+   - Differentiators.
+   - Final CTA.
+
+4. Tone And Copywriting Direction
+   - Use clear, confident, professional language.
+   - Make it feel premium, modern, trustworthy, and operationally serious.
+   - Speak to business owners, finance teams, accountants, operators, and growing enterprises.
+   - Avoid overpromising unsupported capabilities.
+   - Where a feature is still roadmap or readiness-oriented, phrase it honestly.
+   - Make every section explain why the platform matters, not only what it contains.
+
+5. Visual And UX Direction
+   - Keep the design sophisticated and enterprise-grade.
+   - Improve hierarchy, spacing, section rhythm, scanability, and CTA placement.
+   - Avoid decorative clutter or generic startup visuals.
+   - Use the existing design system and visual language unless there is a strong reason to adjust.
+   - Ensure the landing page feels polished on desktop and mobile.
+   - Do not create in-app instructional text; let the page communicate through strong copy, structure, and design.
+
+6. Implementation Requirements
+   - Update the actual landing page files and related components.
+   - Keep changes focused on the landing-page experience.
+   - Preserve existing routing, localization patterns, styling conventions, and reusable components where appropriate.
+   - If the landing page supports multiple locales, update the relevant copy consistently.
+   - Do not break authenticated app routes or dashboard layouts.
+
+7. Verification
+   - Run the relevant lint/typecheck/test commands available in the repo.
+   - If practical, run a browser smoke or screenshot check for the landing page on desktop and mobile.
+   - Confirm that text does not overflow, overlap, or look cramped.
+   - Confirm that the final page communicates the platform's current positioning clearly.
+
+8. Deliverables
+   - A concise summary of what changed.
+   - Files modified.
+   - Verification performed.
+   - Any residual risks or follow-up recommendations.
+
+Success criteria:
+The landing page should immediately communicate that this is a serious, modern, OHADA/SYSCOHADA-ready business operating platform, not a generic POS or inventory app. The presentation should feel credible enough for business owners, accountants, operators, and enterprise evaluators, while remaining clear and attractive to SMB customers.

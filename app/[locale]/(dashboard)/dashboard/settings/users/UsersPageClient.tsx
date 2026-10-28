@@ -28,11 +28,13 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import type { Locale } from "@/types/bilingual"
 import { columns, type UserTableRow } from "./columns"
 
 type UsersPageClientProps = {
   users: UserTableRow[]
   invites: InviteDataProps[]
+  locale?: Locale
 }
 
 function downloadCsv(users: UserTableRow[]) {
@@ -60,7 +62,7 @@ function downloadCsv(users: UserTableRow[]) {
   URL.revokeObjectURL(url)
 }
 
-export default function UsersPageClient({ users, invites }: UsersPageClientProps) {
+export default function UsersPageClient({ users, invites, locale = "en" }: UsersPageClientProps) {
   const router = useRouter()
   const [statusFilter, setStatusFilter] = useState("all")
   const [verificationFilter, setVerificationFilter] = useState("all")
@@ -262,6 +264,7 @@ export default function UsersPageClient({ users, invites }: UsersPageClientProps
               <DataTable
                 data={filteredUsers}
                 columns={columns}
+                locale={locale}
                 searchPlaceholder="Search users, emails, roles, or status"
                 showToolbar={false}
                 variant="landing"

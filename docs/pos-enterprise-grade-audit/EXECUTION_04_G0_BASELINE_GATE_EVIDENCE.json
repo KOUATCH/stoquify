@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-08-17T09:55:00Z",
+  "gate": "G0_BASELINE",
+  "status": "BLOCKED",
+  "releaseAuthorized": false,
+  "statutoryCertified": false,
+  "candidate": {
+    "branch": "codex/pos-g0-release-20260817",
+    "baseCommit": "35b4cc6a06a50ee11de5bfce6b04993e38bd589a",
+    "implementationCommit": "a4ce23a",
+    "originalDirtyWorktreePreserved": true
+  },
+  "checks": [
+    { "id": "clean_candidate", "status": "PASS" },
+    { "id": "prisma_validate", "status": "PASS" },
+    { "id": "prisma_generate", "status": "PASS", "version": "6.19.3" },
+    { "id": "typecheck", "status": "PASS" },
+    { "id": "focused_tests", "status": "PASS_WITH_SKIPS", "passed": 59, "skipped": 3 },
+    { "id": "service_boundary_fail_mode", "status": "PASS", "activeViolations": 0 },
+    { "id": "production_build", "status": "PASS_WITH_ENVIRONMENT_ADVISORY" },
+    { "id": "native_migration_status", "status": "BLOCKED", "pendingMigrations": 66 },
+    { "id": "empty_target", "status": "PASS", "tableCount": 0 },
+    {
+      "id": "restore_replay",
+      "status": "FAIL",
+      "migration": "20260621103000_workflow_assurance_registry_foundation",
+      "prismaCode": "P3018",
+      "postgresCode": "42704"
+    },
+    { "id": "target_replay", "status": "NOT_RUN" },
+    { "id": "postgres_concurrency", "status": "NOT_RUN" },
+    { "id": "authenticated_browser", "status": "HARNESS_READY_EXECUTION_BLOCKED" }
+  ],
+  "databaseBoundary": {
+    "host": "localhost",
+    "port": 5432,
+    "database": "stoquify_dev_migrated_20260814",
+    "targetSchema": "codex_pos_commit_result_cert_20260817",
+    "targetTableCountAfterFailure": 0,
+    "restoreSchema": "codex_pos_commit_result_restore_20260817",
+    "restoreTableCountAfterFailure": 81,
+    "publicDataAccessed": false,
+    "publicSchemaMutated": false,
+    "crossSchemaCatalogMetadataObserved": true,
+    "realDataUsed": false,
+    "originalMigrationsModified": false
+  },
+  "browserBoundary": {
+    "browser": "Microsoft Edge 151.0.4129.86",
+    "operatingSystem": "Microsoft Windows 10.0.26200.9168",
+    "locales": ["en", "fr"]
+  },
+  "blockers": [
+    "Historical workflow-assurance migration uses a globally scoped pg_type existence check.",
+    "A new authorized empty restore schema or explicitly approved compensating recovery is required.",
+    "PostgreSQL POS concurrency tests have not run on a fully migrated target.",
+    "Authenticated EN/FR browser evidence has not run on a certified tenant fixture.",
+    "Operator/checker attestation and qualified production/statutory approvals remain incomplete."
+  ]
+}

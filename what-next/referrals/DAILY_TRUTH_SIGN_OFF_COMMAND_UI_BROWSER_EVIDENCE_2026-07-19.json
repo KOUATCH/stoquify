@@ -1,0 +1,322 @@
+{
+  "kind": "DAILY_TRUTH_SIGN_OFF_COMMAND_UI_BROWSER_EVIDENCE",
+  "contractVersion": "1.0",
+  "checkedAt": "2026-07-19T06:40:30.075Z",
+  "status": "PASS",
+  "operationMode": "AUTHORIZED_REVERSIBLE_LOCAL_E2E",
+  "authorization": {
+    "explicitlyAuthorized": true,
+    "scope": "Slice 20 daily-close reviewer/signer browser certification only"
+  },
+  "scope": {
+    "organizationId": "org_payroll_e2e_local",
+    "locationId": "loc_referral_sign_ui_e2e_local",
+    "businessDate": "2026-07-19",
+    "baseUrl": "http://127.0.0.1:3011"
+  },
+  "baseline": {
+    "actorsDistinct": true,
+    "reviewer": {
+      "userId": "usr_payroll_e2e_local",
+      "email": "hr.manager@stockflow.test",
+      "roleCode": "PAYROLL_E2E",
+      "permissionHash": "sha256:545944b7d91cd83cacae77fc5b7f46245d9dbc36b9bc4fee69f55e87ed2b3aef",
+      "hasReviewPermission": false,
+      "hasSignPermission": false
+    },
+    "signer": {
+      "userId": "usr_payroll_e2e_requester_local",
+      "email": "payroll.requester@stockflow.test",
+      "roleCode": "PAYROLL_E2E_REQUESTER",
+      "permissionHash": "sha256:53c90c13c743574fb3cdd7d72aaab27579d0d3b05ce22cedbb4d96e5c35e9549",
+      "hasSignPermission": false,
+      "sessionCount": 2,
+      "assuranceHash": "sha256:4028cb3538fd782707029c1d757fe7a3ea49e74aaf0fe3c4b193d945e118d8da"
+    },
+    "disposableNamespace": {
+      "locationCount": 0,
+      "reviewRunCount": 0,
+      "signOffCount": 0,
+      "clean": true
+    },
+    "authStatePresent": true
+  },
+  "checks": [
+    {
+      "stage": "reviewer-created-review-desktop",
+      "actor": "reviewer",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "ok": true,
+      "finalPath": "/en/dashboard/manager-action-center/daily-close",
+      "serverDerivedState": "AWAITING_SIGN_OFF",
+      "expectedState": "AWAITING_SIGN_OFF",
+      "reviewCommandVisible": false,
+      "signCommandVisible": false,
+      "expectedSignCommandVisible": false,
+      "signCommandOpenedDialog": false,
+      "dialogVisible": false,
+      "expectedDialogVisible": false,
+      "passwordInputEmptyAtCapture": null,
+      "accessibility": {
+        "seriousOrCriticalViolationCount": 0,
+        "violations": []
+      },
+      "layout": {
+        "rootSelector": "main",
+        "horizontalOverflow": false,
+        "clipped": [],
+        "overlaps": [],
+        "inspectedElementCount": 13
+      },
+      "pageErrors": [],
+      "failedRequests": [],
+      "screenshot": "what-next/referrals/screenshots/daily-truth-sign-off-command-ui-2026-07-19/reviewer-created-review-desktop.png"
+    },
+    {
+      "stage": "signer-read-only-desktop",
+      "actor": "signer-without-sign-permission",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "ok": true,
+      "finalPath": "/en/dashboard/manager-action-center/daily-close",
+      "serverDerivedState": "AWAITING_SIGN_OFF",
+      "expectedState": "AWAITING_SIGN_OFF",
+      "reviewCommandVisible": false,
+      "signCommandVisible": false,
+      "expectedSignCommandVisible": false,
+      "signCommandOpenedDialog": false,
+      "dialogVisible": false,
+      "expectedDialogVisible": false,
+      "passwordInputEmptyAtCapture": null,
+      "accessibility": {
+        "seriousOrCriticalViolationCount": 0,
+        "violations": []
+      },
+      "layout": {
+        "rootSelector": "main",
+        "horizontalOverflow": false,
+        "clipped": [],
+        "overlaps": [],
+        "inspectedElementCount": 13
+      },
+      "pageErrors": [],
+      "failedRequests": [],
+      "screenshot": "what-next/referrals/screenshots/daily-truth-sign-off-command-ui-2026-07-19/signer-read-only-desktop.png"
+    },
+    {
+      "stage": "signer-permitted-mobile-dialog",
+      "actor": "signer-with-sign-permission",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "ok": true,
+      "finalPath": "/en/dashboard/manager-action-center/daily-close",
+      "serverDerivedState": "AWAITING_SIGN_OFF",
+      "expectedState": "AWAITING_SIGN_OFF",
+      "reviewCommandVisible": false,
+      "signCommandVisible": false,
+      "expectedSignCommandVisible": false,
+      "signCommandOpenedDialog": true,
+      "dialogVisible": true,
+      "expectedDialogVisible": true,
+      "passwordInputEmptyAtCapture": true,
+      "accessibility": {
+        "seriousOrCriticalViolationCount": 0,
+        "violations": []
+      },
+      "layout": {
+        "rootSelector": "[role=\"dialog\"]",
+        "horizontalOverflow": false,
+        "clipped": [],
+        "overlaps": [],
+        "inspectedElementCount": 5
+      },
+      "pageErrors": [],
+      "failedRequests": [],
+      "screenshot": "what-next/referrals/screenshots/daily-truth-sign-off-command-ui-2026-07-19/signer-permitted-mobile-dialog.png"
+    },
+    {
+      "stage": "signer-permitted-desktop-dialog",
+      "actor": "signer-with-sign-permission",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "ok": true,
+      "finalPath": "/en/dashboard/manager-action-center/daily-close",
+      "serverDerivedState": "AWAITING_SIGN_OFF",
+      "expectedState": "AWAITING_SIGN_OFF",
+      "reviewCommandVisible": false,
+      "signCommandVisible": false,
+      "expectedSignCommandVisible": false,
+      "signCommandOpenedDialog": true,
+      "dialogVisible": true,
+      "expectedDialogVisible": true,
+      "passwordInputEmptyAtCapture": true,
+      "accessibility": {
+        "seriousOrCriticalViolationCount": 0,
+        "violations": []
+      },
+      "layout": {
+        "rootSelector": "[role=\"dialog\"]",
+        "horizontalOverflow": false,
+        "clipped": [],
+        "overlaps": [],
+        "inspectedElementCount": 5
+      },
+      "pageErrors": [],
+      "failedRequests": [],
+      "screenshot": "what-next/referrals/screenshots/daily-truth-sign-off-command-ui-2026-07-19/signer-permitted-desktop-dialog.png"
+    },
+    {
+      "stage": "signer-signed-desktop",
+      "actor": "signer-with-sign-permission",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "ok": true,
+      "finalPath": "/en/dashboard/manager-action-center/daily-close",
+      "serverDerivedState": "SIGNED",
+      "expectedState": "SIGNED",
+      "reviewCommandVisible": false,
+      "signCommandVisible": false,
+      "expectedSignCommandVisible": false,
+      "signCommandOpenedDialog": false,
+      "dialogVisible": false,
+      "expectedDialogVisible": false,
+      "passwordInputEmptyAtCapture": null,
+      "accessibility": {
+        "seriousOrCriticalViolationCount": 0,
+        "violations": []
+      },
+      "layout": {
+        "rootSelector": "main",
+        "horizontalOverflow": false,
+        "clipped": [],
+        "overlaps": [],
+        "inspectedElementCount": 13
+      },
+      "pageErrors": [],
+      "failedRequests": [],
+      "screenshot": "what-next/referrals/screenshots/daily-truth-sign-off-command-ui-2026-07-19/signer-signed-desktop.png"
+    }
+  ],
+  "durableEvidence": {
+    "review": {
+      "id": "cmrrfe23a00ezmaeg2i56hssa",
+      "status": "IN_REVIEW",
+      "readinessState": "NO_ACTIVITY",
+      "startedById": "usr_payroll_e2e_local",
+      "startedAt": "2026-07-19T06:39:29.994Z",
+      "evidenceHashMatchesSignOff": true,
+      "readinessSourceHashMatchesSignOff": true
+    },
+    "signOff": {
+      "id": "cmrrfeveh00gpmaegg1aru6w2",
+      "status": "ACTIVE",
+      "signedById": "usr_payroll_e2e_requester_local",
+      "signedAt": "2026-07-19T06:40:07.621Z",
+      "authAssuranceLevel": "L1",
+      "freshAuthPresent": true
+    },
+    "makerCheckerDistinct": true,
+    "serverCompletionStateObserved": "SIGNED"
+  },
+  "retainedAppendOnlyEvidence": {
+    "intentionallyRetained": true,
+    "rationale": "Product audit logs and business events are append-only historical evidence; only disposable operational rows are removed.",
+    "auditActionCounts": {
+      "PERMISSION_GRANTED": 20,
+      "OPERATING_ACCESS_SCOPE_ALLOWED": 20,
+      "BRANCH_DAILY_CLOSE_REVIEW_STARTED": 1,
+      "AUTH_STEP_UP_SUCCEEDED": 1,
+      "BRANCH_DAILY_CLOSE_SIGN_OFF_CONTROL": 1,
+      "BRANCH_DAILY_CLOSE_SIGNED": 1
+    },
+    "branchDailyCloseAuditRows": [
+      {
+        "id": "cmrrfe24u00f1maeg9p96e5sb",
+        "action": "BRANCH_DAILY_CLOSE_REVIEW_STARTED",
+        "entityType": "BranchDailyCloseRun",
+        "entityId": "cmrrfe23a00ezmaeg2i56hssa",
+        "userId": "usr_payroll_e2e_local",
+        "createdAt": "2026-07-19T06:39:30.126Z"
+      },
+      {
+        "id": "cmrrfevdz00gnmaeg3i7dfw41",
+        "action": "BRANCH_DAILY_CLOSE_SIGN_OFF_CONTROL",
+        "entityType": "BranchDailyCloseRun",
+        "entityId": "cmrrfe23a00ezmaeg2i56hssa",
+        "userId": "usr_payroll_e2e_requester_local",
+        "createdAt": "2026-07-19T06:40:08.039Z"
+      },
+      {
+        "id": "cmrrfeven00grmaegcjpwj9tc",
+        "action": "BRANCH_DAILY_CLOSE_SIGNED",
+        "entityType": "BranchDailyCloseSignOff",
+        "entityId": "cmrrfeveh00gpmaegg1aru6w2",
+        "userId": "usr_payroll_e2e_requester_local",
+        "createdAt": "2026-07-19T06:40:08.063Z"
+      }
+    ],
+    "businessEvents": [
+      {
+        "id": "cmrrfe26700f3maeguwjs2osy",
+        "eventType": "branch.daily-close.review-started",
+        "sourceId": "cmrrfe23a00ezmaeg2i56hssa",
+        "actorId": "usr_payroll_e2e_local",
+        "occurredAt": "2026-07-19T06:39:29.994Z",
+        "recordedAt": "2026-07-19T06:39:30.175Z"
+      },
+      {
+        "id": "cmrrfevf500gtmaegtllbmzzc",
+        "eventType": "branch.daily-close.signed",
+        "sourceId": "cmrrfeveh00gpmaegg1aru6w2",
+        "actorId": "usr_payroll_e2e_requester_local",
+        "occurredAt": "2026-07-19T06:40:07.621Z",
+        "recordedAt": "2026-07-19T06:40:08.081Z"
+      }
+    ]
+  },
+  "restoration": {
+    "verified": true,
+    "restoredAfterCapture": true,
+    "rolePermissions": {
+      "reviewerHash": "sha256:545944b7d91cd83cacae77fc5b7f46245d9dbc36b9bc4fee69f55e87ed2b3aef",
+      "signerHash": "sha256:53c90c13c743574fb3cdd7d72aaab27579d0d3b05ce22cedbb4d96e5c35e9549",
+      "exactPreflightMatch": true,
+      "roleCodesRestored": true,
+      "updatedAtRestored": true
+    },
+    "signerSessionAssurance": {
+      "sessionCount": 2,
+      "baselineHash": "sha256:4028cb3538fd782707029c1d757fe7a3ea49e74aaf0fe3c4b193d945e118d8da",
+      "exactPreflightMatch": true,
+      "updatedAtRestored": true
+    },
+    "disposableOperationalNamespace": {
+      "locationCount": 0,
+      "reviewRunCount": 0,
+      "signOffCount": 0,
+      "clean": true
+    },
+    "appendOnlyEvidenceRetained": true
+  },
+  "redaction": {
+    "passwordSaved": false,
+    "passwordScreenshotted": false,
+    "sessionIdsSaved": false,
+    "sessionTokensSaved": false,
+    "cookieValuesSaved": false,
+    "assuranceValuesSaved": false,
+    "opaqueHashesOnlyForSessionBaseline": true
+  },
+  "failure": null
+}

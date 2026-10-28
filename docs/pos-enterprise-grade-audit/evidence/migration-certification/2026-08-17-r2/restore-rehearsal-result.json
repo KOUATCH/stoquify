@@ -1,0 +1,27 @@
+{
+  "observedAt": "2026-08-17T10:52:20.320Z",
+  "target": {
+    "protocol": "postgresql:",
+    "host": "localhost",
+    "port": "5432",
+    "database": "stoquify_dev_migrated_20260814",
+    "schema": "codex_pos_commit_result_restore_20260817_r2"
+  },
+  "migrationRun": {
+    "exitCode": 0,
+    "command": "prisma migrate deploy --schema <temporary projection>"
+  },
+  "fingerprint": {
+    "sha256": "c66493b2df85ed984c9454394100e52c326dc3c1223bc147aaa2d8f9e9331dba",
+    "columnCount": 3442,
+    "constraintCount": 3011,
+    "indexCount": 965
+  },
+  "comparedWithTarget": {
+    "sha256": "61e0cdc0dcdb03e00b4ffa9ea166ab1f30c4af6482b9b729dd88efb643e229c3",
+    "columnCount": 3442,
+    "constraintCount": 3011,
+    "indexCount": 965
+  },
+  "fingerprintsMatch": false
+}

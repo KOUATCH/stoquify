@@ -19,6 +19,7 @@ import {
 } from "lucide-react"
 
 import { useShellPermissions } from "@/components/dashboard/useShellPermissions"
+import { useNotifications } from "@/components/notifications/NotificationProvider"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import UserDropdownMenu from "@/components/UserDropdownMenu"
@@ -80,6 +81,7 @@ const Navbar = ({ session }: { session: any }) => {
   const [mobileSearchTerm, setMobileSearchTerm] = useState("")
   const [commandSearchTerm, setCommandSearchTerm] = useState("")
   const { hasPermission } = useShellPermissions(session)
+  const { soundEnabled, toggleSound } = useNotifications()
   const userRole = session?.user?.roles?.[0]?.name ?? "User"
   const localePrefix = pathname.match(/^\/(en|fr)(?=\/)/)?.[1]
   const locale = localePrefix === "fr" ? "fr" : "en"
@@ -234,13 +236,14 @@ const Navbar = ({ session }: { session: any }) => {
                           aria-current={isActive ? "page" : undefined}
                           title={link.dropdown ? `${link.title}: ${item.title}` : item.title}
                           className={cn(
-                            "flex items-center gap-3 rounded-xl px-3 py-2.5 text-[#b9c8c3] outline-none transition-all hover:bg-white/[0.075] hover:text-white focus-visible:ring-2 focus-visible:ring-[#5796ff]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b161b]",
-                            isActive && "bg-[rgba(47,125,246,0.16)] text-white",
+                            "dashboard-sidebar-module relative flex items-center gap-3 rounded-xl px-3 py-2.5 outline-none transition-all focus-visible:ring-2 focus-visible:ring-[#5796ff]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b161b]",
                           )}
                         >
-                          <Icon className="h-4 w-4 shrink-0 text-[#8fb7ff]" aria-hidden="true" />
+                          <span className="dashboard-sidebar-module-icon flex h-8 w-8 shrink-0 items-center justify-center rounded-lg">
+                            <Icon className="h-4 w-4" aria-hidden="true" />
+                          </span>
                           <span className="min-w-0 flex-1 truncate">{item.title}</span>
-                          <ChevronRight className="h-4 w-4 shrink-0 text-[#7f969f]" aria-hidden="true" />
+                          <ChevronRight className="dashboard-sidebar-module-chevron h-4 w-4 shrink-0" aria-hidden="true" />
                         </Link>
                       )
                     })
@@ -359,19 +362,26 @@ const Navbar = ({ session }: { session: any }) => {
         </button>
         <button
           type="button"
+          onClick={toggleSound}
           className="dashboard-top-button relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-all"
-          aria-label="Notifications"
+          aria-label={soundEnabled ? "Disable notification sound" : "Enable notification sound"}
+          aria-pressed={soundEnabled}
         >
           <Bell className="h-5 w-5 text-[#8fb7ff]" aria-hidden="true" />
-          <span className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full bg-[#ef6a6a] shadow-[0_0_0_4px_rgba(239,106,106,0.14)]" />
+          <span
+            aria-hidden="true"
+            className={cn(
+              "absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full",
+              soundEnabled
+                ? "bg-[#2ec98a] shadow-[0_0_0_4px_rgba(46,201,138,0.14)]"
+                : "bg-[#7f969f] shadow-[0_0_0_4px_rgba(127,150,159,0.12)]",
+            )}
+          />
         </button>
         <UserDropdownMenu
           username={session?.user?.name ?? ""}
           email={session?.user?.email ?? ""}
-          avatarUrl={
-            session?.user?.image ??
-            "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%20(54)-NX3G1KANQ2p4Gupgnvn94OQKsGYzyU.png"
-          }
+          avatarUrl={session?.user?.image ?? undefined}
         />
       </div>
     </header>

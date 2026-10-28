@@ -6,9 +6,14 @@ import { useRouter } from "next/navigation"
 import { AlertTriangle, CheckCircle2, Loader2, LockKeyhole, PanelRightOpen } from "lucide-react"
 
 import {
-  approveAndPostPayrollRunAction,
+  approvePayrollPaymentBatchAction,
+  approvePayrollRunAction,
   calculatePayrollRunAction,
+  emitPayrollPayslipsAction,
+  postPayrollRunAction,
   preparePayrollDeclarationsAction,
+  reviewPayrollRunAction,
+  requestPayrollPaymentBatchAction,
   releasePayrollPaymentBatchAction,
   type PayrollRunWorkbenchResult,
 } from "@/actions/payroll/payroll-control.actions"
@@ -22,7 +27,6 @@ import {
 
 type RunRow = PayrollRunWorkbenchResult["runs"][number]
 type RunAction = RunRow["nextActions"][number]
-type PaymentRequesterCandidate = PayrollRunWorkbenchResult["paymentRequesterCandidates"][number]
 type Notice =
   | { kind: "success"; message: string }
   | { kind: "fresh-auth" | "error"; message: string; correlationId?: string }
@@ -37,7 +41,6 @@ type ActionResponse = {
 type Props = {
   run: RunRow
   action: RunAction
-  paymentRequesterCandidates?: PaymentRequesterCandidate[]
   disabled?: boolean
 }
 
@@ -56,20 +59,45 @@ const actionCopy = {
     title: "Calculation drawer",
     description: "Request a protected payroll calculation for the service-owned period and run type.",
   },
-  "approve-post": {
+  review: {
+    trigger: "Open review drawer",
+    title: "Payroll review drawer",
+    description: "Review a calculated run through the fresh-auth maker-checker boundary.",
+  },
+  approve: {
     trigger: "Open approval drawer",
-    title: "Approval and posting drawer",
-    description: "Approve and post a calculated run through the fresh-auth protected action boundary.",
+    title: "Payroll approval drawer",
+    description: "Approve a reviewed run through the fresh-auth protected action boundary.",
+  },
+  emit: {
+    trigger: "Open emission drawer",
+    title: "Payslip emission drawer",
+    description: "Emit payslips from an approved run as an independent authenticated actor.",
+  },
+  post: {
+    trigger: "Open posting drawer",
+    title: "Payroll posting drawer",
+    description: "Post an emitted run through the atomic accounting boundary.",
   },
   "prepare-declarations": {
     trigger: "Open declaration drawer",
     title: "Declaration preparation drawer",
     description: "Prepare statutory declaration rows from the locked payroll run proof.",
   },
+  "request-payments": {
+    trigger: "Open payment request drawer",
+    title: "Payment request drawer",
+    description: "Persist a payment batch from emitted payslip allocations for independent approval.",
+  },
+  "approve-payments": {
+    trigger: "Open payment approval drawer",
+    title: "Payment approval drawer",
+    description: "Approve the persisted payment request as an authenticated checker independent from its requester.",
+  },
   "release-payments": {
-    trigger: "Open payment drawer",
+    trigger: "Open payment release drawer",
     title: "Payment release drawer",
-    description: "Release a payment batch from service-owned emitted payslip allocations and destination proof.",
+    description: "Atomically release the approved payment batch as a third authenticated actor.",
   },
 } as const
 
@@ -216,7 +244,7 @@ function ActionDrawer({
   )
 }
 
-export default function PayrollRunActionPanel({ run, action, paymentRequesterCandidates = [], disabled = false }: Props) {
+export default function PayrollRunActionPanel({ run, action, disabled = false }: Props) {
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [isPending, startTransition] = useTransition()
@@ -224,10 +252,10 @@ export default function PayrollRunActionPanel({ run, action, paymentRequesterCan
   const [idempotencyKey, setIdempotencyKey] = useState(() => nextKey(action.id, run.id))
   const [runDate, setRunDate] = useState(todayInputValue)
   const [documentHash, setDocumentHash] = useState("")
+  const [evidenceHash, setEvidenceHash] = useState("")
   const [declarationTypes, setDeclarationTypes] = useState("")
   const [paymentDate, setPaymentDate] = useState(todayInputValue)
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethodValue>("BANK_TRANSFER")
-  const [requestedById, setRequestedById] = useState(() => paymentRequesterCandidates[0]?.userId ?? "")
   const [bankFileHash, setBankFileHash] = useState("")
   const [paymentDocumentHash, setPaymentDocumentHash] = useState("")
   const [notes, setNotes] = useState("")
@@ -241,12 +269,14 @@ export default function PayrollRunActionPanel({ run, action, paymentRequesterCan
       })),
     [run.paymentAllocationCandidates],
   )
-  const selectedRequester = paymentRequesterCandidates.find((candidate) => candidate.userId === requestedById) ?? null
+  const activePaymentBatch = run.paymentBatches.find(
+    (batch) => batch.status !== "CANCELLED" && batch.status !== "FAILED",
+  ) ?? null
   const paymentProofBlocked =
     !paymentAllocations.length ||
     paymentAllocations.some((allocation) => isRedacted(allocation.amount)) ||
     run.paymentAllocationCandidates.some((candidate) => !candidate.paymentDestinationProofPresent)
-  const paymentDisabled = disabled || isPending || paymentProofBlocked || !selectedRequester
+  const paymentDisabled = disabled || isPending || paymentProofBlocked
 
   function finish(response: ActionResponse, successMessage: string) {
     const nextNotice = noticeFromResponse(response, successMessage)
@@ -273,17 +303,33 @@ export default function PayrollRunActionPanel({ run, action, paymentRequesterCan
     })
   }
 
-  function submitApprove(event: FormEvent<HTMLFormElement>) {
+  function submitLifecycleTransition(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setNotice(null)
     startTransition(async () => {
-      const response = await approveAndPostPayrollRunAction({
+      const payload = {
         payrollRunId: run.id,
+        expectedVersion: run.version,
         idempotencyKey,
+        ...(evidenceHash.trim() ? { evidenceHash: evidenceHash.trim() } : {}),
         ...(documentHash.trim() ? { documentHash: documentHash.trim() } : {}),
         metadata: { sourceSurface: "/dashboard/payroll/runs", runNumber: run.runNumber },
-      })
-      finish(response, "Payroll run approval/posting requested.")
+      }
+      const response = action.id === "review"
+        ? await reviewPayrollRunAction(payload)
+        : action.id === "approve"
+          ? await approvePayrollRunAction(payload)
+          : action.id === "emit"
+            ? await emitPayrollPayslipsAction(payload)
+            : await postPayrollRunAction(payload)
+      const successMessage = action.id === "review"
+        ? "Payroll run review persisted."
+        : action.id === "approve"
+          ? "Payroll run approval persisted."
+          : action.id === "emit"
+            ? "Payslip emission persisted."
+            : "Payroll posting persisted."
+      finish(response, successMessage)
     })
   }
 
@@ -302,13 +348,12 @@ export default function PayrollRunActionPanel({ run, action, paymentRequesterCan
     })
   }
 
-  function submitRelease(event: FormEvent<HTMLFormElement>) {
+  function submitPaymentRequest(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setNotice(null)
     startTransition(async () => {
-      const response = await releasePayrollPaymentBatchAction({
+      const response = await requestPayrollPaymentBatchAction({
         payrollRunId: run.id,
-        requestedById: requestedById.trim(),
         method: paymentMethod,
         paymentDate,
         idempotencyKey,
@@ -318,7 +363,33 @@ export default function PayrollRunActionPanel({ run, action, paymentRequesterCan
         ...(notes.trim() ? { notes: notes.trim() } : {}),
         metadata: { sourceSurface: "/dashboard/payroll/runs", runNumber: run.runNumber },
       })
-      finish(response, "Payroll payment release requested.")
+      finish(response, "Payroll payment request persisted for independent approval.")
+    })
+  }
+
+  function submitPaymentApproval(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    setNotice(null)
+    if (!activePaymentBatch) return
+    startTransition(async () => {
+      const response = await approvePayrollPaymentBatchAction({
+        payrollPaymentBatchId: activePaymentBatch.id,
+        idempotencyKey,
+      })
+      finish(response, "Payroll payment batch approved for independent release.")
+    })
+  }
+
+  function submitPaymentRelease(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    setNotice(null)
+    if (!activePaymentBatch) return
+    startTransition(async () => {
+      const response = await releasePayrollPaymentBatchAction({
+        payrollPaymentBatchId: activePaymentBatch.id,
+        idempotencyKey,
+      })
+      finish(response, "Payroll payment batch released.")
     })
   }
 
@@ -349,23 +420,33 @@ export default function PayrollRunActionPanel({ run, action, paymentRequesterCan
     )
   }
 
-  if (action.id === "approve-post") {
+  if (["review", "approve", "emit", "post"].includes(action.id)) {
+    const submitLabel = action.id === "review"
+      ? "Review calculated run"
+      : action.id === "approve"
+        ? "Approve reviewed run"
+        : action.id === "emit"
+          ? "Emit approved payslips"
+          : "Post emitted run"
     return (
       <ActionDrawer action={action} disabled={disabled} open={open} onOpenChange={setOpen} run={run}>
-        <form onSubmit={submitApprove} className="grid gap-2">
+        <form onSubmit={submitLifecycleTransition} className="grid gap-2">
           {commonHeader}
+          <label className="grid gap-1 text-xs text-slate-400">
+            <span>Evidence hash</span>
+            <input value={evidenceHash} onChange={(event) => setEvidenceHash(event.target.value)} placeholder="optional sha256:..." disabled={disabled || isPending} className="min-h-9 rounded-md border border-white/10 bg-slate-950/60 px-2 text-sm text-white outline-none focus:border-cyan-300/60 disabled:opacity-60" />
+          </label>
           <label className="grid gap-1 text-xs text-slate-400">
             <span>Document hash</span>
             <input value={documentHash} onChange={(event) => setDocumentHash(event.target.value)} placeholder="optional sha256:..." disabled={disabled || isPending} className="min-h-9 rounded-md border border-white/10 bg-slate-950/60 px-2 text-sm text-white outline-none focus:border-cyan-300/60 disabled:opacity-60" />
           </label>
           <IdempotencyProof value={idempotencyKey} />
           <NoticePanel notice={notice} />
-          <SubmitButton label="Approve and post" pending={isPending} disabled={disabled} />
+          <SubmitButton label={submitLabel} pending={isPending} disabled={disabled} />
         </form>
       </ActionDrawer>
     )
   }
-
   if (action.id === "prepare-declarations") {
     return (
       <ActionDrawer action={action} disabled={disabled} open={open} onOpenChange={setOpen} run={run}>
@@ -383,30 +464,14 @@ export default function PayrollRunActionPanel({ run, action, paymentRequesterCan
     )
   }
 
-  if (action.id === "release-payments") {
+  if (action.id === "request-payments") {
     return (
       <ActionDrawer action={action} disabled={disabled} open={open} onOpenChange={setOpen} run={run}>
-        <form onSubmit={submitRelease} className="grid gap-2">
+        <form onSubmit={submitPaymentRequest} className="grid gap-2">
           {commonHeader}
           <div className="rounded-md border border-white/10 bg-white/[0.04] p-2 text-xs text-slate-300">
             {run.paymentAllocationCandidates.length ? `${run.paymentAllocationCandidates.length} payslip allocation(s) from service-owned payslip proof.` : "No emitted payslip allocation candidates are available."}
           </div>
-          <label className="grid gap-1 text-xs text-slate-400">
-            <span>Requested by</span>
-            <select value={requestedById} onChange={(event) => setRequestedById(event.target.value)} required disabled={disabled || isPending || !paymentRequesterCandidates.length} className="min-h-9 rounded-md border border-white/10 bg-slate-950/60 px-2 text-sm text-white outline-none focus:border-cyan-300/60 disabled:opacity-60">
-              {paymentRequesterCandidates.length ? null : <option value="">No separate requester available</option>}
-              {paymentRequesterCandidates.map((candidate) => (
-                <option key={candidate.userId} value={candidate.userId}>{candidate.displayName} ({candidate.email})</option>
-              ))}
-            </select>
-          </label>
-          {selectedRequester ? (
-            <div className="rounded-md border border-white/10 bg-white/[0.04] p-2 text-xs text-slate-300">
-              <p className="font-semibold text-white">Requester evidence</p>
-              <p className="mt-1 break-words">{selectedRequester.roleLabels.join(", ") || "Role evidence unavailable"}</p>
-              <p className="mt-1 break-words text-slate-400">{selectedRequester.matchedPermissions.join(", ")}</p>
-            </div>
-          ) : null}
           <div className="grid gap-2 sm:grid-cols-2">
             <label className="grid gap-1 text-xs text-slate-400">
               <span>Payment date</span>
@@ -434,9 +499,35 @@ export default function PayrollRunActionPanel({ run, action, paymentRequesterCan
             <textarea value={notes} onChange={(event) => setNotes(event.target.value)} maxLength={2000} rows={2} disabled={paymentDisabled} className="min-h-16 resize-y rounded-md border border-white/10 bg-slate-950/60 px-2 py-2 text-sm text-white outline-none focus:border-cyan-300/60 disabled:opacity-60" />
           </label>
           <IdempotencyProof value={idempotencyKey} />
-          {paymentDisabled ? <p className="text-xs text-amber-100">Payment release requires a separate service-backed requester, visible payroll amounts, emitted payslips, and payment destination proof.</p> : null}
+          {paymentDisabled ? <p className="text-xs text-amber-100">Payment request requires visible payroll amounts, emitted payslips, and payment destination proof.</p> : null}
           <NoticePanel notice={notice} />
-          <SubmitButton label="Release payments" pending={isPending} disabled={paymentDisabled} />
+          <SubmitButton label="Request payments" pending={isPending} disabled={paymentDisabled} />
+        </form>
+      </ActionDrawer>
+    )
+  }
+
+  if (action.id === "approve-payments" || action.id === "release-payments") {
+    const approval = action.id === "approve-payments"
+    const expectedStatus = approval ? "DRAFT" : "APPROVED"
+    const batchReady = activePaymentBatch?.status === expectedStatus
+    return (
+      <ActionDrawer action={action} disabled={disabled} open={open} onOpenChange={setOpen} run={run}>
+        <form onSubmit={approval ? submitPaymentApproval : submitPaymentRelease} className="grid gap-2">
+          {commonHeader}
+          <div className="rounded-md border border-white/10 bg-white/[0.04] p-3 text-xs text-slate-300">
+            <p className="font-semibold text-white">Persisted payment batch</p>
+            <p className="mt-1 break-all">{activePaymentBatch?.batchNumber ?? "Unavailable"}</p>
+            <p className="mt-1">Status: {activePaymentBatch?.status ?? "Unavailable"}</p>
+          </div>
+          <IdempotencyProof value={idempotencyKey} />
+          {!batchReady ? <p className="text-xs text-amber-100">The persisted payment batch is not in {expectedStatus} state.</p> : null}
+          <NoticePanel notice={notice} />
+          <SubmitButton
+            label={approval ? "Approve payments" : "Release payments"}
+            pending={isPending}
+            disabled={disabled || !batchReady}
+          />
         </form>
       </ActionDrawer>
     )

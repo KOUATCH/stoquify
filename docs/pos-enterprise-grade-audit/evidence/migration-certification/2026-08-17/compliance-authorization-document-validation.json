@@ -1,0 +1,114 @@
+{
+  "schemaVersion": "1.0.0",
+  "artifactId": "STOQUIFY-COMPLIANCE-AUTHORIZATION-DOCX-VALIDATION-20260817",
+  "generatedAt": "2026-08-17T19:09:07.9671955Z",
+  "source": {
+    "path": "docs/Compliance/Complaince authorization validation.docx",
+    "sha256": "499b4413e29b5d1c6e99f382e4263c424e661f3e61afb2ee6956a0fb2e8b884b",
+    "bytes": 16145,
+    "lastWriteTimeUtc": "2026-08-17T19:03:52.9963285Z",
+    "snapshotMatchedSource": true,
+    "coreProperties": {
+      "author": "KOUATCHOUA MARK",
+      "lastModifiedBy": "KOUATCHOUA MARK",
+      "createdAt": "2026-08-17T08:00:00Z",
+      "modifiedAt": "2026-08-17T19:03:52Z",
+      "revision": 1
+    }
+  },
+  "packageInspection": {
+    "paragraphs": 116,
+    "tables": 0,
+    "embeddedMedia": 0,
+    "inlineShapes": 0,
+    "drawingObjects": 0,
+    "inkObjects": 0,
+    "wordDigitalSignatureParts": 0,
+    "comments": 0
+  },
+  "extractedSignatureLabels": [
+    {
+      "paragraph": 84,
+      "label": "Product signature",
+      "valueHandling": "REDACTED_NOT_COPIED",
+      "classification": "PLAINTEXT_TYPED_TOKEN_NOT_SIGNATURE"
+    },
+    {
+      "paragraph": 85,
+      "label": "DGI signature",
+      "valueHandling": "REDACTED_NOT_COPIED",
+      "classification": "PLAINTEXT_TYPED_TOKEN_NOT_SIGNATURE"
+    },
+    {
+      "paragraph": 86,
+      "label": "MINFI signature",
+      "valueHandling": "REDACTED_NOT_COPIED",
+      "classification": "PLAINTEXT_TYPED_TOKEN_NOT_SIGNATURE"
+    },
+    {
+      "paragraph": 87,
+      "label": "CNPS signature",
+      "valueHandling": "REDACTED_NOT_COPIED",
+      "classification": "PLAINTEXT_TYPED_TOKEN_NOT_SIGNATURE"
+    }
+  ],
+  "acceptedClaims": [
+    "The document declares organization, operator, checker, product approver, controller approver, development schema and pilot workstation values.",
+    "The document declares requested production and statutory authorization.",
+    "The document package metadata identifies KOUATCHOUA MARK as author and last modifier."
+  ],
+  "limitations": [
+    "Package authorship metadata is not signer authentication or proof of approval intent.",
+    "No signature is bound to an artifact SHA-256, decision, role, scope or fresh-authentication event.",
+    "The four signature-labelled values are plaintext typed tokens without a verified individual signer, certificate, key fingerprint, immutable approval record or signature timestamp.",
+    "The document contains contradictory development-only and production/statutory scope statements.",
+    "The product approver role is expressed as alternatives rather than one accountable role.",
+    "The controller role is SYSTEM ADMINISTRATION and does not prove financial-controller authority.",
+    "The operator/checker timestamps predate the final technical evidence bundle.",
+    "No qualified Cameroon reviewer identity, professional qualification, legal conclusion matrix or independent checker decision is present.",
+    "No physical hardware execution evidence or explicit artifact-bound exclusion decision is present."
+  ],
+  "securityDisposition": {
+    "rawValuesCopiedToEvidence": false,
+    "treatSignatureLabelledValuesAsExposedSecrets": true,
+    "requiredAction": "ROTATE_OR_REVOKE_IF_USED_ANYWHERE_AND_REPLACE_WITH_VERIFIABLE_SIGNATURE_OR_ENTERPRISE_APPROVAL_RECORD",
+    "loggingRule": "DO_NOT_LOG_OR_REPLICATE_RAW_VALUES"
+  },
+  "gateAssessments": [
+    {
+      "gate": "G1",
+      "use": "IDENTITY_AND_SCOPE_DECLARATION_ONLY",
+      "approvalCredit": 0,
+      "requiredApprovalCountSatisfied": 0,
+      "verdict": "REJECTED_AS_AUTHENTIC_APPROVAL_EVIDENCE"
+    },
+    {
+      "gate": "DESTRUCTIVE_MIGRATION_MAKER_CHECKER",
+      "use": "NAMED_PARTIES_ONLY",
+      "approvalCredit": 0,
+      "verdict": "REJECTED_AS_EXACT_HASH_SIGNATURE_EVIDENCE"
+    },
+    {
+      "gate": "AUTHENTICATION_ATTESTATION",
+      "use": "NAMED_PARTIES_ONLY",
+      "approvalCredit": 0,
+      "verdict": "REJECTED_NO_FRESH_AUTH_OR_IMMUTABLE_IDENTITY_RECORD"
+    },
+    {
+      "gate": "G3B_CAMEROON_COUNTRY_PACK",
+      "use": "REQUESTED_AUTHORIZATION_DECLARATION_ONLY",
+      "approvalCredit": 0,
+      "verdict": "REJECTED_NO_QUALIFIED_REVIEWER_OR_LEGAL_CONCLUSIONS"
+    },
+    {
+      "gate": "G4_HARDWARE_SCOPE",
+      "use": "DECLARED_SIMULATION_SCOPE_ONLY",
+      "approvalCredit": 0,
+      "verdict": "REJECTED_NO_SIGNED_EXCLUSION_OR_PHYSICAL_TEST_EVIDENCE"
+    }
+  ],
+  "overallVerdict": "REJECTED_AS_SIGNATURE_EVIDENCE_ACCEPTED_AS_UNVERIFIED_DECLARATION_ONLY",
+  "productionAuthorizationProven": false,
+  "statutoryAuthorizationProven": false,
+  "g1ApprovalRegisterMayAdvance": false
+}

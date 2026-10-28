@@ -13,13 +13,13 @@ jest.mock("@/prisma/db", () => {
       findMany: jest.fn(),
     },
     ledgerPostingBatch: { count: jest.fn() },
-    businessEvent: { count: jest.fn() },
+    businessEvent: { count: jest.fn(), findUnique: jest.fn(), create: jest.fn(), update: jest.fn() },
     providerAccount: { count: jest.fn(), findMany: jest.fn() },
     statementFile: { count: jest.fn() },
     statementLine: { count: jest.fn() },
     reconciliationRun: { count: jest.fn() },
     paymentException: { count: jest.fn() },
-    payrollRun: { count: jest.fn() },
+    payrollRun: { count: jest.fn(), findMany: jest.fn() },
     payrollRunLine: { count: jest.fn(), findMany: jest.fn() },
     payrollPayslip: { count: jest.fn() },
     payrollDeclaration: { count: jest.fn() },
@@ -73,13 +73,13 @@ const mockDb = db as unknown as {
     findMany: jest.Mock;
   };
   ledgerPostingBatch: { count: jest.Mock };
-  businessEvent: { count: jest.Mock };
+  businessEvent: { count: jest.Mock; findUnique: jest.Mock; create: jest.Mock; update: jest.Mock };
   providerAccount: { count: jest.Mock; findMany: jest.Mock };
   statementFile: { count: jest.Mock };
   statementLine: { count: jest.Mock };
   reconciliationRun: { count: jest.Mock };
   paymentException: { count: jest.Mock };
-  payrollRun: { count: jest.Mock };
+  payrollRun: { count: jest.Mock; findMany: jest.Mock };
   payrollRunLine: { count: jest.Mock; findMany: jest.Mock };
   payrollPayslip: { count: jest.Mock };
   payrollDeclaration: { count: jest.Mock };
@@ -138,6 +138,8 @@ function seedCleanTrustData() {
     .mockResolvedValueOnce(0)
     .mockResolvedValueOnce(0);
   mockDb.businessEvent.count.mockResolvedValue(0);
+  mockDb.businessEvent.findUnique.mockResolvedValue(null);
+  mockDb.businessEvent.create.mockImplementation(({ data }) => ({ id: "event-export-1", ...data, outboxMessages: [] }));
   mockDb.paymentException.count
     .mockResolvedValueOnce(0)
     .mockResolvedValueOnce(0);
@@ -150,6 +152,7 @@ function seedCleanTrustData() {
   mockDb.payrollDeclarationEvidence.count.mockResolvedValue(0);
   mockDb.payrollPaymentBatch.count.mockResolvedValue(0);
   mockDb.payrollRun.count.mockResolvedValue(0);
+  mockDb.payrollRun.findMany.mockResolvedValue([]);
   mockDb.payrollRunLine.count.mockResolvedValue(0);
   mockDb.payrollRunLine.findMany.mockResolvedValue([]);
   mockDb.payrollPayslip.count.mockResolvedValue(0);
@@ -259,6 +262,96 @@ describe("accountant data trust service", () => {
       amount: "120000.00",
       provenance: "POSTED",
     });
+  });
+
+  it("blocks emitted-unposted and missing post-cutover transition proof while disclosing legacy evidence", async () => {
+    const runtimeTransition = (toStatus: string, fromVersion: number) => ({
+      toStatus,
+      fromVersion,
+      toVersion: fromVersion + 1,
+      actorId: "payroll-actor",
+      transitionedAt: now,
+      businessEventId: "event-" + toStatus,
+      origin: "RUNTIME",
+      evidenceStatus: "VERIFIED",
+    });
+    const reviewed = runtimeTransition("REVIEWED", 1);
+    const approved = runtimeTransition("APPROVED", 2);
+    const emitted = runtimeTransition("EMITTED", 3);
+
+    mockDb.payrollRun.findMany.mockResolvedValue([
+      { status: "EMITTED", transitions: [reviewed, approved, emitted] },
+      { status: "POSTED", transitions: [reviewed, approved, emitted] },
+      {
+        status: "POSTED",
+        transitions: [
+          {
+            toStatus: "POSTED",
+            fromVersion: null,
+            toVersion: null,
+            actorId: null,
+            transitionedAt: null,
+            businessEventId: null,
+            origin: "LEGACY_BACKFILL",
+            evidenceStatus: "LEGACY_PARTIAL_EVIDENCE",
+          },
+        ],
+      },
+    ]);
+
+    const result = await getAccountantPortalData(
+      { organizationId: "org-1" },
+      db,
+      now,
+    );
+
+    expect(mockDb.payrollRun.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          organizationId: "org-1",
+          deletedAt: null,
+        }),
+        select: expect.objectContaining({
+          transitions: expect.objectContaining({
+            select: expect.objectContaining({ businessEventId: true }),
+          }),
+        }),
+      }),
+    );
+    expect(result.certificate.level).toBe("T0");
+    expect(result.exportReadiness.canExportCertifiedPack).toBe(false);
+    expect(result.blockers).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: "payroll-emitted-runs-unposted",
+          severity: "critical",
+          gate: "payroll.lifecycle.posting",
+        }),
+        expect.objectContaining({
+          id: "payroll-transition-proof-missing",
+          severity: "critical",
+          gate: "payroll.lifecycle.transition-proof",
+        }),
+        expect.objectContaining({
+          id: "payroll-transition-proof-legacy-partial",
+          severity: "medium",
+          gate: "payroll.lifecycle.legacy-disclosure",
+        }),
+      ]),
+    );
+    expect(result.moduleEvidence).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          module: "payroll",
+          status: "blocked",
+          facts: expect.arrayContaining([
+            { label: "Emitted runs awaiting posting", value: 1 },
+            { label: "Post-cutover transition proof gaps", value: 1 },
+            { label: "Legacy partial transition disclosures", value: 1 },
+          ]),
+        }),
+      ]),
+    );
   });
 
   it("marks critical source-link failures as T0 and suppresses financial figures", async () => {
@@ -401,6 +494,7 @@ describe("accountant data trust service", () => {
       .mockResolvedValueOnce(1)
       .mockResolvedValueOnce(1)
       .mockResolvedValueOnce(1)
+      .mockResolvedValueOnce(0)
       .mockResolvedValueOnce(0);
     mockDb.payrollPaymentBatch.count
       .mockReset()
@@ -658,6 +752,7 @@ describe("accountant data trust service", () => {
       .mockResolvedValueOnce(0)
       .mockResolvedValueOnce(1)
       .mockResolvedValueOnce(1)
+      .mockResolvedValueOnce(1)
       .mockResolvedValueOnce(1);
     mockDb.payrollRunLine.count.mockResolvedValue(2);
     mockDb.payrollPayslip.count.mockResolvedValue(1);
@@ -670,6 +765,21 @@ describe("accountant data trust service", () => {
 
     expect(result.certificate.level).toBe("T0");
     expect(result.exportReadiness.canExportCertifiedPack).toBe(false);
+    expect(mockDb.payrollRun.count).toHaveBeenNthCalledWith(
+      4,
+      expect.objectContaining({
+        where: expect.objectContaining({
+          organizationId: "org-1",
+          OR: expect.arrayContaining([
+            expect.objectContaining({
+              metadata: expect.objectContaining({
+                path: ["hrisPayrollReadinessHash"],
+              }),
+            }),
+          ]),
+        }),
+      }),
+    );
     expect(result.source.sourceTables).toEqual(
       expect.arrayContaining([
         "payroll_run_lines",
@@ -754,6 +864,10 @@ describe("accountant data trust service", () => {
           severity: "critical",
         }),
         expect.objectContaining({
+          id: "payroll-posted-runs-certified-input-proof-missing",
+          severity: "critical",
+        }),
+        expect.objectContaining({
           id: "payroll-run-lines-without-payslips",
           severity: "critical",
         }),
@@ -790,6 +904,7 @@ describe("accountant data trust service", () => {
             { label: "Payment allocation gaps", value: 1 },
             { label: "Posted run component proof gaps", value: 1 },
             { label: "Posted run composite proof gaps", value: 1 },
+            { label: "Posted run certified input proof gaps", value: 1 },
             { label: "Run lines missing payslips", value: 2 },
             { label: "Payslips missing proof hashes", value: 1 },
             { label: "Paid runs missing settled payments", value: 1 },

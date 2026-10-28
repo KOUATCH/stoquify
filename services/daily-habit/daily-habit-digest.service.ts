@@ -1,5 +1,9 @@
 import "server-only"
 
+import { hasRbacPermission } from "@/lib/security/rbac-permissions"
+import { db } from "@/prisma/db"
+import { NotFoundError } from "@/services/_shared/action-errors"
+
 import type {
   BIActionLink,
   BIBlocker,
@@ -21,6 +25,8 @@ import {
 import { normalizeSnapshotFreshness } from "@/services/bi/bi-evidence-adapter.service"
 import type { EvidenceGrade } from "@/services/evidence/evidence-contracts"
 import type { CommercialModuleSlug } from "@/services/modules/module-control-contracts"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
+import { resolveTenantWideOperatingAuthority } from "@/services/operating-access/operating-access-scope-contracts"
 import { buildActionQueue } from "@/services/signals/action-queue.service"
 import type {
   ActionItem,
@@ -30,6 +36,7 @@ import type {
 import { buildBusinessSignalsFromSnapshots } from "@/services/signals/business-signal-rules.service"
 import { getCloseReadinessSnapshot } from "@/services/snapshots/close-readiness-snapshot.service"
 import { getInventoryCashSnapshot } from "@/services/snapshots/inventory-cash-snapshot.service"
+import { getInventoryLossSnapshot } from "@/services/snapshots/inventory-loss-snapshot.service"
 import { getPaymentTruthSnapshot } from "@/services/snapshots/payment-truth-snapshot.service"
 import {
   getTenantOperatingSnapshotFromRelated,
@@ -37,6 +44,7 @@ import {
 import type {
   CloseReadinessMetrics,
   InventoryCashMetrics,
+  InventoryLossMetrics,
   PaymentTruthMetrics,
   SnapshotResult,
   SnapshotSourceModule,
@@ -49,9 +57,10 @@ import type {
 
 type DailyHabitDigestInput = {
   organizationId: string
-  organizationName?: string | null
+  actorId?: string | null
   actorPermissions: readonly string[]
-  currency?: string | null
+  actorRoleCodes: readonly string[]
+  isSuperUser?: boolean
   periodStart?: Date | string | null
   periodEnd?: Date | string | null
   now?: Date | string | null
@@ -61,10 +70,12 @@ type ComposeDailyHabitDigestInput = {
   organizationId: string
   organizationName: string | null
   actorPermissions: readonly string[]
+  actorRoleCodes: readonly string[]
   currency: string
   tenantOperating: SnapshotResult<TenantOperatingMetrics>
   paymentTruth: SnapshotResult<PaymentTruthMetrics>
   inventoryCash: SnapshotResult<InventoryCashMetrics>
+  inventoryLoss?: SnapshotResult<InventoryLossMetrics> | null
   closeReadiness: SnapshotResult<CloseReadinessMetrics>
   now?: Date | string | null
 }
@@ -76,6 +87,7 @@ type DigestConfig = {
   summary: string
   moduleSlug: CommercialModuleSlug
   requiredPermission: string
+  audienceRoleCodes?: readonly string[]
   actionRoles: SignalOwnerRole[]
   primaryMetric: (input: ComposeDailyHabitDigestInput) => {
     title: string
@@ -100,6 +112,7 @@ const DIGEST_CONFIGS: DigestConfig[] = [
     summary: "Cash truth, stock exposure, close pressure, and the highest visible action risks for today.",
     moduleSlug: "dashboard",
     requiredPermission: "dashboard.read",
+    audienceRoleCodes: ["owner", "admin", "administrator", "org_admin", "super_admin"],
     actionRoles: ["owner", "finance", "manager", "accountant"],
     route: "/dashboard/owner-war-room",
     primaryMetric: (input) => ({
@@ -119,6 +132,7 @@ const DIGEST_CONFIGS: DigestConfig[] = [
     summary: "Visible operational actions for today's branch, stock, payment, and receiving work.",
     moduleSlug: "dashboard",
     requiredPermission: "dashboard.read",
+    audienceRoleCodes: ["manager"],
     actionRoles: ["manager", "purchasing", "stockkeeper"],
     route: "/dashboard/manager-action-center",
     primaryMetric: (input) => ({
@@ -198,6 +212,7 @@ const DIGEST_CONFIGS: DigestConfig[] = [
     summary: "A closing pulse across sales, cash collection, source links, and open command actions.",
     moduleSlug: "dashboard",
     requiredPermission: "dashboard.read",
+    audienceRoleCodes: ["owner", "admin", "administrator", "org_admin", "super_admin", "manager", "cashier", "pos_operator"],
     actionRoles: ["manager", "finance", "stockkeeper", "accountant"],
     route: "/dashboard/manager-action-center",
     primaryMetric: (input) => ({
@@ -233,11 +248,18 @@ const DIGEST_CONFIGS: DigestConfig[] = [
 ]
 
 export async function getDailyHabitDigestData(input: DailyHabitDigestInput): Promise<DailyHabitDigestData> {
-  const [paymentTruth, inventoryCash, closeReadiness] = await Promise.all([
+  const [organization, paymentTruth, inventoryCash, closeReadiness, inventoryLoss] = await Promise.all([
+    db.organization.findFirst({
+      where: { id: input.organizationId, isActive: true, deletedAt: null },
+      select: { name: true, currency: true },
+    }),
     getPaymentTruthSnapshot(input),
     getInventoryCashSnapshot(input),
     getCloseReadinessSnapshot(input),
+    loadDailyHabitInventoryLoss(input),
   ])
+  if (!organization) throw new NotFoundError("Organization not found")
+
   const tenantOperating = await getTenantOperatingSnapshotFromRelated(input, {
     paymentTruth,
     inventoryCash,
@@ -246,12 +268,14 @@ export async function getDailyHabitDigestData(input: DailyHabitDigestInput): Pro
 
   return composeDailyHabitDigestData({
     organizationId: input.organizationId,
-    organizationName: input.organizationName ?? null,
+    organizationName: organization.name,
     actorPermissions: input.actorPermissions,
-    currency: input.currency ?? "XAF",
+    actorRoleCodes: input.actorRoleCodes,
+    currency: organization.currency.trim().toUpperCase(),
     tenantOperating,
     paymentTruth,
     inventoryCash,
+    inventoryLoss,
     closeReadiness,
     now: input.now,
   })
@@ -261,7 +285,13 @@ export function composeDailyHabitDigestData(input: ComposeDailyHabitDigestInput)
   const generatedAt = input.tenantOperating.generatedAt
   const signals = buildBusinessSignalsFromSnapshots({
     organizationId: input.organizationId,
-    snapshots: [input.tenantOperating, input.paymentTruth, input.inventoryCash, input.closeReadiness],
+    snapshots: [
+      input.tenantOperating,
+      input.paymentTruth,
+      input.inventoryCash,
+      input.closeReadiness,
+      ...(input.inventoryLoss ? [input.inventoryLoss] : []),
+    ],
     now: input.now ?? generatedAt,
   })
   const actionQueue = buildActionQueue({
@@ -270,7 +300,8 @@ export function composeDailyHabitDigestData(input: ComposeDailyHabitDigestInput)
     actorPermissions: input.actorPermissions,
     now: input.now ?? generatedAt,
   })
-  const digests = DIGEST_CONFIGS.map((config) =>
+  const visibleConfigs = DIGEST_CONFIGS.filter((config) => isDigestVisible(config, input))
+  const digests = visibleConfigs.map((config) =>
     buildDigest({
       config,
       input,
@@ -285,6 +316,7 @@ export function composeDailyHabitDigestData(input: ComposeDailyHabitDigestInput)
     staleSignalCount: actionQueue.summary.stale,
     redactedSignalCount: actionQueue.summary.redacted,
     blockedDigestCount: digests.filter((digest) => digest.commandBrief.state === "blocked").length,
+    hiddenDigestCount: DIGEST_CONFIGS.length - visibleConfigs.length,
   }
 
   return {
@@ -303,6 +335,53 @@ export function composeDailyHabitDigestData(input: ComposeDailyHabitDigestInput)
   }
 }
 
+async function loadDailyHabitInventoryLoss(
+  input: DailyHabitDigestInput,
+): Promise<SnapshotResult<InventoryLossMetrics> | null> {
+  const actorId = input.actorId?.trim()
+  if (!actorId) return null
+  if (!hasRbacPermission(input.actorPermissions, "dashboard.read")) return null
+  if (!hasRbacPermission(input.actorPermissions, "inventory.levels.read")) return null
+
+  const authority = resolveTenantWideOperatingAuthority({
+    isSuperUser: input.isSuperUser === true,
+    roleCodes: input.actorRoleCodes,
+  })
+  if (!authority) return null
+
+  const access = await observeModuleAccess({
+    organizationId: input.organizationId,
+    userId: actorId,
+    actorPermissions: input.actorPermissions,
+    moduleSlug: "inventory",
+    surfaceType: "report",
+    surface: "daily-habit-digest.inventory-loss",
+    accessIntent: "read",
+    mode: "enforce",
+    audit: true,
+    now: input.now ?? null,
+  })
+  if (!access.allowed) return null
+
+  return getInventoryLossSnapshot({
+    organizationId: input.organizationId,
+    periodStart: input.periodStart ?? null,
+    periodEnd: input.periodEnd ?? null,
+    now: input.now ?? null,
+  })
+}
+
+function isDigestVisible(config: DigestConfig, input: ComposeDailyHabitDigestInput) {
+  if (!hasRbacPermission(input.actorPermissions, config.requiredPermission)) return false
+  if (!config.audienceRoleCodes?.length) return true
+
+  const actorRoles = new Set(input.actorRoleCodes.map(normalizeRoleCode))
+  return config.audienceRoleCodes.some((roleCode) => actorRoles.has(normalizeRoleCode(roleCode)))
+}
+
+function normalizeRoleCode(value: string) {
+  return value.trim().toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "")
+}
 function buildDigest(input: {
   config: DigestConfig
   input: ComposeDailyHabitDigestInput

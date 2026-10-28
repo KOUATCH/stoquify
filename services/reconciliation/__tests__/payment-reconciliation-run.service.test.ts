@@ -4,6 +4,7 @@ import {
   PaymentDirection,
   PaymentExceptionType,
   PaymentTransactionState,
+  ProviderAccountStatus,
   ProviderEventStatus,
   ReconciliationRunStatus,
   StatementLineDirection,
@@ -24,9 +25,9 @@ jest.mock("@/prisma/db", () => ({
     $transaction: jest.fn(),
     providerAccount: { findFirst: jest.fn() },
     reconciliationRun: { findFirst: jest.fn(), create: jest.fn(), update: jest.fn() },
-    paymentTransaction: { findMany: jest.fn() },
-    providerEvent: { findMany: jest.fn(), update: jest.fn() },
-    statementLine: { findMany: jest.fn(), update: jest.fn() },
+    paymentTransaction: { findMany: jest.fn(), findFirst: jest.fn() },
+    providerEvent: { findMany: jest.fn(), findFirst: jest.fn(), update: jest.fn() },
+    statementLine: { findMany: jest.fn(), findFirst: jest.fn(), update: jest.fn() },
     matchRecord: { create: jest.fn(), findFirst: jest.fn() },
     paymentException: { create: jest.fn() },
     suspenseItem: { create: jest.fn() },
@@ -38,9 +39,9 @@ const mockedDb = db as unknown as {
   $transaction: jest.Mock
   providerAccount: { findFirst: jest.Mock }
   reconciliationRun: { findFirst: jest.Mock; create: jest.Mock; update: jest.Mock }
-  paymentTransaction: { findMany: jest.Mock }
-  providerEvent: { findMany: jest.Mock; update: jest.Mock }
-  statementLine: { findMany: jest.Mock; update: jest.Mock }
+  paymentTransaction: { findMany: jest.Mock; findFirst: jest.Mock }
+  providerEvent: { findMany: jest.Mock; findFirst: jest.Mock; update: jest.Mock }
+  statementLine: { findMany: jest.Mock; findFirst: jest.Mock; update: jest.Mock }
   matchRecord: { create: jest.Mock; findFirst: jest.Mock }
   paymentException: { create: jest.Mock }
   suspenseItem: { create: jest.Mock }
@@ -59,10 +60,30 @@ describe("durable payment reconciliation run service", () => {
       id: "provider-account-1",
       paymentRailId: "rail-1",
       currencyCode: "XAF",
+      status: ProviderAccountStatus.ACTIVE,
+      settlementLedgerAccountId: "account-512",
+      suspenseLedgerAccountId: "account-471",
+      paymentRail: { id: "rail-1", isActive: true },
+      settlementAccounts: [{ id: "settlement-1" }],
     })
     mockedDb.reconciliationRun.findFirst.mockResolvedValue(null)
     mockedDb.reconciliationRun.create.mockResolvedValue({ id: "run-1" })
     mockedDb.reconciliationRun.update.mockResolvedValue({ id: "run-1" })
+    mockedDb.paymentTransaction.findFirst.mockResolvedValue({
+      id: "payment-transaction-1",
+      amount: amount(10000),
+      currencyCode: "XAF",
+    })
+    mockedDb.providerEvent.findFirst.mockResolvedValue({
+      id: "provider-event-1",
+      amount: amount(10000),
+      currencyCode: "XAF",
+    })
+    mockedDb.statementLine.findFirst.mockResolvedValue({
+      id: "statement-line-1",
+      amount: amount(10000),
+      currencyCode: "XAF",
+    })
     mockedDb.matchRecord.create.mockResolvedValue({ id: "match-1" })
     mockedDb.providerEvent.update.mockResolvedValue({ id: "provider-event-1" })
     mockedDb.statementLine.update.mockResolvedValue({ id: "statement-line-1" })
@@ -180,6 +201,27 @@ describe("durable payment reconciliation run service", () => {
     expect(mockedDb.matchRecord.create).not.toHaveBeenCalled()
   })
 
+  it("blocks reconciliation before row creation when the provider account is not ready", async () => {
+    mockedDb.providerAccount.findFirst.mockResolvedValue({
+      id: "provider-account-1",
+      paymentRailId: "rail-1",
+      currencyCode: "XAF",
+      status: ProviderAccountStatus.SUSPENDED,
+      settlementLedgerAccountId: "account-512",
+      suspenseLedgerAccountId: "account-471",
+      paymentRail: { id: "rail-1", isActive: true },
+      settlementAccounts: [{ id: "settlement-1" }],
+    })
+
+    await expect(runPaymentReconciliation({
+      organizationId: "org-1",
+      providerAccountId: "provider-account-1",
+      businessDate: new Date("2026-06-14T09:00:00Z"),
+    })).rejects.toThrow(/active provider account/i)
+
+    expect(mockedDb.reconciliationRun.findFirst).not.toHaveBeenCalled()
+    expect(mockedDb.reconciliationRun.create).not.toHaveBeenCalled()
+  })
   it("blocks concurrent same-day reconciliation when a run is already in progress", async () => {
     mockedDb.reconciliationRun.findFirst.mockResolvedValue({
       id: "running-run-1",
@@ -374,7 +416,8 @@ describe("durable payment reconciliation run service", () => {
             providerAmount: null,
             statementAmount: "9000.00",
             mismatchSource: "STATEMENT_LINE",
-            rule: "AMOUNT_MISMATCH",
+            mismatchReasons: ["STATEMENT_LINE_AMOUNT"],
+            rule: "EXTERNAL_EVIDENCE_MISMATCH",
           }),
         }),
       }),
@@ -384,6 +427,57 @@ describe("durable payment reconciliation run service", () => {
         data: expect.objectContaining({
           paymentTransactionId: "payment-transaction-1",
           amount: amount(10000),
+        }),
+      }),
+    )
+  })
+
+  it("creates an exception when external evidence uses a different currency", async () => {
+    mockedDb.paymentTransaction.findMany.mockResolvedValue([
+      {
+        id: "payment-transaction-1",
+        amount: amount(10000),
+        currencyCode: "XAF",
+        providerTransactionId: "txn-1",
+        providerReference: "ref-1",
+        direction: PaymentDirection.INBOUND,
+        state: PaymentTransactionState.CONFIRMED,
+      },
+    ])
+    mockedDb.providerEvent.findMany.mockResolvedValue([
+      {
+        id: "provider-event-1",
+        providerEventId: "evt-1",
+        providerTransactionId: "txn-1",
+        providerReference: "ref-1",
+        amount: amount(10000),
+        currencyCode: "EUR",
+        direction: PaymentDirection.INBOUND,
+        status: ProviderEventStatus.VERIFIED,
+      },
+    ])
+    mockedDb.statementLine.findMany.mockResolvedValue([])
+
+    const result = await runPaymentReconciliation({
+      organizationId: "org-1",
+      providerAccountId: "provider-account-1",
+      businessDate: new Date("2026-06-14T09:00:00Z"),
+    })
+
+    expect(result).toMatchObject({
+      status: ReconciliationRunStatus.NEEDS_REVIEW,
+      matchCount: 0,
+      exceptionCount: 1,
+      suspenseCount: 1,
+    })
+    expect(mockedDb.matchRecord.create).not.toHaveBeenCalled()
+    expect(mockedDb.paymentException.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          type: PaymentExceptionType.AMOUNT_MISMATCH,
+          evidence: expect.objectContaining({
+            mismatchReasons: ["PROVIDER_EVENT_CURRENCY"],
+          }),
         }),
       }),
     )
@@ -436,5 +530,20 @@ describe("durable payment reconciliation run service", () => {
         correlationId: "corr-approve",
       }),
     ).resolves.toMatchObject({ matchId: "approved-match-1", correlationId: "corr-approve" })
+  })
+
+  it("rejects manual match evidence outside the tenant-scoped provider account", async () => {
+    mockedDb.statementLine.findFirst.mockResolvedValue(null)
+
+    await expect(proposeManualMatch({
+      organizationId: "org-1",
+      providerAccountId: "provider-account-1",
+      paymentTransactionId: "payment-transaction-1",
+      statementLineId: "statement-line-from-another-tenant",
+      proposedById: "maker-1",
+      amountMatched: amount(10000),
+    })).rejects.toThrow("Statement line not found")
+
+    expect(mockedDb.matchRecord.create).not.toHaveBeenCalled()
   })
 })

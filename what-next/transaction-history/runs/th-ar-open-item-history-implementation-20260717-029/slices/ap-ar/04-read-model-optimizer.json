@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "1.0",
+  "traceId": "8a1cbf54-3fc3-48ab-a179-ef3b5cd9ad29",
+  "runId": "th-ar-open-item-history-implementation-20260717-029",
+  "sliceId": "ap-ar",
+  "stageId": "04",
+  "skillName": "stoquify-transaction-history-04-read-model-optimizer",
+  "agentType": "Database Optimizer",
+  "mode": "implement",
+  "status": "PASS",
+  "activeLanes": [
+    "ar"
+  ],
+  "blockedLanes": [],
+  "inputArtifacts": [
+    {
+      "path": "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/03-accounting-control-gate.json",
+      "sha256": "sha256:411f10e6efb64d96601d368cea2f1b4dd11d53a7c2f5f8712a866bce9dc0e7fa"
+    }
+  ],
+  "inputFingerprint": "sha256:0628f08178fe0441fe22ccbd1a6b429c2bb07b2ea5d278e6dcb799ab117c6979",
+  "allowedEdits": [
+    "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/04-read-model-optimizer.md",
+    "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/04-read-model-optimizer.json",
+    "services/accounting/ar-open-item.service.ts",
+    "actions/finance/ar-history.actions.ts",
+    "services/accounting/__tests__/ar-open-item.service.test.ts"
+  ],
+  "observedEdits": [
+    "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/04-read-model-optimizer.md",
+    "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/04-read-model-optimizer.json",
+    "services/accounting/ar-open-item.service.ts",
+    "actions/finance/ar-history.actions.ts",
+    "services/accounting/__tests__/ar-open-item.service.test.ts"
+  ],
+  "repository": {
+    "headBefore": "6e78e9aa01af7d8c86f1795d7105d72fb034a72d",
+    "headAfter": "6e78e9aa01af7d8c86f1795d7105d72fb034a72d",
+    "dirtyFilesBefore": [
+      "WORKTREE_DIRTY_SEE_TRANSACTION_HISTORY_RUNS"
+    ],
+    "dirtyFilesAfter": [
+      "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/04-read-model-optimizer.md",
+      "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/04-read-model-optimizer.json",
+      "services/accounting/ar-open-item.service.ts",
+      "actions/finance/ar-history.actions.ts",
+      "services/accounting/__tests__/ar-open-item.service.test.ts"
+    ]
+  },
+  "claims": [
+    {
+      "id": "AR_OPEN_ITEM_READ_MODEL_SERVICE",
+      "result": "PASS",
+      "evidence": [
+        "services/accounting/ar-open-item.service.ts"
+      ]
+    },
+    {
+      "id": "AR_SERVER_ACTION_READ_MODEL_ADAPTER",
+      "result": "PASS",
+      "evidence": [
+        "actions/finance/ar-history.actions.ts"
+      ]
+    }
+  ],
+  "verification": [
+    {
+      "command": "npx eslint services/accounting/ar-open-item.service.ts services/accounting/__tests__/ar-open-item.service.test.ts actions/finance/ar-history.actions.ts",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": null
+    }
+  ],
+  "outputs": [
+    {
+      "path": "services/accounting/ar-open-item.service.ts",
+      "sha256": "sha256:b1b4aefb8f5a3bd0e8e6265a43b43bb8ce47c2e2e688ca351fbeaa05635d4da5"
+    },
+    {
+      "path": "actions/finance/ar-history.actions.ts",
+      "sha256": "sha256:c785928b7fb25f0dd1d8147fb12d9c86934a29d9c9d6d898a8d788630f73399d"
+    },
+    {
+      "path": "services/accounting/__tests__/ar-open-item.service.test.ts",
+      "sha256": "sha256:177ef593821e5a40a29b77ea18c52bb56bc2bb461d722d7a0f774ff790b8ffd7"
+    }
+  ],
+  "blockers": [],
+  "nextEligibleStages": [
+    "05"
+  ],
+  "startedAt": "2026-07-17T10:11:57.705Z",
+  "completedAt": "2026-07-17T10:11:57.705Z"
+}

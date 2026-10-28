@@ -1,0 +1,77 @@
+{
+  "summary": {
+    "generatedAt": "2026-08-22T09:14:23.366Z",
+    "mode": "fail",
+    "status": "ready",
+    "checkCount": 16,
+    "readyCount": 16,
+    "blockerCount": 0
+  },
+  "checks": [
+    {
+      "id": "provisional_receipt_only_client_policy",
+      "ready": true
+    },
+    {
+      "id": "deterministic_device_hash_chain",
+      "ready": true
+    },
+    {
+      "id": "tenant_terminal_device_scope",
+      "ready": true
+    },
+    {
+      "id": "inactive_device_ingestion_quarantine",
+      "ready": true
+    },
+    {
+      "id": "inactive_device_replay_revalidation",
+      "ready": true
+    },
+    {
+      "id": "sequence_hash_idempotency_quarantine",
+      "ready": true
+    },
+    {
+      "id": "accepted_event_pending_replay_proof",
+      "ready": true
+    },
+    {
+      "id": "exact_once_pos_finalization_and_recovery",
+      "ready": true
+    },
+    {
+      "id": "receipt_fiscal_and_replay_evidence",
+      "ready": true
+    },
+    {
+      "id": "assurance_and_policy_wiring",
+      "ready": true
+    },
+    {
+      "id": "durable_offline_schema_migration",
+      "ready": true
+    },
+    {
+      "id": "active_cashier_session_scope",
+      "ready": true
+    },
+    {
+      "id": "cryptographic_device_signature_verification",
+      "ready": true
+    },
+    {
+      "id": "policy_expiry_and_reference_snapshot_quarantine",
+      "ready": true
+    },
+    {
+      "id": "stable_offline_action_discriminant",
+      "ready": true
+    },
+    {
+      "id": "expired_policy_operator_visibility",
+      "ready": true
+    }
+  ],
+  "blockers": []
+}

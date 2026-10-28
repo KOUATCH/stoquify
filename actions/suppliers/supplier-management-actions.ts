@@ -1,10 +1,21 @@
 "use server"
 
+import { createHash } from "node:crypto"
 import { revalidatePath } from "next/cache"
+import { z } from "zod"
 
 import { safeLoggedActionErrorMessage } from "@/actions/_shared/safe-action-responses"
+import { requireFreshAuth } from "@/lib/security/auth-session"
+import { requirePermission } from "@/lib/security/rbac"
 import { BusinessRuleError, ForbiddenError, getPrismaKnownRequest } from "@/services/_shared/action-errors"
 import { requireOrg } from "@/services/_shared/require-org"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
+import { readAPHistory, type APHistoryResult } from "@/services/purchasing/ap-history.service"
+import {
+  buildExportWatermark,
+  evaluateExportSafety,
+} from "@/services/security/export-safety.service"
+import { auditSupplierExportDecision } from "@/services/supplier/supplier-export.service"
 import {
   SupplierCreateSchema,
   SupplierUpdateSchema,
@@ -17,14 +28,16 @@ import {
   getSupplierManagementDataForOrg,
   removeSupplierForManagement,
   updateSupplierForManagement,
-  type SupplierDetailAnalytics,
+  type SupplierDetailAnalytics as SupplierServiceDetailAnalytics,
   type SupplierManagementData,
   type SupplierManagementRow,
 } from "@/services/supplier/supplier.service"
 
 export type SupplierManagementInput = SupplierCreateInput
+export type SupplierDetailAnalytics = SupplierServiceDetailAnalytics & {
+  apHistory: APHistoryResult
+}
 export type {
-  SupplierDetailAnalytics,
   SupplierManagementData,
   SupplierManagementRow,
 }
@@ -39,6 +52,12 @@ type ActionResult<T> = {
   data?: T
   error?: string
 }
+
+const SupplierExportIntentSchema = z.object({
+  rowCount: z.number().int().min(0).max(100_000),
+  includeSensitiveFields: z.boolean().default(false),
+  fields: z.array(z.string().trim().min(1).max(80)).min(1).max(32),
+}).strict()
 
 const ACTIONABLE_ERROR_MESSAGES = new Set([
   "Unauthorized: no active organization",
@@ -186,8 +205,20 @@ export async function getSupplierAnalyticsData(
       return { success: false, error: "Supplier not found" }
     }
 
-    const data = await getSupplierDetailAnalyticsForOrg(scopedOrganizationId, scopedSupplierId)
-    return { success: true, data }
+    const { user, userId } = await requireOrg()
+    const [supplierAnalytics, apHistory] = await Promise.all([
+      getSupplierDetailAnalyticsForOrg(scopedOrganizationId, scopedSupplierId),
+      readAPHistory({
+        organizationId: scopedOrganizationId,
+        actorUserId: userId,
+        actorPermissions: user.permissions ?? [],
+        filters: {
+          supplierId: scopedSupplierId,
+          pageSize: 25,
+        },
+      }),
+    ])
+    return { success: true, data: { ...supplierAnalytics, apHistory } }
   } catch (error) {
     return {
       success: false,
@@ -196,6 +227,102 @@ export async function getSupplierAnalyticsData(
         error,
         { action: "getSupplierAnalyticsData" },
         getActionErrorMessage(error, "Failed to fetch supplier analytics"),
+      ),
+    }
+  }
+}
+
+export async function prepareSupplierManagementExport(
+  organizationId: string,
+  input: unknown,
+): Promise<ActionResult<{
+  watermarkId: string
+  includedFields: string[]
+  includeSensitiveFields: boolean
+}>> {
+  try {
+    const parsed = SupplierExportIntentSchema.parse(input)
+    const requestedOrganizationId = cleanText(organizationId)
+    if (!requestedOrganizationId) throw new BusinessRuleError("Organization is required")
+
+    const ctx = await requirePermission("reports.export", {
+      resource: "SupplierManagementExport",
+      auditAllowed: true,
+    })
+    if (ctx.orgId !== requestedOrganizationId) {
+      throw new ForbiddenError("You do not have access to this organization")
+    }
+    if (parsed.includeSensitiveFields && !ctx.isSuperUser) {
+      throw new ForbiddenError("Sensitive supplier export requires super-user access")
+    }
+
+    const freshSession = await requireFreshAuth(300)
+    const moduleDecision = await observeModuleAccess({
+      organizationId: ctx.orgId,
+      userId: ctx.userId,
+      actorPermissions: ctx.permissions,
+      moduleSlug: "purchasing",
+      surfaceType: "action",
+      surface: "actions/suppliers/supplier-management-actions.ts:prepareSupplierManagementExport",
+      accessIntent: "read",
+      mode: "enforce",
+      audit: true,
+    })
+    if (!moduleDecision.allowed) {
+      throw new BusinessRuleError("Purchasing module is not available")
+    }
+
+    const fields = [...new Set(parsed.fields)].sort()
+    const filtersHash = createHash("sha256")
+      .update(JSON.stringify({ fields, includeSensitiveFields: parsed.includeSensitiveFields }))
+      .digest("hex")
+    const scope = `supplier-directory:${fields.join(",")}`
+    const watermarkId = buildExportWatermark({
+      organizationId: ctx.orgId,
+      actorId: ctx.userId,
+      scope,
+      filtersHash,
+      rowCount: parsed.rowCount,
+      fileType: "csv",
+      sensitivity: parsed.includeSensitiveFields ? "personal" : "operational",
+    })
+    const decision = evaluateExportSafety({
+      action: "report.export",
+      organizationId: ctx.orgId,
+      actorId: ctx.userId,
+      actorPermissions: ctx.permissions,
+      lastAuthAt: freshSession.claims.lastAuthAt,
+      resourceType: "SupplierManagementExport",
+      resourceId: parsed.includeSensitiveFields ? "supplier-directory-full" : "supplier-directory-redacted",
+      exportContext: {
+        scope,
+        filtersHash,
+        rowCount: parsed.rowCount,
+        fileType: "csv",
+        sensitivity: parsed.includeSensitiveFields ? "personal" : "operational",
+        watermarkId,
+      },
+    })
+
+    await auditSupplierExportDecision(decision)
+    if (!decision.allowed) throw new BusinessRuleError(decision.safeMessage)
+
+    return {
+      success: true,
+      data: {
+        watermarkId,
+        includedFields: fields,
+        includeSensitiveFields: parsed.includeSensitiveFields,
+      },
+    }
+  } catch (error) {
+    return {
+      success: false,
+      error: safeLoggedActionErrorMessage(
+        "Error preparing supplier management export",
+        error,
+        { action: "prepareSupplierManagementExport" },
+        getActionErrorMessage(error, "Supplier export could not be prepared"),
       ),
     }
   }

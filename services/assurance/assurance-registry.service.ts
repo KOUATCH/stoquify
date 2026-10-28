@@ -1,6 +1,6 @@
 import "server-only"
 
-import { createHash } from "node:crypto"
+import { createHash, randomUUID } from "node:crypto"
 
 import {
   AccountingPeriodStatus,
@@ -48,26 +48,40 @@ import {
 
 import { db } from "@/prisma/db"
 import { hasRbacPermission } from "@/lib/security/rbac-permissions"
-
-import { upsertWorkflowAssuranceIncidentFromResult } from "./assurance-incident.service"
+import {
+  buildReconciliationEvidenceManifestInTx,
+  reconciliationCertificateSourceEvidenceHash,
+} from "@/services/reconciliation/payment-reconciliation-evidence.service"
+import { assertWorkflowAssuranceExecutionReconciled } from "./assurance-registry-persistence-contracts"
+import {
+  normalizeWorkflowAssuranceExecutionKey,
+  persistWorkflowAssuranceDefinitionExecution,
+} from "./assurance-registry-persistence.service"
 import {
   INITIAL_WORKFLOW_ASSURANCE_CHECK_DEFINITIONS,
   assertCheckDefinitionComplete,
   createAssuranceSourceHash,
   normalizeAssuranceResult,
+  normalizeWorkflowAssuranceRunnerOutput,
   type WorkflowAssuranceCheckDefinitionContract,
   type WorkflowAssuranceCheckResult,
+  type WorkflowAssuranceDefinitionExecution,
   type WorkflowAssuranceCheckRunSummary,
   type WorkflowAssuranceCounts,
   type WorkflowAssuranceExecutionMode,
   type WorkflowAssuranceRegistryRunOutput,
   type WorkflowAssuranceResultStatus,
   type WorkflowAssuranceRunInput,
+  type WorkflowAssuranceRunnerOutput,
   type WorkflowAssuranceRunStatus,
   type WorkflowAssuranceRunType,
   type WorkflowAssuranceSeverity,
   type WorkflowAssuranceWorkflow,
 } from "./assurance-registry-contracts"
+import {
+  buildPosShiftCashShortageDormantRunnerInputFromWorkflowRun,
+  runDormantPosShiftCashShortageAssuranceCheck,
+} from "@/services/leakage/pos-shift-cash-shortage-dormant-runner"
 
 const WORKFLOW_TO_PRISMA = {
   cash_command: "CASH_COMMAND",
@@ -86,6 +100,7 @@ const WORKFLOW_TO_PRISMA = {
   offline_pos: "OFFLINE_POS",
   snapshot_bi: "SNAPSHOT_BI",
   cross_module: "CROSS_MODULE",
+  agent_runtime: "AGENT_RUNTIME",
 } as const satisfies Record<WorkflowAssuranceWorkflow, string>
 
 const EXECUTION_MODE_TO_PRISMA = {
@@ -138,7 +153,7 @@ const PRISMA_TO_SEVERITY = invertMap(SEVERITY_TO_PRISMA)
 type WorkflowAssuranceRunner = (
   definition: WorkflowAssuranceCheckDefinitionContract,
   input: WorkflowAssuranceRunInput,
-) => Promise<WorkflowAssuranceCheckResult>
+) => Promise<WorkflowAssuranceRunnerOutput>
 
 const CHECK_RUNNERS: Record<string, WorkflowAssuranceRunner> = {
   "ledger.posted_source_link.required": runPostedSourceLinkCheck,
@@ -154,6 +169,7 @@ const CHECK_RUNNERS: Record<string, WorkflowAssuranceRunner> = {
   "pos.completed_sale_stock_movement.required": runCompletedPosSaleStockMovementCheck,
   "pos.completed_sale_ledger_source_link.required": runCompletedPosSaleLedgerSourceLinkCheck,
   "pos.network_tender_idempotency_hash.required": runNetworkTenderIdempotencyHashCheck,
+  "pos.closed_shift_cash_shortage.review": runDormantPosShiftCashShortageReviewCheck,
   "offline_pos.replay_sla.visible": runOfflinePosReplaySlaCheck,
   "offline_pos.accepted_event_business_event.required": runOfflineAcceptedEventBusinessEventCheck,
   "offline_pos.sequence_hash_conflict.visible": runOfflineSequenceHashConflictVisibilityCheck,
@@ -303,10 +319,8 @@ const RELEASED_PAYROLL_PAYMENT_STATUSES: PayrollPaymentBatchStatus[] = [
   PayrollPaymentBatchStatus.SETTLED,
 ]
 const PAYROLL_RUN_PAYMENT_READY_STATUSES: PayrollRunStatus[] = [
-  PayrollRunStatus.APPROVED,
-  PayrollRunStatus.EMITTED,
-  PayrollRunStatus.PAID,
   PayrollRunStatus.POSTED,
+  PayrollRunStatus.PAID,
   PayrollRunStatus.ARCHIVED,
 ]
 const PAYROLL_PAYMENT_RECONCILIATION_MONITORED_STATUSES: PayrollPaymentBatchStatus[] = [
@@ -384,71 +398,39 @@ export async function runWorkflowAssuranceRegistry(
 
   const runs: WorkflowAssuranceCheckRunSummary[] = []
   const runType = input.runType ?? "manual"
+  const executionKey = normalizeWorkflowAssuranceExecutionKey(input.executionKey ?? randomUUID())
 
   for (const record of records) {
     const definition = toDefinitionContract(record)
     const startedAt = new Date()
-    const result = await executeDefinition(definition, input)
+    const execution = await executeDefinition(definition, input)
+    const result = execution.aggregate
     const runStatus = runStatusForResult(result.status)
     const completedAt = new Date()
     const durationMs = Math.max(0, completedAt.getTime() - startedAt.getTime())
-    const created = await db.workflowAssuranceCheckRun.create({
-      data: {
-        organizationId: input.organizationId,
-        definitionId: record.id,
-        checkKey: definition.checkKey,
-        definitionVersion: definition.version,
-        runType: RUN_TYPE_TO_PRISMA[runType],
-        runStatus: RUN_STATUS_TO_PRISMA[runStatus],
-        resultStatus: RESULT_STATUS_TO_PRISMA[result.status],
-        severity: SEVERITY_TO_PRISMA[result.severity],
-        actorId: input.actorId,
-        sourceType: result.sourceType ?? input.sourceType,
-        sourceId: result.sourceId ?? input.sourceId,
-        sourceHash: result.sourceHash,
-        fingerprint: result.fingerprint,
-        periodId: input.periodId,
-        locationId: input.locationId,
-        scannedCount: result.counts.scanned,
-        passedCount: result.counts.passed,
-        warningCount: result.counts.warning,
-        failedCount: result.counts.failed,
-        blockedCount: result.counts.blocked,
-        skippedCount: result.counts.skipped,
-        errorCount: result.counts.error,
-        startedAt,
-        completedAt,
-        durationMs,
-        resultSummary: {
-          message: result.message,
-          recommendedAction: result.recommendedAction,
-          evidenceLinks: result.evidenceLinks,
-          metadata: result.metadata,
-        } as Prisma.InputJsonValue,
-        errorCode: result.errorCode,
-        errorMessage: result.errorMessage,
-        metadata: {
-          observeMode: !definition.enforceMode,
-          workflow: definition.workflow,
-          executionMode: definition.executionMode,
-          moduleSlug: definition.moduleSlug,
-          requiredPermission: definition.requiredPermission,
-          actorPermissionCount: input.actorPermissions?.length ?? null,
-        } as Prisma.InputJsonValue,
-      },
-    })
-
-    const incident = await upsertWorkflowAssuranceIncidentFromResult({
+    const persisted = await persistWorkflowAssuranceDefinitionExecution({
       organizationId: input.organizationId,
       definitionId: record.id,
-      checkRunId: created.id,
       definition,
-      result,
+      execution,
+      executionKey,
       actorId: input.actorId,
+      actorPermissionCount: input.actorPermissions?.length ?? null,
+      runType,
+      runStatus,
+      periodId: input.periodId,
+      locationId: input.locationId,
+      sourceType: input.sourceType,
+      sourceId: input.sourceId,
+      startedAt,
+      completedAt,
+      durationMs,
     })
 
     runs.push({
-      id: created.id,
+      id: persisted.checkRunId,
+      executionKey: persisted.executionKey,
+      replayed: persisted.replayed,
       checkKey: definition.checkKey,
       version: definition.version,
       workflow: definition.workflow,
@@ -466,11 +448,12 @@ export async function runWorkflowAssuranceRegistry(
       message: result.message,
       evidenceLinks: result.evidenceLinks,
       actionRoute: definition.actionRoute,
-      incidentId: incident?.id,
+      incidentId: persisted.incidentId,
+      findings: persisted.findings,
       observeMode: !definition.enforceMode,
-      startedAt: startedAt.toISOString(),
-      completedAt: completedAt.toISOString(),
-      durationMs,
+      startedAt: persisted.startedAt.toISOString(),
+      completedAt: persisted.completedAt.toISOString(),
+      durationMs: persisted.durationMs,
     })
   }
 
@@ -486,11 +469,12 @@ export async function runWorkflowAssuranceRegistry(
 async function executeDefinition(
   definition: WorkflowAssuranceCheckDefinitionContract,
   input: WorkflowAssuranceRunInput,
-) {
+): Promise<WorkflowAssuranceDefinitionExecution> {
   if (!canRunDefinition(definition, input.actorPermissions)) {
-    return normalizeAssuranceResult({
+    return aggregateOnlyWorkflowAssuranceExecution(normalizeAssuranceResult({
       organizationId: input.organizationId,
       checkKey: definition.checkKey,
+      definitionVersion: definition.version,
       status: "skipped",
       severity: "info",
       sourceType: "permission",
@@ -502,14 +486,15 @@ async function executeDefinition(
         requiredPermission: definition.requiredPermission,
         permissionBounded: true,
       },
-    })
+    }))
   }
 
   const runner = CHECK_RUNNERS[definition.checkKey]
   if (!runner) {
-    return normalizeAssuranceResult({
+    return aggregateOnlyWorkflowAssuranceExecution(normalizeAssuranceResult({
       organizationId: input.organizationId,
       checkKey: definition.checkKey,
+      definitionVersion: definition.version,
       status: "skipped",
       severity: "info",
       sourceType: "registry",
@@ -520,30 +505,60 @@ async function executeDefinition(
       metadata: {
         missingRunner: true,
       },
-    })
+    }))
   }
 
+  let output: WorkflowAssuranceRunnerOutput
   try {
-    return await runner(definition, input)
+    output = await runner(definition, input)
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown assurance runner error"
-    return normalizeAssuranceResult({
+    return aggregateOnlyWorkflowAssuranceExecution(
+      normalizeAssuranceResult({
+        organizationId: input.organizationId,
+        checkKey: definition.checkKey,
+        definitionVersion: definition.version,
+        status: "error",
+        severity: "blocking",
+        sourceType: "assurance_runner",
+        sourceId: definition.checkKey,
+        message: "The assurance runner failed before it could produce a trusted result.",
+        recommendedAction: "Review the assurance runner error and rerun the check after repair.",
+        counts: { scanned: 0, error: 1 },
+        errorCode: "ASSURANCE_RUNNER_ERROR",
+        errorMessage: message,
+        metadata: {
+          errorName: error instanceof Error ? error.name : "UnknownError",
+        },
+      }),
+    )
+  }
+
+  return assertWorkflowAssuranceExecutionReconciled(
+    normalizeWorkflowAssuranceRunnerOutput({
       organizationId: input.organizationId,
       checkKey: definition.checkKey,
-      status: "error",
-      severity: "blocking",
-      sourceType: "assurance_runner",
-      sourceId: definition.checkKey,
-      message: "The assurance runner failed before it could produce a trusted result.",
-      recommendedAction: "Review the assurance runner error and rerun the check after repair.",
-      counts: { scanned: 0, error: 1 },
-      errorCode: "ASSURANCE_RUNNER_ERROR",
-      errorMessage: message,
-      metadata: {
-        errorName: error instanceof Error ? error.name : "UnknownError",
-      },
-    })
-  }
+      definitionVersion: definition.version,
+      output,
+    }),
+  )
+}
+
+
+function aggregateOnlyWorkflowAssuranceExecution(
+  aggregate: WorkflowAssuranceCheckResult,
+): WorkflowAssuranceDefinitionExecution {
+  return assertWorkflowAssuranceExecutionReconciled({ aggregate, findings: [] })
+}
+
+async function runDormantPosShiftCashShortageReviewCheck(
+  definition: WorkflowAssuranceCheckDefinitionContract,
+  input: WorkflowAssuranceRunInput,
+): Promise<WorkflowAssuranceRunnerOutput> {
+  const dormantInput = buildPosShiftCashShortageDormantRunnerInputFromWorkflowRun(definition, input)
+  const result = await runDormantPosShiftCashShortageAssuranceCheck(dormantInput)
+
+  return result.output
 }
 
 async function runPostedSourceLinkCheck(
@@ -2207,15 +2222,39 @@ async function runReconciliationCertificateHashCheck(
     },
     select: {
       id: true,
+      providerAccountId: true,
+      periodStart: true,
+      periodEnd: true,
       certificateHash: true,
       certificatePayload: true,
     },
   })
   const missingCertificateProofCount = signedRuns.filter((run) => !run.certificateHash || !run.certificatePayload).length
-  const driftedRunIds = signedRuns
+  const payloadDriftedRunIds = signedRuns
     .filter((run) => run.certificateHash && run.certificatePayload)
     .filter((run) => reconciliationCertificateHash(run.certificatePayload) !== run.certificateHash)
     .map((run) => run.id)
+  const sourceDriftedRunIds: string[] = []
+  for (const run of signedRuns) {
+    if (!run.certificateHash || !run.certificatePayload || payloadDriftedRunIds.includes(run.id)) continue
+    const signedSourceHash = reconciliationCertificateSourceEvidenceHash(run.certificatePayload)
+    if (!signedSourceHash) {
+      sourceDriftedRunIds.push(run.id)
+      continue
+    }
+    const currentEvidence = await buildReconciliationEvidenceManifestInTx(
+      db as unknown as Prisma.TransactionClient,
+      {
+        organizationId: input.organizationId,
+        providerAccountId: run.providerAccountId,
+        reconciliationRunId: run.id,
+        periodStart: run.periodStart,
+        periodEnd: run.periodEnd,
+      },
+    )
+    if (currentEvidence.sourceHash !== signedSourceHash) sourceDriftedRunIds.push(run.id)
+  }
+  const driftedRunIds = [...new Set([...payloadDriftedRunIds, ...sourceDriftedRunIds])]
   const driftedCertificateCount = driftedRunIds.length
   const staleCertificateCount = missingCertificateProofCount + driftedCertificateCount
   const status: WorkflowAssuranceResultStatus = staleCertificateCount > 0 ? "failed" : "passed"
@@ -2224,6 +2263,8 @@ async function runReconciliationCertificateHashCheck(
     signedRunCount: signedRuns.length,
     missingCertificateProofCount,
     driftedCertificateCount,
+    payloadDriftedRunCount: payloadDriftedRunIds.length,
+    sourceDriftedRunCount: sourceDriftedRunIds.length,
     driftedRunIds,
   })
 
@@ -2255,6 +2296,8 @@ async function runReconciliationCertificateHashCheck(
           signedRunCount: signedRuns.length,
           missingCertificateProofCount,
           driftedCertificateCount,
+          payloadDriftedRunCount: payloadDriftedRunIds.length,
+          sourceDriftedRunCount: sourceDriftedRunIds.length,
           driftedRunIds: driftedRunIds.slice(0, 10),
         },
       },
@@ -2268,6 +2311,8 @@ async function runReconciliationCertificateHashCheck(
       signedRunCount: signedRuns.length,
       missingCertificateProofCount,
       driftedCertificateCount,
+      payloadDriftedRunCount: payloadDriftedRunIds.length,
+      sourceDriftedRunCount: sourceDriftedRunIds.length,
       driftedRunIds: driftedRunIds.slice(0, 10),
     },
   })

@@ -5,7 +5,11 @@ import {
   PayrollPaymentDestinationChangeStatus,
 } from "@prisma/client"
 
-import { BusinessRuleError, ForbiddenError } from "@/services/_shared/action-errors"
+import {
+  ApplicationError,
+  BusinessRuleError,
+  ForbiddenError,
+} from "@/services/_shared/action-errors"
 
 jest.mock("@/prisma/db", () => ({
   db: {
@@ -33,12 +37,16 @@ import {
   approvePaymentDestinationChange,
   assertApprovedPaymentDestinationEvidence,
   getPaymentEvidenceReadiness,
+  hashPaymentDestinationPrivateValue,
+  PAYMENT_DESTINATION_PRIVACY_POLICY,
   requestPaymentDestinationChange,
 } from "../payment-evidence.service"
 
 const mockDb = db as unknown as { $transaction: jest.Mock }
 const mockedRecordBusinessEventInTx = recordBusinessEventInTx as jest.Mock
 const mockedMarkBusinessEventAppliedInTx = markBusinessEventAppliedInTx as jest.Mock
+const originalPaymentDestinationHashSecret =
+  process.env.PAYROLL_PAYMENT_DESTINATION_HASH_SECRET
 
 function buildTx() {
   return {
@@ -143,6 +151,56 @@ function destinationChangeRow(overrides: Record<string, unknown> = {}) {
   }
 }
 
+function attendanceCertification(overrides: Record<string, unknown> = {}) {
+  return {
+    kind: "STOQUIFY_HRIS_TIME_LEAVE_ATTENDANCE_CERTIFICATION",
+    version: 1,
+    sourceSystem: "hris-attendance",
+    sourceRecordId: "attendance-period-employee-1",
+    sourceRevision: 1,
+    policy: {
+      countryCode: "CM",
+      policyVersion: "CM-2026.1",
+      countryPolicyHash: "sha256:country-policy",
+      companyPolicyHash: "sha256:company-policy",
+      leavePolicyHash: "sha256:leave-policy",
+      overtimePolicyHash: "sha256:overtime-policy",
+      scheduleHash: "sha256:schedule",
+      holidayCalendarHash: "sha256:holidays",
+      effectiveFrom: "2026-01-01T00:00:00.000Z",
+      effectiveTo: null,
+      verificationStatus: "REVIEWED",
+      reviewedById: "policy-reviewer-1",
+      reviewEvidenceHash: "sha256:policy-review",
+    },
+    evidence: {
+      attendanceImportHash: "sha256:attendance-import",
+      leaveBalanceSnapshotHash: "sha256:leave-balance",
+      approvedLeaveRequestHashes: ["sha256:leave-request"],
+      approvedOvertimeRequestHashes: [],
+    },
+    approval: {
+      preparedById: "attendance-preparer-1",
+      approvedById: "manager-1",
+      approvalEvidenceHash: "sha256:attendance-approval",
+    },
+    unresolved: {
+      timeEntryCount: 0,
+      leaveRequestCount: 0,
+      overtimeRequestCount: 0,
+      correctionCount: 0,
+    },
+    totals: {
+      scheduledMinutes: 9600,
+      workedMinutes: 9000,
+      overtimeMinutes: 0,
+      absenceMinutes: 200,
+      leaveMinutes: 400,
+    },
+    ...overrides,
+  }
+}
+
 function attendanceSnapshotRow(overrides: Record<string, unknown> = {}) {
   return {
     id: "attendance-1",
@@ -150,7 +208,15 @@ function attendanceSnapshotRow(overrides: Record<string, unknown> = {}) {
     periodStart: new Date("2026-06-01T00:00:00.000Z"),
     periodEnd: new Date("2026-06-30T23:59:59.999Z"),
     sourceHash: "sha256:attendance-source",
+    scheduledMinutes: 9600,
+    workedMinutes: 9000,
+    overtimeMinutes: 0,
+    absenceMinutes: 200,
+    leaveMinutes: 400,
+    frozenById: "manager-1",
     frozenAt: new Date("2026-06-25T00:00:00.000Z"),
+    correctedFromId: null,
+    metadata: { sourcePayload: attendanceCertification() },
     ...overrides,
   }
 }
@@ -158,8 +224,19 @@ function attendanceSnapshotRow(overrides: Record<string, unknown> = {}) {
 describe("payroll payment evidence service", () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    process.env.PAYROLL_PAYMENT_DESTINATION_HASH_SECRET =
+      "test-payment-destination-secret-1234567890"
     mockedRecordBusinessEventInTx.mockResolvedValue({ event: { id: "event-1" }, created: true })
     mockedMarkBusinessEventAppliedInTx.mockResolvedValue({ id: "event-1", status: "APPLIED" })
+  })
+
+  afterAll(() => {
+    if (originalPaymentDestinationHashSecret === undefined) {
+      delete process.env.PAYROLL_PAYMENT_DESTINATION_HASH_SECRET
+    } else {
+      process.env.PAYROLL_PAYMENT_DESTINATION_HASH_SECRET =
+        originalPaymentDestinationHashSecret
+    }
   })
 
   it("requests a payment destination change with tenant scope, masked values, hashes, audit, and no raw details", async () => {
@@ -193,14 +270,36 @@ describe("payroll payment evidence service", () => {
     }))
     const createdData = tx.payrollPaymentDestinationChangeRequest.create.mock.calls[0][0].data
     expect(createdData.bankAccountMasked).toBe("***1234")
-    expect(createdData.bankAccountHash).toMatch(/^sha256:/)
-    expect(createdData.paymentDestinationHash).toMatch(/^sha256:/)
+    expect(createdData.bankAccountHash).toMatch(/^hmac-sha256:v1:/)
+    expect(createdData.paymentDestinationHash).toMatch(/^hmac-sha256:v1:/)
+    expect(createdData.metadata).toMatchObject({
+      rawPaymentDetailsStored: false,
+      redactionPolicy: "MASKED_AND_HMAC_ONLY",
+      privacyPolicy: PAYMENT_DESTINATION_PRIVACY_POLICY,
+    })
     expect(JSON.stringify(createdData)).not.toContain("1234567890121234")
     expect(JSON.stringify(result)).not.toContain("1234567890121234")
     expect(mockedRecordBusinessEventInTx).toHaveBeenCalledWith(tx, expect.objectContaining({
       eventType: "payroll.payment_destination.requested",
       documentHash: "sha256:request-evidence",
     }))
+  })
+
+  it("uses a dedicated secret-bound HMAC and fails closed when the secret is unavailable", () => {
+    const value = { bankAccountNumber: "1234567890121234" }
+    const first = hashPaymentDestinationPrivateValue("bank-account", value)
+
+    process.env.PAYROLL_PAYMENT_DESTINATION_HASH_SECRET =
+      "different-payment-destination-secret-123456"
+    const second = hashPaymentDestinationPrivateValue("bank-account", value)
+
+    expect(first).toMatch(/^hmac-sha256:v1:/)
+    expect(second).toMatch(/^hmac-sha256:v1:/)
+    expect(second).not.toBe(first)
+
+    delete process.env.PAYROLL_PAYMENT_DESTINATION_HASH_SECRET
+    expect(() => hashPaymentDestinationPrivateValue("bank-account", value))
+      .toThrow(ApplicationError)
   })
 
   it("blocks a requester from approving their own payment destination change", async () => {
@@ -218,6 +317,50 @@ describe("payroll payment evidence service", () => {
     })).rejects.toBeInstanceOf(ForbiddenError)
 
     expect(tx.payrollPaymentDestinationChangeRequest.update).not.toHaveBeenCalled()
+  })
+
+  it("hashes approval reasons in events and limits audit data to control outcomes", async () => {
+    const tx = buildTx()
+    useTransaction(tx)
+    const requested = destinationChangeRow({ requestedById: "hr-1" })
+    let current = requested
+    tx.payrollPaymentDestinationChangeRequest.findFirst.mockResolvedValue(requested)
+    tx.payrollPaymentDestinationChangeRequest.update.mockImplementation(
+      async ({ data }: { data: Record<string, unknown> }) => {
+        current = destinationChangeRow({
+          ...current,
+          ...data,
+          employee: employeeRow(),
+        })
+        return current
+      },
+    )
+
+    const result = await approvePaymentDestinationChange({
+      organizationId: "org-1",
+      actorId: "finance-1",
+      actorPermissions: ["payroll.payment_destination.approve"],
+      paymentDestinationChangeRequestId: "dest-change-1",
+      decisionReason: "Verified against signed bank evidence",
+      approvalEvidenceHash: "sha256:approval-evidence",
+    })
+
+    expect(result.paymentDestinationChange.status)
+      .toBe(PayrollPaymentDestinationChangeStatus.APPROVED)
+    const eventInput = mockedRecordBusinessEventInTx.mock.calls[0][1]
+    expect(eventInput.metadata).toMatchObject({
+      decisionReasonHash: expect.any(String),
+    })
+    expect(JSON.stringify(eventInput)).not.toContain(
+      "Verified against signed bank evidence",
+    )
+    const auditAfter = tx.auditLog.create.mock.calls[0][0].data.changes.after
+    expect(auditAfter).toMatchObject({
+      requesterApproverSeparated: true,
+      approvalEvidencePresent: true,
+    })
+    expect(JSON.stringify(auditAfter)).not.toContain("finance-1")
+    expect(JSON.stringify(auditAfter)).not.toContain("hr-1")
   })
 
   it("approves and applies payment destination evidence without mutating raw payment details into employee metadata", async () => {
@@ -250,7 +393,30 @@ describe("payroll payment evidence service", () => {
     expect(JSON.stringify(employeeUpdate.metadata)).not.toContain("1234567890121234")
   })
 
-  it("returns readiness with evidence references, redacted destination data, and attendance drift detection", async () => {
+  it("blocks the approver from applying the payment destination they approved", async () => {
+    const tx = buildTx()
+    useTransaction(tx)
+    tx.payrollPaymentDestinationChangeRequest.findFirst.mockResolvedValue(
+      destinationChangeRow({
+        status: PayrollPaymentDestinationChangeStatus.APPROVED,
+        requestedById: "hr-1",
+        approvedById: "finance-1",
+        approvalEvidenceHash: "sha256:approval-evidence",
+      }),
+    )
+
+    await expect(applyApprovedPaymentDestinationChange({
+      organizationId: "org-1",
+      actorId: "finance-1",
+      actorPermissions: ["payroll.payment_destination.apply"],
+      paymentDestinationChangeRequestId: "dest-change-1",
+    })).rejects.toBeInstanceOf(ForbiddenError)
+
+    expect(tx.payrollEmployee.update).not.toHaveBeenCalled()
+    expect(tx.payrollPaymentDestinationChangeRequest.update).not.toHaveBeenCalled()
+  })
+
+  it("returns readiness with redacted evidence pointers, destination data, and attendance drift detection", async () => {
     const client = {
       payrollEmployee: {
         findMany: jest.fn().mockResolvedValue([
@@ -269,11 +435,85 @@ describe("payroll payment evidence service", () => {
 
     expect(result.summary.attendanceDriftCount).toBe(1)
     expect(result.employees[0].attendanceReadiness.status).toBe("DRIFT_DETECTED")
-    expect(result.employees[0].evidence.paymentEvidenceHashes).toEqual(expect.arrayContaining([
-      "sha256:request-evidence",
-      "sha256:approval-evidence",
-    ]))
+    expect(result.employees[0].evidence.paymentEvidenceHashes).toEqual([
+      "[REDACTED:HR_DOCUMENT]",
+      "[REDACTED:HR_DOCUMENT]",
+    ])
+    expect(result.employees[0].paymentDestination.latestChange?.evidenceDocumentHash).toBe(
+      "[REDACTED:HR_DOCUMENT]",
+    )
+    expect(result.redaction.documentEvidenceDecision).toMatchObject({
+      allowed: false,
+      mode: "redact",
+      reasonCode: "MISSING_PERMISSION",
+    })
+    expect(JSON.stringify(result)).not.toMatch(/sha256:(contract|salary|request|approval)/)
     expect(JSON.stringify(result)).not.toContain("bankAccountNumber")
+  })
+
+  it("denies attendance readiness when frozen inputs contain unresolved leave", async () => {
+    const client = {
+      payrollEmployee: {
+        findMany: jest.fn().mockResolvedValue([
+          employeeRow({
+            attendanceSnapshots: [attendanceSnapshotRow({
+              metadata: {
+                sourcePayload: attendanceCertification({
+                  unresolved: {
+                    timeEntryCount: 0,
+                    leaveRequestCount: 1,
+                    overtimeRequestCount: 0,
+                    correctionCount: 0,
+                  },
+                }),
+              },
+            })],
+          }),
+        ]),
+      },
+      auditLog: { create: jest.fn() },
+    }
+
+    const result = await getPaymentEvidenceReadiness({
+      organizationId: "org-1",
+      actorPermissions: ["payroll.attendance.readiness.read"],
+    }, client as never)
+
+    expect(result.employees[0].attendanceReadiness).toMatchObject({
+      status: "CERTIFICATION_INVALID",
+      blocker: "ATTENDANCE_CERTIFICATION_INVALID",
+    })
+    expect(result.summary.attendanceReadyCount).toBe(0)
+  })
+
+  it("reveals evidence pointers only to a document-owning payroll role", async () => {
+    const client = {
+      payrollEmployee: {
+        findMany: jest.fn().mockResolvedValue([employeeRow()]),
+      },
+      auditLog: { create: jest.fn() },
+    }
+
+    const result = await getPaymentEvidenceReadiness({
+      organizationId: "org-1",
+      actorId: "document-owner-1",
+      actorPermissions: [
+        "payroll.payment_destination.read",
+        "payroll.employees.manage",
+      ],
+    }, client as never)
+
+    expect(result.employees[0].evidence.paymentEvidenceHashes).toEqual(
+      expect.arrayContaining([
+        "sha256:request-evidence",
+        "sha256:approval-evidence",
+      ]),
+    )
+    expect(result.redaction.documentEvidenceDecision).toMatchObject({
+      allowed: true,
+      mode: "allow",
+      reasonCode: "ALLOWED",
+    })
   })
 
   it("requires an applied destination approval record before payment release can proceed", async () => {
@@ -291,5 +531,42 @@ describe("payroll payment evidence service", () => {
       organizationId: "org-1",
       employeeId: "employee-1",
     })).rejects.toBeInstanceOf(BusinessRuleError)
+  })
+
+  it("returns the approved evidence proof consumed by payroll payment release", async () => {
+    const client = {
+      payrollEmployee: {
+        findFirst: jest.fn().mockResolvedValue(employeeRow()),
+      },
+      payrollPaymentDestinationChangeRequest: {
+        findFirst: jest.fn().mockResolvedValue({
+          id: "dest-change-1",
+          evidenceDocumentHash: "sha256:request-evidence",
+          approvalEvidenceHash: "sha256:approval-evidence",
+          appliedBusinessEventId: "event-apply",
+        }),
+      },
+    }
+
+    const result = await assertApprovedPaymentDestinationEvidence(client as never, {
+      organizationId: "org-1",
+      employeeId: "employee-1",
+    })
+
+    expect(result).toEqual({
+      employeeId: "employee-1",
+      paymentDestinationChangeRequestId: "dest-change-1",
+      paymentDestinationHash: "sha256:destination",
+      evidenceDocumentHash: "sha256:request-evidence",
+      approvalEvidenceHash: "sha256:approval-evidence",
+    })
+    expect(client.payrollPaymentDestinationChangeRequest.findFirst)
+      .toHaveBeenCalledWith(expect.objectContaining({
+        where: expect.objectContaining({
+          organizationId: "org-1",
+          employeeId: "employee-1",
+          status: PayrollPaymentDestinationChangeStatus.APPLIED,
+        }),
+      }))
   })
 })

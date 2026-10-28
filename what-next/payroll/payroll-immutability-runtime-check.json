@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-06T06:16:06.532Z",
+  "generatedAt": "2026-08-22T14:24:26.391Z",
   "mode": "fail",
   "status": "ready",
   "safety": {
@@ -7,8 +7,8 @@
     "host": "localhost"
   },
   "migration": {
-    "applied": true,
-    "exitCode": 0
+    "applied": false,
+    "exitCode": null
   },
   "summary": {
     "presentTriggers": 9,
@@ -70,72 +70,72 @@
     {
       "label": "block_run_update",
       "passed": true,
-      "message": "P2010: PrismaClientKnownRequestError"
+      "message": "23000: error: Cannot modify immutable payroll evidence: payroll run payroll_immut_run_1787408666138_g7rp6yw"
     },
     {
       "label": "block_run_delete",
       "passed": true,
-      "message": "P2010: PrismaClientKnownRequestError"
+      "message": "23000: error: Cannot delete immutable payroll evidence: payroll run payroll_immut_run_1787408666138_g7rp6yw"
     },
     {
       "label": "block_run_line_update",
       "passed": true,
-      "message": "P2010: PrismaClientKnownRequestError"
+      "message": "23000: error: Cannot modify immutable payroll evidence: payroll run line payroll_immut_run_line_1787408666138_g7rp6yw"
     },
     {
       "label": "block_payslip_update",
       "passed": true,
-      "message": "P2010: PrismaClientKnownRequestError"
+      "message": "23000: error: Cannot modify immutable payroll evidence: payslip payroll_immut_payslip_1787408666138_g7rp6yw"
     },
     {
       "label": "block_payslip_line_update",
       "passed": true,
-      "message": "P2010: PrismaClientKnownRequestError"
+      "message": "23000: error: Cannot modify immutable payroll evidence: payslip line payroll_immut_payslip_line_1787408666138_g7rp6yw"
     },
     {
       "label": "block_payment_batch_update",
       "passed": true,
-      "message": "P2010: PrismaClientKnownRequestError"
+      "message": "23000: error: Cannot modify immutable payroll evidence: payment batch payroll_immut_batch_1787408666138_g7rp6yw"
     },
     {
       "label": "block_payment_batch_status_reversal",
       "passed": true,
-      "message": "P2010: PrismaClientKnownRequestError"
+      "message": "23000: error: Cannot change immutable payroll payment lifecycle status from RELEASED to DRAFT for payment batch payroll_immut_batch_1787408666138_g7rp6yw"
     },
     {
       "label": "block_payment_allocation_update",
       "passed": true,
-      "message": "P2010: PrismaClientKnownRequestError"
+      "message": "23000: error: Cannot modify immutable payroll evidence: payment allocation payroll_immut_allocation_1787408666138_g7rp6yw"
     },
     {
       "label": "block_declaration_update",
       "passed": true,
-      "message": "P2010: PrismaClientKnownRequestError"
+      "message": "23000: error: Cannot modify immutable payroll evidence: declaration payroll_immut_declaration_1787408666138_g7rp6yw"
     },
     {
       "label": "block_declaration_delete",
       "passed": true,
-      "message": "P2010: PrismaClientKnownRequestError"
+      "message": "23000: error: Cannot delete immutable payroll evidence: declaration payroll_immut_declaration_1787408666138_g7rp6yw"
     },
     {
       "label": "block_declaration_evidence_update",
       "passed": true,
-      "message": "P2010: PrismaClientKnownRequestError"
+      "message": "23000: error: Cannot modify immutable payroll evidence: declaration evidence payroll_immut_declaration_evidence_1787408666138_g7rp6yw"
     },
     {
       "label": "block_declaration_evidence_delete",
       "passed": true,
-      "message": "P2010: PrismaClientKnownRequestError"
+      "message": "23000: error: Cannot delete immutable payroll evidence: declaration evidence payroll_immut_declaration_evidence_1787408666138_g7rp6yw"
     },
     {
       "label": "block_employee_balance_event_update",
       "passed": true,
-      "message": "P2010: PrismaClientKnownRequestError"
+      "message": "23000: error: Cannot modify immutable payroll evidence: employee balance event payroll_immut_balance_event_1787408666138_g7rp6yw"
     },
     {
       "label": "block_employee_balance_event_delete",
       "passed": true,
-      "message": "P2010: PrismaClientKnownRequestError"
+      "message": "23000: error: Cannot delete immutable payroll evidence: employee balance event payroll_immut_balance_event_1787408666138_g7rp6yw"
     }
   ],
   "allowedChecks": [

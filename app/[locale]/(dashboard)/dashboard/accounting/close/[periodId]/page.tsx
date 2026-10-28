@@ -2,8 +2,10 @@ import { ClipboardCheck, FileSearch, ShieldCheck } from "lucide-react"
 
 import { getCloseAssuranceDashboardAction } from "@/actions/accounting/close-assurance.actions"
 import { CloseAssuranceCenter } from "@/components/accounting/CloseAssuranceCenter"
+import { checkPermission } from "@/config/useAuth"
 import type { Locale } from "@/types/bilingual"
 import { AccountingLinkButton, AccountingPageShell } from "../../_components/accounting-ui"
+import { routeByKey, withAccountingSurfaceAccess } from "../../accounting-route-access"
 
 type CloseAssurancePeriodPageProps = {
   params: Promise<{ locale?: string; periodId: string }>
@@ -13,9 +15,12 @@ function normalizeLocale(locale?: string): Locale {
   return locale === "fr" ? "fr" : "en"
 }
 
-export default async function CloseAssurancePeriodPage({ params }: CloseAssurancePeriodPageProps) {
+async function CloseAssurancePeriodPageImpl({ params }: CloseAssurancePeriodPageProps) {
   const { locale, periodId } = await params
   const normalizedLocale = normalizeLocale(locale)
+
+  await checkPermission("accounting.close.read")
+
   const response = await getCloseAssuranceDashboardAction({ periodId })
   const initialData = response.success ? response.data : null
 
@@ -50,4 +55,20 @@ export default async function CloseAssurancePeriodPage({ params }: CloseAssuranc
       />
     </AccountingPageShell>
   )
+}
+
+
+
+export default async function AccountingRoutePage(props: any = {}) {
+  const surface = routeByKey("accounting-close-period")
+
+  if (!surface) {
+    throw new Error("Missing accounting route surface definition: accounting-close-period")
+  }
+
+  return withAccountingSurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => CloseAssurancePeriodPageImpl(props),
+  })
 }

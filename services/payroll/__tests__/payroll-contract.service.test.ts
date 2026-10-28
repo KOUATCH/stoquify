@@ -34,8 +34,10 @@ import {
 } from "@/services/events/business-event.service"
 
 import {
+  approvePayrollContractActivationFromHris,
   createPayrollContract,
   getEmployeeContractWorkflow,
+  requestPayrollContractActivationFromHris,
   resolvePayrollEmployeeForUser,
   terminatePayrollContract,
   updatePayrollContract,
@@ -117,6 +119,18 @@ function contractRow(overrides: Record<string, unknown> = {}) {
     createdAt: new Date("2026-01-01T00:00:00.000Z"),
     updatedAt: new Date("2026-06-26T00:00:00.000Z"),
     ...overrides,
+  }
+}
+
+function approvedDocumentEvidenceMetadata() {
+  return {
+    hrisDocumentEvidence: {
+      current: {
+        status: "APPROVED",
+        artifactHash: "sha256:signed-contract-hash",
+        approvalBusinessEventId: "document-approval-event",
+      },
+    },
   }
 }
 
@@ -219,28 +233,11 @@ describe("payroll employee contract workflow service", () => {
     ).rejects.toBeInstanceOf(ForbiddenError)
   })
 
-  it("creates an active contract only for a tenant-owned employee with signed evidence", async () => {
+  it("rejects direct active contract creation even when a signed hash is supplied", async () => {
     const tx = buildTx()
     useTransaction(tx)
-    tx.payrollEmployee.findFirst.mockResolvedValue(employeeRow())
-    tx.payrollContract.findFirst.mockResolvedValue(null)
-    tx.payrollContract.findMany.mockResolvedValue([])
-    tx.payrollContract.create.mockImplementation(async ({ data }: { data: any }) =>
-      contractRow({
-        ...data,
-        id: "contract-1",
-        createdAt: new Date("2026-06-26T00:00:00.000Z"),
-        updatedAt: new Date("2026-06-26T00:00:00.000Z"),
-      }),
-    )
-    tx.payrollContract.update.mockImplementation(async ({ data }: { data: any }) =>
-      contractRow({
-        activatedBusinessEventId: data.activatedBusinessEventId ?? "event-1",
-        metadata: data.metadata ?? null,
-      }),
-    )
 
-    const result = await createPayrollContract({
+    await expect(createPayrollContract({
       organizationId: "org-1",
       actorId: "hr-1",
       actorPermissions: ["payroll.contracts.manage"],
@@ -251,53 +248,28 @@ describe("payroll employee contract workflow service", () => {
       effectiveFrom: "2026-01-01",
       baseSalary: "150000.00",
       signedDocumentHash: "sha256:signed-contract-hash",
-    })
+    })).rejects.toBeInstanceOf(BusinessRuleError)
 
-    expect(result).toMatchObject({
-      businessEventId: "event-1",
-      contract: {
-        id: "contract-1",
-        status: PayrollContractStatus.ACTIVE,
-      },
-    })
-    expect(tx.payrollEmployee.findFirst).toHaveBeenCalledWith(
-      expect.objectContaining({
-        where: expect.objectContaining({
-          id: "emp-1",
-          organizationId: "org-1",
-          deletedAt: null,
-        }),
-      }),
-    )
-    expect(tx.payrollContract.findMany).toHaveBeenCalledWith(
-      expect.objectContaining({
-        where: expect.objectContaining({
-          employeeId: "emp-1",
-          status: PayrollContractStatus.ACTIVE,
-        }),
-      }),
-    )
-    expect(mockedRecordBusinessEventInTx).toHaveBeenCalledWith(
-      tx,
-      expect.objectContaining({
-        eventType: "payroll.contract.lifecycle.created",
-        sourceId: "contract-1",
-        documentHash: "sha256:signed-contract-hash",
-      }),
-    )
-    expect(mockedMarkBusinessEventAppliedInTx).toHaveBeenCalledWith(tx, "org-1", "event-1")
-    expect(tx.auditLog.create).toHaveBeenCalledWith(
-      expect.objectContaining({
-        data: expect.objectContaining({
-          action: "PAYROLL_CONTRACT_CREATED",
-          entityId: "contract-1",
-          userId: "hr-1",
-          organizationId: "org-1",
-        }),
-      }),
-    )
+    expect(tx.payrollContract.create).not.toHaveBeenCalled()
   })
+  it("rejects direct signed evidence on a draft contract", async () => {
+    const tx = buildTx()
+    useTransaction(tx)
 
+    await expect(createPayrollContract({
+      organizationId: "org-1",
+      actorId: "hr-1",
+      actorPermissions: ["payroll.contracts.manage"],
+      employeeId: "emp-1",
+      contractNumber: "CTR-001",
+      type: PayrollContractType.CDI,
+      effectiveFrom: "2026-01-01",
+      baseSalary: "150000.00",
+      signedDocumentHash: "sha256:signed-contract-hash",
+    })).rejects.toBeInstanceOf(BusinessRuleError)
+
+    expect(tx.payrollContract.create).not.toHaveBeenCalled()
+  })
   it("rejects contract creation when the employee is not tenant-owned", async () => {
     const tx = buildTx()
     useTransaction(tx)
@@ -319,11 +291,25 @@ describe("payroll employee contract workflow service", () => {
     expect(tx.payrollContract.create).not.toHaveBeenCalled()
   })
 
-  it("rejects overlapping active contracts for the same employee", async () => {
+  it("rejects overlapping active contracts during HRIS approval", async () => {
     const tx = buildTx()
     useTransaction(tx)
-    tx.payrollEmployee.findFirst.mockResolvedValue(employeeRow())
-    tx.payrollContract.findFirst.mockResolvedValue(null)
+    tx.payrollContract.findFirst.mockResolvedValue(contractRow({
+      status: PayrollContractStatus.DRAFT,
+      activatedBusinessEventId: null,
+      metadata: {
+        ...approvedDocumentEvidenceMetadata(),
+        hrisContractApproval: {
+          pending: {
+            requestId: "request-event-1",
+            requestedById: "maker-1",
+            requestedAt: "2026-06-25T00:00:00.000Z",
+            reasonHash: "sha256:reason-hash",
+            requestEvidenceHash: "sha256:request-evidence",
+          },
+        },
+      },
+    }))
     tx.payrollContract.findMany.mockResolvedValue([
       contractRow({
         id: "existing-contract",
@@ -333,23 +319,104 @@ describe("payroll employee contract workflow service", () => {
     ])
 
     await expect(
-      createPayrollContract({
+      approvePayrollContractActivationFromHris({
         organizationId: "org-1",
-        actorId: "hr-1",
-        actorPermissions: ["payroll.contracts.manage"],
+        actorId: "checker-1",
+        actorPermissions: ["hris.people.manage"],
         employeeId: "emp-1",
-        contractNumber: "CTR-002",
-        type: PayrollContractType.CDD,
-        status: PayrollContractStatus.ACTIVE,
-        effectiveFrom: "2026-06-01",
-        baseSalary: "120000.00",
-        signedDocumentHash: "sha256:second-contract-hash",
+        contractId: "contract-1",
+        decisionReasonHash: "sha256:decision-reason",
+        approvalEvidenceHash: "sha256:approval-evidence",
       }),
     ).rejects.toBeInstanceOf(ConflictError)
 
-    expect(tx.payrollContract.create).not.toHaveBeenCalled()
+    expect(tx.payrollContract.update).not.toHaveBeenCalled()
+  })
+  it("records an HRIS activation request without activating the draft contract", async () => {
+    const tx = buildTx()
+    useTransaction(tx)
+    tx.payrollContract.findFirst.mockResolvedValue(contractRow({
+      status: PayrollContractStatus.DRAFT,
+      activatedBusinessEventId: null,
+      metadata: approvedDocumentEvidenceMetadata(),
+    }))
+
+    const result = await requestPayrollContractActivationFromHris({
+      organizationId: "org-1",
+      actorId: "maker-1",
+      actorPermissions: ["hris.people.manage"],
+      employeeId: "emp-1",
+      contractId: "contract-1",
+      reasonHash: "sha256:reason-hash",
+      requestEvidenceHash: "sha256:request-evidence",
+    })
+
+    expect(result).toEqual({
+      contractId: "contract-1",
+      employeeId: "emp-1",
+      status: "REQUESTED",
+      requestId: "event-1",
+    })
+    expect(tx.payrollContract.update).toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.not.objectContaining({ status: PayrollContractStatus.ACTIVE }),
+    }))
+    expect(mockedRecordBusinessEventInTx).toHaveBeenCalledWith(tx, expect.objectContaining({
+      eventType: "hris.contract.activation.requested",
+      documentHash: "sha256:request-evidence",
+    }))
   })
 
+  it("prevents the activation requester from approving the contract", async () => {
+    const tx = buildTx()
+    useTransaction(tx)
+    tx.payrollContract.findFirst.mockResolvedValue(contractRow({
+      status: PayrollContractStatus.DRAFT,
+      activatedBusinessEventId: null,
+      metadata: {
+        ...approvedDocumentEvidenceMetadata(),
+        hrisContractApproval: {
+          pending: {
+            requestId: "request-event-1",
+            requestedById: "maker-1",
+            requestedAt: "2026-06-25T00:00:00.000Z",
+            reasonHash: "sha256:reason-hash",
+            requestEvidenceHash: "sha256:request-evidence",
+          },
+        },
+      },
+    }))
+
+    await expect(approvePayrollContractActivationFromHris({
+      organizationId: "org-1",
+      actorId: "maker-1",
+      actorPermissions: ["hris.people.manage"],
+      employeeId: "emp-1",
+      contractId: "contract-1",
+      decisionReasonHash: "sha256:decision-reason",
+      approvalEvidenceHash: "sha256:approval-evidence",
+    })).rejects.toBeInstanceOf(ForbiddenError)
+
+    expect(tx.payrollContract.update).not.toHaveBeenCalled()
+  })
+
+  it("blocks direct draft-to-active updates outside HRIS approval", async () => {
+    const tx = buildTx()
+    useTransaction(tx)
+    tx.payrollContract.findFirst.mockResolvedValue(contractRow({
+      status: PayrollContractStatus.DRAFT,
+      activatedBusinessEventId: null,
+    }))
+
+    await expect(updatePayrollContract({
+      organizationId: "org-1",
+      actorId: "hr-1",
+      actorPermissions: ["payroll.contracts.manage"],
+      contractId: "contract-1",
+      status: PayrollContractStatus.ACTIVE,
+    })).rejects.toBeInstanceOf(BusinessRuleError)
+
+    expect(tx.payrollContract.update).not.toHaveBeenCalled()
+  })
   it("blocks active contract salary changes outside the compensation approval workflow", async () => {
     const tx = buildTx()
     useTransaction(tx)
@@ -365,6 +432,27 @@ describe("payroll employee contract workflow service", () => {
         changeReason: "Manager request",
       }),
     ).rejects.toBeInstanceOf(BusinessRuleError)
+
+    expect(tx.payrollContract.update).not.toHaveBeenCalled()
+  })
+
+  it("blocks in-place amendments to active contracts", async () => {
+    const tx = buildTx()
+    useTransaction(tx)
+    tx.payrollContract.findFirst.mockResolvedValue(contractRow())
+
+    await expect(
+      updatePayrollContract({
+        organizationId: "org-1",
+        actorId: "hr-1",
+        actorPermissions: ["payroll.contracts.manage"],
+        contractId: "contract-1",
+        classification: "M3",
+        changeReason: "Promotion",
+      }),
+    ).rejects.toThrow(
+      "Active contracts cannot be amended in place; use an approved effective-dated lifecycle workflow.",
+    )
 
     expect(tx.payrollContract.update).not.toHaveBeenCalled()
   })

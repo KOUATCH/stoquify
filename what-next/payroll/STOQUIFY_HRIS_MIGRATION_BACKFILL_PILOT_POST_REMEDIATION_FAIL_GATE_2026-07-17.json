@@ -1,0 +1,77 @@
+{
+  "generatedAt": "2026-07-17T05:21:24.855Z",
+  "dryRunOnly": true,
+  "mutationModeAvailable": false,
+  "status": "READY_FOR_OWNER_SIGNOFF",
+  "organizationRef": "organization:0a89d2168fda329b",
+  "compatibilityStorage": "PayrollEmployee_and_related_payroll_source_tables",
+  "targetOwnership": "HRIS_PEOPLE_CORE",
+  "scan": {
+    "requestedMaxEmployees": 250,
+    "scannedEmployees": 1,
+    "truncated": false,
+    "sourceCounts": {
+      "employees": 1,
+      "contracts": 1,
+      "compensationAssignments": 1,
+      "paymentDestinationRequests": 1,
+      "attendanceSnapshots": 2,
+      "payrollRuns": 2
+    },
+    "projectionCounts": {
+      "adoptable": 1,
+      "legacyUnverified": 0
+    }
+  },
+  "gaps": [],
+  "blockerCount": 0,
+  "warningCount": 0,
+  "correctionPlan": [],
+  "evidence": {
+    "sourceProjectionHash": "sha256:505d71157d80e7a4111f22c1aec277e260f3d966432d1e42bd20787fe9895c6c",
+    "correctionPlanHash": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "immutableEvidenceHashBefore": "sha256:b6669fa086160dcf839c8eef3a18295cde6bd0e59bb1575ea3145c42eeefbc46",
+    "immutableEvidenceHashAfter": "sha256:b6669fa086160dcf839c8eef3a18295cde6bd0e59bb1575ea3145c42eeefbc46",
+    "reconciliationHash": "sha256:fd48b8f98d09e01b0d6630f78718f2207edd461bdc8dc8e7e3401555740cccfa",
+    "planHash": "sha256:3a04f52c32263fb704b9905f31dfac7562a677e3cd17f27097b621796a41db4d"
+  },
+  "rollbackSimulation": {
+    "strategy": "CORRECTION_ONLY",
+    "mutationCount": 0,
+    "destructiveOperations": 0,
+    "immutableEvidencePreserved": true,
+    "result": "NO_OP_DRY_RUN"
+  },
+  "closePack": {
+    "status": "PENDING_OWNER_SIGNOFF",
+    "requiredSignoffs": [
+      {
+        "role": "hr-owner",
+        "status": "PENDING"
+      },
+      {
+        "role": "payroll-owner",
+        "status": "PENDING"
+      },
+      {
+        "role": "accounting-controller",
+        "status": "PENDING"
+      },
+      {
+        "role": "security-privacy",
+        "status": "PENDING"
+      },
+      {
+        "role": "operations-owner",
+        "status": "PENDING"
+      }
+    ]
+  },
+  "redaction": {
+    "rawPersonDataIncluded": false,
+    "rawSalaryIncluded": false,
+    "rawPaymentDestinationIncluded": false,
+    "rawDocumentContentIncluded": false,
+    "rawProofHashesIncluded": false
+  }
+}

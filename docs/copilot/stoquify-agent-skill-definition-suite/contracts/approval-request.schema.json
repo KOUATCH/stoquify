@@ -1,0 +1,263 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:stoquify:approval-request/v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "request_id",
+    "trace_id",
+    "maker_id",
+    "approver_role",
+    "policy",
+    "expires_at",
+    "evidence_fingerprint",
+    "status",
+    "plan_version",
+    "tool_id",
+    "arguments_fingerprint",
+    "risk_class",
+    "idempotency_key",
+    "tenant_id",
+    "organization_id",
+    "location_ids",
+    "policy_version",
+    "policy_fingerprint",
+    "fresh_auth_required",
+    "fresh_auth_max_age_seconds",
+    "separation_of_duties"
+  ],
+  "properties": {
+    "request_id": {
+      "type": "string"
+    },
+    "trace_id": {
+      "type": "string"
+    },
+    "maker_id": {
+      "type": "string"
+    },
+    "approver_role": {
+      "type": "string"
+    },
+    "policy": {
+      "type": "string"
+    },
+    "fresh_auth_required": {
+      "type": "boolean"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "evidence_fingerprint": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "consumed",
+        "rejected",
+        "expired",
+        "cancelled",
+        "revoked"
+      ]
+    },
+    "checker_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "plan_version": {
+      "type": "string"
+    },
+    "tool_id": {
+      "type": "string"
+    },
+    "arguments_fingerprint": {
+      "type": "string"
+    },
+    "risk_class": {
+      "type": "string"
+    },
+    "idempotency_key": {
+      "type": "string"
+    },
+    "consumed_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "revoked_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "separation_of_duties": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "distinct_identity",
+        "delegation_checked",
+        "conflict_checked"
+      ],
+      "properties": {
+        "distinct_identity": {
+          "const": true
+        },
+        "delegation_checked": {
+          "const": true
+        },
+        "conflict_checked": {
+          "const": true
+        }
+      }
+    },
+    "tenant_id": {
+      "type": "string"
+    },
+    "organization_id": {
+      "type": "string"
+    },
+    "location_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "policy_version": {
+      "type": "string"
+    },
+    "policy_fingerprint": {
+      "type": "string"
+    },
+    "fresh_auth_verified_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "fresh_auth_event_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "fresh_auth_max_age_seconds": {
+      "type": "integer",
+      "minimum": 1
+    }
+  },
+  "title": "Approval Request v1",
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "approved"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "checker_id",
+          "fresh_auth_verified_at",
+          "fresh_auth_event_ref"
+        ],
+        "properties": {
+          "checker_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "fresh_auth_required": {
+            "const": true
+          },
+          "consumed_at": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "revoked_at": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "consumed"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "checker_id",
+          "fresh_auth_verified_at",
+          "fresh_auth_event_ref",
+          "consumed_at"
+        ],
+        "properties": {
+          "checker_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "fresh_auth_required": {
+            "const": true
+          },
+          "consumed_at": {
+            "type": "string"
+          },
+          "revoked_at": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "revoked"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "revoked_at"
+        ],
+        "properties": {
+          "revoked_at": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "not": {
+        "required": [
+          "consumed_at",
+          "revoked_at"
+        ],
+        "properties": {
+          "consumed_at": {
+            "type": "string"
+          },
+          "revoked_at": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  ],
+  "$comment": "Standard JSON Schema cannot compare maker_id and checker_id. The approval service MUST enforce inequality atomically, verify fresh-auth age, bind all fingerprints and scope, and consume once with compare-and-swap."
+}

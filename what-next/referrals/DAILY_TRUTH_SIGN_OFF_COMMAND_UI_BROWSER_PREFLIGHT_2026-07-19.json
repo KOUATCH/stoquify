@@ -1,0 +1,86 @@
+{
+  "kind": "DAILY_TRUTH_SIGN_OFF_COMMAND_UI_BROWSER_PREFLIGHT",
+  "contractVersion": "1.0",
+  "checkedAt": "2026-07-19T05:13:39.860Z",
+  "status": "READY_FOR_EXPLICITLY_APPROVED_RUN",
+  "operationMode": "READ_ONLY",
+  "approvalRequired": true,
+  "scope": {
+    "organizationId": "org_payroll_e2e_local",
+    "disposableLocationId": "loc_referral_sign_ui_e2e_local",
+    "businessDate": "2026-07-19"
+  },
+  "actors": {
+    "distinct": true,
+    "reviewer": {
+      "userId": "usr_payroll_e2e_local",
+      "email": "hr.manager@stockflow.test",
+      "active": true,
+      "roleId": "org_payroll_e2e_local_role_payroll_e2e",
+      "roleCode": "PAYROLL_E2E",
+      "permissionCount": 27,
+      "permissionHash": "sha256:545944b7d91cd83cacae77fc5b7f46245d9dbc36b9bc4fee69f55e87ed2b3aef",
+      "hasReviewPermission": false,
+      "hasSignPermission": false
+    },
+    "signer": {
+      "userId": "usr_payroll_e2e_requester_local",
+      "email": "payroll.requester@stockflow.test",
+      "active": true,
+      "roleId": "org_payroll_e2e_local_role_payroll_e2e_requester",
+      "roleCode": "PAYROLL_E2E_REQUESTER",
+      "permissionCount": 5,
+      "permissionHash": "sha256:53c90c13c743574fb3cdd7d72aaab27579d0d3b05ce22cedbb4d96e5c35e9549",
+      "hasReviewPermission": false,
+      "hasSignPermission": false,
+      "sessionCount": 2,
+      "assuranceBaselineHash": "sha256:4028cb3538fd782707029c1d757fe7a3ea49e74aaf0fe3c4b193d945e118d8da"
+    }
+  },
+  "authState": [
+    {
+      "actor": "reviewer",
+      "path": "playwright/.auth/payroll.json",
+      "exists": true,
+      "sizeBytes": 1844
+    },
+    {
+      "actor": "signer",
+      "path": "playwright/.auth/payroll-requester.json",
+      "exists": true,
+      "sizeBytes": 1894
+    }
+  ],
+  "schema": {
+    "migrationCount": 19,
+    "upToDate": true
+  },
+  "disposableNamespace": {
+    "clean": true,
+    "locationCount": 0,
+    "reviewRunCount": 0,
+    "signOffCount": 0
+  },
+  "runtime": {
+    "port3011Listening": false,
+    "temporarySlice20FileCount": 0,
+    "browserEvidenceExists": false,
+    "screenshotDirectoryExists": false
+  },
+  "redaction": {
+    "passwordSaved": false,
+    "sessionIdsSaved": false,
+    "sessionTokensSaved": false,
+    "cookieValuesSaved": false,
+    "assuranceValuesSaved": false,
+    "baselineUsesOpaqueHashes": true
+  },
+  "guardrails": [
+    "No database mutation was performed by this preflight.",
+    "No role permission was changed.",
+    "No session assurance value was changed.",
+    "No disposable location, review run, or sign-off was created.",
+    "The browser certification run remains prohibited until explicit user approval is received."
+  ],
+  "nextAction": "After explicit approval, run the reversible local E2E reviewer/signer workflow, compare restoration against these baselines, save authenticated browser evidence, and certify Slice 20 only if every gate passes."
+}

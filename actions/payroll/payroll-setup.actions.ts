@@ -34,7 +34,6 @@ export type {
   PayrollSetupReadinessResult,
 };
 
-const PAYROLL_SETUP_PERMISSION = "payroll.runs.calculate";
 const employeeSourceModes = new Set<PayrollEmployeeSourceMode>([
   "users",
   "csv",
@@ -194,7 +193,7 @@ function setupInput(
 
 const getSetupReadiness = protect<unknown, PayrollSetupReadinessResult>(
   {
-    permission: PAYROLL_SETUP_PERMISSION,
+    permission: "payroll.runs.calculate",
     auditResource: "PayrollSetupReadiness",
     auditAllowed: false,
     tenantGuard: "handler-derived",
@@ -214,7 +213,7 @@ export async function getPayrollSetupReadinessAction(input: unknown = {}) {
 
 const generateDryRunPlan = protect<unknown, PayrollSeedBackfillDryRunPlan>(
   {
-    permission: PAYROLL_SETUP_PERMISSION,
+    permission: "payroll.runs.calculate",
     auditResource: "PayrollSeedBackfillDryRunPlan",
     auditAllowed: false,
     tenantGuard: "handler-derived",
@@ -246,7 +245,7 @@ const getSetupEvidenceReadModel = protect<
   PayrollSetupEvidenceReadModel
 >(
   {
-    permission: PAYROLL_SETUP_PERMISSION,
+    permission: "payroll.runs.calculate",
     auditResource: "PayrollSetupEvidenceReadModel",
     auditAllowed: false,
     tenantGuard: "handler-derived",
@@ -272,7 +271,7 @@ const validateProofBackfillExecution = protect<
   PayrollProofBackfillExecutionCertificate
 >(
   {
-    permission: PAYROLL_SETUP_PERMISSION,
+    permission: "payroll.runs.calculate",
     auditResource: "PayrollProofBackfillExecutionCertificate",
     auditAllowed: false,
     tenantGuard: "handler-derived",
@@ -297,7 +296,7 @@ const executeProofBackfillExecution = protect<
   PayrollProofBackfillExecutionCertificate
 >(
   {
-    permission: PAYROLL_SETUP_PERMISSION,
+    permission: "payroll.runs.calculate",
     auditResource: "PayrollProofBackfillExecutionCertificate",
     freshAuth: true,
     tenantGuard: "handler-derived",
@@ -335,7 +334,7 @@ const reconcileProofBackfillCertificate = protect<
   PayrollProofBackfillReconciliationCertificate
 >(
   {
-    permission: PAYROLL_SETUP_PERMISSION,
+    permission: "payroll.runs.calculate",
     auditResource: "PayrollProofBackfillReconciliationCertificate",
     auditAllowed: false,
     tenantGuard: "handler-derived",

@@ -128,6 +128,87 @@ describe("raw-error-boundary-gate", () => {
     )
   })
 
+  it("allows reviewed typed release-control rethrows", () => {
+    writeFile(
+      root,
+      "services/agents/agent-release-control.service.ts",
+      'export async function approve() { try { return null } catch (error) { if (error instanceof AgentReleaseControlError) throw error } }\n',
+    )
+
+    const result = scanRoot(root)
+
+    expect(result.summary.activeViolationCount).toBe(0)
+    expect(result.findings).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          allowed: true,
+          classification: "TYPED_APPLICATION_ERROR_RETHROW",
+        }),
+      ]),
+    )
+  })
+
+  it("allows reviewed typed reconciler invocation rethrows", () => {
+    writeFile(
+      root,
+      "services/agents/agent-reconciler-invocation.service.ts",
+      'export async function begin() { try { return null } catch (error) { if (error instanceof AgentReconcilerInvocationError) throw error } }\n',
+    )
+
+    const result = scanRoot(root)
+
+    expect(result.summary.activeViolationCount).toBe(0)
+    expect(result.findings).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          allowed: true,
+          classification: "TYPED_APPLICATION_ERROR_RETHROW",
+        }),
+      ]),
+    )
+  })
+
+  it("allows reviewed Prisma uniqueness rethrows used for immediate idempotency replay", () => {
+    writeFile(
+      root,
+      "services/accounting/settlement.service.ts",
+      'export async function settle() { try { return null } catch (error) { if (isPrismaCode(error, "P2002")) throw error; throw new ApplicationError("INTERNAL_ERROR", "Settlement failed.", 500, false) } }\n',
+    )
+
+    const result = scanRoot(root)
+
+    expect(result.summary.activeViolationCount).toBe(0)
+    expect(result.findings).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          allowed: true,
+          classification: "ALLOWED_PRISMA_CONTROL_FLOW",
+        }),
+      ]),
+    )
+  })
+
+  it("does not allow an unguarded rethrow merely because a nearby branch checks P2002", () => {
+    writeFile(
+      root,
+      "services/accounting/settlement.service.ts",
+      'export async function settle() {\n  try { return null } catch (error) {\n    if (isPrismaCode(error, "P2002")) { markForReplay(error) }\n    throw error\n  }\n}\n',
+    )
+
+    const result = scanRoot(root)
+
+    expect(result.summary.activeViolationCount).toBe(1)
+    expect(result.findings).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          allowed: false,
+          classification: "NEEDS_MIGRATION",
+          pattern: "THROW_ERROR",
+        }),
+      ]),
+    )
+  })
+
   it("renders report-mode migration guidance and supports baseline ratchets", () => {
     writeFile(
       root,

@@ -28,6 +28,7 @@ export const offlineConflictTypeSchema = z.enum([
   "HASH_CHAIN_FORK",
   "DEVICE_REVOKED",
   "SIGNATURE_INVALID",
+  "OFFLINE_POLICY_EXPIRED",
   "STALE_REFERENCE_SNAPSHOT",
   "PROVISIONAL_RECEIPT_PENDING",
   "UNPOSTED_ACCEPTED_EVENT",
@@ -40,6 +41,10 @@ export const registerOfflineDeviceSchema = z.object({
   deviceLabel: z.string().trim().min(1).max(120),
   deviceFingerprintHash: z.string().trim().min(24).max(256),
   publicKeyFingerprint: z.string().trim().min(12).max(256).optional(),
+  signingPublicKeyPem: z.string().trim().min(64).max(8192).optional(),
+  policySnapshotHash: z.string().trim().min(16).max(256).optional(),
+  sourceSnapshotHash: z.string().trim().min(16).max(256).optional(),
+  policyExpiresAt: z.coerce.date().optional(),
   metadata: z.unknown().optional(),
 })
 

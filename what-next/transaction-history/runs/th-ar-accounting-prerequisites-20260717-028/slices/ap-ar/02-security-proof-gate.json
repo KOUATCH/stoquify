@@ -1,0 +1,84 @@
+{
+  "schemaVersion": "1.0",
+  "traceId": "fa477981-2269-4f6c-9a9a-5a5cd41c41e2",
+  "runId": "th-ar-accounting-prerequisites-20260717-028",
+  "sliceId": "ap-ar",
+  "stageId": "02",
+  "skillName": "stoquify-transaction-history-02-security-proof-gate",
+  "agentType": "Security Architect",
+  "mode": "audit",
+  "status": "PARTIAL",
+  "activeLanes": [
+    "ar"
+  ],
+  "blockedLanes": [],
+  "inputArtifacts": [
+    {
+      "path": "what-next/transaction-history/runs/th-ar-accounting-prerequisites-20260717-028/slices/ap-ar/01-architecture-gate.json",
+      "sha256": "sha256:89962205df909870fd7be2121ec4007300aadd8947e33321987e9c56ab481027"
+    }
+  ],
+  "inputFingerprint": "sha256:0628f08178fe0441fe22ccbd1a6b429c2bb07b2ea5d278e6dcb799ab117c6979",
+  "allowedEdits": [
+    "what-next/transaction-history/runs/th-ar-accounting-prerequisites-20260717-028/slices/ap-ar/02-security-proof-gate.md",
+    "what-next/transaction-history/runs/th-ar-accounting-prerequisites-20260717-028/slices/ap-ar/02-security-proof-gate.json"
+  ],
+  "observedEdits": [
+    "what-next/transaction-history/runs/th-ar-accounting-prerequisites-20260717-028/slices/ap-ar/02-security-proof-gate.md",
+    "what-next/transaction-history/runs/th-ar-accounting-prerequisites-20260717-028/slices/ap-ar/02-security-proof-gate.json"
+  ],
+  "repository": {
+    "headBefore": "a27cb0328e044304590cecf20c47832df5e834d5",
+    "headAfter": "a27cb0328e044304590cecf20c47832df5e834d5",
+    "dirtyFilesBefore": [
+      "WORKTREE_DIRTY_SEE_TRANSACTION_HISTORY_RUNS"
+    ],
+    "dirtyFilesAfter": [
+      "what-next/transaction-history/runs/th-ar-accounting-prerequisites-20260717-028/"
+    ]
+  },
+  "claims": [
+    {
+      "id": "AR_OVERVIEW_RBAC_EXISTS",
+      "result": "PASS",
+      "evidence": [
+        "app/[locale]/(dashboard)/dashboard/finance/receivables/page.tsx",
+        "config/permissions.ts",
+        "lib/security/rbac-permissions.ts"
+      ]
+    },
+    {
+      "id": "AR_CANONICAL_HISTORY_SECURITY_SURFACE",
+      "result": "GAP",
+      "evidence": [
+        "what-next/transaction-history/runs/th-ar-accounting-prerequisites-20260717-028/slices/ap-ar/02-security-proof-gate.md"
+      ]
+    },
+    {
+      "id": "AR_EXPORT_PROOF_REDACTION_CONTRACT",
+      "result": "GAP",
+      "evidence": [
+        "what-next/transaction-history/runs/th-ar-accounting-prerequisites-20260717-028/slices/ap-ar/02-security-proof-gate.md"
+      ]
+    }
+  ],
+  "verification": [
+    {
+      "command": "rg finance.receivables, customer routes, customer service tenant reads, and AR-adjacent security evidence",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": null
+    }
+  ],
+  "outputs": [],
+  "blockers": [
+    {
+      "severity": "medium",
+      "code": "AR_CANONICAL_HISTORY_SECURITY_SURFACE_MISSING",
+      "reason": "No canonical AR transaction-history action/export/proof surface exists yet; security contract is recorded for future implementation."
+    }
+  ],
+  "nextEligibleStages": [],
+  "startedAt": "2026-07-17T06:48:08.9200590+01:00",
+  "completedAt": "2026-07-17T06:48:08.9200590+01:00"
+}

@@ -2,14 +2,14 @@ import getOrgCategories from "@/actions/categories/getOrgCategories"
 import { ModernCategoryForm } from "@/components/categories/ModernCategoryForm"
 import { getAuthenticatedUser, checkPermission } from "@/config/useAuth"
 import { pickLocale } from "@/i18n/routing"
-import { PERMISSIONS } from "@/lib/permissions"
+import { routeByKey, withInventorySurfaceAccess } from "../../inventory-route-access"
 
 type CreateCategoryPageProps = {
   params: Promise<{ locale: string }>
 }
 
-export default async function CreateCategoryPage({ params }: CreateCategoryPageProps) {
-  await checkPermission(PERMISSIONS.CREATE_CATEGORIES)
+async function CreateCategoryPageImpl({ params }: CreateCategoryPageProps) {
+  await checkPermission("inventory.categories.create")
 
   const { locale: rawLocale } = await params
   const locale = pickLocale(rawLocale)
@@ -24,4 +24,20 @@ export default async function CreateCategoryPage({ params }: CreateCategoryPageP
       returnHref={`/${locale}/dashboard/inventory/categories`}
     />
   )
+}
+
+
+
+export default async function InventoryRoutePage(props: any = {}) {
+  const surface = routeByKey("inventory-categories-create")
+
+  if (!surface) {
+    throw new Error("Missing inventory route surface definition: inventory-categories-create")
+  }
+
+  return withInventorySurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => CreateCategoryPageImpl(props),
+  })
 }

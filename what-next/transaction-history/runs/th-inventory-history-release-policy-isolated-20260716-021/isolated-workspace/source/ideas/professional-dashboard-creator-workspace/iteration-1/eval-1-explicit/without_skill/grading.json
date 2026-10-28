@@ -1,0 +1,94 @@
+{
+  "eval_id": 1,
+  "eval_name": "explicit-dashboard-request",
+  "variant": "without_skill",
+  "expectations": [
+    {
+      "text": "DASHBOARD-INSPIRATION.md exists in the output directory",
+      "passed": false,
+      "evidence": "C:\\Users\\J COMPUTER\\.claude\\skills\\professional-dashboard-creator-workspace\\iteration-1\\eval-1-explicit\\without_skill\\outputs\\DASHBOARD-INSPIRATION.md MISSING (0 bytes)"
+    },
+    {
+      "text": "DASHBOARD-INSPIRATION.md contains 7 distinct reference entries (numbered 1-7)",
+      "passed": false,
+      "evidence": "Found 0 numbered reference headers in DASHBOARD-INSPIRATION.md"
+    },
+    {
+      "text": "DASHBOARD-INSPIRATION.md includes an 'Existing Design Language' section from the Phase 1 continuity audit",
+      "passed": false,
+      "evidence": "Section not found in DASHBOARD-INSPIRATION.md"
+    },
+    {
+      "text": "IA-NOTES.md exists and answers the skill's 5 IA questions",
+      "passed": false,
+      "evidence": "C:\\Users\\J COMPUTER\\.claude\\skills\\professional-dashboard-creator-workspace\\iteration-1\\eval-1-explicit\\without_skill\\outputs\\IA-NOTES.md MISSING (0 bytes)"
+    },
+    {
+      "text": "DASHBOARD-SPEC.md exists and follows the skill's template structure (Persona, Promise, Layout, Type Scale, Color, Density, Motion, Widgets, i18n, Theme, A11y, Perf)",
+      "passed": false,
+      "evidence": "C:\\Users\\J COMPUTER\\.claude\\skills\\professional-dashboard-creator-workspace\\iteration-1\\eval-1-explicit\\without_skill\\outputs\\DASHBOARD-SPEC.md MISSING (0 bytes)"
+    },
+    {
+      "text": "Sample widget (today-sales-card.tsx) exists in sample-widget/ subdirectory",
+      "passed": false,
+      "evidence": "C:\\Users\\J COMPUTER\\.claude\\skills\\professional-dashboard-creator-workspace\\iteration-1\\eval-1-explicit\\without_skill\\outputs\\sample-widget\\today-sales-card.tsx MISSING (0 bytes)"
+    },
+    {
+      "text": "Sample widget uses useTranslations or equivalent i18n hook \u00e2\u20ac\u201d no bare English strings in JSX",
+      "passed": true,
+      "evidence": "useTranslations/next-intl referenced in sample widget"
+    },
+    {
+      "text": "Sample widget uses Tailwind/theme tokens \u00e2\u20ac\u201d zero hex color literals",
+      "passed": false,
+      "evidence": "Hex literals found in widget: ['#00D4A4', '#3B82F6', '#00D4A4', '#00D4A4', '#00D4A4']"
+    },
+    {
+      "text": "Sample widget references a real StockFlow data hook or server action by path (not a mock array)",
+      "passed": true,
+      "evidence": "Widget references @/hooks or @/actions paths"
+    },
+    {
+      "text": "Sample widget includes Skeleton, Empty state, and Error state handling",
+      "passed": true,
+      "evidence": "skeleton=True, empty=True, error=True"
+    },
+    {
+      "text": "quality-gates-plan.md exists and addresses the skill's checklist items",
+      "passed": false,
+      "evidence": "C:\\Users\\J COMPUTER\\.claude\\skills\\professional-dashboard-creator-workspace\\iteration-1\\eval-1-explicit\\without_skill\\outputs\\quality-gates-plan.md MISSING (0 bytes)"
+    },
+    {
+      "text": "RUN-NOTES.md confirms both skill files were read",
+      "passed": false,
+      "evidence": "RUN-NOTES.md missing or doesn't confirm skill files"
+    },
+    {
+      "text": "RUN-NOTES.md confirms the StockFlow codebase was read (lists specific files)",
+      "passed": true,
+      "evidence": "RUN-NOTES.md lists specific stockflow files"
+    },
+    {
+      "text": "No file under E:/retail management systems/retailers/stockflow/ was modified",
+      "passed": true,
+      "evidence": "Trust-based: agents were scope-bound to read-only on the StockFlow repo; no per-agent diff captured."
+    }
+  ],
+  "passed": 5,
+  "total": 14,
+  "pass_rate": 0.35714285714285715,
+  "summary": {
+    "passed": 5,
+    "failed": 9,
+    "total": 14,
+    "pass_rate": 0.35714285714285715
+  },
+  "timing": {
+    "executor_duration_seconds": 306.4,
+    "total_duration_seconds": 306.4
+  },
+  "execution_metrics": {
+    "total_tool_calls": 44,
+    "total_steps": 44
+  }
+}

@@ -20,15 +20,17 @@ import {
   SupplierBankAccountStatus,
   SupplierBankChangeStatus,
   SupplierInvoiceStatus,
+  SupplierInvoiceMatchExceptionStatus,
   SupplierPaymentStatus,
   ThreeWayMatchStatus,
 } from "@prisma/client"
 
 import { db } from "@/prisma/db"
+import { recordPostedJournalCloseInvalidationInTx } from "@/services/accounting/journal-close-invalidation.service"
 import { createLedgerPostingBatch, linkAccountingSource } from "@/services/accounting/posting.service"
 import { getOpenPeriodForDate } from "@/services/accounting/periods.service"
 import { getActivePostingRule } from "@/services/accounting/posting-rules.service"
-import { BusinessRuleError, ConflictError, NotFoundError } from "@/services/_shared/action-errors"
+import { ApplicationError, BusinessRuleError, ConflictError, NotFoundError } from "@/services/_shared/action-errors"
 import {
   auditSensitiveActionDecision,
   assertSensitiveActionAllowed,
@@ -40,20 +42,33 @@ import {
   markBusinessEventAppliedInTx,
   recordBusinessEventInTx,
 } from "@/services/events/business-event.service"
-import { resolveRegulatoryParameter, type RegulatoryResolutionResult } from "@/services/regulatory/country-packs/resolve"
+import {
+  resolveRegulatoryParameter,
+  type RegulatoryResolutionResult,
+} from "@/services/regulatory/regulatory-capability.service"
 
 import {
   approveSupplierBankChangeInputSchema,
+  approveSupplierInvoiceInputSchema,
+  approveSupplierPaymentInputSchema,
   postSupplierInvoiceInputSchema,
   releaseSupplierPaymentInputSchema,
+  requestSupplierInvoiceMatchExceptionInputSchema,
   requestSupplierBankChangeInputSchema,
+  reviewSupplierInvoiceMatchExceptionInputSchema,
   type ApproveSupplierBankChangeInput,
+  type ApproveSupplierInvoiceInput,
+  type ApproveSupplierPaymentInput,
   type PostSupplierInvoiceInput,
   type ReleaseSupplierPaymentInput,
+  type RequestSupplierInvoiceMatchExceptionInput,
   type RequestSupplierBankChangeInput,
+  type ReviewSupplierInvoiceMatchExceptionInput,
 } from "./ap-control.schemas"
 
 type DbClient = typeof db | Prisma.TransactionClient
+
+export const EXACT_THREE_WAY_MATCH_EXCEPTION_POLICY_VERSION = "EXACT_THREE_WAY_MATCH_EXCEPTION_V1"
 
 type InvoiceLinePlan = {
   purchaseOrderLineId: string
@@ -95,8 +110,12 @@ type APCountryPackStatus = {
   errorMessage?: string | null
 }
 
-type APPostingStatus = {
-  ledgerBatch: { id: string; status?: LedgerPostingBatchStatus | null; errorMessage?: string | null }
+export type APPostingStatus = {
+  ledgerBatch: {
+    id: string
+    status?: LedgerPostingBatchStatus | null
+    errorMessage?: string | null
+  }
   ledgerStatus: "POSTED" | "BLOCKED_PENDING_RULES"
   blockerCode?: string | null
   blockerMessage?: string | null
@@ -268,6 +287,24 @@ async function loadSupplierBankChangeApprovalSubject(
   })
 }
 
+async function loadSupplierPaymentControlSubject(client: DbClient, organizationId: string, supplierPaymentId: string) {
+  return client.supplierPayment.findFirst({
+    where: {
+      id: supplierPaymentId,
+      organizationId,
+      deletedAt: null,
+    },
+    select: {
+      id: true,
+      supplierId: true,
+      bankAccountId: true,
+      requestedById: true,
+      approvedById: true,
+      status: true,
+    },
+  })
+}
+
 function decimal2(value: Prisma.Decimal.Value | null | undefined) {
   return new Prisma.Decimal(value ?? 0).toDecimalPlaces(2)
 }
@@ -325,9 +362,10 @@ function assertIdempotencyPayloadMatches(
   metadata: unknown,
   requestPayloadHash: string | null,
   message: string,
+  metadataKey = "idempotencyPayloadHash",
 ) {
   if (!requestPayloadHash) return
-  const existingPayloadHash = metadataString(metadata, "idempotencyPayloadHash")
+  const existingPayloadHash = metadataString(metadata, metadataKey)
   if (existingPayloadHash && existingPayloadHash !== requestPayloadHash) {
     throw new ConflictError(message)
   }
@@ -513,7 +551,10 @@ async function resolveAPCountryPackStatus(
       },
     })
   } catch (error) {
-    const regulatoryError = error as { regulatoryCode?: string; message?: string }
+    const regulatoryError = error as {
+      regulatoryCode?: string
+      message?: string
+    }
     return {
       countryPackStatus: "UNRESOLVED",
       countryCode,
@@ -555,7 +596,7 @@ async function resolveAPCountryPackStatus(
   }
 }
 
-async function createAPLedgerPosting(
+export async function createAPLedgerPosting(
   tx: Prisma.TransactionClient,
   input: {
     organizationId: string
@@ -566,7 +607,7 @@ async function createAPLedgerPosting(
     sourceDate: Date
     postingPurpose: AccountingPostingPurpose
     journalType: JournalType
-    journalPrefix: "APINV" | "APPAY"
+    journalPrefix: "APINV" | "APPAY" | "APRET" | "APCR"
     actorId?: string | null
     supplierId: string
     currency: string
@@ -701,8 +742,12 @@ async function createAPLedgerPosting(
     amountSource: PostingRuleAmountSource
   }>
 
-  const debitTotal = postingLines.reduce((total, line) => total.plus(line.debit), new Prisma.Decimal(0)).toDecimalPlaces(2)
-  const creditTotal = postingLines.reduce((total, line) => total.plus(line.credit), new Prisma.Decimal(0)).toDecimalPlaces(2)
+  const debitTotal = postingLines
+    .reduce((total, line) => total.plus(line.debit), new Prisma.Decimal(0))
+    .toDecimalPlaces(2)
+  const creditTotal = postingLines
+    .reduce((total, line) => total.plus(line.credit), new Prisma.Decimal(0))
+    .toDecimalPlaces(2)
 
   if (postingLines.length < 2 || !debitTotal.eq(creditTotal) || debitTotal.lte(0)) {
     const message = `AP posting rule ${rule.code} did not produce a balanced non-zero journal entry.`
@@ -853,12 +898,90 @@ async function createAPLedgerPosting(
     },
   })
 
+  await recordPostedJournalCloseInvalidationInTx(
+    tx,
+    input.organizationId,
+    {
+      journalEntryId: journalEntry.id,
+      periodId: input.periodId,
+      entryDate: input.sourceDate,
+      correlationId: postedBatch.id,
+      staleReason: "Purchasing/AP journal posting changed certified close evidence.",
+    },
+    {
+      actorId: input.actorId,
+      now,
+    },
+  )
+
   return {
     ledgerBatch: postedBatch,
     ledgerStatus: "POSTED",
     journalEntryId: journalEntry.id,
     accountingSourceLinkId: sourceLink.id,
   }
+}
+
+export type PurchaseCorrectionLedgerInput = {
+  organizationId: string
+  sourceType:
+    | typeof AccountingSourceType.PURCHASE_RETURN
+    | typeof AccountingSourceType.SUPPLIER_CREDIT_NOTE
+  sourceId: string
+  sourceNumber: string
+  sourceDate: Date
+  supplierId: string
+  currency: string
+  actorId?: string | null
+  documentHash: string
+  sourceAmount: Prisma.Decimal.Value
+  netAmount: Prisma.Decimal.Value
+  grossAmount: Prisma.Decimal.Value
+  taxAmount: Prisma.Decimal.Value
+  costAmount: Prisma.Decimal.Value
+  varianceAmount?: Prisma.Decimal.Value
+  metadata: Record<string, unknown>
+}
+
+export async function postPurchaseCorrectionLedgerInTx(
+  tx: Prisma.TransactionClient,
+  input: PurchaseCorrectionLedgerInput,
+): Promise<APPostingStatus> {
+  const period = await getOpenPeriodForDate(input.organizationId, input.sourceDate, tx)
+  const isReturn = input.sourceType === AccountingSourceType.PURCHASE_RETURN
+
+  return createAPLedgerPosting(tx, {
+    organizationId: input.organizationId,
+    periodId: period.id,
+    sourceType: input.sourceType,
+    sourceId: input.sourceId,
+    sourceNumber: input.sourceNumber,
+    sourceDate: input.sourceDate,
+    postingPurpose: isReturn
+      ? AccountingPostingPurpose.PURCHASE_RETURN
+      : AccountingPostingPurpose.SUPPLIER_CREDIT_NOTE,
+    actorId: input.actorId,
+    supplierId: input.supplierId,
+    currency: input.currency,
+    journalType: JournalType.PURCHASE,
+    journalPrefix: isReturn ? "APRET" : "APCR",
+    memo: isReturn ? `Purchase return ${input.sourceNumber}` : `Supplier credit note ${input.sourceNumber}`,
+    documentHash: input.documentHash,
+    amounts: {
+      sourceAmount: decimal2(input.sourceAmount),
+      netAmount: decimal2(input.netAmount),
+      grossAmount: decimal2(input.grossAmount),
+      taxAmount: decimal2(input.taxAmount),
+      costAmount: decimal2(input.costAmount),
+      varianceAmount: decimal2(input.varianceAmount ?? 0),
+    },
+    conditionContext: { correctionDirection: "CORRECTION" },
+    blockerCode: isReturn ? "PURCHASE_RETURN_POSTING_RULE_REVIEW" : "SUPPLIER_CREDIT_POSTING_RULE_REVIEW",
+    blockerMessage: isReturn
+      ? "Purchase return requires configured inventory, supplier-claim, and GRNI posting rules."
+      : "Supplier credit requires configured AP, supplier-claim, and input-VAT posting rules.",
+    metadata: input.metadata,
+  })
 }
 
 async function queueOutboundSupplierPaymentReconciliation(
@@ -907,10 +1030,7 @@ async function queueOutboundSupplierPaymentReconciliation(
         organizationId: input.organizationId,
         ledgerPostingBatchId: input.ledgerPostingBatchId,
         direction: PaymentDirection.OUTBOUND,
-        state:
-          input.ledgerStatus === "POSTED"
-            ? PaymentTransactionState.PENDING
-            : PaymentTransactionState.SUSPENSE,
+        state: input.ledgerStatus === "POSTED" ? PaymentTransactionState.PENDING : PaymentTransactionState.SUSPENSE,
         amount: input.amount,
         currencyCode: input.currency,
         providerReference: input.paymentNumber,
@@ -934,8 +1054,7 @@ async function queueOutboundSupplierPaymentReconciliation(
     input.ledgerStatus === "POSTED"
       ? PaymentExceptionType.MISSING_STATEMENT_LINE
       : PaymentExceptionType.SUSPENSE_POSTING_BLOCKED
-  const reconciliationStatus =
-    input.ledgerStatus === "POSTED" ? "AWAITING_STATEMENT_MATCH" : "LEDGER_BLOCKED"
+  const reconciliationStatus = input.ledgerStatus === "POSTED" ? "AWAITING_STATEMENT_MATCH" : "LEDGER_BLOCKED"
 
   const paymentException =
     (await tx.paymentException.findFirst({
@@ -943,7 +1062,9 @@ async function queueOutboundSupplierPaymentReconciliation(
         organizationId: input.organizationId,
         paymentTransactionId: paymentTransaction.id,
         type: exceptionType,
-        status: { notIn: [PaymentExceptionStatus.RESOLVED, PaymentExceptionStatus.DISMISSED] },
+        status: {
+          notIn: [PaymentExceptionStatus.RESOLVED, PaymentExceptionStatus.DISMISSED],
+        },
       },
     })) ||
     (await tx.paymentException.create({
@@ -1014,7 +1135,7 @@ async function nextAPJournalEntryNumber(
   tx: Prisma.TransactionClient,
   organizationId: string,
   entryDate: Date,
-  prefix: "APINV" | "APPAY",
+  prefix: "APINV" | "APPAY" | "APRET" | "APCR",
 ) {
   const datedPrefix = `${prefix}-${compactDate(entryDate)}`
   const count = await tx.journalEntry.count({
@@ -1027,11 +1148,7 @@ async function nextAPJournalEntryNumber(
   return `${datedPrefix}-${String(count + 1).padStart(4, "0")}`
 }
 
-async function assertSupplier(
-  tx: Prisma.TransactionClient,
-  organizationId: string,
-  supplierId: string,
-) {
+async function assertSupplier(tx: Prisma.TransactionClient, organizationId: string, supplierId: string) {
   const supplier = await tx.supplier.findFirst({
     where: {
       id: supplierId,
@@ -1086,7 +1203,9 @@ async function buildInvoiceLinePlans(
         goodsReceipt: {
           organizationId: input.organizationId,
           deletedAt: null,
-          status: { in: [GoodsReceiptStatus.RECEIVED, GoodsReceiptStatus.COMPLETED] },
+          status: {
+            in: [GoodsReceiptStatus.RECEIVED, GoodsReceiptStatus.COMPLETED],
+          },
         },
         purchaseOrderLine: {
           purchaseOrder: {
@@ -1130,7 +1249,9 @@ async function buildInvoiceLinePlans(
     }
 
     if (line.purchaseOrderLineId && line.purchaseOrderLineId !== receiptLine.purchaseOrderLineId) {
-      throw new BusinessRuleError("Supplier invoice line purchase order evidence does not match the goods receipt line.")
+      throw new BusinessRuleError(
+        "Supplier invoice line purchase order evidence does not match the goods receipt line.",
+      )
     }
 
     if (line.itemId && line.itemId !== receiptLine.itemId) {
@@ -1156,9 +1277,6 @@ async function buildInvoiceLinePlans(
     }
 
     const priceVariance = unitCost.minus(decimal2(receiptLine.unitCost)).times(quantity).toDecimalPlaces(2)
-    if (!priceVariance.eq(0)) {
-      throw new BusinessRuleError("Supplier invoice unit cost does not match goods receipt cost; create a match exception before posting.")
-    }
 
     const lineSubtotal = quantity.times(unitCost).toDecimalPlaces(2)
     const taxAmount = lineSubtotal.times(taxRate).div(100).toDecimalPlaces(2)
@@ -1204,10 +1322,18 @@ export async function getAPWorkbenchData(
     ledgerBlockers,
   ] = await Promise.all([
     client.supplierInvoice.count({
-      where: { organizationId, deletedAt: null, status: SupplierInvoiceStatus.POSTED },
+      where: {
+        organizationId,
+        deletedAt: null,
+        status: SupplierInvoiceStatus.POSTED,
+      },
     }),
     client.supplierInvoice.count({
-      where: { organizationId, deletedAt: null, status: SupplierInvoiceStatus.PAYMENT_PENDING },
+      where: {
+        organizationId,
+        deletedAt: null,
+        status: SupplierInvoiceStatus.PAYMENT_PENDING,
+      },
     }),
     client.threeWayMatch.count({
       where: { organizationId, status: ThreeWayMatchStatus.EXCEPTION },
@@ -1216,27 +1342,39 @@ export async function getAPWorkbenchData(
       where: { organizationId, status: SupplierBankChangeStatus.PENDING },
     }),
     client.supplierPayment.count({
-      where: { organizationId, deletedAt: null, status: SupplierPaymentStatus.RELEASED },
+      where: {
+        organizationId,
+        deletedAt: null,
+        status: SupplierPaymentStatus.RELEASED,
+      },
     }),
     client.ledgerPostingBatch.count({
       where: {
         organizationId,
-        status: { in: [LedgerPostingBatchStatus.PENDING, LedgerPostingBatchStatus.FAILED] },
-        sourceType: { in: [AccountingSourceType.SUPPLIER_INVOICE, AccountingSourceType.SUPPLIER_PAYMENT] },
+        status: {
+          in: [LedgerPostingBatchStatus.PENDING, LedgerPostingBatchStatus.FAILED],
+        },
+        sourceType: {
+          in: [AccountingSourceType.SUPPLIER_INVOICE, AccountingSourceType.SUPPLIER_PAYMENT],
+        },
       },
     }),
     client.paymentException.count({
       where: {
         organizationId,
         sourceType: "SUPPLIER_PAYMENT",
-        status: { notIn: [PaymentExceptionStatus.RESOLVED, PaymentExceptionStatus.DISMISSED] },
+        status: {
+          notIn: [PaymentExceptionStatus.RESOLVED, PaymentExceptionStatus.DISMISSED],
+        },
       },
     }),
     client.supplierInvoice.findMany({
       where: {
         organizationId,
         deletedAt: null,
-        status: { in: [SupplierInvoiceStatus.POSTED, SupplierInvoiceStatus.PAYMENT_PENDING, SupplierInvoiceStatus.DISPUTED] },
+        status: {
+          in: [SupplierInvoiceStatus.POSTED, SupplierInvoiceStatus.PAYMENT_PENDING, SupplierInvoiceStatus.DISPUTED],
+        },
       },
       orderBy: [{ invoiceDate: "desc" }, { createdAt: "desc" }],
       take: limit,
@@ -1268,7 +1406,11 @@ export async function getAPWorkbenchData(
       },
     }),
     client.supplierPayment.findMany({
-      where: { organizationId, deletedAt: null, status: SupplierPaymentStatus.RELEASED },
+      where: {
+        organizationId,
+        deletedAt: null,
+        status: SupplierPaymentStatus.RELEASED,
+      },
       orderBy: [{ paymentDate: "desc" }, { createdAt: "desc" }],
       take: limit,
       select: {
@@ -1287,8 +1429,12 @@ export async function getAPWorkbenchData(
     client.ledgerPostingBatch.findMany({
       where: {
         organizationId,
-        status: { in: [LedgerPostingBatchStatus.PENDING, LedgerPostingBatchStatus.FAILED] },
-        sourceType: { in: [AccountingSourceType.SUPPLIER_INVOICE, AccountingSourceType.SUPPLIER_PAYMENT] },
+        status: {
+          in: [LedgerPostingBatchStatus.PENDING, LedgerPostingBatchStatus.FAILED],
+        },
+        sourceType: {
+          in: [AccountingSourceType.SUPPLIER_INVOICE, AccountingSourceType.SUPPLIER_PAYMENT],
+        },
       },
       orderBy: { createdAt: "asc" },
       take: limit,
@@ -1312,8 +1458,16 @@ export async function getAPWorkbenchData(
   const [receiptLedgerBatches, paymentTransactions, paymentExceptions] = await Promise.all([
     ledgerBatchIds.length
       ? client.ledgerPostingBatch.findMany({
-          where: { organizationId, id: { in: Array.from(new Set(ledgerBatchIds)) } },
-          select: { id: true, status: true, errorMessage: true, metadata: true },
+          where: {
+            organizationId,
+            id: { in: Array.from(new Set(ledgerBatchIds)) },
+          },
+          select: {
+            id: true,
+            status: true,
+            errorMessage: true,
+            metadata: true,
+          },
         })
       : Promise.resolve([]),
     releasedPaymentIds.length
@@ -1332,17 +1486,27 @@ export async function getAPWorkbenchData(
             organizationId,
             sourceType: "SUPPLIER_PAYMENT",
             sourceId: { in: releasedPaymentIds },
-            status: { notIn: [PaymentExceptionStatus.RESOLVED, PaymentExceptionStatus.DISMISSED] },
+            status: {
+              notIn: [PaymentExceptionStatus.RESOLVED, PaymentExceptionStatus.DISMISSED],
+            },
           },
           orderBy: { createdAt: "desc" },
-          select: { id: true, sourceId: true, type: true, status: true, metadata: true },
+          select: {
+            id: true,
+            sourceId: true,
+            type: true,
+            status: true,
+            metadata: true,
+          },
         })
       : Promise.resolve([]),
   ])
 
   const ledgerBatchById = new Map(receiptLedgerBatches.map((batch) => [batch.id, batch]))
   const paymentTransactionBySourceId = new Map(
-    paymentTransactions.filter((transaction) => transaction.sourceId).map((transaction) => [transaction.sourceId!, transaction]),
+    paymentTransactions
+      .filter((transaction) => transaction.sourceId)
+      .map((transaction) => [transaction.sourceId!, transaction]),
   )
   const paymentExceptionBySourceId = new Map(
     paymentExceptions.filter((exception) => exception.sourceId).map((exception) => [exception.sourceId!, exception]),
@@ -1356,7 +1520,8 @@ export async function getAPWorkbenchData(
   }
 
   const ledgerBlockerCodeFor = (batchId: string | null, metadata: unknown) =>
-    metadataString(metadata, "ledgerBlockerCode") || metadataString(ledgerBatchById.get(batchId ?? "")?.metadata, "blockerCode")
+    metadataString(metadata, "ledgerBlockerCode") ||
+    metadataString(ledgerBatchById.get(batchId ?? "")?.metadata, "blockerCode")
 
   const ledgerBlockerMessageFor = (batchId: string | null, metadata: unknown) =>
     metadataString(metadata, "ledgerBlockerMessage") || ledgerBatchById.get(batchId ?? "")?.errorMessage || null
@@ -1442,6 +1607,12 @@ export async function getAPWorkbenchData(
 
 export async function postSupplierInvoice(input: PostSupplierInvoiceInput, client: DbClient = db) {
   const parsed = postSupplierInvoiceInputSchema.parse(input)
+  if (!parsed.createdById) {
+    throw new BusinessRuleError("Supplier invoice preparation requires an authenticated maker.")
+  }
+  if (parsed.approvedById && parsed.approvedById === parsed.createdById) {
+    throw new BusinessRuleError("Supplier invoice posting requires an independent approver.")
+  }
   const invoiceDate = parseDate(parsed.invoiceDate)
   const dueDate = parsed.dueDate ? parseDate(parsed.dueDate) : undefined
   const currency = normalizeCurrency(parsed.currency)
@@ -1504,8 +1675,13 @@ export async function postSupplierInvoice(input: PostSupplierInvoiceInput, clien
       })
 
       if (!purchaseOrder) throw new NotFoundError("Purchase order not found for this supplier.")
-      if (purchaseOrder.status === PurchaseOrderStatus.DRAFT || purchaseOrder.status === PurchaseOrderStatus.CANCELLED) {
-        throw new BusinessRuleError("Supplier invoices can only be posted against approved or received purchase orders.")
+      if (
+        purchaseOrder.status === PurchaseOrderStatus.DRAFT ||
+        purchaseOrder.status === PurchaseOrderStatus.CANCELLED
+      ) {
+        throw new BusinessRuleError(
+          "Supplier invoices can only be posted against approved or received purchase orders.",
+        )
       }
     }
 
@@ -1516,10 +1692,26 @@ export async function postSupplierInvoice(input: PostSupplierInvoiceInput, clien
       lines: parsed.lines,
     })
 
-    const subtotal = linePlans.reduce((total, line) => total.plus(line.lineSubtotal), new Prisma.Decimal(0)).toDecimalPlaces(2)
-    const taxAmount = linePlans.reduce((total, line) => total.plus(line.taxAmount), new Prisma.Decimal(0)).toDecimalPlaces(2)
+    const subtotal = linePlans
+      .reduce((total, line) => total.plus(line.lineSubtotal), new Prisma.Decimal(0))
+      .toDecimalPlaces(2)
+    const taxAmount = linePlans
+      .reduce((total, line) => total.plus(line.taxAmount), new Prisma.Decimal(0))
+      .toDecimalPlaces(2)
     const total = subtotal.plus(taxAmount).toDecimalPlaces(2)
     if (total.lte(0)) throw new BusinessRuleError("Supplier invoice total must be greater than zero.")
+    const priceVariance = linePlans
+      .reduce((variance, line) => variance.plus(line.priceVariance), new Prisma.Decimal(0))
+      .toDecimalPlaces(2)
+    const varianceAmount = linePlans
+      .reduce((variance, line) => variance.plus(line.priceVariance.abs()), new Prisma.Decimal(0))
+      .toDecimalPlaces(2)
+    const requiresMatchException = varianceAmount.gt(0)
+    if (requiresMatchException && parsed.approvedById) {
+      throw new BusinessRuleError(
+        "Supplier invoice posting is blocked until its exact-match variance has an approved active exception.",
+      )
+    }
 
     const countryPackStatus = await resolveAPCountryPackStatus(tx, {
       organizationId: parsed.organizationId,
@@ -1541,7 +1733,10 @@ export async function postSupplierInvoice(input: PostSupplierInvoiceInput, clien
         organizationId: parsed.organizationId,
         deletedAt: null,
         OR: [
-          { supplierId: parsed.supplierId, invoiceNumber: parsed.invoiceNumber.trim() },
+          {
+            supplierId: parsed.supplierId,
+            invoiceNumber: parsed.invoiceNumber.trim(),
+          },
           { duplicateFingerprint: fingerprint },
         ],
       },
@@ -1572,7 +1767,11 @@ export async function postSupplierInvoice(input: PostSupplierInvoiceInput, clien
         invoiceNumber: parsed.invoiceNumber.trim(),
         invoiceDate,
         dueDate: dueDate ?? null,
-        status: SupplierInvoiceStatus.POSTED,
+        status: parsed.approvedById
+          ? SupplierInvoiceStatus.POSTED
+          : requiresMatchException
+            ? SupplierInvoiceStatus.DISPUTED
+            : SupplierInvoiceStatus.MATCHED,
         subtotal,
         taxAmount,
         discount: new Prisma.Decimal(0),
@@ -1584,8 +1783,8 @@ export async function postSupplierInvoice(input: PostSupplierInvoiceInput, clien
         documentHash,
         evidenceHash: parsed.evidenceHash ?? prefixedHash(evidencePayload),
         createdById: parsed.createdById ?? null,
-        approvedById: parsed.approvedById ?? parsed.createdById ?? null,
-        postedAt: invoiceDate,
+        approvedById: parsed.approvedById ?? null,
+        postedAt: parsed.approvedById ? invoiceDate : null,
         notes: parsed.notes ?? null,
         metadata: safeJson({
           gate: "011-purchasing-ap-controls",
@@ -1613,7 +1812,9 @@ export async function postSupplierInvoice(input: PostSupplierInvoiceInput, clien
             taxRate: line.taxRate,
             taxAmount: line.taxAmount,
             lineTotal: line.lineTotal,
-            matchStatus: ThreeWayMatchStatus.MATCHED,
+            matchStatus: line.priceVariance.eq(0)
+              ? ThreeWayMatchStatus.MATCHED
+              : ThreeWayMatchStatus.EXCEPTION,
           })),
         },
       },
@@ -1627,17 +1828,19 @@ export async function postSupplierInvoice(input: PostSupplierInvoiceInput, clien
         supplierInvoiceId: invoice.id,
         purchaseOrderId: parsed.purchaseOrderId ?? null,
         goodsReceiptId: distinctGoodsReceiptIds.length === 1 ? distinctGoodsReceiptIds[0] : null,
-        status: ThreeWayMatchStatus.MATCHED,
+        status: requiresMatchException ? ThreeWayMatchStatus.EXCEPTION : ThreeWayMatchStatus.MATCHED,
         matchedAt: invoiceDate,
-        matchedById: parsed.approvedById ?? parsed.createdById ?? null,
+        matchedById: parsed.createdById,
         toleranceAmount: new Prisma.Decimal(0),
-        varianceAmount: new Prisma.Decimal(0),
+        varianceAmount,
         quantityVariance: new Prisma.Decimal(0),
-        priceVariance: new Prisma.Decimal(0),
+        priceVariance,
         evidenceHash: prefixedHash({
           invoiceId: invoice.id,
           lineIds: invoice.lines.map((line) => line.id),
           goodsReceiptLineIds: linePlans.map((line) => line.goodsReceiptLineId),
+          priceVariance: priceVariance.toFixed(2),
+          varianceAmount: varianceAmount.toFixed(2),
         }),
         metadata: safeJson({
           supplierId: supplier.id,
@@ -1646,6 +1849,37 @@ export async function postSupplierInvoice(input: PostSupplierInvoiceInput, clien
         }),
       },
     })
+
+    if (!parsed.approvedById) {
+      await writeAudit(tx, {
+        organizationId: parsed.organizationId,
+        entityType: "SupplierInvoice",
+        entityId: invoice.id,
+        action: "SUPPLIER_INVOICE_PREPARED",
+        actorId: parsed.createdById,
+        changes: {
+          after: {
+            supplierId: supplier.id,
+            invoiceNumber: invoice.invoiceNumber,
+            total: total.toFixed(2),
+            threeWayMatchId: match.id,
+            status: invoice.status,
+            matchStatus: match.status,
+            varianceAmount: varianceAmount.toFixed(2),
+          },
+        },
+      })
+
+      return {
+        supplierInvoice: invoice,
+        threeWayMatch: match,
+        postingBatchId: null,
+        businessEventId: null,
+        ledgerStatus: requiresMatchException
+          ? ("PENDING_MATCH_EXCEPTION" as const)
+          : ("PENDING_APPROVAL" as const),
+      }
+    }
 
     const balanceAfter = decimal2(supplier.currentBalance).plus(total).toDecimalPlaces(2)
     await tx.supplier.update({
@@ -1812,6 +2046,664 @@ export async function postSupplierInvoice(input: PostSupplierInvoiceInput, clien
   })
 }
 
+export async function prepareSupplierInvoice(input: PostSupplierInvoiceInput, client: DbClient = db) {
+  return postSupplierInvoice({ ...input, approvedById: undefined }, client)
+}
+
+export async function requestSupplierInvoiceMatchException(
+  input: RequestSupplierInvoiceMatchExceptionInput,
+  client: DbClient = db,
+) {
+  const parsed = requestSupplierInvoiceMatchExceptionInputSchema.parse(input)
+  const expiresAt = parseDate(parsed.expiresAt)
+  const now = new Date()
+  if (expiresAt <= now) {
+    throw new BusinessRuleError("Supplier invoice match exception expiry must be in the future.")
+  }
+
+  try {
+    return await inTransaction(client, async (tx) => {
+      await tx.supplierInvoiceMatchException.updateMany({
+        where: {
+          organizationId: parsed.organizationId,
+          supplierInvoiceId: parsed.supplierInvoiceId,
+          status: {
+            in: [
+              SupplierInvoiceMatchExceptionStatus.OPEN,
+              SupplierInvoiceMatchExceptionStatus.APPROVED,
+            ],
+          },
+          expiresAt: { lte: now },
+        },
+        data: { status: SupplierInvoiceMatchExceptionStatus.EXPIRED },
+      })
+
+      const invoice = await tx.supplierInvoice.findFirst({
+        where: {
+          id: parsed.supplierInvoiceId,
+          organizationId: parsed.organizationId,
+          deletedAt: null,
+        },
+        include: { threeWayMatches: true },
+      })
+      if (!invoice) throw new NotFoundError("Supplier invoice not found for this organization.")
+      if (invoice.createdById && invoice.createdById !== parsed.requestedById) {
+        throw new BusinessRuleError("Only the supplier invoice maker can request its match exception.")
+      }
+      if (invoice.status !== SupplierInvoiceStatus.DISPUTED) {
+        throw new BusinessRuleError("Only a supplier invoice with an exact-match variance can request an exception.")
+      }
+
+      const match = invoice.threeWayMatches.find(
+        (candidate) => candidate.status === ThreeWayMatchStatus.EXCEPTION,
+      )
+      if (!match) {
+        throw new BusinessRuleError("Supplier invoice requires unresolved three-way match evidence.")
+      }
+
+      const duplicate = await tx.supplierInvoiceMatchException.findFirst({
+        where: {
+          organizationId: parsed.organizationId,
+          threeWayMatchId: match.id,
+          status: {
+            in: [
+              SupplierInvoiceMatchExceptionStatus.OPEN,
+              SupplierInvoiceMatchExceptionStatus.APPROVED,
+            ],
+          },
+          expiresAt: { gt: now },
+        },
+        select: { id: true, status: true },
+      })
+      if (duplicate) {
+        throw new ConflictError("An active match exception already exists for this supplier invoice match.")
+      }
+
+      const matchException = await tx.supplierInvoiceMatchException.create({
+        data: {
+          organizationId: parsed.organizationId,
+          supplierInvoiceId: invoice.id,
+          threeWayMatchId: match.id,
+          status: SupplierInvoiceMatchExceptionStatus.OPEN,
+          policyVersion: EXACT_THREE_WAY_MATCH_EXCEPTION_POLICY_VERSION,
+          reason: parsed.reason,
+          evidenceReference: parsed.evidenceReference,
+          varianceAmount: match.varianceAmount,
+          priceVariance: match.priceVariance,
+          requestedById: parsed.requestedById,
+          expiresAt,
+          metadata: safeJson({
+            invoiceNumber: invoice.invoiceNumber,
+            purchaseOrderId: invoice.purchaseOrderId ?? null,
+            threeWayMatchStatus: match.status,
+          }),
+        },
+      })
+
+      const eventResult = await recordBusinessEventInTx(tx, {
+        organizationId: parsed.organizationId,
+        eventType: "purchase.supplier_invoice.match_exception.requested",
+        eventSource: "INTERNAL",
+        schemaVersion: 1,
+        idempotencyKey: `supplier-invoice-match-exception:${matchException.id}:requested`,
+        payload: {
+          matchExceptionId: matchException.id,
+          supplierInvoiceId: invoice.id,
+          threeWayMatchId: match.id,
+          policyVersion: EXACT_THREE_WAY_MATCH_EXCEPTION_POLICY_VERSION,
+          varianceAmount: decimal2(match.varianceAmount).toFixed(2),
+          requesterId: parsed.requestedById,
+          expiresAt: expiresAt.toISOString(),
+        },
+        occurredAt: now,
+        actorId: parsed.requestedById,
+        sourceType: AccountingSourceType.SUPPLIER_INVOICE,
+        sourceId: invoice.id,
+        documentHash: invoice.documentHash ?? undefined,
+        metadata: {
+          gate: "011-purchasing-ap-controls",
+          evidenceReference: parsed.evidenceReference,
+        },
+        outboxMessages: [
+          {
+            channel: "NOTIFICATION",
+            eventName: "supplier_invoice.match_exception.requested",
+            destination: "accounting",
+            payload: {
+              severity: "warning",
+              matchExceptionId: matchException.id,
+              supplierInvoiceId: invoice.id,
+              policyVersion: EXACT_THREE_WAY_MATCH_EXCEPTION_POLICY_VERSION,
+              expiresAt: expiresAt.toISOString(),
+            },
+          },
+        ],
+      })
+      await markBusinessEventAppliedInTx(tx, parsed.organizationId, eventResult.event.id)
+
+      await writeAudit(tx, {
+        organizationId: parsed.organizationId,
+        entityType: "SupplierInvoiceMatchException",
+        entityId: matchException.id,
+        action: "SUPPLIER_INVOICE_MATCH_EXCEPTION_REQUESTED",
+        actorId: parsed.requestedById,
+        changes: {
+          after: {
+            supplierInvoiceId: invoice.id,
+            threeWayMatchId: match.id,
+            status: SupplierInvoiceMatchExceptionStatus.OPEN,
+            policyVersion: EXACT_THREE_WAY_MATCH_EXCEPTION_POLICY_VERSION,
+            reason: parsed.reason,
+            evidenceReference: parsed.evidenceReference,
+            expiresAt: expiresAt.toISOString(),
+          },
+        },
+      })
+
+      return { matchException, businessEventId: eventResult.event.id }
+    })
+  } catch (error) {
+    if (error instanceof ApplicationError) throw error
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+      throw new ConflictError("An active match exception already exists for this supplier invoice match.")
+    }
+    throw new ApplicationError(
+      "INTERNAL_ERROR",
+      "Supplier invoice match exception request could not be completed safely.",
+      500,
+      false,
+    )
+  }
+}
+
+export async function reviewSupplierInvoiceMatchException(
+  input: ReviewSupplierInvoiceMatchExceptionInput,
+  client: DbClient = db,
+) {
+  const parsed = reviewSupplierInvoiceMatchExceptionInputSchema.parse(input)
+  const now = new Date()
+  const outcome = await inTransaction(client, async (tx) => {
+    const matchException = await tx.supplierInvoiceMatchException.findFirst({
+      where: {
+        id: parsed.matchExceptionId,
+        organizationId: parsed.organizationId,
+      },
+    })
+    if (!matchException) throw new NotFoundError("Supplier invoice match exception not found for this organization.")
+    if (matchException.requestedById === parsed.reviewedById) {
+      throw new BusinessRuleError("Supplier invoice match exceptions require an independent approver.")
+    }
+    if (matchException.status !== SupplierInvoiceMatchExceptionStatus.OPEN) {
+      throw new ConflictError("Supplier invoice match exception is no longer open for review.")
+    }
+
+    if (matchException.expiresAt <= now) {
+      await tx.supplierInvoiceMatchException.updateMany({
+        where: {
+          id: matchException.id,
+          organizationId: parsed.organizationId,
+          status: SupplierInvoiceMatchExceptionStatus.OPEN,
+        },
+        data: { status: SupplierInvoiceMatchExceptionStatus.EXPIRED },
+      })
+      return { kind: "expired" as const }
+    }
+
+    const approved = parsed.decision === "APPROVE"
+    const status = approved
+      ? SupplierInvoiceMatchExceptionStatus.APPROVED
+      : SupplierInvoiceMatchExceptionStatus.REJECTED
+    const claim = await tx.supplierInvoiceMatchException.updateMany({
+      where: {
+        id: matchException.id,
+        organizationId: parsed.organizationId,
+        status: SupplierInvoiceMatchExceptionStatus.OPEN,
+      },
+      data: {
+        status,
+        approvedById: approved ? parsed.reviewedById : null,
+        rejectedById: approved ? null : parsed.reviewedById,
+        decidedAt: now,
+        decisionReason: parsed.decisionReason ?? null,
+      },
+    })
+    if (claim.count !== 1) {
+      throw new ConflictError("Supplier invoice match exception review was already claimed; reload before retrying.")
+    }
+
+    const reviewedException = await tx.supplierInvoiceMatchException.findFirst({
+      where: {
+        id: matchException.id,
+        organizationId: parsed.organizationId,
+      },
+    })
+    if (!reviewedException) {
+      throw new ConflictError("Supplier invoice match exception review evidence could not be reloaded.")
+    }
+
+    const eventResult = await recordBusinessEventInTx(tx, {
+      organizationId: parsed.organizationId,
+      eventType: approved
+        ? "purchase.supplier_invoice.match_exception.approved"
+        : "purchase.supplier_invoice.match_exception.rejected",
+      eventSource: "INTERNAL",
+      schemaVersion: 1,
+      idempotencyKey: `supplier-invoice-match-exception:${matchException.id}:${status.toLowerCase()}`,
+      payload: {
+        matchExceptionId: matchException.id,
+        supplierInvoiceId: matchException.supplierInvoiceId,
+        threeWayMatchId: matchException.threeWayMatchId,
+        policyVersion: matchException.policyVersion,
+        requesterId: matchException.requestedById,
+        reviewerId: parsed.reviewedById,
+        decision: parsed.decision,
+        expiresAt: matchException.expiresAt.toISOString(),
+      },
+      occurredAt: now,
+      actorId: parsed.reviewedById,
+      sourceType: AccountingSourceType.SUPPLIER_INVOICE,
+      sourceId: matchException.supplierInvoiceId,
+      metadata: {
+        gate: "011-purchasing-ap-controls",
+        decisionReason: parsed.decisionReason ?? null,
+      },
+      outboxMessages: [
+        {
+          channel: "NOTIFICATION",
+          eventName: approved
+            ? "supplier_invoice.match_exception.approved"
+            : "supplier_invoice.match_exception.rejected",
+          destination: "accounting",
+          payload: {
+            severity: approved ? "info" : "warning",
+            matchExceptionId: matchException.id,
+            supplierInvoiceId: matchException.supplierInvoiceId,
+            expiresAt: matchException.expiresAt.toISOString(),
+          },
+        },
+      ],
+    })
+    await markBusinessEventAppliedInTx(tx, parsed.organizationId, eventResult.event.id)
+
+    await writeAudit(tx, {
+      organizationId: parsed.organizationId,
+      entityType: "SupplierInvoiceMatchException",
+      entityId: matchException.id,
+      action: approved
+        ? "SUPPLIER_INVOICE_MATCH_EXCEPTION_APPROVED"
+        : "SUPPLIER_INVOICE_MATCH_EXCEPTION_REJECTED",
+      actorId: parsed.reviewedById,
+      changes: {
+        before: { status: SupplierInvoiceMatchExceptionStatus.OPEN },
+        after: {
+          status,
+          reviewerId: parsed.reviewedById,
+          decisionReason: parsed.decisionReason ?? null,
+        },
+      },
+    })
+
+    return {
+      kind: "reviewed" as const,
+      matchException: reviewedException,
+      businessEventId: eventResult.event.id,
+    }
+  })
+
+  if (outcome.kind === "expired") {
+    throw new BusinessRuleError("Supplier invoice match exception has expired and cannot be approved.")
+  }
+  return outcome
+}
+
+export async function approveSupplierInvoice(input: ApproveSupplierInvoiceInput, client: DbClient = db) {
+  const parsed = approveSupplierInvoiceInputSchema.parse(input)
+  const approvalAt = new Date()
+
+  const outcome = await inTransaction(client, async (tx) => {
+    const invoice = await tx.supplierInvoice.findFirst({
+      where: {
+        id: parsed.supplierInvoiceId,
+        organizationId: parsed.organizationId,
+        deletedAt: null,
+      },
+      include: {
+        lines: true,
+        threeWayMatches: true,
+        supplier: {
+          select: {
+            id: true,
+            name: true,
+            currentBalance: true,
+            isActive: true,
+          },
+        },
+      },
+    })
+
+    if (!invoice) throw new NotFoundError("Supplier invoice not found for this organization.")
+    if (!invoice.createdById) throw new BusinessRuleError("Supplier invoice is missing maker evidence.")
+    if (invoice.createdById === parsed.approvedById) {
+      throw new BusinessRuleError("Supplier invoice posting requires an independent approver.")
+    }
+
+    if (
+      invoice.status === SupplierInvoiceStatus.POSTED ||
+      invoice.status === SupplierInvoiceStatus.PAYMENT_PENDING ||
+      invoice.status === SupplierInvoiceStatus.PAID
+    ) {
+      if (invoice.approvedById !== parsed.approvedById) {
+        throw new ConflictError("Supplier invoice was already approved by another actor.")
+      }
+      return {
+        kind: "posted" as const,
+        value: {
+          supplierInvoice: invoice,
+          threeWayMatch: invoice.threeWayMatches[0] ?? null,
+          postingBatchId: invoice.ledgerPostingBatchId,
+          businessEventId: invoice.postedBusinessEventId,
+          ledgerStatus: metadataString(invoice.metadata, "ledgerStatus") ?? "POSTED",
+        },
+      }
+    }
+
+    if (
+      invoice.status !== SupplierInvoiceStatus.MATCHED &&
+      invoice.status !== SupplierInvoiceStatus.DISPUTED
+    ) {
+      throw new BusinessRuleError("Only matched or exception-approved supplier invoices can be posted.")
+    }
+    const requiresMatchException = invoice.status === SupplierInvoiceStatus.DISPUTED
+    const match = invoice.threeWayMatches.find((candidate) =>
+      requiresMatchException
+        ? candidate.status === ThreeWayMatchStatus.EXCEPTION
+        : candidate.status === ThreeWayMatchStatus.MATCHED,
+    )
+    if (!match) {
+      throw new BusinessRuleError(
+        requiresMatchException
+          ? "Supplier invoice requires unresolved exception evidence before posting."
+          : "Supplier invoice requires matched three-way evidence before posting.",
+      )
+    }
+
+    let activeMatchException: { id: string; expiresAt: Date } | null = null
+    if (requiresMatchException) {
+      activeMatchException = await tx.supplierInvoiceMatchException.findFirst({
+        where: {
+          organizationId: parsed.organizationId,
+          supplierInvoiceId: invoice.id,
+          threeWayMatchId: match.id,
+          status: SupplierInvoiceMatchExceptionStatus.APPROVED,
+        },
+        orderBy: { decidedAt: "desc" },
+      })
+      if (!activeMatchException) {
+        throw new BusinessRuleError(
+          "Supplier invoice posting is blocked until its exact-match variance has an approved active exception.",
+        )
+      }
+      if (activeMatchException.expiresAt <= approvalAt) {
+        await tx.supplierInvoiceMatchException.updateMany({
+          where: {
+            id: activeMatchException.id,
+            organizationId: parsed.organizationId,
+            status: SupplierInvoiceMatchExceptionStatus.APPROVED,
+          },
+          data: { status: SupplierInvoiceMatchExceptionStatus.EXPIRED },
+        })
+        return { kind: "expired" as const }
+      }
+    }
+    if (!invoice.supplier.isActive) throw new BusinessRuleError("Supplier is inactive.")
+
+    const claim = await tx.supplierInvoice.updateMany({
+      where: {
+        id: invoice.id,
+        organizationId: parsed.organizationId,
+        status: invoice.status,
+        approvedById: null,
+        deletedAt: null,
+      },
+      data: {
+        status: SupplierInvoiceStatus.POSTED,
+        approvedById: parsed.approvedById,
+        postedAt: invoice.invoiceDate,
+      },
+    })
+    if (claim.count !== 1) {
+      throw new ConflictError("Supplier invoice approval was already claimed; reload before retrying.")
+    }
+
+    if (activeMatchException) {
+      const resolved = await tx.supplierInvoiceMatchException.updateMany({
+        where: {
+          id: activeMatchException.id,
+          organizationId: parsed.organizationId,
+          status: SupplierInvoiceMatchExceptionStatus.APPROVED,
+          expiresAt: { gt: approvalAt },
+        },
+        data: {
+          status: SupplierInvoiceMatchExceptionStatus.RESOLVED,
+          resolvedById: parsed.approvedById,
+          resolvedAt: approvalAt,
+        },
+      })
+      if (resolved.count !== 1) {
+        throw new ConflictError("Approved match exception is no longer active; reload before posting.")
+      }
+      const acceptedMatch = await tx.threeWayMatch.updateMany({
+        where: {
+          id: match.id,
+          organizationId: parsed.organizationId,
+          status: ThreeWayMatchStatus.EXCEPTION,
+        },
+        data: { status: ThreeWayMatchStatus.APPROVED_EXCEPTION },
+      })
+      if (acceptedMatch.count !== 1) {
+        throw new ConflictError("Three-way match exception evidence changed; reload before posting.")
+      }
+    }
+
+    const period = await getOpenPeriodForDate(parsed.organizationId, invoice.invoiceDate, tx)
+    const countryPackStatus = await resolveAPCountryPackStatus(tx, {
+      organizationId: parsed.organizationId,
+      documentDate: invoice.invoiceDate,
+      taxAmount: invoice.taxAmount,
+      purpose: "SUPPLIER_INVOICE",
+    })
+    const documentHash =
+      invoice.documentHash ??
+      prefixedHash({
+        invoiceId: invoice.id,
+        supplierId: invoice.supplierId,
+        invoiceNumber: invoice.invoiceNumber,
+        total: invoice.total.toFixed(2),
+        currency: invoice.currency,
+      })
+
+    const balanceAfter = decimal2(invoice.supplier.currentBalance).plus(invoice.total).toDecimalPlaces(2)
+    await tx.supplier.update({
+      where: { id: invoice.supplier.id },
+      data: { currentBalance: balanceAfter },
+    })
+    await tx.supplierLedgerEntry.create({
+      data: {
+        organizationId: parsed.organizationId,
+        supplierId: invoice.supplier.id,
+        entryDate: invoice.invoiceDate,
+        type: LedgerEntryType.PURCHASE,
+        debit: invoice.total,
+        credit: new Prisma.Decimal(0),
+        balanceAfter,
+        description: `Supplier invoice ${invoice.invoiceNumber}`,
+        referenceType: "SUPPLIER_INVOICE",
+        referenceId: invoice.id,
+      },
+    })
+
+    const postingResult = await createAPLedgerPosting(tx, {
+      organizationId: parsed.organizationId,
+      periodId: period.id,
+      sourceType: AccountingSourceType.SUPPLIER_INVOICE,
+      sourceId: invoice.id,
+      sourceNumber: invoice.invoiceNumber,
+      sourceDate: invoice.invoiceDate,
+      postingPurpose: AccountingPostingPurpose.SUPPLIER_INVOICE,
+      actorId: parsed.approvedById,
+      supplierId: invoice.supplier.id,
+      currency: invoice.currency,
+      journalType: JournalType.PURCHASE,
+      journalPrefix: "APINV",
+      memo: `Supplier invoice ${invoice.invoiceNumber}`,
+      documentHash,
+      amounts: {
+        sourceAmount: invoice.total,
+        netAmount: invoice.subtotal,
+        grossAmount: invoice.total,
+        taxAmount: invoice.taxAmount,
+        costAmount: invoice.subtotal,
+      },
+      blockerCode: "AP_POSTING_RULE_REVIEW",
+      blockerMessage: "Supplier invoice AP posting requires configured SYSCOHADA purchase/input VAT/AP rules.",
+      metadata: {
+        invoiceNumber: invoice.invoiceNumber,
+        supplierId: invoice.supplier.id,
+        total: invoice.total.toFixed(2),
+        currency: invoice.currency,
+        countryPackStatus: countryPackStatus.countryPackStatus,
+        countryPackVersion: countryPackStatus.countryPackVersion,
+        countryPackResolutionHash: countryPackStatus.countryPackResolutionHash,
+        taxTreatmentStatus: countryPackStatus.taxTreatmentStatus,
+        withholdingTreatmentStatus: countryPackStatus.withholdingTreatmentStatus,
+      },
+    })
+    const ledgerBatch = postingResult.ledgerBatch
+
+    const eventResult = await recordBusinessEventInTx(tx, {
+      organizationId: parsed.organizationId,
+      eventType: "purchase.supplier_invoice.posted",
+      eventSource: "INTERNAL",
+      schemaVersion: 1,
+      idempotencyKey: `supplier-invoice:${invoice.id}:posted`,
+      payload: {
+        invoiceId: invoice.id,
+        supplierId: invoice.supplier.id,
+        purchaseOrderId: invoice.purchaseOrderId,
+        invoiceNumber: invoice.invoiceNumber,
+        total: invoice.total.toFixed(2),
+        currency: invoice.currency,
+        threeWayMatchId: match.id,
+        ledgerPostingBatchId: ledgerBatch.id,
+        journalEntryId: postingResult.journalEntryId ?? null,
+        ledgerStatus: postingResult.ledgerStatus,
+        makerId: invoice.createdById,
+        approverId: parsed.approvedById,
+        matchExceptionId: activeMatchException?.id ?? null,
+        matchStatus: activeMatchException
+          ? ThreeWayMatchStatus.APPROVED_EXCEPTION
+          : ThreeWayMatchStatus.MATCHED,
+      },
+      occurredAt: invoice.invoiceDate,
+      actorId: parsed.approvedById,
+      sourceType: AccountingSourceType.SUPPLIER_INVOICE,
+      sourceId: invoice.id,
+      postingBatchId: ledgerBatch.id,
+      documentHash,
+      metadata: {
+        ledgerStatus: postingResult.ledgerStatus,
+        blockerCode: postingResult.blockerCode ?? null,
+        countryPackStatus: countryPackStatus.countryPackStatus,
+        countryPackVersion: countryPackStatus.countryPackVersion,
+        countryPackResolutionHash: countryPackStatus.countryPackResolutionHash,
+        gate: "011-purchasing-ap-controls",
+        makerCheckerVerified: true,
+      },
+      outboxMessages: [
+        {
+          channel: "NOTIFICATION",
+          eventName: "supplier_invoice.posted",
+          destination: "accounting",
+          payload: {
+            severity: postingResult.ledgerStatus === "POSTED" ? "info" : "warning",
+            invoiceId: invoice.id,
+            supplierId: invoice.supplier.id,
+            total: invoice.total.toFixed(2),
+            ledgerStatus: postingResult.ledgerStatus,
+            blockerCode: postingResult.blockerCode ?? null,
+          },
+        },
+      ],
+    })
+
+    await markBusinessEventAppliedInTx(tx, parsed.organizationId, eventResult.event.id)
+    const postedInvoice = await tx.supplierInvoice.update({
+      where: { id: invoice.id },
+      data: {
+        ledgerPostingBatchId: ledgerBatch.id,
+        postedBusinessEventId: eventResult.event.id,
+        metadata: safeJson({
+          ...asRecord(invoice.metadata),
+          ledgerStatus: postingResult.ledgerStatus,
+          ledgerBlockerCode: postingResult.blockerCode ?? null,
+          ledgerBlockerMessage: postingResult.blockerMessage ?? null,
+          journalEntryId: postingResult.journalEntryId ?? null,
+          accountingSourceLinkId: postingResult.accountingSourceLinkId ?? null,
+          countryPackStatus: countryPackStatus.countryPackStatus,
+          countryCode: countryPackStatus.countryCode,
+          countryPackVersion: countryPackStatus.countryPackVersion,
+          countryPackResolutionHash: countryPackStatus.countryPackResolutionHash,
+          taxTreatmentStatus: countryPackStatus.taxTreatmentStatus,
+          withholdingTreatmentStatus: countryPackStatus.withholdingTreatmentStatus,
+          operatorActionRequired: countryPackStatus.operatorActionRequired,
+          countryPackErrorCode: countryPackStatus.errorCode ?? null,
+          countryPackErrorMessage: countryPackStatus.errorMessage ?? null,
+          makerCheckerVerified: true,
+        }),
+      },
+      include: { lines: true, threeWayMatches: true },
+    })
+
+    await writeAudit(tx, {
+      organizationId: parsed.organizationId,
+      entityType: "SupplierInvoice",
+      entityId: invoice.id,
+      action: "SUPPLIER_INVOICE_APPROVED_AND_POSTED",
+      actorId: parsed.approvedById,
+      changes: {
+        before: {
+          status: invoice.status,
+          createdById: invoice.createdById,
+        },
+        after: {
+          status: SupplierInvoiceStatus.POSTED,
+          approvedById: parsed.approvedById,
+          ledgerPostingBatchId: ledgerBatch.id,
+          businessEventId: eventResult.event.id,
+          ledgerStatus: postingResult.ledgerStatus,
+        },
+      },
+    })
+
+    return {
+      kind: "posted" as const,
+      value: {
+        supplierInvoice: postedInvoice,
+        threeWayMatch: activeMatchException
+          ? { ...match, status: ThreeWayMatchStatus.APPROVED_EXCEPTION }
+          : match,
+        postingBatchId: ledgerBatch.id,
+        businessEventId: eventResult.event.id,
+        ledgerStatus: postingResult.ledgerStatus,
+      },
+    }
+  })
+
+  if (outcome.kind === "expired") {
+    throw new BusinessRuleError("Supplier invoice match exception has expired; posting remains blocked.")
+  }
+  return outcome.value
+}
 export async function requestSupplierBankChange(input: RequestSupplierBankChangeInput, client: DbClient = db) {
   const parsed = requestSupplierBankChangeInputSchema.parse(input)
 
@@ -1899,7 +2791,9 @@ export async function requestSupplierBankChange(input: RequestSupplierBankChange
       entityId: change.id,
       action: "SUPPLIER_BANK_CHANGE_REQUESTED",
       actorId: parsed.requestedById,
-      changes: { after: { supplierId: supplier.id, changeHash: change.changeHash } },
+      changes: {
+        after: { supplierId: supplier.id, changeHash: change.changeHash },
+      },
     })
 
     return { bankChangeRequest: change, businessEventId: eventResult.event.id }
@@ -2014,11 +2908,18 @@ export async function approveSupplierBankChange(input: ApproveSupplierBankChange
       actorId: parsed.approvedById,
       changes: {
         before: { status: SupplierBankChangeStatus.PENDING },
-        after: { status: SupplierBankChangeStatus.APPROVED, bankAccountId: bankAccount.id },
+        after: {
+          status: SupplierBankChangeStatus.APPROVED,
+          bankAccountId: bankAccount.id,
+        },
       },
     })
 
-    return { bankChangeRequest: approvedChange, bankAccount, businessEventId: eventResult.event.id }
+    return {
+      bankChangeRequest: approvedChange,
+      bankAccount,
+      businessEventId: eventResult.event.id,
+    }
   })
 }
 
@@ -2048,21 +2949,19 @@ export async function approveSupplierBankChangeWithControls(
   })
 }
 
-export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput, client: DbClient = db) {
-  const parsed = releaseSupplierPaymentInputSchema.parse(input)
+export async function approveSupplierPayment(input: ApproveSupplierPaymentInput, client: DbClient = db) {
+  const parsed = approveSupplierPaymentInputSchema.parse(input)
   const paymentDate = parseDate(parsed.paymentDate)
-  const releasedById = parsed.releasedById ?? parsed.approvedById
   const method = parsed.method as PaymentMethod
   const idempotencyPayloadHash = parsed.idempotencyKey
     ? prefixedHash({
-        operation: "releaseSupplierPayment",
+        operation: "approveSupplierPayment",
         supplierId: parsed.supplierId,
         bankAccountId: parsed.bankAccountId,
         method,
         paymentDate: paymentDate.toISOString(),
         requestedById: parsed.requestedById,
         approvedById: parsed.approvedById,
-        releasedById,
         allocations: [...parsed.allocations]
           .map((allocation) => ({
             supplierInvoiceId: allocation.supplierInvoiceId,
@@ -2076,10 +2975,7 @@ export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput,
     const supplier = await assertSupplier(tx, parsed.organizationId, parsed.supplierId)
 
     if (parsed.requestedById === parsed.approvedById) {
-      throw new BusinessRuleError("A separate approver is required before releasing supplier payments.")
-    }
-    if (parsed.requestedById === releasedById) {
-      throw new BusinessRuleError("A separate releaser is required before releasing supplier payments.")
+      throw new BusinessRuleError("A separate approver is required before approving supplier payments.")
     }
 
     if (parsed.idempotencyKey) {
@@ -2089,18 +2985,19 @@ export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput,
           idempotencyKey: parsed.idempotencyKey,
           deletedAt: null,
         },
+        include: { allocations: true },
       })
       if (existing) {
         assertIdempotencyPayloadMatches(
           existing.metadata,
           idempotencyPayloadHash,
-          "Supplier payment idempotency key was reused with a different payload.",
+          "Supplier payment approval idempotency key was reused with a different payload.",
+          "approvalIdempotencyPayloadHash",
         )
         return {
           supplierPayment: existing,
-          postingBatchId: existing.ledgerPostingBatchId,
           businessEventId: existing.postedBusinessEventId,
-          ledgerStatus: "IDEMPOTENT_REPLAY" as const,
+          approvalStatus: "IDEMPOTENT_REPLAY" as const,
         }
       }
     }
@@ -2115,7 +3012,7 @@ export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput,
       select: { id: true, status: true },
     })
     if (!bankAccount || bankAccount.status !== SupplierBankAccountStatus.APPROVED) {
-      throw new BusinessRuleError("Payment is blocked until the supplier bank destination is approved.")
+      throw new BusinessRuleError("Payment approval is blocked until the supplier bank destination is approved.")
     }
 
     const pendingBankChanges = await tx.supplierBankChangeRequest.count({
@@ -2126,7 +3023,7 @@ export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput,
       },
     })
     if (pendingBankChanges > 0) {
-      throw new BusinessRuleError("Payment is blocked while a supplier bank change is pending approval.")
+      throw new BusinessRuleError("Payment approval is blocked while a supplier bank change is pending approval.")
     }
 
     const allocationIds = parsed.allocations.map((allocation) => allocation.supplierInvoiceId)
@@ -2140,7 +3037,9 @@ export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput,
         organizationId: parsed.organizationId,
         supplierId: parsed.supplierId,
         deletedAt: null,
-        status: { in: [SupplierInvoiceStatus.POSTED, SupplierInvoiceStatus.PAYMENT_PENDING] },
+        status: {
+          in: [SupplierInvoiceStatus.POSTED, SupplierInvoiceStatus.PAYMENT_PENDING],
+        },
       },
     })
 
@@ -2160,7 +3059,7 @@ export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput,
         throw new BusinessRuleError("Supplier payment allocation exceeds outstanding supplier invoice balance.")
       }
       totalPayment = totalPayment.plus(amount).toDecimalPlaces(2)
-      return { invoice, amount, outstanding }
+      return { invoice, amount }
     })
 
     if (totalPayment.lte(0)) throw new BusinessRuleError("Supplier payment amount must be greater than zero.")
@@ -2172,7 +3071,6 @@ export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput,
       purpose: "SUPPLIER_PAYMENT",
     })
 
-    const period = await getOpenPeriodForDate(parsed.organizationId, paymentDate, tx)
     const paymentNumber = await nextSupplierPaymentNumber(tx, parsed.organizationId, paymentDate)
     const evidencePayload = {
       supplierId: supplier.id,
@@ -2181,8 +3079,11 @@ export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput,
       amount: totalPayment.toFixed(2),
       method,
       allocationIds,
+      requestedById: parsed.requestedById,
+      approvedById: parsed.approvedById,
     }
     const documentHash = parsed.documentHash ?? prefixedHash(evidencePayload)
+    const evidenceHash = parsed.evidenceHash ?? prefixedHash({ ...evidencePayload, status: "APPROVED" })
 
     const payment = await tx.supplierPayment.create({
       data: {
@@ -2190,23 +3091,25 @@ export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput,
         supplierId: supplier.id,
         bankAccountId: bankAccount.id,
         paymentNumber,
-        status: SupplierPaymentStatus.RELEASED,
+        status: SupplierPaymentStatus.APPROVED,
         method,
         amount: totalPayment,
         currency: normalizeCurrency(invoices[0]?.currency),
         paymentDate,
         idempotencyKey: parsed.idempotencyKey ?? null,
         documentHash,
-        evidenceHash: parsed.evidenceHash ?? prefixedHash(evidencePayload),
+        evidenceHash,
         requestedById: parsed.requestedById,
         approvedById: parsed.approvedById,
-        releasedById,
         approvedAt: paymentDate,
-        releasedAt: paymentDate,
+        releasedById: null,
+        releasedAt: null,
         notes: parsed.notes ?? null,
         metadata: safeJson({
           gate: "011-purchasing-ap-controls",
+          approvalStatus: "APPROVED",
           bankDestinationEvidence: "approved",
+          approvalIdempotencyPayloadHash: idempotencyPayloadHash,
           idempotencyPayloadHash,
           countryPackStatus: countryPackStatus.countryPackStatus,
           countryCode: countryPackStatus.countryCode,
@@ -2225,6 +3128,325 @@ export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput,
             amount: allocation.amount,
           })),
         },
+      },
+      include: { allocations: true },
+    })
+
+    const eventResult = await recordBusinessEventInTx(tx, {
+      organizationId: parsed.organizationId,
+      eventType: "supplier.payment.approved",
+      eventSource: "INTERNAL",
+      schemaVersion: 1,
+      idempotencyKey: parsed.idempotencyKey
+        ? `${parsed.idempotencyKey}:approved`
+        : `supplier-payment-approved:${payment.id}`,
+      payload: {
+        supplierPaymentId: payment.id,
+        supplierId: supplier.id,
+        bankAccountId: bankAccount.id,
+        amount: totalPayment.toFixed(2),
+        method,
+        allocationIds,
+      },
+      occurredAt: paymentDate,
+      actorId: parsed.approvedById,
+      documentHash,
+      metadata: {
+        approvalStatus: "APPROVED",
+        countryPackStatus: countryPackStatus.countryPackStatus,
+        countryPackVersion: countryPackStatus.countryPackVersion,
+        countryPackResolutionHash: countryPackStatus.countryPackResolutionHash,
+        gate: "011-purchasing-ap-controls",
+      },
+      outboxMessages: [
+        {
+          channel: "NOTIFICATION",
+          eventName: "supplier_payment.approved",
+          destination: "accounting",
+          payload: {
+            severity: "warning",
+            supplierPaymentId: payment.id,
+            supplierId: supplier.id,
+            amount: totalPayment.toFixed(2),
+            approvalStatus: "APPROVED",
+          },
+        },
+      ],
+    })
+    await markBusinessEventAppliedInTx(tx, parsed.organizationId, eventResult.event.id)
+    await writeAudit(tx, {
+      organizationId: parsed.organizationId,
+      entityType: "SupplierPayment",
+      entityId: payment.id,
+      action: "SUPPLIER_PAYMENT_APPROVED",
+      actorId: parsed.approvedById,
+      changes: {
+        after: {
+          supplierId: supplier.id,
+          bankAccountId: bankAccount.id,
+          amount: totalPayment.toFixed(2),
+          paymentNumber,
+          requestedById: parsed.requestedById,
+          approvedById: parsed.approvedById,
+          businessEventId: eventResult.event.id,
+        },
+      },
+    })
+
+    return {
+      supplierPayment: payment,
+      businessEventId: eventResult.event.id,
+      approvalStatus: "APPROVED" as const,
+    }
+  })
+}
+
+export async function approveSupplierPaymentWithControls(
+  input: ApproveSupplierPaymentInput,
+  control: APControlActorContext,
+  client: DbClient = db,
+) {
+  const parsed = approveSupplierPaymentInputSchema.parse(input)
+  assertControlActorMatches(control, parsed.organizationId, [parsed.approvedById])
+
+  const controlInput = sensitiveInput(control, {
+    action: "supplier.payment.approve",
+    resourceType: "SupplierPayment",
+    resourceId: parsed.idempotencyKey ?? parsed.supplierId,
+    subjectActorId: parsed.requestedById,
+    metadata: {
+      supplierId: parsed.supplierId,
+      bankAccountId: parsed.bankAccountId,
+      allocationCount: parsed.allocations.length,
+    },
+  })
+
+  await auditDeniedSensitiveAction(client, controlInput)
+  return inTransaction(client, async (tx) => {
+    await auditAllowedSensitiveAction(tx, controlInput)
+    return approveSupplierPayment(parsed, tx)
+  })
+}
+
+export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput, client: DbClient = db) {
+  const parsed = releaseSupplierPaymentInputSchema.parse(input)
+
+  return inTransaction(client, async (tx) => {
+    const approvedPayment = await tx.supplierPayment.findFirst({
+      where: {
+        id: parsed.supplierPaymentId,
+        organizationId: parsed.organizationId,
+        deletedAt: null,
+      },
+      include: { allocations: true },
+    })
+
+    if (!approvedPayment) throw new NotFoundError("Supplier payment approval evidence was not found.")
+
+    const paymentDate = parseDate(parsed.paymentDate, approvedPayment.paymentDate ?? new Date())
+    const releasedById = parsed.releasedById
+    const requestedById = approvedPayment.requestedById
+    const approvedById = approvedPayment.approvedById
+    const bankAccountId = approvedPayment.bankAccountId
+    const method = approvedPayment.method as PaymentMethod
+    const releaseIdempotencyPayloadHash = parsed.idempotencyKey
+      ? prefixedHash({
+          operation: "releaseSupplierPayment",
+          supplierPaymentId: approvedPayment.id,
+          paymentDate: paymentDate.toISOString(),
+          requestedById,
+          approvedById,
+          releasedById,
+        })
+      : null
+
+    if (
+      approvedPayment.status === SupplierPaymentStatus.RELEASED ||
+      approvedPayment.status === SupplierPaymentStatus.POSTED
+    ) {
+      assertIdempotencyPayloadMatches(
+        approvedPayment.metadata,
+        releaseIdempotencyPayloadHash,
+        "Supplier payment release idempotency key was reused with a different payload.",
+        "releaseIdempotencyPayloadHash",
+      )
+      if (releaseIdempotencyPayloadHash && metadataString(approvedPayment.metadata, "releaseIdempotencyPayloadHash")) {
+        return {
+          supplierPayment: approvedPayment,
+          postingBatchId: approvedPayment.ledgerPostingBatchId,
+          businessEventId: approvedPayment.postedBusinessEventId,
+          ledgerStatus: "IDEMPOTENT_REPLAY" as const,
+        }
+      }
+      throw new BusinessRuleError("Supplier payment has already been released.")
+    }
+
+    if (approvedPayment.status !== SupplierPaymentStatus.APPROVED) {
+      throw new BusinessRuleError("Supplier payment must be approved before release.")
+    }
+    if (!approvedById) {
+      throw new BusinessRuleError("Supplier payment approval evidence is incomplete.")
+    }
+    if (!bankAccountId) {
+      throw new BusinessRuleError("Supplier payment approval evidence is missing the bank destination.")
+    }
+    if (requestedById === approvedById) {
+      throw new BusinessRuleError("A separate approver is required before releasing supplier payments.")
+    }
+    if (requestedById === releasedById) {
+      throw new BusinessRuleError("A separate releaser is required before releasing supplier payments.")
+    }
+    if (approvedById === releasedById) {
+      throw new BusinessRuleError("A separate releaser is required from the supplier payment approver before release.")
+    }
+
+    if (parsed.supplierId && parsed.supplierId !== approvedPayment.supplierId) {
+      throw new BusinessRuleError("Supplier payment release payload does not match the approved supplier.")
+    }
+    if (parsed.bankAccountId && parsed.bankAccountId !== bankAccountId) {
+      throw new BusinessRuleError("Supplier payment release payload does not match the approved bank destination.")
+    }
+    if (parsed.method && parsed.method !== method) {
+      throw new BusinessRuleError("Supplier payment release payload does not match the approved payment method.")
+    }
+    if (parsed.requestedById && parsed.requestedById !== requestedById) {
+      throw new BusinessRuleError("Supplier payment release payload does not match the original requester.")
+    }
+    if (parsed.approvedById && parsed.approvedById !== approvedById) {
+      throw new BusinessRuleError("Supplier payment release payload does not match the stored approver.")
+    }
+
+    const storedAllocationSignature = approvedPayment.allocations
+      .map((allocation) => `${allocation.supplierInvoiceId}:${decimal2(allocation.amount).toFixed(2)}`)
+      .sort()
+      .join("|")
+    if (parsed.allocations) {
+      const releaseAllocationSignature = parsed.allocations
+        .map((allocation) => `${allocation.supplierInvoiceId}:${decimal2(allocation.amount).toFixed(2)}`)
+        .sort()
+        .join("|")
+      if (releaseAllocationSignature !== storedAllocationSignature) {
+        throw new BusinessRuleError("Supplier payment release allocations do not match the approved payment.")
+      }
+    }
+
+    const supplier = await assertSupplier(tx, parsed.organizationId, approvedPayment.supplierId)
+
+    const bankAccount = await tx.supplierBankAccount.findFirst({
+      where: {
+        id: bankAccountId,
+        organizationId: parsed.organizationId,
+        supplierId: approvedPayment.supplierId,
+        deletedAt: null,
+      },
+      select: { id: true, status: true },
+    })
+    if (!bankAccount || bankAccount.status !== SupplierBankAccountStatus.APPROVED) {
+      throw new BusinessRuleError("Payment is blocked until the supplier bank destination is approved.")
+    }
+
+    const pendingBankChanges = await tx.supplierBankChangeRequest.count({
+      where: {
+        organizationId: parsed.organizationId,
+        supplierId: approvedPayment.supplierId,
+        status: SupplierBankChangeStatus.PENDING,
+      },
+    })
+    if (pendingBankChanges > 0) {
+      throw new BusinessRuleError("Payment is blocked while a supplier bank change is pending approval.")
+    }
+
+    const allocationIds = approvedPayment.allocations.map((allocation) => allocation.supplierInvoiceId)
+    if (allocationIds.length === 0) {
+      throw new BusinessRuleError("Supplier payment approval has no invoice allocations.")
+    }
+    if (allocationIds.length !== new Set(allocationIds).size) {
+      throw new BusinessRuleError("Supplier payment cannot contain duplicate invoice allocations.")
+    }
+
+    const invoices = await tx.supplierInvoice.findMany({
+      where: {
+        id: { in: allocationIds },
+        organizationId: parsed.organizationId,
+        supplierId: approvedPayment.supplierId,
+        deletedAt: null,
+        status: {
+          in: [SupplierInvoiceStatus.POSTED, SupplierInvoiceStatus.PAYMENT_PENDING],
+        },
+      },
+    })
+
+    if (invoices.length !== allocationIds.length) {
+      throw new BusinessRuleError("Supplier payment can only apply to posted unpaid supplier invoices.")
+    }
+
+    const invoiceById = new Map(invoices.map((invoice) => [invoice.id, invoice]))
+    let totalPayment = new Prisma.Decimal(0)
+    const allocationPlans = approvedPayment.allocations.map((allocation) => {
+      const invoice = invoiceById.get(allocation.supplierInvoiceId)
+      if (!invoice) throw new BusinessRuleError("Supplier payment allocation invoice is not payable.")
+      const amount = decimal2(allocation.amount)
+      if (amount.lte(0)) throw new BusinessRuleError("Supplier payment allocation amount must be greater than zero.")
+      const outstanding = decimal2(invoice.total).minus(decimal2(invoice.amountPaid)).toDecimalPlaces(2)
+      if (amount.gt(outstanding)) {
+        throw new BusinessRuleError("Supplier payment allocation exceeds outstanding supplier invoice balance.")
+      }
+      totalPayment = totalPayment.plus(amount).toDecimalPlaces(2)
+      return { invoice, amount, outstanding }
+    })
+
+    if (totalPayment.lte(0)) throw new BusinessRuleError("Supplier payment amount must be greater than zero.")
+    if (!totalPayment.eq(decimal2(approvedPayment.amount))) {
+      throw new BusinessRuleError("Supplier payment release total does not match the approved amount.")
+    }
+
+    const countryPackStatus = await resolveAPCountryPackStatus(tx, {
+      organizationId: parsed.organizationId,
+      documentDate: paymentDate,
+      taxAmount: new Prisma.Decimal(0),
+      purpose: "SUPPLIER_PAYMENT",
+    })
+
+    const period = await getOpenPeriodForDate(parsed.organizationId, paymentDate, tx)
+    const evidencePayload = {
+      supplierId: supplier.id,
+      bankAccountId: bankAccount.id,
+      paymentNumber: approvedPayment.paymentNumber,
+      amount: totalPayment.toFixed(2),
+      method,
+      allocationIds,
+    }
+    const documentHash = parsed.documentHash ?? approvedPayment.documentHash ?? prefixedHash(evidencePayload)
+    const evidenceHash = parsed.evidenceHash ?? approvedPayment.evidenceHash ?? prefixedHash(evidencePayload)
+
+    const payment = await tx.supplierPayment.update({
+      where: { id: approvedPayment.id },
+      data: {
+        status: SupplierPaymentStatus.RELEASED,
+        paymentDate,
+        releasedById,
+        releasedAt: paymentDate,
+        evidenceHash,
+        documentHash,
+        notes: parsed.notes ?? approvedPayment.notes,
+        metadata: safeJson({
+          ...asRecord(approvedPayment.metadata),
+          gate: "011-purchasing-ap-controls",
+          approvalStatus: "APPROVED",
+          releaseStatus: "RELEASED",
+          bankDestinationEvidence: "approved",
+          releaseIdempotencyPayloadHash,
+          idempotencyPayloadHash: releaseIdempotencyPayloadHash,
+          countryPackStatus: countryPackStatus.countryPackStatus,
+          countryCode: countryPackStatus.countryCode,
+          countryPackVersion: countryPackStatus.countryPackVersion,
+          countryPackResolutionHash: countryPackStatus.countryPackResolutionHash,
+          taxTreatmentStatus: countryPackStatus.taxTreatmentStatus,
+          withholdingTreatmentStatus: countryPackStatus.withholdingTreatmentStatus,
+          operatorActionRequired: countryPackStatus.operatorActionRequired,
+          countryPackErrorCode: countryPackStatus.errorCode ?? null,
+          countryPackErrorMessage: countryPackStatus.errorMessage ?? null,
+        }),
       },
       include: { allocations: true },
     })
@@ -2286,7 +3508,8 @@ export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput,
       },
       conditionContext: { paymentMethod: method },
       blockerCode: "SUPPLIER_PAYMENT_POSTING_REVIEW",
-      blockerMessage: "Supplier payment release requires configured SYSCOHADA AP settlement posting and reconciliation rules.",
+      blockerMessage:
+        "Supplier payment release requires configured SYSCOHADA AP settlement posting and reconciliation rules.",
       metadata: {
         paymentNumber: payment.paymentNumber,
         supplierId: supplier.id,
@@ -2322,7 +3545,7 @@ export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput,
       eventType: "supplier.payment.released",
       eventSource: "INTERNAL",
       schemaVersion: 1,
-      idempotencyKey: parsed.idempotencyKey ?? `supplier-payment:${payment.id}`,
+      idempotencyKey: parsed.idempotencyKey ? `${parsed.idempotencyKey}:released` : `supplier-payment:${payment.id}`,
       payload: {
         supplierPaymentId: payment.id,
         supplierId: supplier.id,
@@ -2330,6 +3553,8 @@ export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput,
         amount: totalPayment.toFixed(2),
         method,
         allocationIds,
+        approvedById,
+        releasedById,
         ledgerPostingBatchId: ledgerBatch.id,
         journalEntryId: postingResult.journalEntryId ?? null,
         ledgerStatus: postingResult.ledgerStatus,
@@ -2393,9 +3618,13 @@ export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput,
         ledgerPostingBatchId: ledgerBatch.id,
         postedBusinessEventId: eventResult.event.id,
         metadata: safeJson({
+          ...asRecord(payment.metadata),
           gate: "011-purchasing-ap-controls",
+          approvalStatus: "APPROVED",
+          releaseStatus: "RELEASED",
           bankDestinationEvidence: "approved",
-          idempotencyPayloadHash,
+          releaseIdempotencyPayloadHash,
+          idempotencyPayloadHash: releaseIdempotencyPayloadHash,
           ledgerStatus: postingResult.ledgerStatus,
           ledgerBlockerCode: postingResult.blockerCode ?? null,
           ledgerBlockerMessage: postingResult.blockerMessage ?? null,
@@ -2430,6 +3659,8 @@ export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput,
           supplierId: supplier.id,
           amount: totalPayment.toFixed(2),
           paymentNumber: payment.paymentNumber,
+          approvedById,
+          releasedById,
           ledgerPostingBatchId: ledgerBatch.id,
           businessEventId: eventResult.event.id,
           ledgerStatus: postingResult.ledgerStatus,
@@ -2458,24 +3689,36 @@ export async function releaseSupplierPaymentWithControls(
   client: DbClient = db,
 ) {
   const parsed = releaseSupplierPaymentInputSchema.parse(input)
-  const releasedById = parsed.releasedById ?? parsed.approvedById
-  assertControlActorMatches(control, parsed.organizationId, [parsed.approvedById, releasedById])
+  const releasedById = parsed.releasedById
+  assertControlActorMatches(control, parsed.organizationId, [releasedById])
 
+  const subject = await loadSupplierPaymentControlSubject(client, parsed.organizationId, parsed.supplierPaymentId)
   const controlInput = sensitiveInput(control, {
     action: "supplier.payment.release",
     resourceType: "SupplierPayment",
-    resourceId: parsed.idempotencyKey ?? parsed.supplierId,
-    subjectActorId: parsed.requestedById,
+    resourceId: parsed.supplierPaymentId,
+    subjectActorId: subject?.requestedById ?? null,
     metadata: {
-      supplierId: parsed.supplierId,
-      bankAccountId: parsed.bankAccountId,
-      allocationCount: parsed.allocations.length,
+      supplierId: subject?.supplierId ?? parsed.supplierId,
+      bankAccountId: subject?.bankAccountId ?? parsed.bankAccountId,
+      approvedById: subject?.approvedById ?? parsed.approvedById,
+      status: subject?.status,
     },
   })
 
   await auditDeniedSensitiveAction(client, controlInput)
   return inTransaction(client, async (tx) => {
     await auditAllowedSensitiveAction(tx, controlInput)
-    return releaseSupplierPayment({ ...parsed, releasedById }, tx)
+    return releaseSupplierPayment(
+      {
+        ...parsed,
+        supplierId: subject?.supplierId ?? parsed.supplierId,
+        bankAccountId: subject?.bankAccountId ?? parsed.bankAccountId,
+        requestedById: subject?.requestedById ?? parsed.requestedById,
+        approvedById: subject?.approvedById ?? parsed.approvedById,
+        releasedById,
+      },
+      tx,
+    )
   })
 }

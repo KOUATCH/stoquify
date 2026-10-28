@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import {
@@ -16,6 +18,11 @@ import {
 import type { PayrollRunWorkbenchResult } from "@/actions/payroll/payroll-control.actions";
 import { localizePath } from "@/i18n/routing";
 import type { Locale } from "@/types/bilingual";
+import {
+  HrPayrollTableControls,
+  HrPayrollTablePagination,
+  useHrPayrollTable,
+} from "@/components/hr-payroll/HrPayrollTableControls";
 import PayrollProofDrawerButton, {
   type PayrollProofDrawerState,
   type PayrollProofDrawerSubject,
@@ -145,6 +152,8 @@ function ProofList({ run }: { run: RunRow }) {
     ["Attendance", run.proof.attendanceSnapshotHash],
     ["Document", run.proof.documentHash],
     ["Evidence", run.proof.evidenceHash],
+    ["Transition proof", run.proof.lifecycle.transitionEvidence],
+    ["Trust Spine writes", run.proof.lifecycle.writeEnabled ? "Enabled" : "Disabled"],
     ...(run.correction.correctionRun
       ? [
           ["Original document", run.correction.originalRunDocumentHash],
@@ -226,6 +235,14 @@ function runProofSubject(
     rows: [
       { label: "Run type", value: run.runType },
       { label: "Version", value: `v${run.version}` },
+      { label: "Transition proof", value: run.proof.lifecycle.transitionEvidence },
+      { label: "Trust Spine writes", value: run.proof.lifecycle.writeEnabled ? "Enabled" : "Disabled" },
+      ...run.proof.lifecycle.stages.flatMap((stage) => [
+        { label: stage.stage + " event", value: stage.businessEventId },
+        { label: stage.stage + " at", value: stage.transitionedAt },
+        { label: stage.stage + " evidence", value: stage.evidenceStatus },
+        { label: stage.stage + " actor", value: stage.actorPresent ? "Present" : null },
+      ]),
       { label: "Period", value: run.period.name },
       { label: "Period status", value: run.period.status },
       { label: "Pay date", value: run.period.payDate },
@@ -559,11 +576,9 @@ function Blockers({ run }: { run: RunRow }) {
 function NextActions({
   run,
   locale,
-  paymentRequesterCandidates,
 }: {
   run: RunRow;
   locale: Locale;
-  paymentRequesterCandidates: PayrollRunWorkbenchResult["paymentRequesterCandidates"];
 }) {
   if (!run.nextActions.length) return <Badge value="No manual action" />;
 
@@ -581,6 +596,8 @@ function NextActions({
             {action.requiresSeparateApprover ? (
               <Badge value="Maker-checker" />
             ) : null}
+            {action.allowed ? <Badge value="Allowed" /> : <Badge value="Blocked" />}
+            {action.blockedBy.map((code) => <Badge key={code} value={code} />)}
             {action.href ? (
               <Link
                 href={localizePath(action.href, locale)}
@@ -593,7 +610,7 @@ function NextActions({
           <PayrollRunActionPanel
             run={run}
             action={action}
-            paymentRequesterCandidates={paymentRequesterCandidates}
+            disabled={!action.allowed || action.blockedBy.length > 0}
           />
         </div>
       ))}
@@ -659,6 +676,19 @@ function RelatedItems({ run }: { run: RunRow }) {
 }
 
 export default function PayrollRunWorkbench({ data, error, locale }: Props) {
+  const runTable = useHrPayrollTable({
+    rows: data?.runs ?? [],
+    searchText: (run) => JSON.stringify(run),
+    dateValue: (run) => run.period.payDate ?? run.period.periodEnd,
+    sortOptions: [
+      { key: "run", label: "Run", value: (run) => run.runNumber },
+      { key: "period", label: "Pay date", value: (run) => run.period.payDate },
+      { key: "status", label: "Status", value: (run) => run.status },
+      { key: "net", label: "Net payable", value: (run) => Number(run.amounts.netPayableAmount) },
+      { key: "blockers", label: "Blockers", value: (run) => run.blockers.length },
+    ],
+  });
+
   if (error) return <ErrorPanel message={error} />;
   if (!data) return <EmptyState />;
 
@@ -750,7 +780,8 @@ export default function PayrollRunWorkbench({ data, error, locale }: Props) {
           <BadgeCheck className="h-4 w-4 text-cyan-200" aria-hidden="true" />
           <h2 className="text-sm font-semibold text-white">Run lifecycle</h2>
         </div>
-        <div className="overflow-x-auto">
+        <HrPayrollTableControls table={runTable} locale={locale} tableLabel="payroll runs" />
+        <div className="dashboard-data-table dashboard-table-shell overflow-x-auto">
           <table className="min-w-[1680px] w-full table-fixed border-collapse text-left text-sm">
             <thead className="border-b border-white/10 text-xs uppercase tracking-normal text-slate-400">
               <tr>
@@ -771,8 +802,8 @@ export default function PayrollRunWorkbench({ data, error, locale }: Props) {
               </tr>
             </thead>
             <tbody className="divide-y divide-white/10">
-              {data.runs.length ? (
-                data.runs.map((run) => (
+              {runTable.rows.length ? (
+                runTable.rows.map((run) => (
                   <tr key={run.id} className="align-top">
                     <td className="px-4 py-3">
                       <p className="break-words font-semibold text-white">
@@ -843,9 +874,6 @@ export default function PayrollRunWorkbench({ data, error, locale }: Props) {
                       <NextActions
                         run={run}
                         locale={locale}
-                        paymentRequesterCandidates={
-                          data.paymentRequesterCandidates
-                        }
                       />
                     </td>
                   </tr>
@@ -860,6 +888,7 @@ export default function PayrollRunWorkbench({ data, error, locale }: Props) {
             </tbody>
           </table>
         </div>
+        <HrPayrollTablePagination table={runTable} locale={locale} />
       </section>
 
       <section className="rounded-lg border border-white/10 bg-white/[0.05] p-4">

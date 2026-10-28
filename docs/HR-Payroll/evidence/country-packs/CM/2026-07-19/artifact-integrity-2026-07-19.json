@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-07-19T20:11:43.3851363Z",
+  "countryCode": "CM",
+  "evidenceFolder": "docs\\HR-Payroll\\evidence\\country-packs\\CM\\2026-07-19",
+  "manifest": {
+    "file": "manifest.json",
+    "reviewStatus": "PENDING_EXPERT_REVIEW",
+    "productionUseAllowed": false,
+    "requiredApprovalComplete": false
+  },
+  "sourceArtifacts": [
+    {
+      "artifactId": "CM_CNPS_CONTRIBUTION_DECREE_2016_SOURCE_2026_07_19",
+      "legalRef": "CM_CNPS_CONTRIBUTION_DECREE_2016",
+      "file": "CNPS-Decree-2016-072-contribution-rates.pdf",
+      "manifestSha256": "1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
+      "actualSha256": "1e88f488d96e163ded9e204c100c5bbce9e8d4917e6e72387ec6af52e0c90b61",
+      "manifestByteLength": 2608628,
+      "actualByteLength": 2608628,
+      "hashMatchesManifest": true,
+      "byteLengthMatchesManifest": true,
+      "reviewStatus": "PENDING_EXPERT_REVIEW",
+      "productionUseAllowed": false
+    },
+    {
+      "artifactId": "CM_CNPS_EMPLOYER_RULES_SOURCE_2026_07_19",
+      "legalRef": "CM_CNPS_EMPLOYER_RULES",
+      "file": "CNPS-employer-general-rules.html",
+      "manifestSha256": "bc51f74de8dd3b0c7babd86e8f98d92dbdbece214480f66ac89c42d3e894a868",
+      "actualSha256": "bc51f74de8dd3b0c7babd86e8f98d92dbdbece214480f66ac89c42d3e894a868",
+      "manifestByteLength": 248633,
+      "actualByteLength": 248633,
+      "hashMatchesManifest": true,
+      "byteLengthMatchesManifest": true,
+      "reviewStatus": "PENDING_EXPERT_REVIEW",
+      "productionUseAllowed": false
+    }
+  ],
+  "countryPackSourceEvidenceHashes": [
+    {
+      "sourceEvidenceHash": "sha256:cm-cnps-regulator-confirmed-2026",
+      "occurrenceCount": 7,
+      "isSha256Hex": false,
+      "matchesManifestArtifact": false
+    }
+  ],
+  "gateInterpretation": {
+    "artifactFilesMatchManifest": true,
+    "declaredHashesMatchManifestArtifacts": false,
+    "productionApprovalPresent": false,
+    "expectedGateBlockers": [
+      "source_artifact_hash_verification",
+      "source_artifact_expert_approval"
+    ],
+    "safetyDecision": "KEEP_BLOCKED_UNTIL_QUALIFIED_REVIEW_APPROVAL"
+  }
+}

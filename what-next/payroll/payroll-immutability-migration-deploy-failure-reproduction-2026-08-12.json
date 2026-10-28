@@ -1,0 +1,17 @@
+{
+  "date": "2026-08-12",
+  "target": {
+    "host": "localhost",
+    "dbName": "stockflow_immutability_nonempty_test_20260812"
+  },
+  "sequence": [
+    "prisma db push --skip-generate",
+    "prisma migrate deploy"
+  ],
+  "exitCode": 1,
+  "errorCode": "P3005",
+  "stdout": "Prisma schema loaded from prisma\\schema.prisma\nDatasource \"db\": PostgreSQL database \"stockflow_immutability_nonempty_test_20260812\", schema \"public\" at \"localhost:5432\"\n\n62 migrations found in prisma/migrations\n",
+  "stderr": "Loaded Prisma config from prisma.config.ts.\n\nPrisma config detected, skipping environment variable loading.\nError: P3005\n\nThe database schema is not empty. Read more about how to baseline an existing production database: https://pris.ly/d/migrate-baseline\n",
+  "secretUrlValuesPrinted": false,
+  "diagnosis": "The test harness populated the new database with prisma db push before migrate deploy, creating a non-empty schema without Prisma migration history. No migration SQL failed."
+}

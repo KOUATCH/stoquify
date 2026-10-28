@@ -1,0 +1,114 @@
+{
+  "checkedAt": "2026-07-18T21:27:54.882Z",
+  "baseUrl": "http://127.0.0.1:3011",
+  "fixture": {
+    "organizationId": "org_payroll_e2e_local",
+    "roleCode": "PAYROLL_E2E",
+    "locationId": "loc_referral_review_ui_e2e_local",
+    "businessDate": "2026-07-18",
+    "restoredAfterCapture": true
+  },
+  "assertions": {
+    "capabilityDerivedFromFreshServerRbacContext": true,
+    "sameTenantAndLocationUsedForBothCapabilityStates": true,
+    "reviewCommandNeverClicked": true,
+    "productMutationCreated": false,
+    "seriousAccessibilityViolations": 0,
+    "layoutFailures": 0
+  },
+  "results": [
+    {
+      "id": "read-only-desktop",
+      "route": "/en/dashboard/manager-action-center/daily-close?locationId=loc_referral_review_ui_e2e_local&businessDate=2026-07-18&browserEvidence=read-only-desktop",
+      "finalUrl": "http://127.0.0.1:3011/en/dashboard/manager-action-center/daily-close?locationId=loc_referral_review_ui_e2e_local&businessDate=2026-07-18&browserEvidence=read-only-desktop",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "permissionEvidence": {
+        "organizationId": "org_payroll_e2e_local",
+        "roles": [
+          "PAYROLL_E2E"
+        ],
+        "hasDashboardRead": true,
+        "hasReviewPermission": false
+      },
+      "expectedReviewCapability": false,
+      "reviewCommandCount": 0,
+      "reviewButtonVisible": false,
+      "completionStateVisible": true,
+      "accessibility": [],
+      "layout": {
+        "viewportWidth": 1440,
+        "documentWidth": 1440,
+        "bodyWidth": 1440,
+        "hasDocumentOverflow": false,
+        "overlappingElements": [],
+        "clippedElements": []
+      },
+      "screenshot": "what-next/referrals/screenshots/daily-truth-review-command-ui-2026-07-18/read-only-desktop.png"
+    },
+    {
+      "id": "permitted-desktop",
+      "route": "/en/dashboard/manager-action-center/daily-close?locationId=loc_referral_review_ui_e2e_local&businessDate=2026-07-18&browserEvidence=permitted-desktop",
+      "finalUrl": "http://127.0.0.1:3011/en/dashboard/manager-action-center/daily-close?locationId=loc_referral_review_ui_e2e_local&businessDate=2026-07-18&browserEvidence=permitted-desktop",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "permissionEvidence": {
+        "organizationId": "org_payroll_e2e_local",
+        "roles": [
+          "PAYROLL_E2E"
+        ],
+        "hasDashboardRead": true,
+        "hasReviewPermission": true
+      },
+      "expectedReviewCapability": true,
+      "reviewCommandCount": 1,
+      "reviewButtonVisible": true,
+      "completionStateVisible": true,
+      "accessibility": [],
+      "layout": {
+        "viewportWidth": 1440,
+        "documentWidth": 1440,
+        "bodyWidth": 1440,
+        "hasDocumentOverflow": false,
+        "overlappingElements": [],
+        "clippedElements": []
+      },
+      "screenshot": "what-next/referrals/screenshots/daily-truth-review-command-ui-2026-07-18/permitted-desktop.png"
+    },
+    {
+      "id": "permitted-mobile",
+      "route": "/en/dashboard/manager-action-center/daily-close?locationId=loc_referral_review_ui_e2e_local&businessDate=2026-07-18&browserEvidence=permitted-mobile",
+      "finalUrl": "http://127.0.0.1:3011/en/dashboard/manager-action-center/daily-close?locationId=loc_referral_review_ui_e2e_local&businessDate=2026-07-18&browserEvidence=permitted-mobile",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "permissionEvidence": {
+        "organizationId": "org_payroll_e2e_local",
+        "roles": [
+          "PAYROLL_E2E"
+        ],
+        "hasDashboardRead": true,
+        "hasReviewPermission": true
+      },
+      "expectedReviewCapability": true,
+      "reviewCommandCount": 1,
+      "reviewButtonVisible": true,
+      "completionStateVisible": true,
+      "accessibility": [],
+      "layout": {
+        "viewportWidth": 390,
+        "documentWidth": 390,
+        "bodyWidth": 390,
+        "hasDocumentOverflow": false,
+        "overlappingElements": [],
+        "clippedElements": []
+      },
+      "screenshot": "what-next/referrals/screenshots/daily-truth-review-command-ui-2026-07-18/permitted-mobile.png"
+    }
+  ]
+}

@@ -5,6 +5,7 @@ import { z } from "zod"
 import { BusinessRuleError } from "@/services/_shared/action-errors"
 import { protect } from "@/services/_shared/protect"
 import {
+  activateTenantModule,
   getModuleControlCenterData,
   observeModuleAccess,
 } from "@/services/modules/module-entitlement.service"
@@ -13,6 +14,7 @@ import {
   type ModuleControlCenterData,
   type ModuleEntitlementDecision,
   type ModuleSurfaceType,
+  type TenantModuleActivationResult,
 } from "@/services/modules/module-control-contracts"
 
 export type { ModuleControlCenterData, ModuleEntitlementDecision }
@@ -22,6 +24,10 @@ const observeInputSchema = z.object({
   surfaceType: z.enum(["navigation", "page", "action", "api", "report", "export", "job"]),
   surface: z.string().trim().min(1),
   accessIntent: z.enum(["read", "write", "export", "job"]).optional(),
+})
+
+const activateInputSchema = z.object({
+  moduleSlug: z.string().min(1),
 })
 
 const getControlCenter = protect<unknown, ModuleControlCenterData>(
@@ -54,10 +60,36 @@ const observeAccess = protect<unknown, ModuleEntitlementDecision>(
   },
 )
 
+const activateModule = protect<unknown, TenantModuleActivationResult>(
+  {
+    permission: "MANAGE_SYSTEM_SETTINGS",
+    auditResource: "ModuleEntitlementProvisioning",
+    auditAllowed: true,
+    freshAuth: { maxAgeSeconds: 600 },
+    tenantGuard: "handler-derived",
+  },
+  async (input, ctx) => {
+    const parsed = activateInputSchema.parse(input && typeof input === "object" ? input : {})
+    if (!isCommercialModuleSlug(parsed.moduleSlug)) {
+      throw new BusinessRuleError("Unsupported module slug")
+    }
+
+    return activateTenantModule({
+      organizationId: ctx.orgId,
+      actorId: ctx.userId,
+      moduleSlug: parsed.moduleSlug,
+    })
+  },
+)
+
 export async function getModuleControlCenterAction(input: unknown = {}) {
   return getControlCenter(input)
 }
 
 export async function observeModuleAccessAction(input: unknown) {
   return observeAccess(input)
+}
+
+export async function activateTenantModuleAction(input: unknown) {
+  return activateModule(input)
 }

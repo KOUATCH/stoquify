@@ -188,7 +188,7 @@ const EnhancedImageUploadButton = ({
                 width={300}
               />
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-lg flex items-center justify-center">
-                <Button variant="destructive" size="sm" onClick={handleRemoveImage} className="gap-2">
+                <Button type="button" variant="destructive" size="sm" onClick={handleRemoveImage} className="gap-2">
                   <X className="h-4 w-4" />
                   Remove
                 </Button>

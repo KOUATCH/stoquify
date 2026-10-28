@@ -1,0 +1,17 @@
+{
+  "eval_id": 4,
+  "eval_name": "operator-control-center",
+  "prompt": "design a control center for branch managers when they log in. should help them see what's happening across their branch in one screen — open cash drawers, today's sales vs target, stock that's running low, any pending purchase approvals.",
+  "assertions": [
+    {"text": "Agent recognized 'control center' as a dashboard task", "type": "content_check"},
+    {"text": "Persona (branch manager) is explicitly carried into Phase 2 IA", "type": "content_check"},
+    {"text": "Each user-named widget mapped to a real StockFlow action or hook path", "type": "content_check"},
+    {"text": "Mapping table in RUN-NOTES.md references actual paths under actions/ and hooks/", "type": "content_check"},
+    {"text": "No widgets added for excluded domains (HR/Presence, AP/AR, ClientOrder, commercial agents)", "type": "content_check"},
+    {"text": "DASHBOARD-INSPIRATION.md exists with 7 entries", "type": "file_exists", "path": "DASHBOARD-INSPIRATION.md"},
+    {"text": "DASHBOARD-SPEC.md exists with branch-manager persona clearly stated", "type": "file_exists", "path": "DASHBOARD-SPEC.md"},
+    {"text": "Sample widget (cash-drawers-strip.tsx) exists with real-time strategy noted (per project override polling rules)", "type": "file_exists", "path": "sample-widget/cash-drawers-strip.tsx"},
+    {"text": "Sample widget uses i18n, theme tokens, real data hook reference", "type": "code_check"},
+    {"text": "No StockFlow file modified", "type": "side_effect_check"}
+  ]
+}

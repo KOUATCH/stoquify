@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "1.0",
+  "traceId": "8a1cbf54-3fc3-48ab-a179-ef3b5cd9ad29",
+  "runId": "th-ar-open-item-history-implementation-20260717-029",
+  "sliceId": "ap-ar",
+  "stageId": "02",
+  "skillName": "stoquify-transaction-history-02-security-proof-gate",
+  "agentType": "Security Architect",
+  "mode": "implement",
+  "status": "PASS",
+  "activeLanes": [
+    "ar"
+  ],
+  "blockedLanes": [],
+  "inputArtifacts": [
+    {
+      "path": "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/01-architecture-gate.json",
+      "sha256": "sha256:2ab3abf532c7c10979ea4a8c007227c45a9a3b7c21fe42f24660ebe0f3ff3795"
+    }
+  ],
+  "inputFingerprint": "sha256:0628f08178fe0441fe22ccbd1a6b429c2bb07b2ea5d278e6dcb799ab117c6979",
+  "allowedEdits": [
+    "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/02-security-proof-gate.md",
+    "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/02-security-proof-gate.json",
+    "actions/finance/ar-history.actions.ts"
+  ],
+  "observedEdits": [
+    "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/02-security-proof-gate.md",
+    "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/02-security-proof-gate.json",
+    "actions/finance/ar-history.actions.ts"
+  ],
+  "repository": {
+    "headBefore": "6e78e9aa01af7d8c86f1795d7105d72fb034a72d",
+    "headAfter": "6e78e9aa01af7d8c86f1795d7105d72fb034a72d",
+    "dirtyFilesBefore": [
+      "WORKTREE_DIRTY_SEE_TRANSACTION_HISTORY_RUNS"
+    ],
+    "dirtyFilesAfter": [
+      "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/02-security-proof-gate.md",
+      "what-next/transaction-history/runs/th-ar-open-item-history-implementation-20260717-029/slices/ap-ar/02-security-proof-gate.json",
+      "actions/finance/ar-history.actions.ts"
+    ]
+  },
+  "claims": [
+    {
+      "id": "AR_ACTION_RBAC_TENANT_SCOPE",
+      "result": "PASS",
+      "evidence": [
+        "actions/finance/ar-history.actions.ts"
+      ]
+    },
+    {
+      "id": "AR_EXPORT_FRESH_AUTH_AND_FILTER_HASH",
+      "result": "PASS",
+      "evidence": [
+        "actions/finance/ar-history.actions.ts"
+      ]
+    }
+  ],
+  "verification": [
+    {
+      "command": "npx eslint actions/finance/ar-history.actions.ts",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": null
+    }
+  ],
+  "outputs": [
+    {
+      "path": "actions/finance/ar-history.actions.ts",
+      "sha256": "sha256:c785928b7fb25f0dd1d8147fb12d9c86934a29d9c9d6d898a8d788630f73399d"
+    }
+  ],
+  "blockers": [],
+  "nextEligibleStages": [
+    "03"
+  ],
+  "startedAt": "2026-07-17T10:11:57.705Z",
+  "completedAt": "2026-07-17T10:11:57.705Z"
+}

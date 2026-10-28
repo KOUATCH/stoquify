@@ -852,6 +852,7 @@ export default function UnitsManagementDashboard({
             <DataTable
               columns={columns}
               data={filteredUnits}
+              locale={locale}
               emptyMessage={`${t.emptyTitle}. ${t.emptyBody}`}
               searchPlaceholder={t.search}
               showToolbar={false}

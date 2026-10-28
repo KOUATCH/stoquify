@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useCallback, useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react"
 import type { ColumnDef } from "@tanstack/react-table"
 import {
@@ -14,7 +15,6 @@ import {
   CreditCard,
   Download,
   Edit3,
-  ExternalLink,
   Languages,
   Loader2,
   Mail,
@@ -76,6 +76,7 @@ import type { CustomerManagementInput, CustomerManagementRow } from "@/actions/c
 import {
   useCreateManagedCustomer,
   useCustomerAnalyticsData,
+  useCustomerExport,
   useCustomerManagementData,
   useDeleteManagedCustomer,
   useUpdateManagedCustomer,
@@ -127,6 +128,7 @@ const copy = {
     export: "Export",
     actions: "Actions",
     viewAnalytics: "View analytics",
+    createStatement: "Create statement",
     editCustomer: "Edit customer",
     openEditPage: "Open edit page",
     copyId: "Copy ID",
@@ -140,7 +142,7 @@ const copy = {
     search: "Search customers, code, email, phone, address, tax ID...",
     status: "Status",
     activity: "Activity",
-    language: "Language",
+    language: "Preferred language",
     all: "All",
     active: "Active",
     inactive: "Inactive",
@@ -202,7 +204,7 @@ const copy = {
     topSales: "Top sales value",
     topBalances: "Highest receivables",
     recentOrders: "Recent orders",
-    recentLedger: "Receivable ledger",
+    recentLedger: "Recent receivable activity",
     recentPayments: "Recent payments",
     tableColumns: {
       customer: "Customer",
@@ -250,6 +252,7 @@ const copy = {
     export: "Exporter",
     actions: "Actions",
     viewAnalytics: "Voir analyse",
+    createStatement: "Creer un releve",
     editCustomer: "Modifier client",
     openEditPage: "Ouvrir page modification",
     copyId: "Copier ID",
@@ -263,7 +266,7 @@ const copy = {
     search: "Rechercher client, code, email, telephone, adresse, ID fiscal...",
     status: "Statut",
     activity: "Activite",
-    language: "Langue",
+    language: "Langue preferee",
     all: "Tous",
     active: "Actif",
     inactive: "Inactif",
@@ -324,9 +327,9 @@ const copy = {
     notes: "Notes",
     topSales: "Top valeur ventes",
     topBalances: "Creances les plus elevees",
-    recentOrders: "Commandes recentes",
-    recentLedger: "Grand livre client",
-    recentPayments: "Paiements recents",
+    recentOrders: "Commandes récentes",
+    recentLedger: "Activité récente des créances",
+    recentPayments: "Paiements récents",
     tableColumns: {
       customer: "Client",
       contact: "Contact",
@@ -401,10 +404,11 @@ function formatNumber(value: number, locale: Locale) {
   }).format(value)
 }
 
-function formatCurrency(value: number, locale: Locale) {
+function formatCurrency(value: number, locale: Locale, currency?: string) {
+  if (!currency) return "—"
   return new Intl.NumberFormat(locale === "fr" ? "fr-FR" : "en-US", {
     style: "currency",
-    currency: "XAF",
+    currency,
     maximumFractionDigits: 0,
   }).format(value)
 }
@@ -417,11 +421,6 @@ function formatDate(value: Date | string | null | undefined, locale: Locale, fal
   return new Intl.DateTimeFormat(locale === "fr" ? "fr-FR" : "en-US", {
     dateStyle: "medium",
   }).format(date)
-}
-
-function escapeCsv(value: string | number | boolean | null | undefined) {
-  const text = String(value ?? "")
-  return `"${text.replace(/"/g, '""')}"`
 }
 
 function initials(name: string) {
@@ -466,10 +465,12 @@ export default function CustomerManagementDashboard({
   initialAnalyticsId,
 }: CustomerManagementDashboardProps) {
   const t = copy[locale]
+  const router = useRouter()
   const notifications = useNotifications()
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all")
   const [activityFilter, setActivityFilter] = useState<ActivityFilter>("all")
   const [localeFilter, setLocaleFilter] = useState<LocaleFilter>("all")
+  const [visibleCustomerIds, setVisibleCustomerIds] = useState<string[]>([])
   const [formOpen, setFormOpen] = useState(false)
   const [editingCustomer, setEditingCustomer] = useState<CustomerManagementRow | null>(null)
   const [archiveTarget, setArchiveTarget] = useState<CustomerManagementRow | null>(null)
@@ -489,6 +490,7 @@ export default function CustomerManagementDashboard({
   const createMutation = useCreateManagedCustomer(organizationId, locale)
   const updateMutation = useUpdateManagedCustomer(organizationId, locale)
   const archiveMutation = useDeleteManagedCustomer(organizationId, locale)
+  const exportMutation = useCustomerExport(locale)
   const analyticsQuery = useCustomerAnalyticsData(organizationId, analyticsCustomerId)
 
   const customers = useMemo(() => data?.customers ?? [], [data?.customers])
@@ -643,47 +645,25 @@ export default function CustomerManagementDashboard({
     }
   }, [notifications, t.copiedBody, t.copiedTitle, t.copyFailedBody, t.copyFailedTitle])
 
+  const handleVisibleCustomersChange = useCallback(
+    (visibleCustomers: CustomerManagementRow[]) => {
+      setVisibleCustomerIds(visibleCustomers.map((customer) => customer.id))
+    },
+    [],
+  )
+
   const exportCustomers = useCallback(() => {
-    const header = [
-      "Name",
-      "Code",
-      "Email",
-      "Phone",
-      "Payment Terms",
-      "Credit Limit",
-      "Balance",
-      "Active",
-      "Orders",
-      "Open Orders",
-      "Unpaid Orders",
-      "Sales Value",
-    ]
-    const rows = filteredCustomers.map((customer) => [
-      customer.name,
-      customer.code ?? "",
-      customer.email ?? "",
-      customer.phone ?? "",
-      customer.paymentTerms ?? "",
-      customer.creditLimit ?? "",
-      customer.currentBalance,
-      customer.isActive ? "true" : "false",
-      customer.salesOrdersCount,
-      customer.openSalesOrdersCount,
-      customer.unpaidSalesOrdersCount,
-      customer.totalSalesValue,
-    ])
-    const csv = [header, ...rows]
-      .map((row) => row.map((value) => escapeCsv(value)).join(","))
-      .join("\n")
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" })
-    const url = URL.createObjectURL(blob)
-    const anchor = document.createElement("a")
-    anchor.href = url
-    anchor.download = "customers.csv"
-    anchor.click()
-    URL.revokeObjectURL(url)
-    notifications.success(t.exportTitle, t.exportBody)
-  }, [filteredCustomers, notifications, t.exportBody, t.exportTitle])
+    exportMutation.mutate({
+      scope: "customers",
+      customerIds: visibleCustomerIds,
+      purpose: "CUSTOMER_MANAGEMENT_EXPORT",
+      filters: {
+        status: statusFilter,
+        activity: activityFilter,
+        preferredLocale: localeFilter,
+      },
+    })
+  }, [activityFilter, exportMutation, localeFilter, statusFilter, visibleCustomerIds])
 
   const columns = useMemo<ColumnDef<CustomerManagementRow>[]>(() => [
     {
@@ -762,8 +742,8 @@ export default function CustomerManagementDashboard({
         const overLimit = isOverCreditLimit(customer)
         return (
           <div className="min-w-[210px] space-y-2">
-            <InlineMetric label={t.creditLimit} value={customer.creditLimit !== null ? formatCurrency(customer.creditLimit, locale) : "-"} />
-            <InlineMetric label={t.balance} value={formatCurrency(customer.currentBalance, locale)} tone={overLimit ? "danger" : "default"} />
+            <InlineMetric label={t.creditLimit} value={customer.creditLimit !== null ? formatCurrency(customer.creditLimit, locale, data?.currency) : "-"} />
+            <InlineMetric label={t.balance} value={formatCurrency(customer.currentBalance, locale, data?.currency)} tone={overLimit ? "danger" : "default"} />
             <p className="text-xs text-[var(--dash-text-faint)]">
               {customer.paymentTerms ?? 0} {t.days}
             </p>
@@ -781,7 +761,7 @@ export default function CustomerManagementDashboard({
             <InlineMetric label={t.salesOrders} value={formatNumber(customer.salesOrdersCount, locale)} />
             <InlineMetric label={t.openOrdersCard} value={formatNumber(customer.openSalesOrdersCount, locale)} tone={customer.openSalesOrdersCount > 0 ? "gold" : "default"} />
             <InlineMetric label={t.unpaidOrders} value={formatNumber(customer.unpaidSalesOrdersCount, locale)} tone={customer.unpaidSalesOrdersCount > 0 ? "danger" : "default"} />
-            <InlineMetric label={t.salesValue} value={formatCurrency(customer.totalSalesValue, locale)} />
+            <InlineMetric label={t.salesValue} value={formatCurrency(customer.totalSalesValue, locale, data?.currency)} />
           </div>
         )
       },
@@ -849,18 +829,22 @@ export default function CustomerManagementDashboard({
                 {t.copyId}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setAnalyticsCustomerId(customer.id)}>
-                <BarChart3 className="me-2 h-4 w-4" />
-                {t.viewAnalytics}
+              <DropdownMenuItem asChild>
+                <Link href={`${basePath}/${customer.id}`}>
+                  <BarChart3 className="me-2 h-4 w-4" />
+                  {t.viewAnalytics}
+                </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => openEdit(customer)}>
-                <Edit3 className="me-2 h-4 w-4" />
-                {t.editCustomer}
+              <DropdownMenuItem asChild>
+                <Link href={`${basePath}/${customer.id}/statement`}>
+                  <ReceiptText className="me-2 h-4 w-4" />
+                  {t.createStatement}
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href={`${basePath}/${customer.id}/edit`}>
-                  <ExternalLink className="me-2 h-4 w-4" />
-                  {t.openEditPage}
+                  <Edit3 className="me-2 h-4 w-4" />
+                  {t.editCustomer}
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
@@ -873,7 +857,7 @@ export default function CustomerManagementDashboard({
         )
       },
     },
-  ], [basePath, copyCustomerId, locale, openEdit, t])
+  ], [basePath, copyCustomerId, data?.currency, locale, t])
 
   const statsCards = useMemo(() => {
     const summary = data?.summary
@@ -912,7 +896,7 @@ export default function CustomerManagementDashboard({
       },
       {
         label: t.salesValue,
-        value: formatCurrency(summary?.totalSalesValue ?? 0, locale),
+        value: formatCurrency(summary?.totalSalesValue ?? 0, locale, data?.currency),
         Icon: ReceiptText,
         accent: "var(--dash-spruce)",
         soft: "var(--dash-spruce-soft)",
@@ -920,14 +904,14 @@ export default function CustomerManagementDashboard({
       },
       {
         label: t.balance,
-        value: formatCurrency(summary?.totalBalance ?? 0, locale),
+        value: formatCurrency(summary?.totalBalance ?? 0, locale, data?.currency),
         Icon: Wallet,
         accent: "var(--dash-warm)",
         soft: "var(--dash-warm-soft)",
         sub: `${formatNumber(summary?.overCreditLimitCustomers ?? 0, locale)} ${t.overLimit}`,
       },
     ]
-  }, [data?.summary, locale, t])
+  }, [data?.currency, data?.summary, locale, t])
 
   if (isLoading) {
     return (
@@ -993,9 +977,11 @@ export default function CustomerManagementDashboard({
               <RefreshCw className={cn("h-4 w-4", isFetching && "animate-spin")} />
               {isFetching ? t.refreshing : t.refresh}
             </Button>
-            <Button type="button" onClick={openCreate} className="dashboard-button-create h-10 w-full rounded-lg sm:w-auto">
-              <Plus className="h-4 w-4" />
-              {t.create}
+            <Button asChild className="dashboard-button-create h-10 w-full rounded-lg sm:w-auto">
+              <Link href={`${basePath}/new`}>
+                <Plus className="h-4 w-4" />
+                {t.create}
+              </Link>
             </Button>
           </div>
         </div>
@@ -1012,18 +998,18 @@ export default function CustomerManagementDashboard({
             icon={BarChart3}
             rows={data?.topBySales ?? []}
             locale={locale}
-            valueFor={(customer) => formatCurrency(customer.totalSalesValue, locale)}
+            valueFor={(customer) => formatCurrency(customer.totalSalesValue, locale, data?.currency)}
             emptyText={t.noOrdersYet}
-            onOpen={setAnalyticsCustomerId}
+            onOpen={(customerId) => router.push(`${basePath}/${customerId}`)}
           />
           <AnalyticsListCard
             title={t.topBalances}
             icon={ShieldAlert}
             rows={data?.topByBalance ?? []}
             locale={locale}
-            valueFor={(customer) => formatCurrency(customer.currentBalance, locale)}
+            valueFor={(customer) => formatCurrency(customer.currentBalance, locale, data?.currency)}
             emptyText={t.noLedgerYet}
-            onOpen={setAnalyticsCustomerId}
+            onOpen={(customerId) => router.push(`${basePath}/${customerId}`)}
           />
         </div>
 
@@ -1050,8 +1036,19 @@ export default function CustomerManagementDashboard({
                   <RefreshCw className={cn("h-4 w-4", isFetching && "animate-spin")} />
                   {isFetching ? t.refreshing : t.refresh}
                 </Button>
-                <Button type="button" variant="outline" size="sm" onClick={exportCustomers} className="dashboard-button-secondary h-9 rounded-lg">
-                  <Download className="h-4 w-4" />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={exportCustomers}
+                  disabled={exportMutation.isPending || visibleCustomerIds.length === 0}
+                  className="dashboard-button-secondary h-9 rounded-lg"
+                >
+                  {exportMutation.isPending ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Download className="h-4 w-4" />
+                  )}
                   {t.export}
                 </Button>
               </div>
@@ -1082,15 +1079,18 @@ export default function CustomerManagementDashboard({
             <DataTable
               columns={columns}
               data={filteredCustomers}
+              locale={locale}
               emptyMessage={`${t.emptyTitle}. ${t.emptyBody}`}
               searchPlaceholder={t.search}
+              onVisibleDataChange={handleVisibleCustomersChange}
+              singleRowControls
               showToolbar={false}
               variant="landing"
               filters={{
                 additionalFilters: (
                   <>
                     <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value as StatusFilter)}>
-                      <SelectTrigger className="dashboard-control h-9 w-full rounded-lg sm:w-[150px]">
+                      <SelectTrigger aria-label={t.status} className="dashboard-control h-9 w-full rounded-lg sm:w-[150px] xl:w-[100px] xl:shrink-0">
                         <SelectValue placeholder={t.status} />
                       </SelectTrigger>
                       <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
@@ -1100,7 +1100,7 @@ export default function CustomerManagementDashboard({
                       </SelectContent>
                     </Select>
                     <Select value={activityFilter} onValueChange={(value) => setActivityFilter(value as ActivityFilter)}>
-                      <SelectTrigger className="dashboard-control h-9 w-full rounded-lg sm:w-[170px]">
+                      <SelectTrigger aria-label={t.activity} className="dashboard-control h-9 w-full rounded-lg sm:w-[170px] xl:w-28 xl:shrink-0">
                         <SelectValue placeholder={t.activity} />
                       </SelectTrigger>
                       <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
@@ -1113,7 +1113,7 @@ export default function CustomerManagementDashboard({
                       </SelectContent>
                     </Select>
                     <Select value={localeFilter} onValueChange={(value) => setLocaleFilter(value as LocaleFilter)}>
-                      <SelectTrigger className="dashboard-control h-9 w-full rounded-lg sm:w-[145px]">
+                      <SelectTrigger aria-label={t.language} className="dashboard-control h-9 w-full rounded-lg sm:w-[145px] xl:w-[92px] xl:shrink-0">
                         <SelectValue placeholder={t.language} />
                       </SelectTrigger>
                       <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
@@ -1225,8 +1225,8 @@ export default function CustomerManagementDashboard({
                     <div className="grid gap-3 sm:grid-cols-2">
                       <InlineMetric label={t.salesOrders} value={formatNumber(editingCustomer.salesOrdersCount, locale)} />
                       <InlineMetric label={t.unpaidOrders} value={formatNumber(editingCustomer.unpaidSalesOrdersCount, locale)} />
-                      <InlineMetric label={t.salesValue} value={formatCurrency(editingCustomer.totalSalesValue, locale)} />
-                      <InlineMetric label={t.balance} value={formatCurrency(editingCustomer.currentBalance, locale)} tone={isOverCreditLimit(editingCustomer) ? "danger" : "default"} />
+                      <InlineMetric label={t.salesValue} value={formatCurrency(editingCustomer.totalSalesValue, locale, data?.currency)} />
+                      <InlineMetric label={t.balance} value={formatCurrency(editingCustomer.currentBalance, locale, data?.currency)} tone={isOverCreditLimit(editingCustomer) ? "danger" : "default"} />
                     </div>
                   </FormSection>
                 ) : null}
@@ -1269,7 +1269,7 @@ export default function CustomerManagementDashboard({
               {analyticsCustomer?.name ?? t.analytics}
             </DialogTitle>
             <DialogDescription className="text-[var(--dash-text-soft)]">
-              {analyticsCustomer ? `${analyticsCustomer.code || t.noCode} | ${analyticsCustomer.email || t.noEmail}` : t.analytics}
+              {analyticsCustomer ? analyticsCustomer.code || t.noCode : t.analytics}
             </DialogDescription>
           </DialogHeader>
 
@@ -1287,8 +1287,8 @@ export default function CustomerManagementDashboard({
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                   <InlineMetric label={t.salesOrders} value={formatNumber(analyticsCustomer.salesOrdersCount, locale)} />
                   <InlineMetric label={t.unpaidOrders} value={formatNumber(analyticsCustomer.unpaidSalesOrdersCount, locale)} tone={analyticsCustomer.unpaidSalesOrdersCount > 0 ? "danger" : "default"} />
-                  <InlineMetric label={t.salesValue} value={formatCurrency(analyticsCustomer.totalSalesValue, locale)} />
-                  <InlineMetric label={t.balance} value={formatCurrency(analyticsCustomer.currentBalance, locale)} tone={isOverCreditLimit(analyticsCustomer) ? "danger" : "default"} />
+                  <InlineMetric label={t.salesValue} value={formatCurrency(analyticsCustomer.totalSalesValue, locale, data?.currency)} />
+                  <InlineMetric label={t.balance} value={formatCurrency(analyticsCustomer.currentBalance, locale, data?.currency)} tone={isOverCreditLimit(analyticsCustomer) ? "danger" : "default"} />
                 </div>
               ) : null}
 
@@ -1301,7 +1301,7 @@ export default function CustomerManagementDashboard({
                     id: order.id,
                     title: order.orderNumber,
                     meta: `${order.status} | ${order.paymentStatus} | ${formatDate(order.orderDate, locale)}`,
-                    value: formatCurrency(order.total, locale),
+                    value: formatCurrency(order.total, locale, data?.currency),
                   }))}
                 />
                 <DetailList
@@ -1312,7 +1312,7 @@ export default function CustomerManagementDashboard({
                     id: entry.id,
                     title: entry.type,
                     meta: `${formatDate(entry.entryDate, locale)} | ${entry.description}`,
-                    value: formatCurrency(entry.balanceAfter, locale),
+                    value: formatCurrency(entry.balanceAfter, locale, data?.currency),
                   }))}
                 />
                 <DetailList
@@ -1323,7 +1323,7 @@ export default function CustomerManagementDashboard({
                     id: payment.id,
                     title: payment.paymentNumber,
                     meta: `${payment.method} | ${payment.status} | ${formatDate(payment.processedAt ?? payment.createdAt, locale)}`,
-                    value: formatCurrency(payment.amount, locale),
+                    value: formatCurrency(payment.amount, locale, data?.currency),
                   }))}
                 />
               </div>

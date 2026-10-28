@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client"
 
 import { db } from "@/prisma/db"
+import { BusinessRuleError } from "@/services/_shared/action-errors"
 import { hashBusinessPayload } from "@/services/events/business-event.service"
 
 import {
@@ -12,6 +13,7 @@ type DbClient = Prisma.TransactionClient | typeof db
 
 export type InventoryProjectionDriftType =
   | "MISSING_LEVEL"
+  | "UNEXPLAINED_LEVEL"
   | "QUANTITY_DRIFT"
   | "VALUE_DRIFT"
   | "AVERAGE_COST_DRIFT"
@@ -35,6 +37,7 @@ export type InventoryProjectionDrift = {
 export type InventoryProjectionRebuildResult = {
   organizationId: string
   asOf: string
+  recordedThrough: string
   projectionHash: string
   driftCount: number
   drifts: InventoryProjectionDrift[]
@@ -81,8 +84,13 @@ export async function rebuildInventoryProjection(
   input: RebuildInventoryProjectionInput,
   client: DbClient = db,
 ): Promise<InventoryProjectionRebuildResult> {
+  const startedAt = new Date()
   const parsed = rebuildInventoryProjectionInputSchema.parse(input)
-  const asOf = parsed.asOf ?? new Date()
+  const asOf = parsed.asOf ?? startedAt
+  const recordedThrough = parsed.recordedThrough ?? startedAt
+  if (recordedThrough.getTime() > startedAt.getTime()) {
+    throw new BusinessRuleError("Inventory projection recordedThrough cannot be in the future.")
+  }
   const toleranceQuantity = decimal(parsed.toleranceQuantity ?? "0.000")
   const toleranceValue = decimal(parsed.toleranceValue ?? "0.00")
 
@@ -90,11 +98,12 @@ export async function rebuildInventoryProjection(
     client.inventoryTransaction.findMany({
       where: {
         organizationId: parsed.organizationId,
-        createdAt: { lte: asOf },
+        effectiveAt: { lte: asOf },
+        recordedAt: { lte: recordedThrough },
         ...(parsed.itemId ? { itemId: parsed.itemId } : {}),
         ...(parsed.locationId ? { locationId: parsed.locationId } : {}),
       },
-      orderBy: [{ createdAt: "asc" }, { id: "asc" }],
+      orderBy: [{ effectiveAt: "asc" }, { recordedAt: "asc" }, { id: "asc" }],
       select: {
         id: true,
         itemId: true,
@@ -218,10 +227,40 @@ export async function rebuildInventoryProjection(
       `${left.itemId}:${left.locationId}`.localeCompare(`${right.itemId}:${right.locationId}`),
     )
 
+  for (const level of levels) {
+    if (projectionsByKey.has(key(level.itemId, level.locationId))) continue
+    const actualQuantity = decimal(level.quantityOnHand).toDecimalPlaces(3)
+    const actualValue = decimal(level.totalValue).toDecimalPlaces(2)
+    const actualAverageCost = decimal(level.averageCost).toDecimalPlaces(2)
+    if (
+      actualQuantity.abs().lte(toleranceQuantity) &&
+      actualValue.abs().lte(toleranceValue) &&
+      actualAverageCost.abs().lte(toleranceValue)
+    ) {
+      continue
+    }
+    drifts.push({
+      type: "UNEXPLAINED_LEVEL",
+      itemId: level.itemId,
+      locationId: level.locationId,
+      expected: {
+        quantityOnHand: "0.000",
+        totalValue: "0.00",
+        averageCost: "0.00",
+      },
+      actual: {
+        quantityOnHand: formatQuantity(actualQuantity),
+        totalValue: formatMoney(actualValue),
+        averageCost: formatMoney(actualAverageCost),
+      },
+    })
+  }
+
   return {
     organizationId: parsed.organizationId,
     asOf: asOf.toISOString(),
-    projectionHash: `sha256:${hashBusinessPayload({ asOf, projections })}`,
+    recordedThrough: recordedThrough.toISOString(),
+    projectionHash: `sha256:${hashBusinessPayload({ asOf, recordedThrough, projections })}`,
     driftCount: drifts.length,
     drifts,
     projections,

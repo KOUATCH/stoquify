@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "1.0",
+  "runId": "th-ap-supplier-history-security-accounting-20260717-026",
+  "traceId": "2a6f0aa1-4908-4d38-97c2-455a5428851f",
+  "sliceId": "ap-ar",
+  "mode": "audit",
+  "currentStage": "03",
+  "stages": {
+    "01": {
+      "status": "PASS",
+      "evidence": "what-next/transaction-history/runs/th-ap-supplier-history-security-accounting-20260717-026/slices/ap-ar/01-architecture-gate.json"
+    },
+    "02": {
+      "status": "PARTIAL",
+      "evidence": "what-next/transaction-history/runs/th-ap-supplier-history-security-accounting-20260717-026/slices/ap-ar/02-security-proof-gate.json"
+    },
+    "03": {
+      "status": "PARTIAL",
+      "evidence": "what-next/transaction-history/runs/th-ap-supplier-history-security-accounting-20260717-026/slices/ap-ar/03-accounting-control-gate.json"
+    },
+    "04": {
+      "status": "PENDING",
+      "evidence": null
+    },
+    "05": {
+      "status": "PENDING",
+      "evidence": null
+    },
+    "06": {
+      "status": "PENDING",
+      "evidence": null
+    },
+    "07": {
+      "status": "PENDING",
+      "evidence": null
+    }
+  },
+  "nextEligibleStages": [],
+  "updatedAt": "2026-07-17T06:48:08.920059+01:00"
+}

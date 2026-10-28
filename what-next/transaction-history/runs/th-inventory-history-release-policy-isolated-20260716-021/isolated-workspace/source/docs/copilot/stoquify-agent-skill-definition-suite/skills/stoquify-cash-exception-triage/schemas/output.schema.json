@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:stoquify:stoquify-cash-exception-triage/output/v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "capability_id",
+    "status",
+    "trace_id",
+    "result",
+    "evidence",
+    "confidence",
+    "assumptions",
+    "missing_information",
+    "approval",
+    "next_safe_action",
+    "security"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "capability_id": {
+      "const": "S19"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "completed",
+        "blocked",
+        "degraded",
+        "approval_required",
+        "denied",
+        "partial",
+        "unavailable",
+        "failed",
+        "cancelled",
+        "retryable",
+        "provisional",
+        "unknown_outcome"
+      ]
+    },
+    "trace_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "result": {
+      "type": "object"
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:stoquify:evidence-record/v1"
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "missing_information": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "next_safe_action": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "confidence": {
+      "type": "object",
+      "required": [
+        "level",
+        "basis"
+      ],
+      "properties": {
+        "level": {
+          "type": "string",
+          "enum": [
+            "high",
+            "medium",
+            "low",
+            "not_applicable"
+          ]
+        },
+        "basis": {
+          "type": "string"
+        }
+      }
+    },
+    "approval": {
+      "type": "object",
+      "required": [
+        "required"
+      ],
+      "properties": {
+        "required": {
+          "type": "boolean"
+        },
+        "policy": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "approver_role": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "security": {
+      "$ref": "urn:stoquify:retrieved-content-isolation-result/v1"
+    }
+  },
+  "title": "stoquify-cash-exception-triage Output v1"
+}

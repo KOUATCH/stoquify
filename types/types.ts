@@ -213,6 +213,9 @@ export interface RegisterUserProps {
   requestedModules?: string[]
   assistedSetupRequested?: boolean
   onboardingSource?: string
+  referralCode?: string
+  accountantInviteToken?: string
+  accountantInviteAccepted?: boolean
 
   // Security
   password: string

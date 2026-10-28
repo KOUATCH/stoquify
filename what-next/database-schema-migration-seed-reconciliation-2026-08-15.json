@@ -1,0 +1,60 @@
+{
+  "generatedDate": "2026-08-15",
+  "status": "complete",
+  "schema": {
+    "valid": true,
+    "models": 184,
+    "enums": 187,
+    "additionalMigrationRequired": false
+  },
+  "migrations": {
+    "repositoryCount": 64,
+    "freshReplay": "pass",
+    "configuredDatabaseAppliedCount": 64,
+    "historyHealth": {
+      "status": "ready",
+      "checksReady": 9,
+      "checksTotal": 9,
+      "missing": 0,
+      "unknown": 0,
+      "unfinished": 0,
+      "checksumMismatches": 0
+    },
+    "latest": [
+      "20260815120000_supplier_po_acknowledgement_pilot",
+      "20260815130000_governed_master_data_onboarding"
+    ],
+    "safetyGate": {
+      "status": "blocked",
+      "preExistingRiskFindings": 13,
+      "migration": "20260611130000_accounting_auth_baseline_bridge",
+      "approvalInvented": false
+    }
+  },
+  "seed": {
+    "fakerSeed": 20260527,
+    "versionedIdPrefix": "rds_",
+    "organizations": 2,
+    "loginPersonas": 28,
+    "disposableFirstRun": "pass",
+    "disposableSecondRun": "pass_validated_noop",
+    "configuredDatabaseInstall": "pass",
+    "configuredDatabaseExistingVersionedOrganizations": 2,
+    "credentialArtifact": ".seed-artifacts/seed-login-credentials.json",
+    "credentialArtifactGitIgnored": true
+  },
+  "runtimeVerification": {
+    "credentialPersonasVerified": 5,
+    "posCatalogItems": 12,
+    "posReadyItems": 12,
+    "distinctItemsSold": 7,
+    "saleStatus": "COMPLETED",
+    "paymentStatus": "PAID",
+    "inventoryDecrementVerified": true,
+    "focusedTests": {
+      "suitesPassed": 2,
+      "testsPassed": 23
+    }
+  },
+  "independentReviewerFindings": "not_applicable_no_delegated_review"
+}

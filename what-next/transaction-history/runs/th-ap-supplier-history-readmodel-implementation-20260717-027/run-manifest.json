@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "1.0",
+  "runId": "th-ap-supplier-history-readmodel-implementation-20260717-027",
+  "traceId": "72f71709-b8e7-4e91-b1d6-09dc3d3d1447",
+  "mode": "implement",
+  "sliceId": "ap-ar",
+  "contractVersion": "2026-07-14",
+  "proposal": {
+    "path": "docs/new ideas/STOQUIFY_TRANSACTION_HISTORY_ANALYTICS_AND_SECURITY_PROPOSAL_2026-07-14.md",
+    "sha256": "sha256:0628f08178fe0441fe22ccbd1a6b429c2bb07b2ea5d278e6dcb799ab117c6979"
+  },
+  "baseCommit": "a27cb0328e044304590cecf20c47832df5e834d5",
+  "runtimeArtifactRoot": "what-next/transaction-history/runs/th-ap-supplier-history-readmodel-implementation-20260717-027/",
+  "scope": {
+    "lanes": [
+      "ap"
+    ],
+    "includePaths": [
+      "services/purchasing/ap-history.schemas.ts",
+      "services/purchasing/ap-history.service.ts",
+      "actions/purchasing/ap-history.actions.ts",
+      "services/purchasing/__tests__/ap-history.service.test.ts"
+    ],
+    "excludePaths": [
+      "prisma/migrations/**",
+      "app/**",
+      "components/**",
+      "hooks/**",
+      "messages/**"
+    ]
+  },
+  "stageAllowlists": {
+    "01": [
+      "what-next/transaction-history/runs/th-ap-supplier-history-security-accounting-20260717-026/slices/ap-ar/01-architecture-gate.json"
+    ],
+    "02": [
+      "what-next/transaction-history/runs/th-ap-supplier-history-readmodel-implementation-20260717-027/slices/ap-ar/02-security-proof-gate.md",
+      "what-next/transaction-history/runs/th-ap-supplier-history-readmodel-implementation-20260717-027/slices/ap-ar/02-security-proof-gate.json"
+    ],
+    "03": [
+      "what-next/transaction-history/runs/th-ap-supplier-history-readmodel-implementation-20260717-027/slices/ap-ar/03-accounting-control-gate.md",
+      "what-next/transaction-history/runs/th-ap-supplier-history-readmodel-implementation-20260717-027/slices/ap-ar/03-accounting-control-gate.json"
+    ],
+    "04": [
+      "what-next/transaction-history/runs/th-ap-supplier-history-readmodel-implementation-20260717-027/slices/ap-ar/04-read-model-optimizer.md",
+      "what-next/transaction-history/runs/th-ap-supplier-history-readmodel-implementation-20260717-027/slices/ap-ar/04-read-model-optimizer.json",
+      "services/purchasing/ap-history.schemas.ts",
+      "services/purchasing/ap-history.service.ts",
+      "actions/purchasing/ap-history.actions.ts",
+      "services/purchasing/__tests__/ap-history.service.test.ts"
+    ],
+    "05": [
+      "what-next/transaction-history/runs/th-ap-supplier-history-readmodel-implementation-20260717-027/slices/ap-ar/05-workbench-ux-contract.md",
+      "what-next/transaction-history/runs/th-ap-supplier-history-readmodel-implementation-20260717-027/slices/ap-ar/05-workbench-ux-contract.json"
+    ],
+    "06": [
+      "what-next/transaction-history/runs/th-ap-supplier-history-readmodel-implementation-20260717-027/slices/ap-ar/06-frontend-delivery.md",
+      "what-next/transaction-history/runs/th-ap-supplier-history-readmodel-implementation-20260717-027/slices/ap-ar/06-frontend-delivery.json",
+      "app/[locale]/(dashboard)/dashboard/purchases/payables/history/page.tsx",
+      "components/purchasing/APHistoryWorkbench.tsx",
+      "hooks/useAPHistoryWorkbench.ts",
+      "messages/en.json",
+      "messages/fr.json"
+    ],
+    "07": [
+      "what-next/transaction-history/runs/th-ap-supplier-history-readmodel-implementation-20260717-027/slices/ap-ar/07-release-review.md",
+      "what-next/transaction-history/runs/th-ap-supplier-history-readmodel-implementation-20260717-027/slices/ap-ar/07-release-review.json"
+    ]
+  },
+  "orchestratorPolicy": {
+    "productCodeEdits": false,
+    "installSkills": false,
+    "deployMigrations": false
+  },
+  "gates": {
+    "foundationInventory": {
+      "status": "PASS",
+      "evidence": [
+        "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/slices/foundation-inventory/07-release-review.json"
+      ]
+    },
+    "arAccountingPrerequisites": {
+      "status": "NA",
+      "evidence": [
+        "what-next/transaction-history/runs/th-ap-ar-architecture-20260717-025/slices/ap-ar/01-architecture-gate.json"
+      ]
+    }
+  },
+  "createdAt": "2026-07-17T06:48:08.920059+01:00"
+}

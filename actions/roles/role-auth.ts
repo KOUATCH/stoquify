@@ -9,6 +9,16 @@ export const ROLE_ACTION_PERMISSIONS = {
   assignPermissions: "roles.permissions.assign",
 } as const
 
+export const ROLE_AUTH_SURFACE = {
+  moduleSlug: "settings",
+  permissions: [
+    "roles.read",
+    "roles.create",
+    "roles.update",
+    "roles.permissions.assign",
+  ],
+} as const
+
 type AuthedRoleContext = Pick<RbacContext, "orgId" | "userId" | "permissions" | "isSuperUser">
 
 export type RoleActionContext = {

@@ -19,6 +19,19 @@ import {
 
 export type { ComplianceCenterKernelSnapshot }
 
+const COMPLIANCE_MODULE_READ = {
+  moduleSlug: "compliance" as const,
+  surfaceType: "action" as const,
+  accessIntent: "read" as const,
+  mode: "enforce" as const,
+  audit: true,
+}
+
+const COMPLIANCE_MODULE_WRITE = {
+  ...COMPLIANCE_MODULE_READ,
+  accessIntent: "write" as const,
+}
+
 function revalidateCompliancePaths() {
   revalidatePath("/dashboard/compliance", "page")
   revalidatePath("/[locale]/dashboard/compliance", "page")
@@ -29,6 +42,10 @@ const getKernelSnapshot = protect<unknown, ComplianceCenterKernelSnapshot>(
     permission: "compliance.documents.read",
     auditResource: "ComplianceCenter",
     auditAllowed: false,
+    module: {
+      ...COMPLIANCE_MODULE_READ,
+      surface: "actions/compliance/compliance-center.actions.ts:getComplianceCenterKernelSnapshotAction",
+    },
   },
   async (input, ctx) => {
     const parsed = complianceCenterQuerySchema.parse(input ?? {})
@@ -49,6 +66,10 @@ const resolveMetadata = protect<unknown, unknown>(
     permission: "compliance.metadata.read",
     auditResource: "ComplianceCountryPack",
     auditAllowed: false,
+    module: {
+      ...COMPLIANCE_MODULE_READ,
+      surface: "actions/compliance/compliance-center.actions.ts:resolveEInvoicingMetadataAction",
+    },
   },
   async (input) => {
     const parsed = complianceMetadataResolutionSchema.parse(input ?? {})
@@ -65,6 +86,10 @@ const createFiscalDocument = protect<unknown, unknown>(
     permission: "compliance.documents.issue",
     auditResource: "FiscalDocument",
     freshAuth: true,
+    module: {
+      ...COMPLIANCE_MODULE_WRITE,
+      surface: "actions/compliance/compliance-center.actions.ts:createFiscalDocumentFromPostedSourceAction",
+    },
   },
   async (input, ctx) => {
     const parsed = createFiscalDocumentFromPostedSourceSchema.parse({
@@ -87,6 +112,10 @@ const enqueueSubmission = protect<unknown, unknown>(
     permission: "compliance.submissions.retry",
     auditResource: "ComplianceSubmission",
     freshAuth: true,
+    module: {
+      ...COMPLIANCE_MODULE_WRITE,
+      surface: "actions/compliance/compliance-center.actions.ts:enqueueComplianceSubmissionAction",
+    },
   },
   async (input, ctx) => {
     const parsed = enqueueComplianceSubmissionSchema.parse({

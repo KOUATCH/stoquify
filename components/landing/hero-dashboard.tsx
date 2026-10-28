@@ -15,9 +15,9 @@ const branches = [
 ]
 
 const activity = [
-  ["09:42", "sale", "$812.40"],
-  ["09:39", "transfer", "B-03"],
-  ["09:31", "po", "SUP-18"],
+  ["09:42", "sale", "XAF 487k"],
+  ["09:39", "transfer", "TRF-03"],
+  ["09:31", "po", "PO-18"],
 ]
 
 export function HeroDashboard() {
@@ -27,12 +27,15 @@ export function HeroDashboard() {
     <div className="frame-glow hero-command min-w-0 rounded-lg border border-[var(--color-border-subtle)] bg-[var(--color-surface-panel)]/92 p-3 shadow-2xl shadow-black/30">
       <div className="relative overflow-hidden rounded-lg border border-[var(--color-border-subtle)] bg-[var(--color-surface-deep)] p-4 sm:p-5">
         <div className="command-center-beam" aria-hidden="true" />
-        <div className="relative flex items-center justify-between border-b border-[var(--color-border-subtle)] pb-4">
+        <div className="relative flex flex-col gap-3 border-b border-[var(--color-border-subtle)] pb-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
             <div className="data-text text-xs uppercase text-[var(--accent-hi)]">{t("period")}</div>
             <div className="mt-1 body-text text-lg font-semibold text-[var(--color-text-primary)] sm:text-xl">{t("title")}</div>
+            <div className="mt-2 inline-flex rounded-lg border border-[var(--color-border-subtle)] bg-black/[0.18] px-2 py-1 data-text text-[0.68rem] text-[var(--color-text-tertiary)]">
+              {t("sampleLabel")}
+            </div>
           </div>
-          <div className="inline-flex items-center gap-2 rounded-lg bg-black/[0.15] px-3 py-1 data-text text-xs text-[var(--color-success)]">
+          <div className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-black/[0.15] px-3 py-1 data-text text-xs text-[var(--color-success)]">
             <BadgeCheck className="size-3.5" aria-hidden="true" />
             {t("synced")}
           </div>

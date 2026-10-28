@@ -1,5 +1,6 @@
 import "server-only"
 
+import { createHmac } from "node:crypto"
 import {
   PaymentMethod,
   PayrollAttendanceSnapshotStatus,
@@ -11,12 +12,20 @@ import { z } from "zod"
 
 import { hasAnyRbacPermission } from "@/lib/security/rbac-permissions"
 import { db } from "@/prisma/db"
-import { BusinessRuleError, ConflictError, ForbiddenError, NotFoundError } from "@/services/_shared/action-errors"
+import {
+  ApplicationError,
+  BusinessRuleError,
+  ConflictError,
+  ForbiddenError,
+  NotFoundError,
+} from "@/services/_shared/action-errors"
 import {
   hashBusinessPayload,
   markBusinessEventAppliedInTx,
   recordBusinessEventInTx,
 } from "@/services/events/business-event.service"
+import { validateHrisTimeLeaveAttendanceCertification } from "@/services/hris/time-leave.contract"
+import { evaluateRedaction, type RedactionDecision } from "@/services/security/redaction-policy.service"
 
 export type DbClient = typeof db | Prisma.TransactionClient
 
@@ -154,10 +163,35 @@ function metadataRecord(value: unknown): Record<string, unknown> {
   return JSON.parse(JSON.stringify(value)) as Record<string, unknown>
 }
 
-function prefixedHash(value: unknown) {
-  return `sha256:${hashBusinessPayload(value)}`
+export const PAYMENT_DESTINATION_PRIVACY_POLICY = {
+  rawValueStorage: "NEVER",
+  hashAlgorithm: "HMAC_SHA256_V1",
+  revealPolicy: "PROHIBITED",
+  exportPolicy: "MASKED_STATUS_ONLY",
+  recoveryPolicy: "RE_ENTRY_AND_NEW_APPROVAL_REQUIRED",
+} as const
+
+function paymentDestinationHashSecret() {
+  const secret = process.env.PAYROLL_PAYMENT_DESTINATION_HASH_SECRET
+  if (!secret || secret.length < 32) {
+    throw new ApplicationError(
+      "DATABASE_UNAVAILABLE",
+      "Payment destination privacy protection is unavailable",
+      503,
+      false,
+    )
+  }
+  return secret
 }
 
+export function hashPaymentDestinationPrivateValue(scope: string, value: unknown) {
+  const digest = createHmac("sha256", paymentDestinationHashSecret())
+    .update(scope)
+    .update("\u0000")
+    .update(hashBusinessPayload(value))
+    .digest("hex")
+  return "hmac-sha256:v1:" + digest
+}
 function normalizeSensitiveValue(value: string) {
   return value.replace(/\s+/g, "").trim()
 }
@@ -188,11 +222,14 @@ function normalizeDestination(input: z.output<typeof requestPaymentDestinationCh
     return {
       paymentMethod,
       bankAccountMasked: maskTrailing(normalizedAccount),
-      bankAccountHash: prefixedHash(payload),
+      bankAccountHash: hashPaymentDestinationPrivateValue("bank-account", payload),
       mobileMoneyProvider: null,
       mobileMoneyPhoneMasked: null,
       mobileMoneyPhoneHash: null,
-      paymentDestinationHash: prefixedHash({ destination: payload, evidenceDocumentHash: input.evidenceDocumentHash }),
+      paymentDestinationHash: hashPaymentDestinationPrivateValue("payment-destination", {
+        destination: payload,
+        evidenceDocumentHash: input.evidenceDocumentHash,
+      }),
     }
   }
 
@@ -209,8 +246,11 @@ function normalizeDestination(input: z.output<typeof requestPaymentDestinationCh
       bankAccountHash: null,
       mobileMoneyProvider: provider,
       mobileMoneyPhoneMasked: maskTrailing(normalizedPhone, 3),
-      mobileMoneyPhoneHash: prefixedHash(payload),
-      paymentDestinationHash: prefixedHash({ destination: payload, evidenceDocumentHash: input.evidenceDocumentHash }),
+      mobileMoneyPhoneHash: hashPaymentDestinationPrivateValue("mobile-money-phone", payload),
+      paymentDestinationHash: hashPaymentDestinationPrivateValue("payment-destination", {
+        destination: payload,
+        evidenceDocumentHash: input.evidenceDocumentHash,
+      }),
     }
   }
 
@@ -221,7 +261,11 @@ function normalizeDestination(input: z.output<typeof requestPaymentDestinationCh
     mobileMoneyProvider: null,
     mobileMoneyPhoneMasked: null,
     mobileMoneyPhoneHash: null,
-    paymentDestinationHash: prefixedHash({ method: paymentMethod, employeeId: input.employeeId, evidenceDocumentHash: input.evidenceDocumentHash }),
+    paymentDestinationHash: hashPaymentDestinationPrivateValue("payment-destination", {
+      method: paymentMethod,
+      employeeId: input.employeeId,
+      evidenceDocumentHash: input.evidenceDocumentHash,
+    }),
   }
 }
 
@@ -267,6 +311,27 @@ function mapChange(request: DestinationChangeRecord): PaymentDestinationChangeRe
     approvalEvidenceHashPresent: Boolean(request.approvalEvidenceHash),
     paymentDestinationHashPresent: Boolean(request.paymentDestinationHash),
     redactions: ["PAYMENT_DETAILS_REDACTED", "DESTINATION_HASH_HIDDEN"],
+  }
+}
+function changeAuditSnapshot(change: PaymentDestinationChangeReadModel) {
+  return {
+    id: change.id,
+    employeeId: change.employeeId,
+    status: change.status,
+    paymentMethod: change.paymentMethod,
+    maskedDestination: change.maskedDestination,
+    requestEvidencePresent: Boolean(change.evidenceDocumentHash),
+    approvalEvidencePresent: change.approvalEvidenceHashPresent,
+    destinationHashPresent: change.paymentDestinationHashPresent,
+    requesterApproverSeparated: change.approvedById
+      ? change.requestedById !== change.approvedById
+      : null,
+    requesterApplierSeparated: change.appliedById
+      ? change.requestedById !== change.appliedById
+      : null,
+    approverApplierSeparated: change.approvedById && change.appliedById
+      ? change.approvedById !== change.appliedById
+      : null,
   }
 }
 function evidenceReferencesFromMetadata(metadata: unknown) {
@@ -337,6 +402,7 @@ function buildEmployeeMetadataForAppliedDestination(
       appliedById: actorId,
       appliedAt: appliedAt.toISOString(),
       workflowSource: "payroll.payment_destination_approval",
+      privacyPolicy: PAYMENT_DESTINATION_PRIVACY_POLICY,
     },
   })
 }
@@ -386,6 +452,36 @@ function attendanceReadinessFor(employee: EmployeeReadinessRecord, parsed: z.out
       blocker: "ATTENDANCE_SOURCE_HASH_MISSING",
     }
   }
+  try {
+    validateHrisTimeLeaveAttendanceCertification({
+      sourcePayload: metadataRecord(snapshot.metadata).sourcePayload,
+      approvedById: snapshot.frozenById ?? "",
+      countryCode: employee.countryCode ?? "",
+      periodStart: snapshot.periodStart,
+      periodEnd: snapshot.periodEnd,
+      totals: {
+        scheduledMinutes: snapshot.scheduledMinutes,
+        workedMinutes: snapshot.workedMinutes,
+        overtimeMinutes: snapshot.overtimeMinutes,
+        absenceMinutes: snapshot.absenceMinutes,
+        leaveMinutes: snapshot.leaveMinutes,
+      },
+    })
+  } catch {
+    return {
+      status: "CERTIFICATION_INVALID" as const,
+      snapshotId: snapshot.id,
+      snapshotStatus: snapshot.status,
+      periodStart: snapshot.periodStart.toISOString(),
+      periodEnd: snapshot.periodEnd.toISOString(),
+      sourceHashPresent: true,
+      expectedSourceHashPresent: Boolean(expectedSourceHash),
+      driftDetected: false,
+      frozenAt: snapshot.frozenAt?.toISOString() ?? null,
+      blocker: "ATTENDANCE_CERTIFICATION_INVALID",
+    }
+  }
+
   if (expectedSourceHash && expectedSourceHash !== snapshot.sourceHash) {
     return {
       status: "DRIFT_DETECTED" as const,
@@ -414,7 +510,11 @@ function attendanceReadinessFor(employee: EmployeeReadinessRecord, parsed: z.out
   }
 }
 
-function mapEmployeeReadiness(employee: EmployeeReadinessRecord, parsed: z.output<typeof paymentDestinationReadinessInputSchema>) {
+function mapEmployeeReadiness(
+  employee: EmployeeReadinessRecord,
+  parsed: z.output<typeof paymentDestinationReadinessInputSchema>,
+  documentEvidenceDecision: RedactionDecision,
+) {
   const approvedEvidence = approvedEvidenceFromMetadata(employee.metadata)
   const change = employee.paymentDestinationChangeRequests[0]
   const hasApprovedPaymentDestination = Boolean(
@@ -443,6 +543,18 @@ function mapEmployeeReadiness(employee: EmployeeReadinessRecord, parsed: z.outpu
   const identifierHashTypes = [employee.taxIdentifierHash ? "TAX" : null, employee.socialIdentifierHash ? "SOCIAL" : null]
     .filter((value): value is string => Boolean(value))
   const paymentHashes = paymentEvidenceHashes(employee)
+  const visibleEvidenceHashes = (hashes: string[]) =>
+    documentEvidenceDecision.allowed
+      ? hashes
+      : hashes.map(() => documentEvidenceDecision.replacement)
+  const latestChange = change
+    ? {
+        ...mapChange({ ...change, employee } as DestinationChangeRecord),
+        evidenceDocumentHash: documentEvidenceDecision.allowed
+          ? change.evidenceDocumentHash
+          : documentEvidenceDecision.replacement,
+      }
+    : null
   const blockers: string[] = []
   if (employee.status !== PayrollEmployeeStatus.ACTIVE) blockers.push("EMPLOYEE_NOT_ACTIVE")
   if (!hasApprovedPaymentDestination) blockers.push("APPROVED_PAYMENT_DESTINATION_EVIDENCE_MISSING")
@@ -459,13 +571,13 @@ function mapEmployeeReadiness(employee: EmployeeReadinessRecord, parsed: z.outpu
       maskedDestination: maskedDestinationFor(employee),
       approvedEvidenceHashPresent: Boolean(approvedEvidence.approvalEvidenceHash),
       paymentDestinationHashPresent: Boolean(employee.paymentDestinationHash),
-      latestChange: change ? mapChange({ ...change, employee } as DestinationChangeRecord) : null,
+      latestChange,
     },
     evidence: {
-      contractEvidenceHashes,
-      salaryChangeEvidenceHashes,
+      contractEvidenceHashes: visibleEvidenceHashes(contractEvidenceHashes),
+      salaryChangeEvidenceHashes: visibleEvidenceHashes(salaryChangeEvidenceHashes),
       identifierHashTypes,
-      paymentEvidenceHashes: paymentHashes,
+      paymentEvidenceHashes: visibleEvidenceHashes(paymentHashes),
       totalReferenceCount: contractEvidenceHashes.length + salaryChangeEvidenceHashes.length + identifierHashTypes.length + paymentHashes.length,
     },
     attendanceReadiness: attendance,
@@ -546,6 +658,12 @@ export async function getPaymentEvidenceReadiness(input: PaymentDestinationReadi
   const canReadDestination = hasAnyRbacPermission(parsed.actorPermissions, READ_PERMISSIONS)
   const canReadAttendance = hasAnyRbacPermission(parsed.actorPermissions, ATTENDANCE_READINESS_PERMISSIONS)
   if (!canReadDestination && !canReadAttendance) throw new ForbiddenError("Missing permission for payment evidence readiness read.")
+  const documentEvidenceDecision = evaluateRedaction({
+    field: "PayrollPaymentEvidenceReadiness.evidenceHashes",
+    category: "payroll_document_evidence",
+    actorPermissions: parsed.actorPermissions,
+  })
+
 
   const employees = await client.payrollEmployee.findMany({
     where: {
@@ -570,18 +688,38 @@ export async function getPaymentEvidenceReadiness(input: PaymentDestinationReadi
     orderBy: [{ employeeNumber: "asc" }],
     take: parsed.limit,
   })
-  const mapped = (employees as EmployeeReadinessRecord[]).map((employee) => mapEmployeeReadiness(employee, parsed))
+  const mapped = (employees as EmployeeReadinessRecord[]).map((employee) =>
+    mapEmployeeReadiness(employee, parsed, documentEvidenceDecision),
+  )
   await writeAudit(client, {
     organizationId: parsed.organizationId,
     entityType: "PayrollPaymentEvidenceReadiness",
     entityId: parsed.employeeId ?? "payment-evidence-readiness",
     action: "PAYROLL_PAYMENT_EVIDENCE_READINESS_READ",
     actorId: parsed.actorId,
-    after: { employeeCount: mapped.length, paymentDestinationReadAllowed: canReadDestination, attendanceReadAllowed: canReadAttendance },
+    after: {
+      employeeCount: mapped.length,
+      paymentDestinationReadAllowed: canReadDestination,
+      attendanceReadAllowed: canReadAttendance,
+      documentEvidenceAccess: {
+        allowed: documentEvidenceDecision.allowed,
+        mode: documentEvidenceDecision.mode,
+        reasonCode: documentEvidenceDecision.reasonCode,
+        policy: documentEvidenceDecision.policy,
+      },
+    },
   })
 
   return {
     organizationId: parsed.organizationId,
+    redaction: {
+      documentEvidenceDecision: {
+        allowed: documentEvidenceDecision.allowed,
+        mode: documentEvidenceDecision.mode,
+        reasonCode: documentEvidenceDecision.reasonCode,
+        policy: documentEvidenceDecision.policy,
+      },
+    },
     asOf: new Date().toISOString(),
     employees: mapped,
     summary: {
@@ -645,7 +783,8 @@ export async function requestPaymentDestinationChange(
           workflowSource: "payroll.payment_destination_approval",
           sourceReference: parsed.sourceReference ?? null,
           rawPaymentDetailsStored: false,
-          redactionPolicy: "MASKED_AND_HASHED_ONLY",
+          redactionPolicy: "MASKED_AND_HMAC_ONLY",
+          privacyPolicy: PAYMENT_DESTINATION_PRIVACY_POLICY,
         }),
       },
       include: { employee: true },
@@ -675,7 +814,7 @@ export async function requestPaymentDestinationChange(
       action: "PAYROLL_PAYMENT_DESTINATION_CHANGE_REQUESTED",
       actorId: parsed.actorId,
       before: null,
-      after: mapped,
+      after: changeAuditSnapshot(mapped),
     })
     return { paymentDestinationChange: mapped, businessEventId }
   })
@@ -723,7 +862,9 @@ export async function approvePaymentDestinationChange(
       sourceId: approved.id,
       documentHash: parsed.approvalEvidenceHash,
       payload: changeEventPayload(approved, "approved"),
-      metadata: { decisionReason: parsed.decisionReason },
+      metadata: {
+        decisionReasonHash: hashBusinessPayload({ decisionReason: parsed.decisionReason }),
+      },
     })
     const updated = await tx.payrollPaymentDestinationChangeRequest.update({
       where: { id: approved.id, organizationId: parsed.organizationId },
@@ -739,7 +880,7 @@ export async function approvePaymentDestinationChange(
       action: "PAYROLL_PAYMENT_DESTINATION_CHANGE_APPROVED",
       actorId: parsed.actorId,
       before: { status: existing.status, requestedById: existing.requestedById },
-      after: mapped,
+      after: changeAuditSnapshot(mapped),
     })
     return { paymentDestinationChange: mapped, businessEventId }
   })
@@ -779,7 +920,9 @@ export async function rejectPaymentDestinationChange(
       sourceId: rejected.id,
       documentHash: rejected.evidenceDocumentHash,
       payload: changeEventPayload(rejected, "rejected"),
-      metadata: { decisionReason: parsed.decisionReason },
+      metadata: {
+        decisionReasonHash: hashBusinessPayload({ decisionReason: parsed.decisionReason }),
+      },
     })
     const mapped = mapChange(rejected)
 
@@ -790,7 +933,7 @@ export async function rejectPaymentDestinationChange(
       action: "PAYROLL_PAYMENT_DESTINATION_CHANGE_REJECTED",
       actorId: parsed.actorId,
       before: { status: existing.status, requestedById: existing.requestedById },
-      after: mapped,
+      after: changeAuditSnapshot(mapped),
     })
     return { paymentDestinationChange: mapped, businessEventId }
   })
@@ -813,6 +956,9 @@ export async function applyApprovedPaymentDestinationChange(
     }
     if (existing.requestedById === parsed.actorId) {
       throw new ForbiddenError("Payment destination requester cannot apply their own request.")
+    }
+    if (existing.approvedById === parsed.actorId) {
+      throw new ForbiddenError("Payment destination approver cannot apply their own approval.")
     }
     const appliedAt = new Date()
 
@@ -860,7 +1006,7 @@ export async function applyApprovedPaymentDestinationChange(
       action: "PAYROLL_PAYMENT_DESTINATION_CHANGE_APPLIED",
       actorId: parsed.actorId,
       before: { status: existing.status, employeePaymentDestinationHashPresent: Boolean(existing.employee.paymentDestinationHash) },
-      after: mapped,
+      after: changeAuditSnapshot(mapped),
     })
     return { paymentDestinationChange: mapped, businessEventId }
   })

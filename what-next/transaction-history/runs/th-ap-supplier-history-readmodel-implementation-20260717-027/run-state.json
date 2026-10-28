@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "1.0",
+  "runId": "th-ap-supplier-history-readmodel-implementation-20260717-027",
+  "traceId": "72f71709-b8e7-4e91-b1d6-09dc3d3d1447",
+  "sliceId": "ap-ar",
+  "mode": "implement",
+  "currentStage": "07",
+  "stages": {
+    "01": {
+      "status": "PASS",
+      "evidence": "what-next/transaction-history/runs/th-ap-supplier-history-security-accounting-20260717-026/slices/ap-ar/01-architecture-gate.json"
+    },
+    "02": {
+      "status": "PASS",
+      "evidence": "what-next/transaction-history/runs/th-ap-supplier-history-readmodel-implementation-20260717-027/slices/ap-ar/02-security-proof-gate.json"
+    },
+    "03": {
+      "status": "PASS",
+      "evidence": "what-next/transaction-history/runs/th-ap-supplier-history-readmodel-implementation-20260717-027/slices/ap-ar/03-accounting-control-gate.json"
+    },
+    "04": {
+      "status": "PASS",
+      "evidence": "what-next/transaction-history/runs/th-ap-supplier-history-readmodel-implementation-20260717-027/slices/ap-ar/04-read-model-optimizer.json"
+    },
+    "05": {
+      "status": "PASS",
+      "evidence": "what-next/transaction-history/runs/th-ap-supplier-history-readmodel-implementation-20260717-027/slices/ap-ar/05-workbench-ux-contract.json"
+    },
+    "06": {
+      "status": "PASS",
+      "evidence": "what-next/transaction-history/runs/th-ap-supplier-history-readmodel-implementation-20260717-027/slices/ap-ar/06-frontend-delivery.json"
+    },
+    "07": {
+      "status": "BLOCKED",
+      "evidence": "what-next/transaction-history/runs/th-ap-supplier-history-readmodel-implementation-20260717-027/slices/ap-ar/07-release-review.json"
+    }
+  },
+  "nextEligibleStages": [],
+  "updatedAt": "2026-07-17T06:48:08.920059+01:00"
+}

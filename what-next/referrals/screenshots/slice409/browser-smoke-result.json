@@ -1,0 +1,48 @@
+{
+  "slice": 409,
+  "date": "2026-08-01",
+  "route": "/en/dashboard/inventory/loss-control?from=2026-07-01&to=2026-07-31",
+  "decision": "authenticated_visual_certification_blocked",
+  "attempts": [
+    {
+      "name": "stored_auth_state",
+      "viewports": ["desktop_1440x1000", "mobile_390x844"],
+      "permissionStatus": 401,
+      "routeStatus": 200,
+      "finalSurface": "login",
+      "callbackPreserved": true,
+      "workbenchRendered": false,
+      "consoleErrors": 0,
+      "screenshots": [
+        "inventory-loss-desktop.png",
+        "inventory-loss-mobile.png"
+      ]
+    },
+    {
+      "name": "fresh_local_seeded_admin",
+      "viewports": ["desktop_1440x1000", "mobile_390x844"],
+      "loginStatus": 401,
+      "permissionStatus": 401,
+      "routeStatus": 200,
+      "finalSurface": "login",
+      "callbackPreserved": true,
+      "workbenchRendered": false,
+      "desktopConsoleErrors": 0,
+      "mobileConsoleErrors": 1,
+      "mobileConsoleErrorScope": "existing login-page hydration warning; changed workbench did not render",
+      "screenshots": [
+        "inventory-loss-authenticated-desktop.png",
+        "inventory-loss-authenticated-mobile.png"
+      ]
+    }
+  ],
+  "requiredForRerun": [
+    "valid tenant session",
+    "dashboard.read",
+    "inventory.levels.read",
+    "active inventory module entitlement",
+    "tenant-wide or managed-location operating authority",
+    "complete, partial, and empty inventory-loss fixtures"
+  ],
+  "claim": "These artifacts prove a safe authentication stop only. They do not certify the Slice 409 workbench layout or accessibility."
+}

@@ -22,7 +22,7 @@ const getCommandReadModel = protect<unknown, PayrollCommandReadModel>(
       moduleSlug: "payroll",
       surface: "payroll.command.read",
       accessIntent: "read",
-      mode: "enforce",
+      mode: "observe",
     },
   },
   async (input, ctx) => {

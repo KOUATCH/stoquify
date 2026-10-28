@@ -11,13 +11,14 @@ import { z } from "zod"
 
 import { hasAnyRbacPermission } from "@/lib/security/rbac-permissions"
 import { db } from "@/prisma/db"
-import { ConflictError, ForbiddenError, NotFoundError } from "@/services/_shared/action-errors"
+import { BusinessRuleError, ConflictError, ForbiddenError, NotFoundError } from "@/services/_shared/action-errors"
 import {
   hashBusinessPayload,
   markBusinessEventAppliedInTx,
   recordBusinessEventInTx,
 } from "@/services/events/business-event.service"
 import type { ModuleEntitlementDecision } from "@/services/modules/module-control-contracts"
+import { assertPayrollEmployeeLocationInOrganization } from "@/services/payroll/org-manager-scope.service"
 import { evaluateRedaction, type RedactionDecision } from "@/services/security/redaction-policy.service"
 
 type DbClient = typeof db | Prisma.TransactionClient
@@ -66,6 +67,8 @@ const employeeSourceDataInputSchema = z.object({
   actorId: z.string().trim().min(1).optional().nullable(),
   actorPermissions: z.array(z.string().trim().min(1)).default([]),
   employeeId: z.string().trim().min(1).optional(),
+  employeeIds: z.array(z.string().trim().min(1)).max(250).optional(),
+  userId: z.string().trim().min(1).optional(),
   limit: z.number().int().positive().max(100).default(50),
   asOf: z.coerce.date().optional(),
   moduleDecision: z.custom<ModuleEntitlementDecision>().optional().nullable(),
@@ -150,11 +153,12 @@ export type PayrollEmployeeSourceDataResult = {
   }
   redaction: {
     salaryDecision: Pick<RedactionDecision, "allowed" | "mode" | "reasonCode" | "policy">
+    documentEvidenceDecision: Pick<RedactionDecision, "allowed" | "mode" | "reasonCode" | "policy">
   }
 }
 
-const READ_PERMISSIONS = ["payroll.employees.read", "payroll.command.read"] as const
-const MANAGE_PERMISSIONS = ["payroll.employees.manage"] as const
+const READ_PERMISSIONS = ["hris.people.read", "payroll.employees.read", "payroll.command.read"] as const
+const MANAGE_PERMISSIONS = ["hris.people.manage", "payroll.employees.manage"] as const
 
 function assertPermission(actorPermissions: readonly string[] | null | undefined, required: readonly string[], action: string) {
   if (!hasAnyRbacPermission(actorPermissions, required)) {
@@ -233,6 +237,12 @@ function evidenceReferencesFromMetadata(metadata: unknown): PayrollHrEvidenceRef
     }))
 }
 
+function hasOpenHrisLifecycleRequest(metadata: unknown) {
+  const lifecycle = metadataRecord(metadataRecord(metadata).hrisLifecycle)
+  const pending = metadataRecord(lifecycle.pending)
+  return pending.status === "REQUESTED" || pending.status === "APPROVED"
+}
+
 function mergeEvidenceReferences(
   existingMetadata: unknown,
   newReferences: readonly PayrollHrEvidenceReference[],
@@ -290,6 +300,7 @@ function employeeAuditSnapshot(employee: {
   hireDate: Date
   terminationDate?: Date | null
   countryCode?: string | null
+  locationId?: string | null
   department?: string | null
   jobTitle?: string | null
   costCenter?: string | null
@@ -303,6 +314,7 @@ function employeeAuditSnapshot(employee: {
     hireDate: employee.hireDate.toISOString(),
     terminationDate: employee.terminationDate?.toISOString() ?? null,
     countryCode: employee.countryCode ?? null,
+    locationId: employee.locationId ?? null,
     department: employee.department ?? null,
     jobTitle: employee.jobTitle ?? null,
     costCenter: employee.costCenter ?? null,
@@ -316,6 +328,7 @@ async function auditEmployeeSourceDataRead(
     actorId?: string | null
     returnedCount: number
     salaryDecision: RedactionDecision
+    documentEvidenceDecision: RedactionDecision
   },
 ) {
   await client.auditLog.create({
@@ -326,12 +339,19 @@ async function auditEmployeeSourceDataRead(
       userId: input.actorId ?? null,
       organizationId: input.organizationId,
       changes: safeJson({
+        purpose: "HRIS_PAYROLL_EMPLOYEE_SOURCE_DATA_EVIDENCE_READ",
         returnedCount: input.returnedCount,
         salaryAccess: {
           allowed: input.salaryDecision.allowed,
           mode: input.salaryDecision.mode,
           reasonCode: input.salaryDecision.reasonCode,
           policy: input.salaryDecision.policy,
+        },
+        documentEvidenceAccess: {
+          allowed: input.documentEvidenceDecision.allowed,
+          mode: input.documentEvidenceDecision.mode,
+          reasonCode: input.documentEvidenceDecision.reasonCode,
+          policy: input.documentEvidenceDecision.policy,
         },
       }),
     },
@@ -390,6 +410,7 @@ function mapEmployeeSourceRecord(
   employee: PayrollEmployeeSourceRow,
   linkedUser: LinkedUserRow | null,
   asOf: Date,
+  documentEvidenceDecision: RedactionDecision,
 ): PayrollEmployeeSourceDataRecord {
   const evidenceReferences = evidenceReferencesFromMetadata(employee.metadata)
   const activeContracts = employee.contracts.filter((contract) => isActiveContract(contract, asOf))
@@ -405,6 +426,7 @@ function mapEmployeeSourceRecord(
   const blockers: string[] = []
 
   if (employee.status !== PayrollEmployeeStatus.ACTIVE) blockers.push("EMPLOYEE_NOT_ACTIVE")
+  if (hasOpenHrisLifecycleRequest(employee.metadata)) blockers.push("LIFECYCLE_REQUEST_PENDING")
   if (userMappingState !== "LINKED") blockers.push("USER_MAPPING_NOT_READY")
   if (activeContracts.length === 0) blockers.push("ACTIVE_CONTRACT_MISSING")
   if (activeContracts.length > 0 && !hasSignedDocumentEvidence) blockers.push("CONTRACT_EVIDENCE_MISSING")
@@ -433,7 +455,11 @@ function mapEmployeeSourceRecord(
     },
     evidence: {
       referenceCount: evidenceReferences.length,
-      latestDocumentHash: evidenceReferences[evidenceReferences.length - 1]?.documentHash ?? null,
+      latestDocumentHash: documentEvidenceDecision.allowed
+        ? evidenceReferences[evidenceReferences.length - 1]?.documentHash ?? null
+        : evidenceReferences.length > 0
+          ? documentEvidenceDecision.replacement
+          : null,
       referenceTypes: Array.from(new Set(evidenceReferences.map((reference) => reference.type))),
       hasTaxIdentifierHash: Boolean(employee.taxIdentifierHash),
       hasSocialIdentifierHash: Boolean(employee.socialIdentifierHash),
@@ -467,12 +493,20 @@ export async function getPayrollEmployeeSourceData(
     actorPermissions: parsed.actorPermissions,
     moduleDecision: parsed.moduleDecision ?? null,
   })
+  const documentEvidenceDecision = evaluateRedaction({
+    field: "PayrollEmployeeSourceData.evidence.latestDocumentHash",
+    category: "payroll_document_evidence",
+    actorPermissions: parsed.actorPermissions,
+    moduleDecision: parsed.moduleDecision ?? null,
+  })
 
   const employees = await client.payrollEmployee.findMany({
     where: {
       organizationId: parsed.organizationId,
       deletedAt: null,
       ...(parsed.employeeId ? { id: parsed.employeeId } : {}),
+      ...(!parsed.employeeId && parsed.employeeIds ? { id: { in: parsed.employeeIds } } : {}),
+      ...(parsed.userId ? { userId: parsed.userId } : {}),
     },
     orderBy: [{ displayName: "asc" }],
     take: parsed.limit,
@@ -524,13 +558,16 @@ export async function getPayrollEmployeeSourceData(
       })
     : []
   const userById = new Map(linkedUsers.map((user) => [user.id, user]))
-  const records = employees.map((employee) => mapEmployeeSourceRecord(employee, userById.get(employee.userId ?? "") ?? null, asOf))
+  const records = employees.map((employee) =>
+    mapEmployeeSourceRecord(employee, userById.get(employee.userId ?? "") ?? null, asOf, documentEvidenceDecision),
+  )
 
   await auditEmployeeSourceDataRead(client, {
     organizationId: parsed.organizationId,
     actorId: parsed.actorId,
     returnedCount: records.length,
     salaryDecision,
+    documentEvidenceDecision,
   })
 
   return {
@@ -553,6 +590,12 @@ export async function getPayrollEmployeeSourceData(
         reasonCode: salaryDecision.reasonCode,
         policy: salaryDecision.policy,
       },
+      documentEvidenceDecision: {
+        allowed: documentEvidenceDecision.allowed,
+        mode: documentEvidenceDecision.mode,
+        reasonCode: documentEvidenceDecision.reasonCode,
+        policy: documentEvidenceDecision.policy,
+      },
     },
   }
 }
@@ -565,6 +608,7 @@ export async function upsertPayrollEmployeeSourceProfile(
   assertPermission(parsed.actorPermissions, MANAGE_PERMISSIONS, "payroll employee source-data management")
   const rawInput = input && typeof input === "object" ? input as Record<string, unknown> : {}
   const userIdProvided = Object.prototype.hasOwnProperty.call(rawInput, "userId")
+  const statusProvided = Object.prototype.hasOwnProperty.call(rawInput, "status")
   const now = new Date()
   const requestPayloadHash = `sha256:${hashBusinessPayload({
     employeeNumber: parsed.employeeNumber,
@@ -602,6 +646,12 @@ export async function upsertPayrollEmployeeSourceProfile(
       if (!linkedUser) throw new NotFoundError("Linked user was not found in this organization")
     }
 
+    const locationId = await assertPayrollEmployeeLocationInOrganization(
+      tx,
+      parsed.organizationId,
+      parsed.locationId,
+    )
+
     const duplicateMatches = await tx.payrollEmployee.findMany({
       where: {
         organizationId: parsed.organizationId,
@@ -620,6 +670,7 @@ export async function upsertPayrollEmployeeSourceProfile(
         hireDate: true,
         terminationDate: true,
         countryCode: true,
+        locationId: true,
         department: true,
         jobTitle: true,
         costCenter: true,
@@ -636,6 +687,9 @@ export async function upsertPayrollEmployeeSourceProfile(
     if (existing?.userId && parsed.userId && existing.userId !== parsed.userId) {
       throw new ConflictError("Payroll employee is already linked to a different user.")
     }
+    if (existing && statusProvided && existing.status !== parsed.status) {
+      throw new BusinessRuleError("Existing employee status changes require the HRIS lifecycle workflow.")
+    }
 
     const metadata = safeJson(buildEmployeeMetadata(existing?.metadata, parsed, now))
     const data = {
@@ -643,11 +697,11 @@ export async function upsertPayrollEmployeeSourceProfile(
       employeeNumber: parsed.employeeNumber,
       displayName: parsed.displayName,
       legalName: parsed.legalName ?? null,
-      status: parsed.status,
+      status: existing && !statusProvided ? undefined : parsed.status,
       hireDate: parsed.hireDate,
       terminationDate: parsed.terminationDate ?? null,
       countryCode: normalizeCountryCode(parsed.countryCode),
-      locationId: parsed.locationId ?? null,
+      locationId,
       department: parsed.department ?? null,
       jobTitle: parsed.jobTitle ?? null,
       costCenter: parsed.costCenter ?? null,
@@ -670,7 +724,7 @@ export async function upsertPayrollEmployeeSourceProfile(
             hireDate: parsed.hireDate,
             terminationDate: parsed.terminationDate ?? null,
             countryCode: normalizeCountryCode(parsed.countryCode),
-            locationId: parsed.locationId ?? null,
+            locationId,
             department: parsed.department ?? null,
             jobTitle: parsed.jobTitle ?? null,
             costCenter: parsed.costCenter ?? null,

@@ -102,12 +102,18 @@ describe("offline local POS queue", () => {
     })
   })
 
-  it("blocks final fiscal numbering claims unless country policy explicitly permits them", async () => {
+  it("keeps final fiscal numbering unavailable to caller-controlled queue input", async () => {
     const config = queueConfig()
 
     await expect(
       enqueueOfflineLocalEvent(config, {
         eventType: "OFFLINE_RECEIPT_PROVISIONED",
+        metadata: {
+          offlineReceiptPolicy: {
+            finalFiscalNumberingPermitted: true,
+            receiptStatus: "COUNTRY_POLICY_PERMITTED",
+          },
+        },
         payload: {
           legalNumber: "CM-FINAL-0001",
           provisionalNumber: "LOCAL-1",
@@ -117,20 +123,18 @@ describe("offline local POS queue", () => {
 
     expect(loadOfflineLocalQueue(config).entries).toHaveLength(0)
 
-    const permitted = await enqueueOfflineLocalEvent(config, {
+    const provisional = await enqueueOfflineLocalEvent(config, {
       eventType: "OFFLINE_RECEIPT_PROVISIONED",
-      allowFinalFiscalNumbering: true,
       payload: {
-        legalNumber: "CM-FINAL-0001",
         provisionalNumber: "LOCAL-1",
       },
     })
 
-    expect(permitted.event.metadata).toEqual(
+    expect(provisional.event.metadata).toEqual(
       expect.objectContaining({
         offlineReceiptPolicy: expect.objectContaining({
-          finalFiscalNumberingPermitted: true,
-          receiptStatus: "COUNTRY_POLICY_PERMITTED",
+          finalFiscalNumberingPermitted: false,
+          receiptStatus: "PROVISIONAL_ONLY",
         }),
       }),
     )

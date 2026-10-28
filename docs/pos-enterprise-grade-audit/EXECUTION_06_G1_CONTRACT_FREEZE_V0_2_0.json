@@ -1,0 +1,217 @@
+{
+  "schemaVersion": "1.0.0",
+  "artifactId": "STOQUIFY-POS-G1-CONTRACT-FREEZE-0.2.0-20260817",
+  "gateId": "G1",
+  "gateName": "Architecture and control contract freeze",
+  "contractVersion": "0.2.0",
+  "status": "READY_FOR_ACCOUNTABLE_REVIEW_NOT_APPROVED",
+  "productionAuthorized": false,
+  "statutoryCertified": false,
+  "candidate": {
+    "commit": "35b4cc6a06a50ee11de5bfce6b04993e38bd589a",
+    "tree": "7efce91d5ba871e91470f60ed3b53833a1c3b4b4",
+    "dirty": true,
+    "bindingClass": "ROLLING_TECHNICAL_REASSESSMENT_NOT_RELEASE_FREEZE"
+  },
+  "authority": {
+    "canonicalRoadmap": "docs/pos-enterprise-grade-audit/STOQUIFY_POS_AND_SALES_TO_CASH_MASTER_IMPLEMENTATION_ROADMAP_2026-08-17.md",
+    "canonicalDefinition": "G1 = architecture/control freeze; approval of D-01 through D-11 by product, architecture, accounting, inventory, payments, security, country-pack and operations owners.",
+    "legacyRoadmap": "docs/pos-enterprise-grade-audit/STOQUIFY_ENTERPRISE_SALES_TO_CASH_IMPLEMENTATION_ROADMAP_2026-08-17.md",
+    "legacyMapping": {
+      "legacyG0": "G1",
+      "legacyG1": "G2",
+      "legacyG2A": "G3A",
+      "legacyG2B": "G3B",
+      "legacyG3": "G4",
+      "legacyG4": "G5",
+      "legacyG5": "G6",
+      "legacyG6": "G7",
+      "legacyG7": "G8",
+      "legacyG8": "G9"
+    }
+  },
+  "currentAuthorizedScope": {
+    "environment": "DEVELOPMENT_ONLY",
+    "country": "Cameroon",
+    "currency": "XAF",
+    "locales": ["EN", "FR"],
+    "tenders": ["CASH"],
+    "electronicCapture": "DISABLED",
+    "offlineCapture": "DISABLED",
+    "storeCredit": "DISABLED",
+    "receipt": "NON_STATUTORY_DEVELOPMENT_ONLY",
+    "hardware": "SIMULATED_DESKTOP_BROWSER_PRINT_PREVIEW_AND_PDF_ONLY"
+  },
+  "decisions": [
+    {
+      "id": "D-01",
+      "title": "Store-credit tender disposition",
+      "selectedOption": "DISABLE_HIDE_AND_REJECT_STORE_CREDIT",
+      "technicalValidity": "VALID",
+      "implementationStatus": "ENFORCED_DEVELOPMENT_SCOPE",
+      "evidence": ["services/pos/pos.service.ts", "components/pos/ProfessionalPOSSystem.tsx"],
+      "requiredApproverRoles": ["Product owner", "Financial controller", "Payments owner"],
+      "approvals": [],
+      "approvalStatus": "PENDING_ACCOUNTABLE_APPROVERS"
+    },
+    {
+      "id": "D-02",
+      "title": "Physical terminal/register and drawer session boundary",
+      "selectedOption": "TERMINAL_CURRENT_SESSION_CAS_PLUS_ONE_SESSION_DRAWER_OPENING_CLAIM",
+      "technicalValidity": "VALID_WITH_DATABASE_INVARIANT_GAP",
+      "implementationStatus": "PARTIALLY_ENFORCED",
+      "evidence": ["prisma/schema.prisma:POSStation.currentSessionId", "services/pos/pos.service.ts:openPOSShift", "services/pos/pos.service.ts:commitPOSSale"],
+      "limitations": ["The terminal claim is unique/CAS protected; the drawer claim is evidenced by one session opening record but is not a dedicated unique active-drawer-claim aggregate."],
+      "requiredApproverRoles": ["Retail operations owner", "POS architect", "Security owner"],
+      "approvals": [],
+      "approvalStatus": "PENDING_ACCOUNTABLE_APPROVERS"
+    },
+    {
+      "id": "D-03",
+      "title": "First electronic payment provider",
+      "selectedOption": "ELECTRONIC_TENDER_DISABLED_UNTIL_NAMED_PROVIDER_APPROVED",
+      "technicalValidity": "VALID_FAIL_CLOSED",
+      "implementationStatus": "DISABLED_CURRENT_SCOPE",
+      "evidence": ["services/pos/pos.service.ts:assertSupportedSaleTenders", "components/pos/ProfessionalPOSSystem.tsx:tenderMethods"],
+      "requiredApproverRoles": ["Payments owner", "Treasury owner", "Security owner"],
+      "approvals": [],
+      "approvalStatus": "PENDING_ACCOUNTABLE_APPROVERS"
+    },
+    {
+      "id": "D-04",
+      "title": "Offline tender policy",
+      "selectedOption": "OFFLINE_CAPTURE_DISABLED",
+      "technicalValidity": "VALID_FAIL_CLOSED",
+      "implementationStatus": "DISABLED_CURRENT_SCOPE",
+      "evidence": ["services/pos/offline-sync.service.ts", "docs/pos-enterprise-grade-audit/EXECUTION_00_DECISION_REGISTER.json"],
+      "requiredApproverRoles": ["Product owner", "Risk owner", "Retail operations owner"],
+      "approvals": [],
+      "approvalStatus": "PENDING_ACCOUNTABLE_APPROVERS"
+    },
+    {
+      "id": "D-05",
+      "title": "Browser, terminal and peripheral support matrix",
+      "selectedOption": "EDGE_151_WINDOWS_10_25H2_SIMULATED_DESKTOP_PDF_ONLY_DEVELOPMENT",
+      "technicalValidity": "VALID_LIMITED_SCOPE",
+      "implementationStatus": "DEVELOPMENT_MATRIX_DECLARED_NOT_PHYSICALLY_CERTIFIED",
+      "evidence": ["docs/pos-enterprise-grade-audit/templates/TEMPLATE-04-HARDWARE-COMPLIANCE-MATRIX_FILLED_20260817.md"],
+      "requiredApproverRoles": ["Retail operations owner", "QA owner", "Support owner"],
+      "approvals": [],
+      "approvalStatus": "PENDING_SIGNED_MATRIX_OR_PRODUCTION_EXCLUSION"
+    },
+    {
+      "id": "D-06",
+      "title": "Returns, voids and refunds policy",
+      "selectedOption": "LINKED_COMPENSATING_FULL_SALE_REFUND_AND_VOID_CURRENT_SCOPE",
+      "technicalValidity": "VALID_TARGET_PARTIAL_IMPLEMENTATION",
+      "implementationStatus": "FRESH_AUTH_AND_COMPENSATING_EVENTS_PRESENT_PARTIAL_RETURN_AND_MAKER_CHECKER_MISSING",
+      "evidence": ["actions/pos/tender.actions.ts", "services/pos/pos.service.ts:refundPOSSale", "services/pos/pos.service.ts:voidPOSSale", "services/accounting/postings/post-refund.ts", "services/accounting/postings/post-void.ts"],
+      "limitations": ["No partial line/quantity return aggregate, inspection/disposition workflow, materiality threshold or maker-checker approval contract is production-proven."],
+      "requiredApproverRoles": ["Financial controller", "Retail operations owner", "Risk owner"],
+      "approvals": [],
+      "approvalStatus": "PENDING_ACCOUNTABLE_APPROVERS"
+    },
+    {
+      "id": "D-07",
+      "title": "Pilot country, currency, language and fiscal profile",
+      "selectedOption": "CAMEROON_XAF_EN_FR_DEVELOPMENT_ONLY",
+      "technicalValidity": "VALID_LIMITED_SCOPE",
+      "implementationStatus": "DEVELOPMENT_ONLY_COUNTRY_PACK_FAILS_CLOSED_FOR_PRODUCTION",
+      "evidence": ["what-next/statutory-country-pack-production-readiness.json", "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/manifest.json"],
+      "requiredApproverRoles": ["Product owner", "Financial controller", "Qualified Cameroon country-pack reviewer"],
+      "approvals": [],
+      "approvalStatus": "PENDING_QUALIFIED_COUNTRY_REVIEW_AND_ACCOUNTABLE_APPROVERS"
+    },
+    {
+      "id": "D-08",
+      "title": "Pilot service levels and error budgets",
+      "selectedOption": "NO_PRODUCTION_SLO_UNTIL_D05_MATRIX_AND_MEASURED_BASELINE",
+      "technicalValidity": "VALID",
+      "implementationStatus": "TARGET_CONTRACT_NOT_BASELINED",
+      "requiredApproverRoles": ["SRE owner", "Product owner", "Support owner"],
+      "approvals": [],
+      "approvalStatus": "PENDING_BASELINE_AND_ACCOUNTABLE_APPROVERS"
+    },
+    {
+      "id": "D-09",
+      "title": "Delivery invoice recognition event",
+      "selectedOption": "ORDER_CONFIRMATION_NON_POSTING_INVOICE_FROM_ACCEPTED_DELIVERED_QUANTITY",
+      "technicalValidity": "VALID_ACCOUNTING_TARGET",
+      "implementationStatus": "NOT_IMPLEMENTED_AS_DELIVERY_O2C_AGGREGATES",
+      "evidence": ["prisma/schema.prisma:SalesOrderStatus"],
+      "requiredApproverRoles": ["Financial controller", "Order-to-cash product owner", "Qualified accounting reviewer"],
+      "approvals": [],
+      "approvalStatus": "PENDING_ACCOUNTABLE_AND_QUALIFIED_APPROVERS"
+    },
+    {
+      "id": "D-10",
+      "title": "Reservation, availability and goods-issue policy",
+      "selectedOption": "RESERVATION_AFFECTS_AVAILABILITY_ONLY_PHYSICAL_ISSUE_OWNS_STOCK_AND_COGS",
+      "technicalValidity": "VALID_INVENTORY_ACCOUNTING_TARGET",
+      "implementationStatus": "IMMEDIATE_POS_GOODS_ISSUE_PRESENT_DELIVERY_RESERVATION_AGGREGATE_NOT_IMPLEMENTED",
+      "evidence": ["services/inventory/inventory-stock-event.service.ts:postPOSStockIssue", "services/inventory/inventory-stock-event.service.ts:postStockReservation"],
+      "requiredApproverRoles": ["Inventory controller", "Fulfillment owner", "Accounting owner"],
+      "approvals": [],
+      "approvalStatus": "PENDING_ACCOUNTABLE_APPROVERS"
+    },
+    {
+      "id": "D-11",
+      "title": "Business-day, statement, reconciliation and accounting-close boundary",
+      "selectedOption": "KEEP_SESSION_DRAWER_BUSINESS_DAY_STATEMENT_RECONCILIATION_AND_CLOSE_SEPARATE",
+      "technicalValidity": "VALID_CONTROL_TARGET",
+      "implementationStatus": "SESSION_STATEMENT_RECONCILIATION_AND_ACCOUNTING_PERIOD_PRESENT_BUSINESS_DAY_AGGREGATE_MISSING",
+      "evidence": ["prisma/schema.prisma:POSSession", "prisma/schema.prisma:StatementFile", "prisma/schema.prisma:ReconciliationRun", "services/accounting/periods.service.ts"],
+      "requiredApproverRoles": ["Financial controller", "Treasury owner", "Retail operations owner"],
+      "approvals": [],
+      "approvalStatus": "PENDING_ACCOUNTABLE_APPROVERS"
+    }
+  ],
+  "stateMachines": [
+    {"id":"POS_CART","canonicalStates":["OPEN","CHECKOUT_PENDING","COMPLETED","ABANDONED","CONFLICT"],"runtimeMapping":{"OPEN":"SalesOrder.DRAFT","COMPLETED":"SalesOrder.COMPLETED"},"implementationStatus":"PARTIAL_MAPPING","gap":"CHECKOUT_PENDING, ABANDONED and CONFLICT are not durable SalesOrder states."},
+    {"id":"POS_SALE_COMMIT","canonicalStates":["CLAIMED","COMMITTED","COMPLETED","CONFLICT","CORRECTION_REQUIRED"],"runtimeMapping":{"CLAIMED":"POSCommitResult.CLAIMED","COMMITTED":"POSCommitResult.COMMITTED","COMPLETED":"POSCommitResult.COMPLETED","CONFLICT":"audited rejection"},"implementationStatus":"PARTIAL_MAPPING","gap":"CORRECTION_REQUIRED is not a durable commit-result state."},
+    {"id":"PAYMENT_ATTEMPT","canonicalStates":["CREATED","PENDING_PROVIDER","UNKNOWN","CAPTURED","FAILED","REVERSED","REFUNDED"],"runtimeMapping":{"CREATED":"PaymentTransaction.PENDING","PENDING_PROVIDER":"PaymentTransaction.PROCESSING","CAPTURED":"PaymentTransaction.CONFIRMED","FAILED":"PaymentTransaction.FAILED","REFUNDED":"PaymentTransaction.REFUNDED"},"implementationStatus":"DISABLED_AND_UNMAPPED","gap":"UNKNOWN and REVERSED are not explicit runtime states; no named provider state map is approved."},
+    {"id":"SETTLEMENT_ITEM","canonicalStates":["UNMATCHED","MATCHED","SUSPENSE","RESOLVED"],"runtimeMapping":{"UNMATCHED":"StatementLine.UNMATCHED","MATCHED":"StatementLine.MATCHED","SUSPENSE":"PaymentTransaction.SUSPENSE","RESOLVED":"PaymentException.RESOLVED"},"implementationStatus":"PARTIAL_MULTI_AGGREGATE_MAPPING","gap":"One authoritative settlement-item reducer contract is not frozen."},
+    {"id":"RECEIPT_FISCAL_SOURCE","canonicalStates":["MATERIALIZED","FISCAL_PENDING","FISCAL_ACCEPTED","FISCAL_REJECTED","CORRECTED"],"runtimeMapping":{"FISCAL_PENDING":"FiscalDocument.QUEUED/SUBMITTED","FISCAL_ACCEPTED":"FiscalDocument.CERTIFIED","FISCAL_REJECTED":"FiscalDocument.REJECTED","CORRECTED":"FiscalDocument.REVERSED plus linked corrective document"},"implementationStatus":"PARTIAL_MAPPING","gap":"Every completed sale does not yet return a materialized immutable receipt/fiscal-source record."},
+    {"id":"RECEIPT_DELIVERY","canonicalStates":["QUEUED","DELIVERED","RETRY_REQUIRED","DEAD_LETTER"],"runtimeMapping":{"QUEUED":"ReceiptDeliveryStatus.PENDING","DELIVERED":"ReceiptDeliveryStatus.SENT","RETRY_REQUIRED":"ReceiptDeliveryStatus.FAILED"},"implementationStatus":"NON_DURABLE_PRESENTATION_MAPPING","gap":"Receipt delivery is not a durable aggregate with retry/dead-letter state evidence."},
+    {"id":"CASHIER_SESSION","canonicalStates":["OPEN","DECLARATION_PENDING","DECLARED","REVIEWED","CLOSED"],"runtimeMapping":{"OPEN":"POSSession.ACTIVE","CLOSED":"POSSession.CLOSED","REVIEWED":"POSSession.RECONCILED"},"implementationStatus":"PARTIAL_MAPPING","gap":"Blind declaration and separate reviewer states are not explicit."},
+    {"id":"BUSINESS_DAY","canonicalStates":["OPEN","CLOSE_PENDING","CLOSED","INVALIDATED","REOPEN_REQUIRES_APPROVAL"],"runtimeMapping":{},"implementationStatus":"NOT_IMPLEMENTED","gap":"No governed business-day aggregate exists."},
+    {"id":"SALES_ORDER","canonicalStates":["DRAFT","CONFIRMED","PARTIALLY_FULFILLED","FULFILLED","CANCELLED"],"runtimeMapping":{"DRAFT":"SalesOrder.DRAFT","CONFIRMED":"SalesOrder.CONFIRMED","PARTIALLY_FULFILLED":"legacy PROCESSING/SHIPPED cannot be treated as an authoritative quantity state","FULFILLED":"legacy DELIVERED/COMPLETED requires quantity evidence","CANCELLED":"SalesOrder.CANCELLED"},"implementationStatus":"LEGACY_LABELS_NOT_FROZEN_O2C","gap":"Partial fulfillment must be quantity-derived from fulfillment evidence, not inferred from a label."},
+    {"id":"RESERVATION","canonicalStates":["ACTIVE","PARTIALLY_CONSUMED","CONSUMED","RELEASED","EXPIRED"],"runtimeMapping":{},"implementationStatus":"NOT_IMPLEMENTED_AS_AGGREGATE","gap":"Reserved quantity support is not a versioned reservation lifecycle."},
+    {"id":"FULFILLMENT","canonicalStates":["RELEASED","PICKED","PACKED","ISSUED","DELIVERED","REVERSED"],"runtimeMapping":{},"implementationStatus":"NOT_IMPLEMENTED","gap":"Delivery fulfillment aggregate and exactly-once goods-issue command are absent."},
+    {"id":"CUSTOMER_INVOICE","canonicalStates":["DRAFT","ISSUED","PARTIALLY_PAID","PAID","CREDITED","VOIDED_BY_CORRECTION"],"runtimeMapping":{},"implementationStatus":"NOT_IMPLEMENTED_AS_DELIVERY_INVOICE_AGGREGATE","gap":"Current customer receivable documents do not prove delivered-quantity invoice eligibility."},
+    {"id":"RETURN","canonicalStates":["REQUESTED","AUTHORIZED","RECEIVED","INSPECTED","DISPOSITIONED","COMPLETED"],"runtimeMapping":{"COMPLETED":"full-sale POS refund/void compensating workflow"},"implementationStatus":"PARTIAL_CORRECTION_ONLY","gap":"No partial return authorization, receipt, inspection or disposition aggregate exists."},
+    {"id":"RECONCILIATION_RUN","canonicalStates":["DRAFT","RUNNING","NEEDS_REVIEW","BLOCKED","READY_FOR_SIGNOFF","SIGNED","FAILED","VOIDED"],"runtimeMapping":{"exact":"ReconciliationRunStatus"},"implementationStatus":"IMPLEMENTED_SCHEMA_CONTRACT"}
+  ],
+  "eventContracts": [
+    {"eventType":"pos.sale.finalized","version":1,"owner":"commitPOSSale transaction","accounting":"sale and cash payment postings balance","inventory":"pos.sale.stock_issued occurs exactly once","status":"IMPLEMENTED_DEVELOPMENT_SCOPE"},
+    {"eventType":"pos.sale.stock_issued","version":1,"owner":"inventory stock-event kernel","accounting":"Dr COGS / Cr inventory through source-linked posting","inventory":"decrease on-hand","status":"IMPLEMENTED_DEVELOPMENT_SCOPE"},
+    {"eventType":"pos.refund.issued","version":1,"owner":"refundPOSSale transaction","accounting":"linked compensating refund posting","inventory":"pos.refund.stock_returned","status":"IMPLEMENTED_FULL_SALE_SCOPE"},
+    {"eventType":"pos.refund.stock_returned","version":1,"owner":"inventory stock-event kernel","accounting":"linked refund compensation","inventory":"increase stock from original movement evidence","status":"IMPLEMENTED_FULL_SALE_SCOPE"},
+    {"eventType":"pos.void.stock_returned","version":1,"owner":"inventory stock-event kernel","accounting":"linked void compensation","inventory":"increase stock from original movement evidence","status":"IMPLEMENTED_FULL_SALE_SCOPE"},
+    {"eventType":"pos.sale.voided","version":1,"owner":"voidPOSSale transaction","accounting":"linked compensating void posting","inventory":"pos.void.stock_returned","status":"IMPLEMENTED_FULL_SALE_SCOPE"},
+    {"eventType":"pos.shift.closed","version":1,"owner":"closePOSShift transaction","accounting":"cash variance evidence and posting linkage","inventory":"none","status":"IMPLEMENTED_DEVELOPMENT_SCOPE"},
+    {"eventType":"pos.sale.fiscalization.requested","version":1,"owner":"transactional business-event outbox","accounting":"binds sale posting batch","inventory":"none","status":"DEVELOPMENT_NON_STATUTORY_ONLY"},
+    {"eventType":"payment.provider.state_changed","version":1,"owner":"named provider adapter plus append-only provider ingestion","accounting":"no success posting for pending/unknown","inventory":"none","status":"TARGET_NOT_IMPLEMENTED_PROVIDER_DISABLED"},
+    {"eventType":"sales_order.confirmed","version":1,"owner":"delivery O2C orchestrator","accounting":"none","inventory":"none","status":"TARGET_NOT_IMPLEMENTED"},
+    {"eventType":"inventory.reservation.changed","version":1,"owner":"reservation aggregate","accounting":"none","inventory":"reserved/available only","status":"TARGET_NOT_IMPLEMENTED_AS_AGGREGATE"},
+    {"eventType":"fulfillment.goods_issued","version":1,"owner":"fulfillment command using inventory kernel","accounting":"Dr COGS / Cr inventory","inventory":"decrease on-hand and consume reservation","status":"TARGET_NOT_IMPLEMENTED"},
+    {"eventType":"customer.invoice.issued","version":1,"owner":"invoice aggregate","accounting":"Dr AR / Cr revenue and tax","inventory":"none","status":"TARGET_NOT_IMPLEMENTED"},
+    {"eventType":"customer.return.dispositioned","version":1,"owner":"return aggregate","accounting":"approved correction based on disposition","inventory":"sellable/quarantine/damage consequence","status":"TARGET_NOT_IMPLEMENTED"},
+    {"eventType":"business_day.closed","version":1,"owner":"governed business-day service","accounting":"close evidence only; accounting close remains separate","inventory":"none","status":"TARGET_NOT_IMPLEMENTED"}
+  ],
+  "approvalContract": {
+    "detachedApprovalRegister": "docs/pos-enterprise-grade-audit/EXECUTION_06_G1_CONTRACT_APPROVAL_REGISTER.json",
+    "hashBindingRule": "Do not insert approvals into or edit this contract after hashing. Each detached approval record must bind this artifactId, contractVersion, selectedOption and exact contract SHA-256, then reference externally verifiable signature evidence.",
+    "requiredFieldsPerDecision": ["selectedOption","rationale","accountableApprover","approverRole","authorityReference","freshAuthenticatedAt","approvedAt","effectiveVersion","reviewOrExpiryAt","evidenceLinks","affectedCapabilities","rollbackOrDisablePolicy","signatureReference","signatureEvidenceSha256"],
+    "requiredOwnerDomains": ["product","architecture","finance/accounting","inventory","payments/treasury","security/risk","operations/SRE/support","qualified country-pack"],
+    "completedDecisionApprovals": 0,
+    "requiredDecisionApprovals": 11,
+    "rule": "Technical validity and typed names are not approval. G1 remains blocked until every decision has authentic role authority, fresh authentication, signature evidence and required segregation."
+  },
+  "gateResult": {
+    "technicalContract": "READY_FOR_ACCOUNTABLE_REVIEW",
+    "runtimeConformance": "PARTIAL_WITH_EXPLICIT_GAPS",
+    "humanApproval": "BLOCKED_0_OF_11",
+    "overall": "BLOCKED"
+  }
+}

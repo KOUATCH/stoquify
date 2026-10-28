@@ -1,8 +1,11 @@
 jest.mock("server-only", () => ({}))
 
+import { adminPermissions } from "@/config/permissions"
 import { hashPolicyCompliantPassword, syncUserCredentialPassword, upsertCredentialAccount, verifyUserCredentialPassword } from "@/lib/security/auth-credentials"
 import { logSecurityEvent } from "@/lib/security/audit-log"
 import { db } from "@/prisma/db"
+import { recordReferralConversionInTx } from "@/services/referrals/referral-attribution.service"
+import { enforcePublicIdentityAbuseLimits } from "@/services/security/public-identity-abuse.service"
 import {
   acceptInvitationWorkflow,
   changeUserPasswordWorkflow,
@@ -72,6 +75,14 @@ jest.mock("@/lib/security/audit-log", () => ({
   logSecurityEvent: jest.fn(),
 }))
 
+jest.mock("@/services/security/public-identity-abuse.service", () => ({
+  enforcePublicIdentityAbuseLimits: jest.fn(),
+}))
+
+jest.mock("@/services/referrals/referral-attribution.service", () => ({
+  recordReferralConversionInTx: jest.fn(),
+}))
+
 jest.mock("@/lib/security/server-authz", () => ({
   safeUserSelect: {
     id: true,
@@ -100,7 +111,9 @@ const mockVerifyUserCredentialPassword = verifyUserCredentialPassword as jest.Mo
 const mockSyncUserCredentialPassword = syncUserCredentialPassword as jest.Mock
 const mockUpsertCredentialAccount = upsertCredentialAccount as jest.Mock
 const mockLogSecurityEvent = logSecurityEvent as jest.Mock
+const mockEnforcePublicIdentityAbuseLimits = enforcePublicIdentityAbuseLimits as jest.Mock
 
+const mockRecordReferralConversionInTx = recordReferralConversionInTx as jest.Mock
 beforeEach(() => {
   mockDb.$transaction.mockReset()
   mockDb.user.findFirst.mockReset()
@@ -111,12 +124,52 @@ beforeEach(() => {
   mockSyncUserCredentialPassword.mockReset()
   mockUpsertCredentialAccount.mockReset()
   mockLogSecurityEvent.mockReset()
+  mockEnforcePublicIdentityAbuseLimits.mockReset()
+  mockRecordReferralConversionInTx.mockReset()
+  mockEnforcePublicIdentityAbuseLimits.mockResolvedValue({
+    allowed: true,
+    operation: "registration",
+    retryAfterSeconds: 0,
+  })
   mockHashPolicyCompliantPassword.mockResolvedValue({ ok: true, hash: "hash-1" })
   mockVerifyUserCredentialPassword.mockResolvedValue(true)
+  mockRecordReferralConversionInTx.mockResolvedValue(null)
 })
 
 function runTransactionWith(tx: unknown) {
   mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
+}
+
+type InviteRoleFixture = {
+  id: string
+  nameEn: string
+  nameFr: string | null
+  code: string
+  organizationId: string
+  permissions: string[]
+}
+
+const inviteActor = {
+  id: "admin-1",
+  organizationId: "org-1",
+  organizationName: "Demo Org",
+}
+const inviteGrantAuthority = ["users.invite", "users.roles.assign"]
+
+function buildInviteTransaction(role: InviteRoleFixture | null) {
+  return {
+    role: {
+      findFirst: jest.fn().mockResolvedValue(role),
+    },
+    user: {
+      findFirst: jest.fn().mockResolvedValue(null),
+    },
+    invite: {
+      findUnique: jest.fn().mockResolvedValue(null),
+      create: jest.fn().mockResolvedValue({ id: "invite-1" }),
+      update: jest.fn(),
+    },
+  }
 }
 
 describe("user identity service creation and invite workflows", () => {
@@ -153,6 +206,67 @@ describe("user identity service creation and invite workflows", () => {
       data: null,
     })
     expect(tx.organization.create).not.toHaveBeenCalled()
+  })
+
+  it("creates the legacy owner administrator role with canonical explicit permissions", async () => {
+    const verificationExpiresAt = new Date(Date.now() + 60_000)
+    const tx = {
+      user: {
+        findUnique: jest.fn().mockResolvedValueOnce(null).mockResolvedValueOnce(null),
+        create: jest.fn().mockResolvedValue({
+          id: "user-1",
+          email: "owner@example.com",
+          verificationToken: "123456",
+          verificationTokenExpires: verificationExpiresAt,
+        }),
+      },
+      organization: {
+        findUnique: jest.fn().mockResolvedValue(null),
+        create: jest.fn().mockResolvedValue({ id: "org-1" }),
+      },
+      role: {
+        findFirst: jest.fn().mockResolvedValue(null),
+        create: jest.fn().mockResolvedValue({ id: "role-1" }),
+      },
+      passwordHistory: {
+        create: jest.fn().mockResolvedValue({ id: "history-1" }),
+      },
+    }
+    runTransactionWith(tx)
+
+    const result = await createOrganizationOwner(
+      {
+        email: "Owner@Example.com",
+        password: "Password123!",
+        firstName: "Owner",
+        lastName: "One",
+        name: "Owner One",
+        organizationName: "Demo Org",
+        phone: "+237600000001",
+      },
+      { name: "Demo Org" },
+    )
+
+    expect(result).toEqual({
+      error: null,
+      status: 200,
+      data: {
+        id: "user-1",
+        email: "owner@example.com",
+        organizationId: "org-1",
+      },
+    })
+    expect(tx.role.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        code: "admin",
+        permissions: ["*", ...adminPermissions],
+        organizationId: "org-1",
+      }),
+    })
+    const createdPermissions = tx.role.create.mock.calls[0][0].data.permissions
+    expect(createdPermissions).toEqual(
+      expect.arrayContaining(["users.invite", "users.roles.assign"]),
+    )
   })
 
   it("expires stale invitations without creating a user", async () => {
@@ -195,7 +309,14 @@ describe("user identity service creation and invite workflows", () => {
   it("does not issue duplicate pending invitations", async () => {
     const tx = {
       role: {
-        findFirst: jest.fn().mockResolvedValue({ id: "role-1", nameEn: "Cashier", nameFr: null }),
+        findFirst: jest.fn().mockResolvedValue({
+          id: "role-1",
+          nameEn: "Cashier",
+          nameFr: null,
+          code: "cashier",
+          organizationId: "org-1",
+          permissions: [],
+        }),
       },
       user: {
         findFirst: jest.fn().mockResolvedValue(null),
@@ -213,7 +334,8 @@ describe("user identity service creation and invite workflows", () => {
     runTransactionWith(tx)
 
     const result = await sendInviteWorkflow({
-      actor: { id: "admin-1", organizationId: "org-1", organizationName: "Demo Org" },
+      actor: inviteActor,
+      actorPermissions: inviteGrantAuthority,
       email: "User@Example.com",
       roleId: "role-1",
     })
@@ -225,6 +347,153 @@ describe("user identity service creation and invite workflows", () => {
     })
     expect(tx.invite.create).not.toHaveBeenCalled()
     expect(tx.invite.update).not.toHaveBeenCalled()
+  })
+
+  it("rejects invitations without role-assignment authority before opening a transaction", async () => {
+    const result = await sendInviteWorkflow({
+      actor: inviteActor,
+      actorPermissions: ["users.invite", "dashboard.read"],
+      email: "user@example.com",
+      roleId: "role-1",
+    })
+
+    expect(result).toEqual({
+      error: "You are not allowed to invite users with roles",
+      status: 403,
+      data: null,
+    })
+    expect(mockDb.$transaction).not.toHaveBeenCalled()
+  })
+
+  it("rejects invitation target roles containing wildcard permissions", async () => {
+    const tx = buildInviteTransaction({
+      id: "role-1",
+      nameEn: "Administrator",
+      nameFr: null,
+      code: "administrator",
+      organizationId: "org-1",
+      permissions: ["*"],
+    })
+    runTransactionWith(tx)
+
+    const result = await sendInviteWorkflow({
+      actor: inviteActor,
+      actorPermissions: [...inviteGrantAuthority, "dashboard.read"],
+      email: "user@example.com",
+      roleId: "role-1",
+    })
+
+    expect(result).toEqual({
+      error: "You cannot grant the selected role",
+      status: 403,
+      data: null,
+    })
+    expect(tx.user.findFirst).not.toHaveBeenCalled()
+    expect(tx.invite.create).not.toHaveBeenCalled()
+  })
+
+  it("rejects invitation target roles above the actor's explicit permission ceiling", async () => {
+    const tx = buildInviteTransaction({
+      id: "role-1",
+      nameEn: "Controller",
+      nameFr: null,
+      code: "controller",
+      organizationId: "org-1",
+      permissions: ["dashboard.read", "accounting.period.close"],
+    })
+    runTransactionWith(tx)
+
+    const result = await sendInviteWorkflow({
+      actor: inviteActor,
+      actorPermissions: [...inviteGrantAuthority, "dashboard.read", "*"],
+      email: "user@example.com",
+      roleId: "role-1",
+    })
+
+    expect(result).toEqual({
+      error: "You cannot grant the selected role",
+      status: 403,
+      data: null,
+    })
+    expect(tx.user.findFirst).not.toHaveBeenCalled()
+    expect(tx.invite.create).not.toHaveBeenCalled()
+  })
+
+  it("rejects an invitation role belonging to another tenant", async () => {
+    const tx = buildInviteTransaction({
+      id: "role-2",
+      nameEn: "Cashier",
+      nameFr: null,
+      code: "cashier",
+      organizationId: "org-2",
+      permissions: ["dashboard.read"],
+    })
+    runTransactionWith(tx)
+
+    const result = await sendInviteWorkflow({
+      actor: inviteActor,
+      actorPermissions: [...inviteGrantAuthority, "dashboard.read"],
+      email: "user@example.com",
+      roleId: "role-2",
+    })
+
+    expect(result).toEqual({
+      error: "Invalid role for this organization",
+      status: 403,
+      data: null,
+    })
+    expect(tx.role.findFirst).toHaveBeenCalledWith({
+      where: { id: "role-2", organizationId: "org-1" },
+      select: {
+        id: true,
+        nameEn: true,
+        nameFr: true,
+        code: true,
+        organizationId: true,
+        permissions: true,
+      },
+    })
+    expect(tx.user.findFirst).not.toHaveBeenCalled()
+  })
+
+  it("creates an invitation for a same-tenant role within the actor's explicit ceiling", async () => {
+    const tx = buildInviteTransaction({
+      id: "role-1",
+      nameEn: "Cashier",
+      nameFr: null,
+      code: "cashier",
+      organizationId: "org-1",
+      permissions: ["dashboard.read"],
+    })
+    runTransactionWith(tx)
+
+    const result = await sendInviteWorkflow({
+      actor: inviteActor,
+      actorPermissions: [...inviteGrantAuthority, "dashboard.read"],
+      email: "User@Example.com",
+      roleId: "role-1",
+    })
+
+    expect(result).toEqual({
+      error: null,
+      status: 200,
+      data: { id: "email-1" },
+    })
+    expect(tx.invite.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        email: "user@example.com",
+        organizationId: "org-1",
+        roleId: "role-1",
+      }),
+    })
+    expect(mockLogSecurityEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        userId: "admin-1",
+        organizationId: "org-1",
+        resource: "user@example.com",
+        details: { roleId: "role-1" },
+      }),
+    )
   })
 
   it("persists v2 registration onboarding context and creates a verified workflow payload", async () => {
@@ -287,6 +556,9 @@ describe("user identity service creation and invite workflows", () => {
       requestedModules: ["POS", "Inventory", "POS", "Accounting"],
       assistedSetupRequested: true,
       onboardingSource: "aqstoqflow-register-v2",
+      referralCode: "referral_code_123",
+      accountantInviteToken: "invite-token-" + "a".repeat(32),
+      accountantInviteAccepted: true,
       password: "StrongPassword123!",
       confirmPassword: "StrongPassword123!",
       termsAccepted: true,
@@ -309,7 +581,7 @@ describe("user identity service creation and invite workflows", () => {
           branchCount: "2-3",
           primaryPain: "Full operating system",
           setupRole: "owner",
-          requestedModules: ["POS", "Inventory", "Accounting"],
+          requestedModules: ["POS", "Sales", "Inventory", "Accounting"],
           assistedSetupRequested: true,
         },
       },
@@ -327,11 +599,22 @@ describe("user identity service creation and invite workflows", () => {
         branchCount: "2-3",
         primaryPain: "Full operating system",
         setupRole: "owner",
-        requestedModules: ["POS", "Inventory", "Accounting"],
+        requestedModules: ["POS", "Sales", "Inventory", "Accounting"],
         assistedSetupRequested: true,
         onboardingSource: "aqstoqflow-register-v2",
       }),
     })
+    expect(tx.role.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        code: "administrator",
+        permissions: ["*", ...adminPermissions],
+        organizationId: "org-1",
+      }),
+    })
+    const createdPermissions = tx.role.create.mock.calls[0][0].data.permissions
+    expect(createdPermissions).toEqual(
+      expect.arrayContaining(["users.invite", "users.roles.assign"]),
+    )
     expect(tx.location.create).toHaveBeenCalledWith({
       data: expect.objectContaining({
         name: "Main branch",
@@ -344,6 +627,15 @@ describe("user identity service creation and invite workflows", () => {
     expect(mockUpsertCredentialAccount).toHaveBeenCalledWith(tx, {
       userId: "user-1",
       passwordHash: "hash-1",
+    })
+    expect(mockRecordReferralConversionInTx).toHaveBeenCalledWith(tx, {
+      referralCode: "referral_code_123",
+      targetOrganizationId: "org-1",
+      subject: "owner@example.com",
+      targetUserId: "user-1",
+      accountantInviteToken: "invite-token-" + "a".repeat(32),
+      accountantInviteAccepted: true,
+      now: expect.any(Date),
     })
     expect(mockLogSecurityEvent).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -469,5 +761,101 @@ describe("user identity service password and auth edge cases", () => {
         resource: "user@example.com",
       }),
     )
+  })
+  it("blocks registration before password hashing or tenant creation when throttled", async () => {
+    mockEnforcePublicIdentityAbuseLimits.mockResolvedValue({
+      allowed: false,
+      operation: "registration",
+      retryAfterSeconds: 3600,
+    })
+
+    const result = await createOrganizationOwner(
+      {
+        email: "owner@example.com",
+        password: "Password123!",
+        firstName: "Owner",
+        lastName: "One",
+        name: "Owner One",
+        organizationName: "Demo Org",
+        phone: "+237600000001",
+      },
+      { name: "Demo Org" },
+      { ipAddress: "203.0.113.10" },
+    )
+
+    expect(result).toMatchObject({ status: 429, data: null })
+    expect(mockHashPolicyCompliantPassword).not.toHaveBeenCalled()
+    expect(mockDb.$transaction).not.toHaveBeenCalled()
+  })
+
+  it("blocks invitation redemption before token lookup when throttled", async () => {
+    mockEnforcePublicIdentityAbuseLimits.mockResolvedValue({
+      allowed: false,
+      operation: "invitation_redemption",
+      retryAfterSeconds: 1800,
+    })
+
+    const result = await acceptInvitationWorkflow(
+      { token: "invite-token", password: "Password123!" },
+      { ipAddress: "203.0.113.10" },
+    )
+
+    expect(result).toEqual({
+      error: "Too many invitation attempts. Please try again later.",
+      status: 429,
+      data: null,
+    })
+    expect(mockDb.$transaction).not.toHaveBeenCalled()
+  })
+
+  it("keeps throttled reset-link requests generic and skips account lookup", async () => {
+    mockEnforcePublicIdentityAbuseLimits.mockResolvedValue({
+      allowed: false,
+      operation: "password_reset_request",
+      retryAfterSeconds: 1800,
+    })
+
+    const result = await requestPasswordResetLinkWorkflow(
+      "user@example.com",
+      { ipAddress: "203.0.113.10" },
+    )
+
+    expect(result).toEqual({ status: 200, error: null, data: null })
+    expect(mockDb.user.findFirst).not.toHaveBeenCalled()
+  })
+
+  it("blocks reset completion before token lookup when throttled", async () => {
+    mockEnforcePublicIdentityAbuseLimits.mockResolvedValue({
+      allowed: false,
+      operation: "password_reset_completion",
+      retryAfterSeconds: 1800,
+    })
+
+    const result = await completePasswordResetWorkflow(
+      "user@example.com",
+      "reset-token",
+      "Password123!",
+      { ipAddress: "203.0.113.10" },
+    )
+
+    expect(result).toMatchObject({ status: 429, data: null })
+    expect(mockDb.user.findFirst).not.toHaveBeenCalled()
+  })
+
+  it("blocks OTP verification before user lookup when throttled", async () => {
+    mockEnforcePublicIdentityAbuseLimits.mockResolvedValue({
+      allowed: false,
+      operation: "email_otp_verification",
+      retryAfterSeconds: 1800,
+    })
+
+    const result = await verifyEmailOtpWorkflow(
+      "user-1",
+      "123456",
+      { ipAddress: "203.0.113.10" },
+    )
+
+    expect(result).toEqual({ status: 429 })
+    expect(mockDb.user.findUnique).not.toHaveBeenCalled()
   })
 })

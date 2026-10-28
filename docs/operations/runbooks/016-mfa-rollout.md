@@ -14,7 +14,7 @@ Generate locally:
 DATABASE_URL="<dev-url>" npx prisma migrate dev --name add_user_mfa_fields
 ```
 
-Smoke-test on staging then deploy. `vercel-build` runs `prisma migrate deploy` automatically.
+Smoke-test on staging, then deploy through `npm run build`; its guarded migration runner applies pending migrations only to the validated production target.
 
 ## Step 2 — Generate the encryption key + set in Vercel
 

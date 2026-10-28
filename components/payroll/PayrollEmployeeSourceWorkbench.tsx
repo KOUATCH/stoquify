@@ -1,3 +1,5 @@
+"use client"
+
 import Link from "next/link"
 import {
   AlertTriangle,
@@ -12,6 +14,11 @@ import {
 import type { PayrollEmployeeSourceDataResult } from "@/actions/payroll/payroll-employee.actions"
 import { localizePath } from "@/i18n/routing"
 import type { Locale } from "@/types/bilingual"
+import {
+  HrPayrollTableControls,
+  HrPayrollTablePagination,
+  useHrPayrollTable,
+} from "@/components/hr-payroll/HrPayrollTableControls"
 
 type Props = {
   data: PayrollEmployeeSourceDataResult | null
@@ -97,6 +104,18 @@ function blockerLabel(blockers: readonly string[]) {
 }
 
 export default function PayrollEmployeeSourceWorkbench({ data, error, locale }: Props) {
+  const employeeTable = useHrPayrollTable({
+    rows: data?.employees ?? [],
+    searchText: (employee) => JSON.stringify(employee),
+    dateValue: (employee) => employee.employment.hireDate ?? employee.attendanceReadiness.latestFrozenPeriodEnd ?? data?.asOf,
+    sortOptions: [
+      { key: "employee", label: "Employee", value: (employee) => employee.displayName },
+      { key: "status", label: "Status", value: (employee) => employee.status },
+      { key: "hire-date", label: "Hire date", value: (employee) => employee.employment.hireDate },
+      { key: "readiness", label: "Blockers", value: (employee) => employee.blockers.length },
+    ],
+  })
+
   if (error) return <ErrorPanel message={error} />
   if (!data) return <EmptyState />
 
@@ -136,7 +155,13 @@ export default function PayrollEmployeeSourceWorkbench({ data, error, locale }: 
         <div className="border-b border-white/10 px-4 py-3">
           <h2 className="text-sm font-semibold text-white">Readiness rows</h2>
         </div>
-        <div className="overflow-x-auto">
+        <HrPayrollTableControls
+          table={employeeTable}
+          locale={locale}
+          tableLabel="employee readiness"
+          searchPlaceholder="Search employees, jobs, evidence, or blockers"
+        />
+        <div className="dashboard-data-table dashboard-table-shell overflow-x-auto">
           <table className="min-w-[1180px] w-full table-fixed border-collapse text-left text-sm">
             <thead className="border-b border-white/10 text-xs uppercase tracking-normal text-slate-400">
               <tr>
@@ -150,7 +175,7 @@ export default function PayrollEmployeeSourceWorkbench({ data, error, locale }: 
               </tr>
             </thead>
             <tbody className="divide-y divide-white/10">
-              {data.employees.map((employee) => (
+              {employeeTable.rows.length ? employeeTable.rows.map((employee) => (
                 <tr key={employee.id} className="align-top">
                   <td className="px-4 py-3">
                     <p className="break-words font-semibold text-white">{employee.displayName}</p>
@@ -195,10 +220,13 @@ export default function PayrollEmployeeSourceWorkbench({ data, error, locale }: 
                     <p className="break-words text-xs text-slate-300">{blockerLabel(employee.blockers)}</p>
                   </td>
                 </tr>
-              ))}
+              )) : (
+                <tr><td colSpan={7} className="px-4 py-8 text-center text-slate-400">No employee readiness rows match the table filters.</td></tr>
+              )}
             </tbody>
           </table>
         </div>
+        <HrPayrollTablePagination table={employeeTable} locale={locale} />
       </section>
     </main>
   )

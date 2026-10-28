@@ -1,8 +1,8 @@
 "use server"
 
-import { getAuthenticatedUser } from "@/lib/auth-server"
 import { inventoryAction, type ServerActionResult } from "@/lib/error-handling"
-import { AuthRequiredError, BusinessRuleError, ForbiddenError } from "@/services/_shared/action-errors"
+import { requirePermission } from "@/lib/security/rbac"
+import { BusinessRuleError, ForbiddenError } from "@/services/_shared/action-errors"
 import {
   createStockAdjustment as createStockAdjustmentService,
   requestManualItemStockAdjustment,
@@ -133,17 +133,30 @@ const outboundTransactionTypes = new Set<TransactionType>([
   TransactionType.PROMOTION,
 ])
 
-async function trustedInventoryContext(inputOrganizationId?: string) {
-  const user = await getAuthenticatedUser()
-  if (!user?.id || !user.organizationId) {
-    throw new AuthRequiredError("Authenticated inventory context is required")
-  }
-  if (inputOrganizationId && inputOrganizationId !== user.organizationId) {
+type InventoryPermissionOptions = {
+  permission: string
+  resource: string
+  resourceId?: string
+  auditAllowed?: boolean
+}
+
+async function trustedInventoryContext(
+  inputOrganizationId: string | undefined,
+  options: InventoryPermissionOptions,
+) {
+  const ctx = await requirePermission(options.permission, {
+    resource: options.resource,
+    ...(options.resourceId ? { resourceId: options.resourceId } : {}),
+    ...(options.auditAllowed !== undefined ? { auditAllowed: options.auditAllowed } : {}),
+  })
+
+  if (inputOrganizationId && inputOrganizationId !== ctx.orgId) {
     throw new ForbiddenError("Organization mismatch")
   }
+
   return {
-    organizationId: user.organizationId,
-    userId: user.id,
+    organizationId: ctx.orgId,
+    userId: ctx.userId,
   }
 }
 
@@ -159,7 +172,10 @@ export const getItems = inventoryAction(
     filters?: InventoryFilters
   }): Promise<ServerActionResult<ItemWithRelations[]>> => {
     const { organizationId, filters } = input
-    const ctx = await trustedInventoryContext(organizationId)
+    const ctx = await trustedInventoryContext(organizationId, {
+      permission: "inventory.items.read",
+      resource: "Item",
+    })
     const result = await listItemsWithRelations({
       organizationId: ctx.organizationId,
       q: filters?.search,
@@ -186,7 +202,11 @@ export const getItems = inventoryAction(
 export const getItem = inventoryAction(
   async (input: { id: string }): Promise<ServerActionResult<ItemWithRelations | null>> => {
     const { id } = input
-    const ctx = await trustedInventoryContext()
+    const ctx = await trustedInventoryContext(undefined, {
+      permission: "inventory.items.read",
+      resource: "Item",
+      resourceId: id,
+    })
     const item = await getItemWithRelations(ctx.organizationId, id)
     return { success: true, data: item as unknown as ItemWithRelations | null }
   },
@@ -208,7 +228,11 @@ export const createItem = inventoryAction(
     data: CreateItemRequest
   }): Promise<ServerActionResult<Item>> => {
     const { organizationId, data } = input
-    const ctx = await trustedInventoryContext(organizationId)
+    const ctx = await trustedInventoryContext(organizationId, {
+      permission: "inventory.items.create",
+      resource: "Item",
+      auditAllowed: true,
+    })
     const item = await createInventoryItem(ctx.organizationId, ctx.userId, {
       nameEn: data.name,
       nameFr: null,
@@ -242,7 +266,10 @@ export const getInventoryLevels = inventoryAction(
     filters?: InventoryFilters
   }): Promise<ServerActionResult<InventoryLevelWithRelations[]>> => {
     const { organizationId, filters } = input
-    const ctx = await trustedInventoryContext(organizationId)
+    const ctx = await trustedInventoryContext(organizationId, {
+      permission: "inventory.levels.read",
+      resource: "InventoryLevel",
+    })
     const levels = await readInventoryLevels({ organizationId: ctx.organizationId, filters })
     return { success: true, data: levels }
   },
@@ -263,7 +290,11 @@ export const updateInventoryLevel = inventoryAction(
     data: UpdateInventoryLevelRequest
   }): Promise<ServerActionResult<unknown>> => {
     const { data } = input
-    const ctx = await trustedInventoryContext()
+    const ctx = await trustedInventoryContext(undefined, {
+      permission: "inventory.levels.adjust",
+      resource: "InventoryLevel",
+      auditAllowed: true,
+    })
     const adjustment = await requestManualItemStockAdjustment({
       organizationId: ctx.organizationId,
       itemId: data.itemId,
@@ -295,7 +326,11 @@ export const reserveInventory = inventoryAction(
     data: ReserveInventoryRequest
   }): Promise<ServerActionResult<unknown[]>> => {
     const { data } = input
-    const ctx = await trustedInventoryContext(data.organizationId)
+    const ctx = await trustedInventoryContext(data.organizationId, {
+      permission: "inventory.levels.adjust",
+      resource: "InventoryReservation",
+      auditAllowed: true,
+    })
     const reservations = await Promise.all(
       data.reservations.map((reservation) =>
         postInventoryReservation({
@@ -346,7 +381,10 @@ export const getInventoryTransactions = inventoryAction(
     filters?: TransactionFilters
   }): Promise<ServerActionResult<InventoryTransactionWithRelations[]>> => {
     const { organizationId, filters } = input
-    const ctx = await trustedInventoryContext(organizationId)
+    const ctx = await trustedInventoryContext(organizationId, {
+      permission: "inventory.levels.read",
+      resource: "InventoryTransaction",
+    })
     const transactions = await listInventoryTransactionRecords({
       organizationId: ctx.organizationId,
       filters,
@@ -368,7 +406,10 @@ export const getInventoryTransactions = inventoryAction(
 
 export const getInventoryStats = inventoryAction(
   async (): Promise<ServerActionResult<InventoryStats>> => {
-    const ctx = await trustedInventoryContext()
+    const ctx = await trustedInventoryContext(undefined, {
+      permission: "inventory.read",
+      resource: "InventoryDashboard",
+    })
     const stats = await readInventoryStats(ctx.organizationId)
     return { success: true, data: stats as InventoryStats }
   },
@@ -390,7 +431,10 @@ export const getStockAdjustments = inventoryAction(
     organizationId: string
   }): Promise<ServerActionResult<StockAdjustmentWithRelations[]>> => {
     const { organizationId } = input
-    const ctx = await trustedInventoryContext(organizationId)
+    const ctx = await trustedInventoryContext(organizationId, {
+      permission: "inventory.levels.read",
+      resource: "StockAdjustment",
+    })
     const adjustments = await readStockAdjustments(ctx.organizationId)
     return { success: true, data: adjustments }
   },
@@ -411,7 +455,11 @@ export const createStockAdjustment = inventoryAction(
     data: CreateStockAdjustmentRequest
   }): Promise<ServerActionResult<StockAdjustment>> => {
     const { data } = input
-    const ctx = await trustedInventoryContext()
+    const ctx = await trustedInventoryContext(undefined, {
+      permission: "inventory.stock.adjust",
+      resource: "StockAdjustment",
+      auditAllowed: true,
+    })
     const adjustment = await createStockAdjustmentService({
       organizationId: ctx.organizationId,
       locationId: data.locationId,
@@ -449,7 +497,10 @@ export const getStockTransfers = inventoryAction(
     organizationId: string
   }): Promise<ServerActionResult<StockTransferWithRelations[]>> => {
     const { organizationId } = input
-    const ctx = await trustedInventoryContext(organizationId)
+    const ctx = await trustedInventoryContext(organizationId, {
+      permission: "TRANSFERS_READ",
+      resource: "StockTransfer",
+    })
     const transfers = await listStockTransferRecords(ctx.organizationId)
     return { success: true, data: transfers }
   },
@@ -470,7 +521,11 @@ export const createStockTransfer = inventoryAction(
     data: CreateStockTransferRequest
   }): Promise<ServerActionResult<StockTransfer>> => {
     const { data } = input
-    const ctx = await trustedInventoryContext()
+    const ctx = await trustedInventoryContext(undefined, {
+      permission: "inventory.stock.transfer",
+      resource: "StockTransfer",
+      auditAllowed: true,
+    })
     const result = await createStockTransferService({
       organizationId: ctx.organizationId,
       createdById: ctx.userId,

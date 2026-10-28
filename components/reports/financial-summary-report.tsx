@@ -23,7 +23,7 @@ export function FinancialSummaryReportComponent({ report }: FinancialSummaryRepo
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
-      currency: "USD",
+      currency: report.provenance.currency,
     }).format(amount)
   }
 

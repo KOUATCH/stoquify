@@ -1,0 +1,112 @@
+{
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-07-15T15:54:18.773Z",
+  "mode": "audit",
+  "secretValuesInspected": false,
+  "secretValuesPrinted": false,
+  "localInventory": {
+    "installedStorageClients": [
+      "uploadthing"
+    ],
+    "missingStorageClients": [
+      "@aws-sdk/client-s3",
+      "@aws-sdk/s3-request-presigner",
+      "@azure/storage-blob",
+      "@vercel/blob",
+      "minio"
+    ],
+    "configuredCredentialFamilies": [
+      "uploadthing"
+    ],
+    "missingCredentialFamilies": [
+      "aws-s3",
+      "cloudflare-r2",
+      "azure-blob",
+      "vercel-blob"
+    ],
+    "currentAdapter": "uploadthing",
+    "currentPrivateCanary": "blocked",
+    "currentPrivateCanaryCode": "PROVIDER_CANARY_UPLOAD_FAILED"
+  },
+  "options": [
+    {
+      "id": "paid-uploadthing",
+      "implementationChange": "none",
+      "newDependencyRequired": false,
+      "newCredentialsRequired": false,
+      "externalAction": "upgrade the configured app to a paid plan",
+      "privateAccess": "supported on paid plans",
+      "shortLivedRead": "supported by the existing adapter",
+      "lifecycleAndGovernance": "requires separate contractual and operational certification",
+      "residency": "selectable paid regions; current documented region list has no Africa region",
+      "fit": "fastest pilot unblock",
+      "status": "awaiting-commercial-approval"
+    },
+    {
+      "id": "amazon-s3",
+      "implementationChange": "new adapter behind InventoryHistoryExportArtifactStore",
+      "newDependencyRequired": true,
+      "newCredentialsRequired": true,
+      "externalAction": "approve AWS account, bucket, region, IAM/KMS and retention policy",
+      "privateAccess": "private bucket and IAM policy",
+      "shortLivedRead": "presigned GetObject URL",
+      "lifecycleAndGovernance": "S3 Lifecycle, encryption, versioning and optional Object Lock",
+      "residency": "explicit AWS region selection subject to approved policy",
+      "fit": "strongest documented finance-grade strategic baseline",
+      "status": "not-configured"
+    },
+    {
+      "id": "cloudflare-r2",
+      "implementationChange": "S3-compatible adapter using AWS SDK",
+      "newDependencyRequired": true,
+      "newCredentialsRequired": true,
+      "externalAction": "approve Cloudflare account, bucket, API token and jurisdiction",
+      "privateAccess": "private bucket with S3 API credentials",
+      "shortLivedRead": "S3-compatible presigned URL",
+      "lifecycleAndGovernance": "requires compatibility and retention-policy certification",
+      "residency": "location hints are best effort; guaranteed jurisdictions currently include EU and FedRAMP",
+      "fit": "cost-sensitive S3-compatible candidate with residency caveats",
+      "status": "not-configured"
+    },
+    {
+      "id": "azure-blob",
+      "implementationChange": "new Azure Blob adapter",
+      "newDependencyRequired": true,
+      "newCredentialsRequired": true,
+      "externalAction": "approve Azure subscription, storage account, private container, managed identity and retention policy",
+      "privateAccess": "private container with Entra RBAC",
+      "shortLivedRead": "user-delegation SAS",
+      "lifecycleAndGovernance": "lifecycle rules plus optional immutable WORM policies",
+      "residency": "explicit Azure geography selection subject to approved policy",
+      "fit": "strong enterprise candidate when Azure is the deployment control plane",
+      "status": "not-configured"
+    }
+  ],
+  "decision": {
+    "fastestPilotUnblock": "paid-uploadthing",
+    "strategicArchitecture": "retain the provider-neutral interface and prefer a certified S3-compatible or Azure adapter for production",
+    "automaticVendorSelectionAllowed": false,
+    "reason": "No alternate client, credential, bucket, residency policy, DPA or commercial approval exists in this workspace."
+  },
+  "requiredDecisionInputs": [
+    "pilot versus production target",
+    "approved cloud and billing owner",
+    "data-residency jurisdiction",
+    "DPA and subprocessors",
+    "retention and legal-hold policy",
+    "KMS or managed-identity policy",
+    "budget and throughput envelope"
+  ],
+  "externalSources": [
+    "https://docs.uploadthing.com/concepts/regions-acl",
+    "https://docs.uploadthing.com/blog/usage-based",
+    "https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-presigned-url.html",
+    "https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingEncryption.html",
+    "https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lifecycle-mgmt.html",
+    "https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lock.html",
+    "https://developers.cloudflare.com/r2/api/s3/presigned-urls/",
+    "https://developers.cloudflare.com/r2/reference/data-location/",
+    "https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-create-user-delegation-sas-javascript",
+    "https://learn.microsoft.com/en-us/azure/storage/blobs/immutable-policy-configure-container-scope"
+  ]
+}

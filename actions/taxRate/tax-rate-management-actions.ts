@@ -5,6 +5,8 @@ import { assertCanUseOrganization, requirePermission } from "@/lib/security/rbac
 import { safeLoggedActionErrorMessage } from "@/actions/_shared/safe-action-responses"
 import { assertActiveOrganization } from "@/services/_shared/assert-active-organization"
 import { BusinessRuleError, getPrismaKnownRequest, getPrismaKnownRequestField } from "@/services/_shared/action-errors"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
+import type { ModuleAccessIntent } from "@/services/modules/module-control-contracts"
 import {
   createTaxRateForManagement,
   getTaxRateManagementDataForOrg,
@@ -31,6 +33,8 @@ type ActionResult<T> = {
   data?: T
   error?: string
 }
+
+type PermissionContext = Awaited<ReturnType<typeof requirePermission>>
 
 const ACTIONABLE_ERROR_MESSAGES = new Set([
   "Unauthorized",
@@ -115,7 +119,26 @@ async function assertOrganizationAccess(
   })
   await assertCanUseOrganization(ctx, requestedOrganizationId)
 
-  return assertActiveOrganization(requestedOrganizationId)
+  return {
+    organizationId: await assertActiveOrganization(requestedOrganizationId),
+    ctx,
+  }
+}
+
+async function observeTaxRateAccess(
+  ctx: PermissionContext,
+  accessIntent: ModuleAccessIntent,
+) {
+  await observeModuleAccess({
+    organizationId: ctx.orgId,
+    userId: ctx.userId,
+    actorPermissions: ctx.permissions,
+    moduleSlug: "settings",
+    surfaceType: "action",
+    surface: "actions/taxRate/tax-rate-management-actions.ts",
+    accessIntent,
+    mode: "observe",
+  })
 }
 
 function revalidateTaxRatePaths() {
@@ -130,11 +153,12 @@ export async function getTaxRateManagementData(
   organizationId: string,
 ): Promise<ActionResult<TaxRateManagementData>> {
   try {
-    const scopedOrganizationId = await assertOrganizationAccess(organizationId, {
+    const access = await assertOrganizationAccess(organizationId, {
       permission: "taxes.read",
       resource: "TaxRate",
     })
-    const data = await getTaxRateManagementDataForOrg(scopedOrganizationId)
+    const data = await getTaxRateManagementDataForOrg(access.organizationId)
+    await observeTaxRateAccess(access.ctx, "read")
 
     return {
       success: true,
@@ -158,7 +182,7 @@ export async function createManagedTaxRate(
   input: TaxRateManagementInput,
 ): Promise<ActionResult<TaxRateManagementRow>> {
   try {
-    const scopedOrganizationId = await assertOrganizationAccess(organizationId, {
+    const access = await assertOrganizationAccess(organizationId, {
       permission: "taxes.create",
       resource: "TaxRate",
       auditAllowed: true,
@@ -169,7 +193,8 @@ export async function createManagedTaxRate(
       return { success: false, error: parsed.error }
     }
 
-    const row = await createTaxRateForManagement(scopedOrganizationId, parsed.data)
+    const row = await createTaxRateForManagement(access.organizationId, parsed.data)
+    await observeTaxRateAccess(access.ctx, "write")
     revalidateTaxRatePaths()
 
     return { success: true, data: row }
@@ -193,7 +218,7 @@ export async function updateManagedTaxRate(
 ): Promise<ActionResult<TaxRateManagementRow>> {
   try {
     const scopedTaxRateId = cleanText(taxRateId)
-    const scopedOrganizationId = await assertOrganizationAccess(organizationId, {
+    const access = await assertOrganizationAccess(organizationId, {
       permission: "taxes.update",
       resource: "TaxRate",
       ...(scopedTaxRateId ? { resourceId: scopedTaxRateId } : {}),
@@ -210,7 +235,8 @@ export async function updateManagedTaxRate(
       return { success: false, error: parsed.error }
     }
 
-    const row = await updateTaxRateForManagement(scopedOrganizationId, scopedTaxRateId, parsed.data)
+    const row = await updateTaxRateForManagement(access.organizationId, scopedTaxRateId, parsed.data)
+    await observeTaxRateAccess(access.ctx, "write")
     revalidateTaxRatePaths()
 
     return { success: true, data: row }
@@ -233,7 +259,7 @@ export async function deleteManagedTaxRate(
 ): Promise<ActionResult<TaxRateRemovalResult>> {
   try {
     const scopedTaxRateId = cleanText(taxRateId)
-    const scopedOrganizationId = await assertOrganizationAccess(organizationId, {
+    const access = await assertOrganizationAccess(organizationId, {
       permission: "taxes.delete",
       resource: "TaxRate",
       ...(scopedTaxRateId ? { resourceId: scopedTaxRateId } : {}),
@@ -244,7 +270,8 @@ export async function deleteManagedTaxRate(
       return { success: false, error: "Tax rate not found" }
     }
 
-    const data = await removeTaxRateForManagement(scopedOrganizationId, scopedTaxRateId)
+    const data = await removeTaxRateForManagement(access.organizationId, scopedTaxRateId)
+    await observeTaxRateAccess(access.ctx, "write")
     revalidateTaxRatePaths()
 
     return { success: true, data }

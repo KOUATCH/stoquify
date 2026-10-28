@@ -1,0 +1,47 @@
+{
+  "createdAtLocal": "2026-07-20 04:40:52 +01:00",
+  "selectedSkill": "017-aqstoqflow-enterprise-release-gate",
+  "decision": "APPROVED_FOR_THESE_TWO_LOCAL_GATES_ONLY",
+  "releasedGates": [
+    {
+      "gate": "regulatory:hardcode:fail",
+      "result": "pass",
+      "evidence": "what-next/gate-release-attestations/regulatory-hardcode-readiness-2026-07-20.md",
+      "generatedAt": "2026-07-20T03:23:14.732Z",
+      "activeFindings": 0
+    },
+    {
+      "gate": "error:boundary:fail",
+      "result": "pass",
+      "evidence": "what-next/gate-release-attestations/raw-error-boundary-readiness-2026-07-20.md",
+      "generatedAt": "2026-07-20T03:23:16.443Z",
+      "activeUnsafeRawErrorFindings": 0,
+      "allowedClassifiedFindings": 76,
+      "totalRawErrorCallsitesScanned": 76
+    }
+  ],
+  "codeFix": {
+    "service": "services/assurance/assurance-incident.service.ts",
+    "tests": "services/assurance/__tests__/assurance-incident.service.test.ts",
+    "summary": "Preserve typed ApplicationError rethrows and wrap unknown or exhausted retryable incident upsert failures in safe BusinessRuleError messages."
+  },
+  "verification": [
+    "npx jest --runTestsByPath \"services/assurance/__tests__/assurance-incident.service.test.ts\" --runInBand: passed, 1 suite, 14 tests",
+    "regulatory-hardcode gate fail mode: passed, 0 active findings",
+    "raw-error-boundary gate fail mode: passed, 0 active unsafe findings",
+    "npx jest --runTestsByPath \"scripts/__tests__/raw-error-boundary-gate.test.js\" \"scripts/__tests__/regulatory-hardcode-gate.test.js\" --runInBand: passed, 2 suites, 9 tests",
+    "npm run typecheck: passed"
+  ],
+  "excludedClaims": [
+    "No statutory correctness approval asserted",
+    "No legal/tax/fiscal-device/payroll/authority-submission approval asserted",
+    "No production secret provisioning asserted",
+    "No full production release readiness asserted"
+  ],
+  "externalBlockers": [
+    "source_artifact_hash_verification",
+    "source_artifact_expert_approval",
+    "production secret provisioning"
+  ],
+  "nextRecommendedNumberedSkill": "018-aqstoqflow-close-assurance-audit"
+}

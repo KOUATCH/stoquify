@@ -21,6 +21,8 @@ import {
 import { createHash, randomUUID } from "node:crypto";
 
 import { db } from "@/prisma/db";
+import { recordBusinessEventInTx } from "@/services/events/business-event.service";
+import { summarizePayrollTransitionEvidence } from "@/services/payroll/payroll-transition-evidence";
 import { BusinessRuleError } from "@/services/_shared/action-errors";
 import {
   assertSensitiveActionAllowed,
@@ -247,6 +249,7 @@ const DATA_TRUST_SOURCE_TABLES = [
   "supplier_invoices",
   "supplier_payments",
   "payroll_runs",
+  "payroll_run_transitions",
   "payroll_run_lines",
   "payroll_payslips",
   "payroll_declarations",
@@ -880,10 +883,12 @@ export async function getAccountantPortalData(
     payrollPaymentUnsettledCount,
     payrollPaymentReconciliationEvidenceMissingCount,
     payrollPaymentAllocationMissingCount,
+    payrollTransitionEvidenceRuns,
     payrollPostedRunMissingLedgerCount,
     payrollPostedRunComponentProofMissingCount,
     payrollPostedRunCompositeProofMissingCount,
     payrollDeductionRecoveryLedgerMappingMissingCount,
+    payrollPostedRunCertifiedInputProofMissingCount,
     payrollEffectiveComponentProofMissingCount,
     payrollPostedRunLineMissingPayslipCount,
     payrollEmittedPayslipMissingProofCount,
@@ -1487,6 +1492,39 @@ export async function getAccountantPortalData(
         ...createdAtFilter(scope),
       },
     }),
+    client.payrollRun.findMany({
+      where: {
+        organizationId: scope.organizationId,
+        status: {
+          in: [
+            PayrollRunStatus.REVIEWED,
+            PayrollRunStatus.APPROVED,
+            PayrollRunStatus.EMITTED,
+            PayrollRunStatus.POSTED,
+            PayrollRunStatus.PAID,
+            PayrollRunStatus.ARCHIVED,
+          ],
+        },
+        deletedAt: null,
+        ...createdAtFilter(scope),
+      },
+      select: {
+        status: true,
+        transitions: {
+          orderBy: { sequence: "asc" },
+          select: {
+            toStatus: true,
+            fromVersion: true,
+            toVersion: true,
+            actorId: true,
+            transitionedAt: true,
+            businessEventId: true,
+            origin: true,
+            evidenceStatus: true,
+          },
+        },
+      },
+    }),
     client.payrollRun.count({
       where: {
         organizationId: scope.organizationId,
@@ -1571,6 +1609,50 @@ export async function getAccountantPortalData(
         },
       })
       .then(countDeductionRecoveryLedgerMappingGaps),
+    client.payrollRun.count({
+      where: {
+        organizationId: scope.organizationId,
+        status: { in: [PayrollRunStatus.POSTED, PayrollRunStatus.PAID] },
+        deletedAt: null,
+        OR: [
+          { metadata: { equals: Prisma.AnyNull } },
+          {
+            metadata: {
+              path: ["hrisPayrollReadinessHash"],
+              equals: Prisma.AnyNull,
+            },
+          },
+          { metadata: { path: ["hrisPayrollReadinessHash"], equals: "" } },
+          {
+            metadata: {
+              path: ["payrollInputReadinessHash"],
+              equals: Prisma.AnyNull,
+            },
+          },
+          { metadata: { path: ["payrollInputReadinessHash"], equals: "" } },
+          {
+            metadata: {
+              path: ["payrollEngineInputSnapshotHash"],
+              equals: Prisma.AnyNull,
+            },
+          },
+          {
+            metadata: {
+              path: ["payrollEngineInputSnapshotHash"],
+              equals: "",
+            },
+          },
+          {
+            metadata: {
+              path: ["payrollEngineInputHashes"],
+              equals: Prisma.AnyNull,
+            },
+          },
+          { metadata: { path: ["payrollEngineInputHashes"], equals: [] } },
+        ],
+        ...createdAtFilter(scope),
+      },
+    }),
     client.payrollRunLine
       .findMany({
         where: {
@@ -1762,6 +1844,9 @@ export async function getAccountantPortalData(
     }),
   ]);
 
+  const payrollTransitionEvidence = summarizePayrollTransitionEvidence(
+    payrollTransitionEvidenceRuns,
+  );
   const blockers: DataTrustBlocker[] = [];
   const currency = settings?.baseCurrency || "XAF";
   const periodStatus: PeriodStatus = period?.status ?? "UNAVAILABLE";
@@ -2184,6 +2269,43 @@ export async function getAccountantPortalData(
     });
   }
 
+  if (payrollTransitionEvidence.emittedUnpostedCount > 0) {
+    addBlocker(blockers, {
+      id: "payroll-emitted-runs-unposted",
+      severity: "critical",
+      gate: "payroll.lifecycle.posting",
+      title: "Emitted payroll runs are not posted",
+      detail: String(payrollTransitionEvidence.emittedUnpostedCount) + " emitted payroll run has payslip evidence but no completed ledger posting transition.",
+      sourceTables: [
+        "payroll_runs",
+        "payroll_run_transitions",
+        "payroll_payslips",
+      ],
+    });
+  }
+
+  if (payrollTransitionEvidence.missingPostCutoverProofCount > 0) {
+    addBlocker(blockers, {
+      id: "payroll-transition-proof-missing",
+      severity: "critical",
+      gate: "payroll.lifecycle.transition-proof",
+      title: "Payroll lifecycle transition proof is missing",
+      detail: String(payrollTransitionEvidence.missingPostCutoverProofCount) + " post-cutover payroll run lacks a complete verified review, approval, emission, or posting transition ledger.",
+      sourceTables: ["payroll_runs", "payroll_run_transitions"],
+    });
+  }
+
+  if (payrollTransitionEvidence.legacyPartialEvidenceCount > 0) {
+    addBlocker(blockers, {
+      id: "payroll-transition-proof-legacy-partial",
+      severity: "medium",
+      gate: "payroll.lifecycle.legacy-disclosure",
+      title: "Historical payroll transition proof is partial",
+      detail: String(payrollTransitionEvidence.legacyPartialEvidenceCount) + " historical payroll run is explicitly disclosed as legacy partial evidence and cannot be represented as verified runtime proof.",
+      sourceTables: ["payroll_runs", "payroll_run_transitions"],
+    });
+  }
+
   if (payrollPostedRunMissingLedgerCount > 0) {
     addBlocker(blockers, {
       id: "payroll-runs-without-ledger",
@@ -2238,6 +2360,17 @@ export async function getAccountantPortalData(
         "ledger_posting_batches",
         "accounting_source_links",
       ],
+    });
+  }
+
+  if (payrollPostedRunCertifiedInputProofMissingCount > 0) {
+    addBlocker(blockers, {
+      id: "payroll-posted-runs-certified-input-proof-missing",
+      severity: "critical",
+      gate: "payroll.accounting.certified-input-proof",
+      title: "Posted payroll runs lack certified HRIS input proof",
+      detail: `${payrollPostedRunCertifiedInputProofMissingCount} posted or paid payroll run is missing explicit certified HRIS readiness, payroll readiness, or engine input proof required for close evidence.`,
+      sourceTables: ["payroll_runs"],
     });
   }
 
@@ -2485,15 +2618,19 @@ export async function getAccountantPortalData(
     {
       module: "payroll",
       status: statusFor(
-        payrollPostedRunMissingLedgerCount > 0 ||
+        payrollTransitionEvidence.emittedUnpostedCount > 0 ||
+          payrollTransitionEvidence.missingPostCutoverProofCount > 0 ||
+          payrollPostedRunMissingLedgerCount > 0 ||
           payrollPostedRunComponentProofMissingCount > 0 ||
           payrollPostedRunCompositeProofMissingCount > 0 ||
           payrollDeductionRecoveryLedgerMappingMissingCount > 0 ||
+          payrollPostedRunCertifiedInputProofMissingCount > 0 ||
           payrollEffectiveComponentProofMissingCount > 0 ||
           payrollPostedRunLineMissingPayslipCount > 0 ||
           payrollPaymentMissingLedgerCount > 0 ||
           payrollPostedLedgerMissingSourceLinkCount > 0,
-        payrollDeclarationRejectedCount > 0 ||
+        payrollTransitionEvidence.legacyPartialEvidenceCount > 0 ||
+          payrollDeclarationRejectedCount > 0 ||
           payrollDeclarationLifecycleEvidenceMissingCount > 0 ||
           payrollDeclarationRegisterProofMissingCount > 0 ||
           payrollDeclarationCountryPackRegisterProofMissingCount > 0 ||
@@ -2515,8 +2652,20 @@ export async function getAccountantPortalData(
       ),
       label: "Payroll and declarations",
       detail:
-        "Payroll register tie-out, payslip proof, payment reconciliation/component proof, ledger source-link, and declaration lifecycle evidence is consumed from payroll services.",
+        "Payroll lifecycle transition proof, certified HRIS input proof, register tie-out, payslip proof, payment reconciliation/component proof, ledger source-link, and declaration lifecycle evidence is consumed from payroll services.",
       facts: [
+        {
+          label: "Emitted runs awaiting posting",
+          value: payrollTransitionEvidence.emittedUnpostedCount,
+        },
+        {
+          label: "Post-cutover transition proof gaps",
+          value: payrollTransitionEvidence.missingPostCutoverProofCount,
+        },
+        {
+          label: "Legacy partial transition disclosures",
+          value: payrollTransitionEvidence.legacyPartialEvidenceCount,
+        },
         {
           label: "Prepared declarations",
           value: payrollDeclarationPreparedCount,
@@ -2601,6 +2750,10 @@ export async function getAccountantPortalData(
         {
           label: "Deduction/recovery ledger mapping gaps",
           value: payrollDeductionRecoveryLedgerMappingMissingCount,
+        },
+        {
+          label: "Posted run certified input proof gaps",
+          value: payrollPostedRunCertifiedInputProofMissingCount,
         },
         {
           label: "Effective component proof gaps",
@@ -2756,6 +2909,15 @@ export async function getAccountantPortalData(
         payrollDeclarationAuthorityLifecycleProofMissingCount,
     },
     proofGates: [
+      {
+        gate: "payroll.accounting.certified-input-proof",
+        status: proofGateStatus(payrollPostedRunCertifiedInputProofMissingCount),
+        blockerCount: payrollPostedRunCertifiedInputProofMissingCount,
+        blockerIds: payrollBlockerIdsFor(blockers, [
+          "payroll.accounting.certified-input-proof",
+        ]),
+        evidence: ["certified HRIS readiness and payroll engine input proof"],
+      },
       {
         gate: "payroll.accounting.posting",
         status: proofGateStatus(
@@ -3093,6 +3255,7 @@ export async function exportAccountantTrustPack(
     const payload = {
       kind: "AQSTOQFLOW_ACCOUNTANT_TRUST_PACK",
       version: 1,
+      packVersion: "accountant-trust-pack.v1",
       export: {
         exportId,
         generatedAt: now.toISOString(),
@@ -3139,6 +3302,37 @@ export async function exportAccountantTrustPack(
           scopeHash: portal.source.scopeHash,
         },
       },
+    });
+
+    await recordBusinessEventInTx(tx, {
+      organizationId: input.organizationId,
+      eventType: "REPORT_EXPORT_CREATED",
+      eventSource: "INTERNAL",
+      idempotencyKey: `accountant-trust-pack-export:${exportId}`,
+      actorId: input.exportedById,
+      sourceType: "AccountantTrustPack",
+      sourceId: exportId,
+      documentHash: contentHash,
+      payload: {
+        exportId,
+        packVersion: "accountant-trust-pack.v1",
+        filtersHash: portal.source.scopeHash,
+        sourceTables: portal.source.sourceTables,
+        periodId: portal.scope.periodId,
+        contentHash,
+        rowCount,
+      },
+      outboxMessages: [
+        {
+          channel: "REPORT_EXPORT",
+          eventName: "REPORT_EXPORT_CREATED",
+          payload: {
+            exportId,
+            organizationId: input.organizationId,
+            contentHash,
+          },
+        },
+      ],
     });
 
     return {

@@ -28,6 +28,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { DataTablePagination } from "@/components/DataTableComponents/DataTablePagination"
+import {
+  TableDateRangePicker,
+  type TableDateRangeValue,
+} from "@/components/DataTableComponents/TableDateRangePicker"
 
 import {
   DropdownMenu,
@@ -66,10 +71,10 @@ import {
   Download,
   Edit,
   Eye,
-  FileText,
   MoreHorizontal,
   Package,
   Plus,
+  Printer,
   RefreshCw,
   Search,
   SlidersHorizontal,
@@ -77,7 +82,8 @@ import {
   XCircle
 } from "lucide-react"
 import { getLocaleFromPathname, localizePath } from "@/i18n/routing"
-import { DEFAULT_LOCALE } from "@/types/bilingual"
+import { DEFAULT_LOCALE, type Locale } from "@/types/bilingual"
+import { formatCurrency as formatMoney } from "@/lib/i18n/formatters"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 
@@ -90,15 +96,33 @@ import {
   useReceiveItems
 } from "@/hooks/useRecentPurchaseOrderQueries"
 import type { PurchaseOrderWithRelations } from "@/types/purchase-orders-system-types"
+import type { PurchaseOrderPresentation } from "@/services/purchase-order/purchase-order-capabilities"
 
 // Use the real type from the database
-type PurchaseOrderData = PurchaseOrderWithRelations
+type PurchaseOrderData = PurchaseOrderWithRelations & PurchaseOrderPresentation
 
 function dateSortValue(value: unknown) {
   if (!value) return null
 
   const timestamp = new Date(value as Date | string).getTime()
   return Number.isNaN(timestamp) ? null : timestamp
+}
+
+function isOrderDateWithinRange(
+  value: Date | string | null | undefined,
+  range: TableDateRangeValue,
+) {
+  if (!range.from && !range.to) return true
+
+  const timestamp = dateSortValue(value)
+  if (timestamp === null) return false
+
+  const from = range.from ? new Date(`${range.from}T00:00:00`).getTime() : null
+  const to = range.to ? new Date(`${range.to}T23:59:59.999`).getTime() : null
+
+  if (from !== null && timestamp < from) return false
+  if (to !== null && timestamp > to) return false
+  return true
 }
 
 const dateSortingFn: SortingFn<PurchaseOrderData> = (rowA, rowB, columnId) => {
@@ -324,19 +348,19 @@ const getColumns = (
                 <Eye className="h-3 w-3" />
               </Button>
             </Link>
-            {/* Edit Action - Only for DRAFT status */}
-            <Link href={localizedHref(`/dashboard/purchase-orders/${po.id}/edit`)}>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleEditClick(po)}
-                disabled={status !== 'DRAFT'}
-                className={`h-8 w-8 p-0 ${getActionButtonVariant('edit', status)}`}
-                title={status === 'DRAFT' ? 'Edit purchase order' : 'Cannot edit non-draft orders'}
-              >
-                <Edit className="h-3 w-3" />
-              </Button>
-            </Link>
+            {po.capabilities.edit.allowed ? (
+              <Link href={localizedHref(`/dashboard/purchase-orders/${po.id}/edit`)}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleEditClick(po)}
+                  className={`h-8 w-8 p-0 ${getActionButtonVariant('edit', status)}`}
+                  title="Edit purchase order"
+                >
+                  <Edit className="h-3 w-3" />
+                </Button>
+              </Link>
+            ) : null}
             {/* More Actions Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -350,7 +374,7 @@ const getColumns = (
                 <DropdownMenuSeparator />
 
                 {/* Approve Action - For SUBMITTED status */}
-                {status === 'SUBMITTED' && (
+                {po.capabilities.approve.allowed && (
                   <DropdownMenuItem
                     onClick={() => handleApproveClick(po)}
                     className="text-emerald-700 focus:text-emerald-700 dark:text-emerald-300 dark:focus:text-emerald-300"
@@ -361,7 +385,7 @@ const getColumns = (
                 )}
 
                 {/* Receive Action - For APPROVED/ORDERED status */}
-                {(['APPROVED', 'ORDERED', 'PARTIALLY_RECEIVED'].includes(status)) && (
+                {po.capabilities.receive.allowed && (
                   <DropdownMenuItem
                     onClick={() => handleReceiveClick(po)}
                     className="text-blue-700 focus:text-blue-700 dark:text-blue-300 dark:focus:text-blue-300"
@@ -372,7 +396,7 @@ const getColumns = (
                 )}
 
                 {/* Cancel Action - For non-completed orders */}
-                {!['RECEIVED', 'COMPLETED', 'CANCELLED'].includes(status) && (
+                {po.capabilities.cancel.allowed && (
                   <DropdownMenuItem
                     onClick={() => handleCancelClick(po)}
                     className="text-rose-700 focus:text-rose-700 dark:text-rose-300 dark:focus:text-rose-300"
@@ -382,21 +406,20 @@ const getColumns = (
                   </DropdownMenuItem>
                 )}
 
-                {/* Delete Action - Only for DRAFT status */}
-                {status === 'DRAFT' && (
+                {po.capabilities.archive.allowed && (
                   <DropdownMenuItem
                     onClick={() => handleDeleteClick(po)}
                     className="text-rose-700 focus:text-rose-700 dark:text-rose-300 dark:focus:text-rose-300"
                   >
                     <XCircle className="mr-2 h-4 w-4" />
-                    Delete Order
+                    Archive Order
                   </DropdownMenuItem>
                 )}
 
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => handleDownloadPDF(po)}>
-                  <FileText className="mr-2 h-4 w-4" />
-                  Download PDF
+                  <Printer className="mr-2 h-4 w-4" />
+                  Print Order
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -417,6 +440,8 @@ const ModernPurchaseOrderTable = ({
   title,
   subtitle,
   localizedHref,
+  canCreate,
+  locale,
 }: {
   data: PurchaseOrderData[]
   columns: ColumnDef<PurchaseOrderData>[]
@@ -427,15 +452,23 @@ const ModernPurchaseOrderTable = ({
   title: string
   subtitle: string
   localizedHref: (href: string) => string
+  canCreate: boolean
+  locale: Locale
 }) => {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({})
   const [globalFilter, setGlobalFilter] = useState("")
+  const [orderDateRange, setOrderDateRange] = useState<TableDateRangeValue>({})
+
+  const dateFilteredData = useMemo(
+    () => data.filter((order) => isOrderDateWithinRange(order.orderDate, orderDateRange)),
+    [data, orderDateRange],
+  )
 
   const table = useReactTable({
-    data,
+    data: dateFilteredData,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -460,6 +493,18 @@ const ModernPurchaseOrderTable = ({
       },
     },
   })
+
+  const hasActiveTableState = Boolean(
+    globalFilter || orderDateRange.from || orderDateRange.to || sorting.length || columnFilters.length,
+  )
+
+  const clearTableState = () => {
+    setGlobalFilter("")
+    setOrderDateRange({})
+    setSorting([])
+    setColumnFilters([])
+    table.setPageIndex(0)
+  }
 
   if (isLoading) {
     return (
@@ -510,57 +555,89 @@ const ModernPurchaseOrderTable = ({
             <Download className="w-4 h-4 mr-2" />
             Export
           </Button>
-          <Link href={localizedHref("/dashboard/purchase-orders/new")}>
-            <Button
-              size="sm"
-              className="dashboard-button-primary h-9 w-full justify-center rounded-lg sm:w-auto"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Create PO
-            </Button>
-          </Link>
+          {canCreate ? (
+            <Link href={localizedHref("/dashboard/purchase-orders/new")}>
+              <Button
+                size="sm"
+                className="dashboard-button-primary h-9 w-full justify-center rounded-lg sm:w-auto"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Create PO
+              </Button>
+            </Link>
+          ) : null}
         </div>
       </div>
 
       {/* Filters */}
-      <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center">
-        <div className="relative min-w-0 flex-1 sm:max-w-sm">
+      <div className="dashboard-table-toolbar flex min-w-0 flex-col gap-3 rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)]/70 p-3 lg:flex-row lg:items-center lg:justify-between xl:flex-nowrap">
+        <div className="relative w-full min-w-0 flex-1 xl:min-w-0">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--dash-text-faint)]" />
           <Input
             placeholder="Search purchase orders..."
             value={globalFilter ?? ""}
-            onChange={(event) => setGlobalFilter(event.target.value)}
-            className="dashboard-control h-10 w-full rounded-lg pl-10"
+            onChange={(event) => {
+              setGlobalFilter(event.target.value)
+              table.setPageIndex(0)
+            }}
+            className="dashboard-control h-9 w-full rounded-lg pl-10"
           />
         </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm" className="dashboard-button-secondary h-10 justify-center rounded-lg">
-              <SlidersHorizontal className="w-4 h-4 mr-2" />
-              View
-              <ChevronDownIcon className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48 border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
-            <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div
+          className="flex w-full min-w-0 flex-wrap items-center gap-2 lg:w-auto lg:flex-1 lg:justify-end xl:flex-none xl:flex-nowrap"
+          data-slot="purchase-order-table-filter-controls"
+        >
+          <TableDateRangePicker
+            value={orderDateRange}
+            onChange={(range) => {
+              setOrderDateRange(range)
+              table.setPageIndex(0)
+            }}
+            locale={locale}
+            placeholder="Order date range"
+            ariaLabel="Order date range"
+            className="min-w-[210px] flex-1 sm:flex-none xl:w-[230px] xl:min-w-0 xl:flex-none"
+          />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="dashboard-button-secondary h-9 shrink-0 justify-center whitespace-nowrap rounded-lg">
+                <SlidersHorizontal className="mr-2 h-4 w-4" />
+                View
+                <ChevronDownIcon className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48 border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
+              <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
+                  )
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={clearTableState}
+            disabled={!hasActiveTableState}
+            className="dashboard-button-secondary h-9 shrink-0 whitespace-nowrap rounded-lg"
+          >
+            <XCircle className="mr-2 h-4 w-4" />
+            Clear filters
+          </Button>
+        </div>
       </div>
 
       {/* Selected rows info */}
@@ -631,39 +708,7 @@ const ModernPurchaseOrderTable = ({
       </div>
 
       {/* Pagination */}
-      <div className="flex flex-col gap-3 py-1 sm:flex-row sm:items-center sm:justify-between">
-        <div className="min-w-0 flex-1 text-sm text-[var(--dash-text-soft)]">
-          {Object.keys(rowSelection).length > 0 && (
-            <span>{Object.keys(rowSelection).length} of {table.getFilteredRowModel().rows.length} row(s) selected. </span>
-          )}
-          Showing {table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1} to{" "}
-          {Math.min(
-            (table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize,
-            table.getFilteredRowModel().rows.length
-          )}{" "}
-          of {table.getFilteredRowModel().rows.length} entries
-        </div>
-        <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-            className="dashboard-button-secondary h-9 rounded-lg disabled:opacity-50"
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-            className="dashboard-button-secondary h-9 rounded-lg disabled:opacity-50"
-          >
-            Next
-          </Button>
-        </div>
-      </div>
+      <DataTablePagination table={table} variant="landing" locale={locale} />
     </div>
   )
 }
@@ -671,9 +716,12 @@ const ModernPurchaseOrderTable = ({
 interface PurchaseOrderManagementProps {
   title: string
   organizationId: string
-  initialPurchaseOrderData: any[]
+  initialPurchaseOrderData: PurchaseOrderData[]
   initialSupplierData: SupplierData[]
   initialLocationData: LocationData[]
+  currency: string
+  canCreate: boolean
+  locale?: Locale
 }
 
 const PurchaseOrderManagement = memo(function PurchaseOrderManagement({
@@ -681,11 +729,14 @@ const PurchaseOrderManagement = memo(function PurchaseOrderManagement({
   organizationId,
   initialPurchaseOrderData,
   initialSupplierData,
-  initialLocationData
+  initialLocationData,
+  currency,
+  canCreate,
+  locale: localeProp,
 }: PurchaseOrderManagementProps) {
   const router = useRouter()
   const pathname = usePathname()
-  const locale = getLocaleFromPathname(pathname) ?? DEFAULT_LOCALE
+  const locale = localeProp ?? getLocaleFromPathname(pathname) ?? DEFAULT_LOCALE
   const localizedHref = useCallback((href: string) => localizePath(href, locale), [locale])
 
   // Use real data hooks
@@ -769,7 +820,7 @@ const PurchaseOrderManagement = memo(function PurchaseOrderManagement({
   // Get purchase orders data
   const purchaseOrdersArray = useMemo(() => {
     if (purchaseOrdersResponse?.data && purchaseOrdersResponse.data != null) {
-      return purchaseOrdersResponse.data ?? []
+      return (purchaseOrdersResponse.data ?? []) as PurchaseOrderData[]
     }
     // Fallback to initial data if hook hasn't loaded yet
     return initialPurchaseOrderData as PurchaseOrderData[]
@@ -782,9 +833,9 @@ const PurchaseOrderManagement = memo(function PurchaseOrderManagement({
   }, [localizedHref, router])
 
   const handleEditClick = useCallback((po: PurchaseOrderData) => {
-    if (po.status !== 'DRAFT') {
+    if (!po.capabilities.edit.allowed) {
       notify.error("Cannot edit", {
-        description: "Only draft purchase orders can be edited"
+        description: po.capabilities.edit.reason ?? "Editing is unavailable for this purchase order."
       })
       return
     }
@@ -823,9 +874,9 @@ const PurchaseOrderManagement = memo(function PurchaseOrderManagement({
   }, [openConfirmationDialog])
 
   const handleDeleteClick = useCallback((po: PurchaseOrderData) => {
-    if (po.status !== 'DRAFT') {
-      notify.error("Cannot delete", {
-        description: "Only draft purchase orders can be deleted"
+    if (!po.capabilities.archive.allowed) {
+      notify.error("Cannot archive", {
+        description: po.capabilities.archive.reason ?? "Archiving is unavailable for this purchase order."
       })
       return
     }
@@ -833,20 +884,19 @@ const PurchaseOrderManagement = memo(function PurchaseOrderManagement({
     openConfirmationDialog(
       'delete',
       po,
-      'Delete Purchase Order',
-      `Are you sure you want to delete purchase order ${po.orderNumber}? This action cannot be undone and all associated data will be permanently removed.`,
-      'Delete Order',
+      'Archive Purchase Order',
+      `Archive purchase order ${po.orderNumber}? It will be removed from the active register and retained with its audit evidence.`,
+      'Archive Order',
       'destructive'
     )
   }, [openConfirmationDialog])
 
   const handleDownloadPDF = useCallback((po: PurchaseOrderData) => {
-    // Navigate to PDF download or API endpoint
-    window.open(`/api/purchase-orders/${po.id}/pdf?organizationId=${organizationId}`, '_blank')
-    notify.success("PDF Download", {
-      description: `Download initiated for ${po.orderNumber}`
+    window.print()
+    notify.success("Print Purchase Order", {
+      description: `Use the browser print dialog to save ${po.orderNumber} as a PDF.`
     })
-  }, [organizationId])
+  }, [])
 
   const handleRefresh = useCallback(async () => {
     await refetch()
@@ -890,12 +940,8 @@ const PurchaseOrderManagement = memo(function PurchaseOrderManagement({
 
   // Format currency helper
   const formatCurrencyValue = useCallback((amount: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 0,
-    }).format(amount)
-  }, [])
+    return formatMoney(amount, locale, currency)
+  }, [currency, locale])
 
   // Format date helper
   const formatDateValue = useCallback((date: Date | string) => {
@@ -953,6 +999,8 @@ const PurchaseOrderManagement = memo(function PurchaseOrderManagement({
         title={title}
         subtitle={subtitle}
         localizedHref={localizedHref}
+        canCreate={canCreate}
+        locale={locale}
       />
 
       {/* Confirmation Dialog */}

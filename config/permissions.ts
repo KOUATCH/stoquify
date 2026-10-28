@@ -7,6 +7,12 @@ export const dashboardPermissions = [
   "dashboard.overview.read",
 ] as const;
 
+// Branch daily-close controls
+export const branchDailyClosePermissions = [
+  "branch.daily-close.review",
+  "branch.daily-close.sign",
+] as const;
+
 // User management permissions
 export const userPermissions = [
   "users.read",
@@ -105,12 +111,14 @@ export const purchasePermissions = [
   "purchases.orders.approve",
   "purchases.orders.cancel",
   "purchases.orders.receive",
+  "purchasing.returns.post",
   "purchases.suppliers.read",
   "purchases.suppliers.create",
   "purchases.suppliers.update",
   "purchases.suppliers.delete",
   "purchasing.ap.invoice.view",
   "purchasing.ap.invoice.post",
+  "purchasing.ap.credit.post",
   "purchasing.ap.match.review",
   "purchasing.supplier.bank.request",
   "purchasing.supplier.bank.approve",
@@ -132,6 +140,7 @@ export const financialPermissions = [
   "finance.receivables.create",
   "finance.receivables.update",
   "finance.receivables.collect",
+  "finance.receivables.reverse",
   "finance.cash-flow.read",
   "finance.cash-drawer.read",
   "finance.costs.read",
@@ -198,6 +207,14 @@ export const compliancePermissions = [
   "compliance.metadata.read",
 ] as const;
 
+// HRIS people-core permissions
+export const hrisPermissions = [
+  "hris.self_service.read",
+  "hris.self_service.request",
+  "hris.people.read",
+  "hris.people.manage",
+] as const;
+
 // Payroll and presence permissions
 export const payrollPermissions = [
   "payroll.read",
@@ -227,6 +244,7 @@ export const payrollPermissions = [
   "payroll.payslips.self.export",
   "payroll.payslips.emit",
   "payroll.payments.request",
+  "payroll.payments.approve",
   "payroll.payments.release",
   "payroll.payments.reconcile",
   "payroll.declarations.prepare",
@@ -255,6 +273,7 @@ export const customerPermissions = [
   "customers.create",
   "customers.update",
   "customers.delete",
+  "customers.export",
   "customers.orders.read",
   "customers.analytics.read",
   "customers.communication.send",
@@ -273,6 +292,10 @@ export const posPermissions = [
   "pos.discounts.apply",
   "pos.receipts.print",
   "pos.receipts.reprint",
+] as const;
+
+export const posReceiptControlPermissions = [
+  "pos.receipts.revoke",
 ] as const;
 
 // Analytics and reporting permissions
@@ -303,6 +326,18 @@ export const systemPermissions = [
   "system.organization.update",
 ] as const;
 
+// Governed agent release controls
+export const agentReleasePermissions = [
+  "agent.release.prepare",
+  "agent.release.product.approve",
+  "agent.release.security.approve",
+  "agent.release.owner.manage",
+  "agent.release.owner.accept",
+  "agent.release.provision",
+  "agent.release.activate",
+  "agent.release.suspend",
+  "agent.release.retire",
+] as const;
 // Communication permissions
 export const communicationPermissions = [
   "communication.emails.send",
@@ -328,6 +363,7 @@ export const dataPermissions = [
 // Admin permissions (all permissions combined)
 export const adminPermissions = [
   ...dashboardPermissions,
+  ...branchDailyClosePermissions,
   ...userPermissions,
   ...profilePermissions,
   ...rolePermissions,
@@ -338,12 +374,15 @@ export const adminPermissions = [
   ...financialPermissions,
   ...accountingPermissions,
   ...compliancePermissions,
+  ...hrisPermissions,
   ...payrollPermissions,
   ...taxPermissions,
   ...customerPermissions,
   ...posPermissions,
+  ...posReceiptControlPermissions,
   ...analyticsPermissions,
   ...systemPermissions,
+  ...agentReleasePermissions,
   ...communicationPermissions,
   ...dataPermissions,
 ] as const;
@@ -351,6 +390,7 @@ export const adminPermissions = [
 // Manager permissions (subset of admin)
 export const managerPermissions = [
   ...dashboardPermissions,
+  ...branchDailyClosePermissions,
   ...profilePermissions,
   "users.read",
   "users.invite",
@@ -376,6 +416,9 @@ export const managerPermissions = [
   "accounting.close.accountant.comment",
   "compliance.documents.read",
   "compliance.metadata.read",
+  "hris.self_service.read",
+  "hris.self_service.request",
+  "hris.people.read",
   "payroll.read",
   "payroll.employees.read",
   "payroll.contracts.read",
@@ -390,6 +433,7 @@ export const managerPermissions = [
   ...taxPermissions,
   ...customerPermissions,
   ...posPermissions,
+  ...posReceiptControlPermissions,
   ...analyticsPermissions,
   "reports.read",
   "reports.create",
@@ -404,6 +448,9 @@ export const staffPermissions = [
   "profile.read",
   "profile.update",
   "profile.password.update",
+  "hris.self_service.read",
+  "hris.self_service.request",
+  "payroll.payslips.self.read",
   "inventory.read",
   "inventory.items.read",
   "inventory.levels.read",
@@ -428,6 +475,9 @@ export const cashierPermissions = [
   "profile.read",
   "profile.update",
   "profile.password.update",
+  "hris.self_service.read",
+  "hris.self_service.request",
+  "payroll.payslips.self.read",
   "inventory.read",
   "inventory.items.read",
   "sales.read",
@@ -448,6 +498,9 @@ export const viewerPermissions = [
   "profile.read",
   "profile.update",
   "profile.password.update",
+  "hris.self_service.read",
+  "hris.self_service.request",
+  "payroll.payslips.self.read",
   "inventory.read",
   "inventory.items.read",
   "inventory.levels.read",
@@ -472,6 +525,7 @@ export const rolePermissionMap = {
 // Permission categories for UI organization
 export const permissionCategories = {
   "Dashboard & Overview": dashboardPermissions,
+  "Branch Daily Close Controls": branchDailyClosePermissions,
   "User Management": userPermissions,
   "Profile Management": profilePermissions,
   "Role Management": rolePermissions,
@@ -482,12 +536,15 @@ export const permissionCategories = {
   "Financial Management": financialPermissions,
   "Accounting Backbone": accountingPermissions,
   "Compliance Center": compliancePermissions,
+  "HRIS People Core": hrisPermissions,
   "Payroll & Presence": payrollPermissions,
   "Tax Management": taxPermissions,
   "Customer Management": customerPermissions,
   "POS System": posPermissions,
+  "POS Receipt Controls": posReceiptControlPermissions,
   "Analytics & Reporting": analyticsPermissions,
   "System Administration": systemPermissions,
+  "Agent Release Controls": agentReleasePermissions,
   "Communication": communicationPermissions,
   "Data Management": dataPermissions,
 } as const;
@@ -528,9 +585,13 @@ export function isValidPermission(permission: string): permission is Permission 
 
 export default {
   adminPermissions,
+  agentReleasePermissions,
+  branchDailyClosePermissions,
   accountingPermissions,
   compliancePermissions,
+  hrisPermissions,
   payrollPermissions,
+  posReceiptControlPermissions,
   managerPermissions,
   staffPermissions,
   cashierPermissions,
@@ -545,4 +606,3 @@ export default {
   getAllPermissions,
   isValidPermission,
 };
-

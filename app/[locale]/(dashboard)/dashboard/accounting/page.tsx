@@ -1,6 +1,7 @@
 import { BookOpenCheck, ClipboardCheck, FilePlus2, FileSearch, Landmark, ListTree, Scale, Settings2, ShieldCheck } from "lucide-react"
 
 import { getAccountingDashboardSummaryAction } from "@/actions/accounting/reports.actions"
+import { checkPermission } from "@/config/useAuth"
 import { Link } from "@/i18n/navigation"
 import {
   AccountingLinkButton,
@@ -10,6 +11,7 @@ import {
   accountingDate,
   formatAccountingMoney,
 } from "./_components/accounting-ui"
+import { routeByKey, withAccountingSurfaceAccess } from "./accounting-route-access"
 
 type AccountingSummary = {
   settings: { accountingEnabled: boolean; setupStatus: string; baseCurrency: string } | null
@@ -32,7 +34,9 @@ type AccountingSummary = {
   }>
 }
 
-export default async function AccountingDashboardPage() {
+async function AccountingDashboardPageImpl() {
+  await checkPermission("accounting.reports.read")
+
   const summaryResponse = await getAccountingDashboardSummaryAction({})
   const summary = summaryResponse.success ? (summaryResponse.data as AccountingSummary) : null
   const currency = summary?.settings?.baseCurrency || "XAF"
@@ -117,7 +121,7 @@ export default async function AccountingDashboardPage() {
             />
           </div>
 
-          <div className="grid gap-4 lg:grid-cols-6">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[
               { label: "Control center", href: "/dashboard/accounting/control-center", text: "Readiness gates and setup lock" },
               { label: "Accountant portal", href: "/dashboard/accounting/accountant-portal", text: "Trust packs and source links" },
@@ -125,6 +129,7 @@ export default async function AccountingDashboardPage() {
               { label: "Setup", href: "/dashboard/accounting/setup", text: "Settings, journals, and periods" },
               { label: "Accounts", href: "/dashboard/accounting/accounts", text: "Chart of accounts" },
               { label: "Journals", href: "/dashboard/accounting/journals", text: "Drafts, posting, reversals" },
+              { label: "Financial reports", href: "/dashboard/accounting/reports/financial-statements", text: "P&L, EBITDA, and Balance Sheet" },
               { label: "Trial balance", href: "/dashboard/accounting/reports/trial-balance", text: "Posted ledger report" },
             ].map((item) => (
               <Link
@@ -140,7 +145,7 @@ export default async function AccountingDashboardPage() {
 
           <AccountingPanel title="Latest journal entries" description="Recent activity from draft and posted journals.">
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[760px] text-sm">
+              <table className="dashboard-table-base w-full min-w-[760px] text-sm">
                 <thead className="border-b border-[var(--dash-border-subtle)] text-left text-xs uppercase text-[var(--dash-text-faint)]">
                   <tr>
                     <th className="px-4 py-3">Entry</th>
@@ -180,4 +185,20 @@ export default async function AccountingDashboardPage() {
       )}
     </AccountingPageShell>
   )
+}
+
+
+
+export default async function AccountingRoutePage(props: any = {}) {
+  const surface = routeByKey("accounting-dashboard")
+
+  if (!surface) {
+    throw new Error("Missing accounting route surface definition: accounting-dashboard")
+  }
+
+  return withAccountingSurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => AccountingDashboardPageImpl(),
+  })
 }

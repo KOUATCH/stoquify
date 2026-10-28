@@ -25,7 +25,8 @@ import {
   markBusinessEventAppliedInTx,
   recordBusinessEventInTx,
 } from "@/services/events/business-event.service"
-import { resolveRegulatoryParameter } from "@/services/regulatory/country-packs/resolve"
+import { evaluateHrisContractReadinessProof } from "@/services/hris/payroll-readiness-contract"
+import { resolveRegulatoryParameter } from "@/services/regulatory/regulatory-capability.service"
 import { evaluateRedaction, type RedactionDecision } from "@/services/security/redaction-policy.service"
 
 type DbClient = typeof db | Prisma.TransactionClient
@@ -96,7 +97,7 @@ export const upsertPayrollRubriqueInputSchema = z.object({
 
 export const assignEmployeeRubriqueInputSchema = z.object({
   organizationId: z.string().trim().min(1),
-  actorId: z.string().trim().min(1).optional(),
+  actorId: z.string().trim().min(1),
   actorPermissions: z.array(z.string()).optional().default([]),
   employeeId: z.string().trim().min(1),
   rubriqueId: z.string().trim().min(1),
@@ -107,8 +108,19 @@ export const assignEmployeeRubriqueInputSchema = z.object({
   currency: z.string().trim().length(3).optional().default("XAF"),
   effectiveFrom: dateInputSchema,
   effectiveTo: optionalDateInputSchema,
-  evidenceDocumentHash: evidenceHashSchema.optional(),
+  evidenceDocumentHash: evidenceHashSchema,
   sourceReference: sourceReferenceSchema,
+  idempotencyKey: z.string().trim().min(1).max(200).optional(),
+})
+
+export const approveEmployeeRubriqueAssignmentInputSchema = z.object({
+  organizationId: z.string().trim().min(1),
+  actorId: z.string().trim().min(1),
+  actorPermissions: z.array(z.string()).optional().default([]),
+  employeeId: z.string().trim().min(1),
+  assignmentId: z.string().trim().min(1),
+  decisionReasonHash: evidenceHashSchema,
+  approvalEvidenceHash: evidenceHashSchema,
   idempotencyKey: z.string().trim().min(1).max(200).optional(),
 })
 
@@ -156,6 +168,9 @@ export const applyApprovedSalaryChangeInputSchema = z.object({
 export type CompensationWorkflowInput = z.input<typeof compensationWorkflowInputSchema>
 export type UpsertPayrollRubriqueInput = z.input<typeof upsertPayrollRubriqueInputSchema>
 export type AssignEmployeeRubriqueInput = z.input<typeof assignEmployeeRubriqueInputSchema>
+export type ApproveEmployeeRubriqueAssignmentInput = z.input<
+  typeof approveEmployeeRubriqueAssignmentInputSchema
+>
 export type RequestSalaryChangeInput = z.input<typeof requestSalaryChangeInputSchema>
 export type ApproveSalaryChangeInput = z.input<typeof approveSalaryChangeInputSchema>
 export type RejectSalaryChangeInput = z.input<typeof rejectSalaryChangeInputSchema>
@@ -198,11 +213,14 @@ export type PayrollRubriqueAssignmentReadModel = {
   rubriqueCode: string
   status: PayrollRubriqueAssignmentStatus
   amount: string | null
-  rateBps: number | null
+  rateBps: number | string | null
   quantity: string | null
   currency: string
   effectiveFrom: string
   effectiveTo: string | null
+  evidenceDocumentHashPresent: boolean
+  approvalBusinessEventPresent: boolean
+  hrisApprovalStatus: "NOT_REQUESTED" | "REQUESTED" | "APPROVED" | "LEGACY_ACTIVE"
   redactions: CompensationRedaction[]
 }
 
@@ -466,6 +484,26 @@ function mapRubrique(rubrique: RubriqueRecord): PayrollRubriqueReadModel {
   }
 }
 
+function assignmentApprovalStatus(
+  assignment: AssignmentRecord,
+): PayrollRubriqueAssignmentReadModel["hrisApprovalStatus"] {
+  const metadata = metadataRecord(assignment.metadata)
+  const approval = metadataRecord(metadata.hrisCompensationApproval as Prisma.JsonValue | undefined)
+
+  if (
+    approval.status === "APPROVED" &&
+    assignment.status === PayrollRubriqueAssignmentStatus.ACTIVE &&
+    assignment.approvalBusinessEventId
+  ) {
+    return "APPROVED"
+  }
+  if (approval.status === "REQUESTED" && assignment.status === PayrollRubriqueAssignmentStatus.DRAFT) {
+    return "REQUESTED"
+  }
+  if (assignment.status === PayrollRubriqueAssignmentStatus.ACTIVE) return "LEGACY_ACTIVE"
+  return "NOT_REQUESTED"
+}
+
 function mapAssignment(
   assignment: AssignmentRecord,
   decision: RedactionDecision,
@@ -478,11 +516,18 @@ function mapAssignment(
     rubriqueCode: assignment.rubrique.code,
     status: assignment.status,
     amount: decision.allowed ? decimalToString(assignment.amount) : decision.replacement,
-    rateBps: assignment.rateBps,
-    quantity: decimalToString(assignment.quantity),
+    rateBps: assignment.rateBps === null
+      ? null
+      : decision.allowed ? assignment.rateBps : decision.replacement,
+    quantity: assignment.quantity === null
+      ? null
+      : decision.allowed ? decimalToString(assignment.quantity) : decision.replacement,
     currency: assignment.currency,
     effectiveFrom: assignment.effectiveFrom.toISOString(),
     effectiveTo: assignment.effectiveTo?.toISOString() ?? null,
+    evidenceDocumentHashPresent: Boolean(assignment.evidenceDocumentHash),
+    approvalBusinessEventPresent: Boolean(assignment.approvalBusinessEventId),
+    hrisApprovalStatus: assignmentApprovalStatus(assignment),
     redactions: redactions(decision),
   }
 }
@@ -600,6 +645,52 @@ async function assertNoPayrollRunLineOnOrAfter(
   if (impactedLine) {
     throw new BusinessRuleError("Salary change effective date overlaps an existing payroll run; use a corrective payroll workflow instead.")
   }
+}
+
+async function assertApprovedEffectiveContractForActiveAssignment(
+  tx: Prisma.TransactionClient,
+  input: { organizationId: string; employeeId: string; effectiveFrom: Date; effectiveTo: Date | null },
+) {
+  const contract = await tx.payrollContract.findFirst({
+    where: {
+      organizationId: input.organizationId,
+      employeeId: input.employeeId,
+      status: PayrollContractStatus.ACTIVE,
+      signedDocumentHash: { not: null },
+      activatedBusinessEventId: { not: null },
+      effectiveFrom: { lte: input.effectiveFrom },
+      ...(input.effectiveTo
+        ? { OR: [{ effectiveTo: null }, { effectiveTo: { gte: input.effectiveTo } }] }
+        : { effectiveTo: null }),
+      deletedAt: null,
+    },
+    orderBy: [{ effectiveFrom: "desc" }],
+    select: {
+      id: true,
+      contractNumber: true,
+      effectiveFrom: true,
+      effectiveTo: true,
+      signedDocumentHash: true,
+      activatedBusinessEventId: true,
+      metadata: true,
+    },
+  })
+
+  if (!contract) {
+    throw new BusinessRuleError("Active rubrique assignments require an approved effective contract covering the assignment period.")
+  }
+
+  const proof = evaluateHrisContractReadinessProof({
+    id: contract.id,
+    signedDocumentHash: contract.signedDocumentHash,
+    activatedBusinessEventId: contract.activatedBusinessEventId,
+    metadata: contract.metadata,
+  })
+  if (!proof.approvalValid || !proof.documentValid) {
+    throw new BusinessRuleError("Active compensation requires complete HRIS contract activation and document approval proof.")
+  }
+
+  return contract
 }
 
 function salaryChangePayload(request: Prisma.PayrollSalaryChangeRequestGetPayload<object>, action: string) {
@@ -792,7 +883,7 @@ export async function assignEmployeeRubrique(
   client: DbClient = db,
 ): Promise<AssignmentMutationResult> {
   const parsed = assignEmployeeRubriqueInputSchema.parse(input)
-  assertPermission(parsed.actorPermissions, MANAGE_PERMISSIONS, "employee rubrique assignment")
+  assertPermission(parsed.actorPermissions, MANAGE_PERMISSIONS, "employee rubrique assignment request")
   const effectiveFrom = parseDate(parsed.effectiveFrom, "effectiveFrom")
   const effectiveTo = parseOptionalDate(parsed.effectiveTo, "effectiveTo")
   const amount = parseOptionalDecimal(parsed.amount, "amount")
@@ -801,6 +892,11 @@ export async function assignEmployeeRubrique(
 
   if (!amount && parsed.rateBps === undefined && !quantity) {
     throw new BusinessRuleError("Rubrique assignment requires an amount, rate, or quantity.")
+  }
+  if (parsed.status !== PayrollRubriqueAssignmentStatus.DRAFT) {
+    throw new BusinessRuleError(
+      "Employee compensation assignments must be requested as drafts and approved by a different actor before payroll consumption.",
+    )
   }
 
   return inTransaction(client, async (tx) => {
@@ -826,17 +922,25 @@ export async function assignEmployeeRubrique(
         organizationId: parsed.organizationId,
         employeeId: parsed.employeeId,
         rubriqueId: parsed.rubriqueId,
-        status: parsed.status,
+        status: PayrollRubriqueAssignmentStatus.DRAFT,
         amount,
         rateBps: parsed.rateBps ?? null,
         quantity,
         currency: parsed.currency.toUpperCase(),
         effectiveFrom,
         effectiveTo,
-        evidenceDocumentHash: parsed.evidenceDocumentHash ?? null,
+        evidenceDocumentHash: parsed.evidenceDocumentHash,
         metadata: buildMetadata(null, {
           sourceReference: parsed.sourceReference ?? null,
           employeeNumber: employee.employeeNumber,
+          contractLifecycleGate: "REQUIRED_AT_APPROVAL",
+          hrisCompensationApproval: {
+            version: 1,
+            status: "REQUESTED",
+            requestedById: parsed.actorId,
+            requestBusinessEventId: null,
+            requestedAt: new Date().toISOString(),
+          },
         }),
       },
       include: { employee: true, rubrique: true },
@@ -845,11 +949,15 @@ export async function assignEmployeeRubrique(
     const businessEventId = await recordCompensationEvent(tx, {
       organizationId: parsed.organizationId,
       actorId: parsed.actorId,
-      eventType: "payroll.rubrique.assignment.created",
-      idempotencyKey: parsed.idempotencyKey ?? `payroll-rubrique-assignment:${parsed.organizationId}:${assignment.id}`,
+      eventType: "hris.compensation.assignment.requested",
+      idempotencyKey: parsed.idempotencyKey ?? [
+        "hris-compensation-assignment-request",
+        parsed.organizationId,
+        assignment.id,
+      ].join(":"),
       sourceType: "PAYROLL_RUBRIQUE_ASSIGNMENT",
       sourceId: assignment.id,
-      documentHash: parsed.evidenceDocumentHash ?? null,
+      documentHash: parsed.evidenceDocumentHash,
       payload: {
         assignmentId: assignment.id,
         employeeId: assignment.employeeId,
@@ -859,35 +967,209 @@ export async function assignEmployeeRubrique(
         effectiveFrom: assignment.effectiveFrom.toISOString(),
         effectiveTo: assignment.effectiveTo?.toISOString() ?? null,
         amountHash: amount ? hashBusinessPayload({ value: amount.toString(), currency: assignment.currency }) : null,
-        rateBps: assignment.rateBps,
-        quantity: assignment.quantity?.toString() ?? null,
+        rateHash: assignment.rateBps === null
+          ? null
+          : hashBusinessPayload({ value: assignment.rateBps, unit: "BPS" }),
+        quantityHash: assignment.quantity === null
+          ? null
+          : hashBusinessPayload({ value: assignment.quantity.toString(), unit: "QUANTITY" }),
       },
       metadata: { sourceReference: parsed.sourceReference ?? null },
     })
 
     const updated = await tx.payrollEmployeeRubriqueAssignment.update({
-      where: { id: assignment.id },
-      data: { approvalBusinessEventId: businessEventId },
+      where: { id: assignment.id, organizationId: parsed.organizationId },
+      data: {
+        metadata: buildMetadata(assignment.metadata, {
+          hrisCompensationApproval: {
+            version: 1,
+            status: "REQUESTED",
+            requestedById: parsed.actorId,
+            requestBusinessEventId: businessEventId,
+            requestedAt: new Date().toISOString(),
+          },
+        }),
+      },
       include: { employee: true, rubrique: true },
     })
 
-    const decision = salaryDecisionFor({ actorPermissions: parsed.actorPermissions, field: "payroll.compensation.assignment.amount" })
+    const decision = salaryDecisionFor({
+      actorPermissions: parsed.actorPermissions,
+      field: "payroll.compensation.assignment.amount",
+    })
     const mapped = mapAssignment(updated, decision)
 
     await writeAudit(tx, {
       organizationId: parsed.organizationId,
       entityType: "PayrollEmployeeRubriqueAssignment",
       entityId: assignment.id,
-      action: "PAYROLL_RUBRIQUE_ASSIGNMENT_CREATED",
+      action: "HRIS_COMPENSATION_ASSIGNMENT_REQUESTED",
       actorId: parsed.actorId,
       before: null,
-      after: { ...mapped, amount: mapped.redactions.length ? "[REDACTED]" : mapped.amount },
+      after: {
+        id: mapped.id,
+        employeeId: mapped.employeeId,
+        rubriqueId: mapped.rubriqueId,
+        status: mapped.status,
+        hrisApprovalStatus: mapped.hrisApprovalStatus,
+        evidenceDocumentHashPresent: mapped.evidenceDocumentHashPresent,
+      },
     })
 
     return { assignment: mapped, businessEventId }
   })
 }
 
+export async function approveEmployeeRubriqueAssignment(
+  input: ApproveEmployeeRubriqueAssignmentInput,
+  client: DbClient = db,
+): Promise<AssignmentMutationResult> {
+  const parsed = approveEmployeeRubriqueAssignmentInputSchema.parse(input)
+  assertPermission(parsed.actorPermissions, MANAGE_PERMISSIONS, "employee rubrique assignment approval")
+
+  return inTransaction(client, async (tx) => {
+    const existing = await tx.payrollEmployeeRubriqueAssignment.findFirst({
+      where: {
+        id: parsed.assignmentId,
+        organizationId: parsed.organizationId,
+        employeeId: parsed.employeeId,
+        deletedAt: null,
+      },
+      include: { employee: true, rubrique: true },
+    }) as AssignmentRecord | null
+    if (!existing) {
+      throw new NotFoundError("Employee compensation assignment was not found for this tenant and employee.")
+    }
+    if (existing.status !== PayrollRubriqueAssignmentStatus.DRAFT) {
+      throw new BusinessRuleError("Only requested draft compensation assignments can be approved.")
+    }
+    if (!existing.evidenceDocumentHash) {
+      throw new BusinessRuleError("Compensation assignment approval requires request evidence.")
+    }
+
+    const metadata = metadataRecord(existing.metadata)
+    const approval = metadataRecord(
+      metadata.hrisCompensationApproval as Prisma.JsonValue | undefined,
+    )
+    const requestedById = typeof approval.requestedById === "string"
+      ? approval.requestedById
+      : null
+    if (approval.status !== "REQUESTED" || !requestedById) {
+      throw new BusinessRuleError("Compensation assignment approval requires a traceable HRIS request.")
+    }
+    if (requestedById === parsed.actorId) {
+      throw new ForbiddenError("Compensation assignment requester cannot approve their own request.")
+    }
+
+    const approvedContract = await assertApprovedEffectiveContractForActiveAssignment(tx, {
+      organizationId: parsed.organizationId,
+      employeeId: parsed.employeeId,
+      effectiveFrom: existing.effectiveFrom,
+      effectiveTo: existing.effectiveTo,
+    })
+    const approvedAt = new Date()
+    const approvalMetadata = {
+      version: 1,
+      status: "APPROVED",
+      requestedById,
+      requestBusinessEventId: typeof approval.requestBusinessEventId === "string"
+        ? approval.requestBusinessEventId
+        : null,
+      approvedById: parsed.actorId,
+      approvedAt: approvedAt.toISOString(),
+      decisionReasonHash: parsed.decisionReasonHash,
+      approvalEvidenceHash: parsed.approvalEvidenceHash,
+      approvalBusinessEventId: null,
+      activeContractId: approvedContract.id,
+    }
+
+    const approved = await tx.payrollEmployeeRubriqueAssignment.update({
+      where: { id: existing.id, organizationId: parsed.organizationId },
+      data: {
+        status: PayrollRubriqueAssignmentStatus.ACTIVE,
+        metadata: buildMetadata(existing.metadata, {
+          contractLifecycleGate: "APPROVED_EFFECTIVE_CONTRACT",
+          activeContractId: approvedContract.id,
+          activeContractNumber: approvedContract.contractNumber,
+          hrisCompensationApproval: approvalMetadata,
+        }),
+      },
+      include: { employee: true, rubrique: true },
+    })
+
+    const businessEventId = await recordCompensationEvent(tx, {
+      organizationId: parsed.organizationId,
+      actorId: parsed.actorId,
+      eventType: "hris.compensation.assignment.approved",
+      idempotencyKey: parsed.idempotencyKey ?? [
+        "hris-compensation-assignment-approve",
+        parsed.organizationId,
+        approved.id,
+      ].join(":"),
+      sourceType: "PAYROLL_RUBRIQUE_ASSIGNMENT",
+      sourceId: approved.id,
+      documentHash: parsed.approvalEvidenceHash,
+      payload: {
+        assignmentId: approved.id,
+        employeeId: approved.employeeId,
+        rubriqueId: approved.rubriqueId,
+        rubriqueCode: approved.rubrique.code,
+        status: approved.status,
+        effectiveFrom: approved.effectiveFrom.toISOString(),
+        effectiveTo: approved.effectiveTo?.toISOString() ?? null,
+        amountHash: approved.amount
+          ? hashBusinessPayload({ value: approved.amount.toString(), currency: approved.currency })
+          : null,
+        activeContractId: approvedContract.id,
+        makerCheckerProven: true,
+      },
+      metadata: {
+        requestBusinessEventId: approvalMetadata.requestBusinessEventId,
+        decisionReasonHash: parsed.decisionReasonHash,
+        activeContractId: approvedContract.id,
+      },
+    })
+
+    const updated = await tx.payrollEmployeeRubriqueAssignment.update({
+      where: { id: approved.id, organizationId: parsed.organizationId },
+      data: {
+        approvalBusinessEventId: businessEventId,
+        metadata: buildMetadata(approved.metadata, {
+          hrisCompensationApproval: {
+            ...approvalMetadata,
+            approvalBusinessEventId: businessEventId,
+          },
+        }),
+      },
+      include: { employee: true, rubrique: true },
+    })
+
+    const decision = salaryDecisionFor({
+      actorPermissions: parsed.actorPermissions,
+      field: "payroll.compensation.assignment.amount",
+    })
+    const mapped = mapAssignment(updated, decision)
+    await writeAudit(tx, {
+      organizationId: parsed.organizationId,
+      entityType: "PayrollEmployeeRubriqueAssignment",
+      entityId: updated.id,
+      action: "HRIS_COMPENSATION_ASSIGNMENT_APPROVED",
+      actorId: parsed.actorId,
+      before: {
+        status: existing.status,
+        hrisApprovalStatus: "REQUESTED",
+      },
+      after: {
+        status: updated.status,
+        hrisApprovalStatus: mapped.hrisApprovalStatus,
+        approvalBusinessEventPresent: mapped.approvalBusinessEventPresent,
+        activeContractId: approvedContract.id,
+      },
+    })
+
+    return { assignment: mapped, businessEventId }
+  })
+}
 export async function requestSalaryChange(
   input: RequestSalaryChangeInput,
   client: DbClient = db,
@@ -1049,7 +1331,9 @@ export async function approveSalaryChange(
       sourceId: approved.id,
       documentHash: parsed.approvalEvidenceHash,
       payload: salaryChangePayload(approved, "approved"),
-      metadata: { decisionReason: parsed.decisionReason },
+      metadata: {
+        decisionReasonHash: hashBusinessPayload({ decisionReason: parsed.decisionReason }),
+      },
     })
 
     const updated = await tx.payrollSalaryChangeRequest.update({
@@ -1111,7 +1395,9 @@ export async function rejectSalaryChange(
       sourceType: "PAYROLL_SALARY_CHANGE",
       sourceId: rejected.id,
       payload: salaryChangePayload(rejected, "rejected"),
-      metadata: { decisionReason: parsed.decisionReason },
+      metadata: {
+        decisionReasonHash: hashBusinessPayload({ decisionReason: parsed.decisionReason }),
+      },
     })
 
     const decision = salaryDecisionFor({ actorPermissions: parsed.actorPermissions, field: "payroll.salaryChange.amounts" })
@@ -1144,6 +1430,9 @@ export async function applyApprovedSalaryChange(
     }
     if (existing.requestedById === parsed.actorId) {
       throw new ForbiddenError("Salary change requester cannot apply their own request.")
+    }
+    if (existing.approvedById === parsed.actorId) {
+      throw new ForbiddenError("Salary change approver cannot apply their own approval.")
     }
     if (!existing.approvalEvidenceHash) {
       throw new BusinessRuleError("Approved salary changes require approval evidence before application.")

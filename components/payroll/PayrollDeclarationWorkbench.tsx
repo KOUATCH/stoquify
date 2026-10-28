@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import {
@@ -14,6 +16,11 @@ import type { PayrollDeclarationWorkbenchResult } from "@/actions/payroll/payrol
 import { localizePath } from "@/i18n/routing";
 import type { Locale } from "@/types/bilingual";
 import PayrollAuditorProofPanel from "./PayrollAuditorProofPanel";
+import {
+  HrPayrollTableControls,
+  HrPayrollTablePagination,
+  useHrPayrollTable,
+} from "@/components/hr-payroll/HrPayrollTableControls";
 import PayrollDeclarationAuthorityExecutionPanel from "./PayrollDeclarationAuthorityExecutionPanel";
 import PayrollProofDrawerButton, {
   type PayrollProofDrawerSubject,
@@ -390,6 +397,19 @@ export default function PayrollDeclarationWorkbench({
   error,
   locale,
 }: Props) {
+  const declarationTable = useHrPayrollTable({
+    rows: data?.declarations ?? [],
+    searchText: (declaration) => JSON.stringify(declaration),
+    dateValue: (declaration) => declaration.dueDate,
+    sortOptions: [
+      { key: "declaration", label: "Declaration", value: (declaration) => declaration.authority },
+      { key: "due-date", label: "Due date", value: (declaration) => declaration.dueDate },
+      { key: "run", label: "Payroll run", value: (declaration) => declaration.payrollRun.runNumber },
+      { key: "amount", label: "Amount", value: (declaration) => Number(declaration.amount) },
+      { key: "status", label: "Status", value: (declaration) => declaration.status },
+    ],
+  });
+
   if (error) return <ErrorPanel message={error} />;
   if (!data) return <EmptyState />;
 
@@ -490,7 +510,8 @@ export default function PayrollDeclarationWorkbench({
             Declaration lifecycle
           </h2>
         </div>
-        <div className="overflow-x-auto">
+        <HrPayrollTableControls table={declarationTable} locale={locale} tableLabel="payroll declarations" />
+        <div className="dashboard-data-table dashboard-table-shell overflow-x-auto">
           <table className="min-w-[1440px] w-full table-fixed border-collapse text-left text-sm">
             <thead className="border-b border-white/10 text-xs uppercase tracking-normal text-slate-400">
               <tr>
@@ -507,8 +528,8 @@ export default function PayrollDeclarationWorkbench({
               </tr>
             </thead>
             <tbody className="divide-y divide-white/10">
-              {data.declarations.length ? (
-                data.declarations.map((declaration) => (
+              {declarationTable.rows.length ? (
+                declarationTable.rows.map((declaration) => (
                   <tr key={declaration.id} className="align-top">
                     <td className="px-4 py-3">
                       <p className="break-words font-semibold text-white">
@@ -593,6 +614,7 @@ export default function PayrollDeclarationWorkbench({
             </tbody>
           </table>
         </div>
+        <HrPayrollTablePagination table={declarationTable} locale={locale} />
       </section>
 
       <section className="rounded-lg border border-white/10 bg-white/[0.05] p-4">

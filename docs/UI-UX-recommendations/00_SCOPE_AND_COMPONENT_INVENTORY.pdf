@@ -1,0 +1,207 @@
+%PDF-1.4
+1 0 obj
+<< /Length 2774 >>
+stream
+BT
+/F1 11 Tf
+1 0 0 1 50 0 Tm
+50 770 Td
+0 -14 Td
+14 TL
+(Stoquify UI/UX Enterprise Review \(non-table scope\)) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Date: 2026-08-24) Tj
+0 -14 Td
+(Owner: Multidisciplinary enterprise review board) Tj
+0 -14 Td
+(Scope: UI/UX modernization across non-table components only) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(1\) Scope confirmation) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(- Included: dashboard shell, navigation, command/search surfaces, modals/dialogs/drawers, forms/workflows, alerts/toasts, empty/loading/error states, global branding tokens, accessibility and localization touchpoints, and workflow ergonomics for high-frequency business tasks.) Tj
+0 -14 Td
+(- Explicitly excluded: data table components and table-centric pages \(already analyzed separately\), including row-level bulk actions, table column metadata surfaces, and grid virtualization strategy.) Tj
+0 -14 Td
+(- Included source signals:) Tj
+0 -14 Td
+(- `graphify-out/GRAPH_REPORT_*.md` \(architecture and dependency context\)) Tj
+0 -14 Td
+(- `app/globals.css` \(token and interaction conventions\)) Tj
+0 -14 Td
+(- `app/[locale]/\(dashboard\)/dashboard/layout.tsx`) Tj
+0 -14 Td
+(- `components/dashboard/Sidebar.tsx`) Tj
+0 -14 Td
+(- `components/dashboard/Navbar.tsx`) Tj
+0 -14 Td
+(- `components/dashboard/EnhancedEnterpriseDashboard.tsx`) Tj
+0 -14 Td
+(- `components/dashboard/primitives/command-center-primitives.tsx`) Tj
+0 -14 Td
+(- `components/finance/finance-dashboard-theme.ts`) Tj
+0 -14 Td
+(- `config/sidebar.ts`) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(2\) Impacted feature families \(non-table\)) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Shell & navigation) Tj
+0 -14 Td
+(- Dashboard route shell and module-level navigation layout.) Tj
+0 -14 Td
+(Module surface governance) Tj
+0 -14 Td
+(- Permission-aware visibility in navigation + module route exposure.) Tj
+0 -14 Td
+(Command/search surfaces) Tj
+0 -14 Td
+(- Command inputs, quick actions, command palette, contextual search.) Tj
+0 -14 Td
+(Stateful surfaces) Tj
+0 -14 Td
+(- Empty, loading, and failure states; progress/feedback patterns.) Tj
+0 -14 Td
+(Dialog and overlay system) Tj
+0 -14 Td
+(- Modal/dialog, drawer, confirmation patterns, wizard-like workflows.) Tj
+0 -14 Td
+(Feedback and action system) Tj
+0 -14 Td
+(- Toasts, badges, alerts, callouts, and task queues.) Tj
+0 -14 Td
+(Workflow ergonomics) Tj
+0 -14 Td
+(- Form density, action grouping, error recovery, undo/confirmation flow.) Tj
+0 -14 Td
+(Localization and copy) Tj
+0 -14 Td
+(- `useTranslation` / locale-aware labels and user-facing microcopy.) Tj
+0 -14 Td
+(Design tokens and visual system) Tj
+0 -14 Td
+(- Color, spacing, radius, shadow, gradients, type scale.) Tj
+0 -14 Td
+(Responsive behavior) Tj
+0 -14 Td
+(- Desktop + mobile shell transitions, navigation persistence, density.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+ET
+endstream
+endobj
+2 0 obj
+<< /Length 2816 >>
+stream
+BT
+/F1 11 Tf
+1 0 0 1 50 0 Tm
+50 770 Td
+0 -14 Td
+14 TL
+(3\) Usage graph \(minimum dependency trace\)) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(- `app/[locale]/\(dashboard\)/dashboard/layout.tsx`) Tj
+0 -14 Td
+(- composes `Sidebar`, `Navbar`, and dashboard shell behavior.) Tj
+0 -14 Td
+(- `components/dashboard/Sidebar.tsx`) Tj
+0 -14 Td
+(- reads route groups and permission metadata \(`config/sidebar.ts`\) and controls module visibility.) Tj
+0 -14 Td
+(- `components/dashboard/Navbar.tsx`) Tj
+0 -14 Td
+(- consumes pathname/session context and action shortcuts in top shell.) Tj
+0 -14 Td
+(- `components/dashboard/EnhancedEnterpriseDashboard.tsx`) Tj
+0 -14 Td
+(- composes premium dashboard composition patterns and command-center primitives.) Tj
+0 -14 Td
+(- `components/dashboard/primitives/command-center-primitives.tsx`) Tj
+0 -14 Td
+(- provides reusable command/wizard/filter building blocks reused by multiple surfaces.) Tj
+0 -14 Td
+(- `components/finance/finance-dashboard-theme.ts`) Tj
+0 -14 Td
+(- applies domain-specific visual treatment and token overrides to finance pages.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(4\) Repository truth vs proposal) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(| Area | Repository truth | Proposal posture |) Tj
+0 -14 Td
+(| --- | --- | --- |) Tj
+0 -14 Td
+(| Navigation | Existing permission-aware shell and dashboard layout are already in place | Standardize IA and interaction contracts across modules; remove visual drift between modules |) Tj
+0 -14 Td
+(| Command surfaces | Present in select modules with differing UX behavior | Consolidate into one reusable command contract with predictable keyboard, results, and empty/error behavior |) Tj
+0 -14 Td
+(| Design system usage | Strong token base in `globals.css`, but variable drift in page modules | Tighten token governance and module override policy |) Tj
+0 -14 Td
+(| State handling | Robust patterns exist for many states, but inconsistent semantics across surfaces | Introduce state-level rubric with mandatory mapping per component family |) Tj
+0 -14 Td
+(| Accessibility | Not uniformly enforced across non-table overlays/forms | Align with WCAG-friendly baseline for focus, labels, contrast, and key handling |) Tj
+0 -14 Td
+(| Localization | Locale-aware structure exists but copy consistency varies by module | Add per-surface copy quality checks and bilingual semantic taxonomy |) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(5\) Immaterial lenses \(not applicable\)) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(- Offline/edge architecture: **Not applicable** in this pass because scope is desktop UI/UX surfaces.) Tj
+0 -14 Td
+(- Deep distributed systems fault model: **Not applicable** for visual patterns; handled by backend-focused review stream.) Tj
+0 -14 Td
+(- Raw accounting/tax interpretation: **Not applicable**; this review avoids legal/tax conclusions.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+ET
+endstream
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 5 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 2 0 R >>
+endobj
+5 0 obj
+<< /Type /Page /Parent 5 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 3 0 R >>
+endobj
+6 0 obj
+<< /Type /Pages /Kids [5 0 R 6 0 R] /Count 2 >>
+endobj
+7 0 obj
+<< /Type /Catalog /Pages 6 0 R >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000009 00000 n 
+0000002834 00000 n 
+0000005701 00000 n 
+0000005771 00000 n 
+0000005897 00000 n 
+0000006023 00000 n 
+0000006086 00000 n 
+trailer
+<< /Size 8 /Root 7 0 R >>
+startxref
+6135
+%%EOF

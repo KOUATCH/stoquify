@@ -1,0 +1,98 @@
+{
+  "schemaVersion": "1.0",
+  "runId": "th-inventory-history-bounded-artifacts-20260715-011",
+  "traceId": "5d4e1190-8264-41a3-9bc8-ec44168bc08e",
+  "mode": "implement",
+  "sliceId": "foundation-inventory",
+  "contractVersion": "1.0",
+  "proposal": {
+    "path": "docs/new ideas/STOQUIFY_TRANSACTION_HISTORY_ANALYTICS_AND_SECURITY_PROPOSAL_2026-07-14.md",
+    "sha256": "sha256:0628f08178fe0441fe22ccbd1a6b429c2bb07b2ea5d278e6dcb799ab117c6979"
+  },
+  "baseCommit": "8a406e93b0e798ed6f476ca5d81df37a2aaa38be",
+  "runtimeArtifactRoot": "what-next/transaction-history/runs/th-inventory-history-bounded-artifacts-20260715-011/",
+  "scope": {
+    "lanes": [
+      "workbench",
+      "inventory"
+    ],
+    "includePaths": [
+      "services/inventory/inventory-history-export-artifact-store.ts",
+      "services/inventory/__tests__/inventory-history-export-artifact-store.test.ts",
+      "services/inventory/inventory-read.service.ts",
+      "services/inventory/__tests__/inventory-read.service.test.ts",
+      "services/inventory/inventory-history-background-export.service.ts",
+      "services/inventory/__tests__/inventory-history-background-export.service.test.ts",
+      "actions/inventory/inventoryMovementHistoryBackgroundExportActions.ts",
+      "actions/inventory/__tests__/inventoryMovementHistoryBackgroundExportActions.test.ts",
+      "scripts/inventory-history-export-worker.ts",
+      "scripts/__tests__/inventory-history-export-worker.test.ts"
+    ],
+    "excludePaths": [
+      ".env",
+      ".env.example",
+      "package.json",
+      "prisma/schema.prisma",
+      "prisma/migrations/",
+      "app/",
+      "components/",
+      "hooks/",
+      "lib/",
+      "services/events/business-event.service.ts"
+    ]
+  },
+  "stageAllowlists": {
+    "01": [
+      "what-next/transaction-history/runs/th-inventory-history-bounded-artifacts-20260715-011/slices/foundation-inventory/01-architecture-gate.json"
+    ],
+    "02": [
+      "what-next/transaction-history/runs/th-inventory-history-bounded-artifacts-20260715-011/slices/foundation-inventory/02-security-proof-gate.json"
+    ],
+    "03": [
+      "what-next/transaction-history/runs/th-inventory-history-bounded-artifacts-20260715-011/slices/foundation-inventory/03-accounting-control-gate.json"
+    ],
+    "04": [
+      "services/inventory/inventory-history-export-artifact-store.ts",
+      "services/inventory/__tests__/inventory-history-export-artifact-store.test.ts",
+      "services/inventory/inventory-read.service.ts",
+      "services/inventory/__tests__/inventory-read.service.test.ts",
+      "services/inventory/inventory-history-background-export.service.ts",
+      "services/inventory/__tests__/inventory-history-background-export.service.test.ts",
+      "actions/inventory/inventoryMovementHistoryBackgroundExportActions.ts",
+      "actions/inventory/__tests__/inventoryMovementHistoryBackgroundExportActions.test.ts",
+      "scripts/inventory-history-export-worker.ts",
+      "scripts/__tests__/inventory-history-export-worker.test.ts",
+      "what-next/transaction-history/runs/th-inventory-history-bounded-artifacts-20260715-011/slices/foundation-inventory/04-read-model-optimizer.json",
+      "what-next/transaction-history/runs/th-inventory-history-bounded-artifacts-20260715-011/slices/foundation-inventory/04-read-model-optimizer.md",
+      "what-next/transaction-history/runs/th-inventory-history-bounded-artifacts-20260715-011/logs/04-bounded-artifact-capacity.json"
+    ],
+    "05": [
+      "what-next/transaction-history/runs/th-inventory-history-bounded-artifacts-20260715-011/slices/foundation-inventory/05-workbench-ux-contract.json"
+    ],
+    "06": [
+      "what-next/transaction-history/runs/th-inventory-history-bounded-artifacts-20260715-011/slices/foundation-inventory/06-frontend-delivery.json"
+    ],
+    "07": [
+      "what-next/transaction-history/runs/th-inventory-history-bounded-artifacts-20260715-011/slices/foundation-inventory/07-release-review.json"
+    ]
+  },
+  "orchestratorPolicy": {
+    "productCodeEdits": false,
+    "installSkills": false,
+    "deployMigrations": false
+  },
+  "gates": {
+    "foundationInventory": {
+      "status": "PASS",
+      "evidence": [
+        "what-next/transaction-history/runs/th-foundation-inventory-correction-verify-20260715-006/slices/foundation-inventory/02-security-proof-gate.json",
+        "what-next/transaction-history/runs/th-foundation-inventory-correction-verify-20260715-006/slices/foundation-inventory/03-accounting-control-gate.json"
+      ]
+    },
+    "arAccountingPrerequisites": {
+      "status": "NA",
+      "evidence": []
+    }
+  },
+  "createdAt": "2026-07-15T14:11:39.3404993+01:00"
+}

@@ -1,0 +1,395 @@
+{
+  "summary": {
+    "generatedAt": "2026-07-16T16:26:34.766Z",
+    "mode": "fail",
+    "releaseEnforced": true,
+    "status": "blocked",
+    "checkCount": 11,
+    "readyCount": 8,
+    "blockerCount": 3,
+    "releaseConditionCount": 3,
+    "releaseBlockerCount": 3,
+    "runReportCount": 14,
+    "readinessArtifactCount": 10,
+    "secretValuePrinted": false
+  },
+  "checks": [
+    {
+      "id": "all_skill_run_reports_present",
+      "ready": false
+    },
+    {
+      "id": "run_reports_record_date_and_verification",
+      "ready": false
+    },
+    {
+      "id": "readiness_json_is_parseable_and_clear",
+      "ready": true
+    },
+    {
+      "id": "readiness_markdown_is_present",
+      "ready": true
+    },
+    {
+      "id": "supporting_inventory_evidence_is_present",
+      "ready": false
+    },
+    {
+      "id": "domain_policy_gates_are_composed",
+      "ready": true
+    },
+    {
+      "id": "release_verification_enforces_both_secret_gates",
+      "ready": true
+    },
+    {
+      "id": "dedicated_release_secret_preflight_is_wired",
+      "ready": true
+    },
+    {
+      "id": "prisma_migration_automation_is_wired",
+      "ready": true
+    },
+    {
+      "id": "database_backed_ci_release_gate_is_wired",
+      "ready": true
+    },
+    {
+      "id": "release_evidence_gate_is_wired",
+      "ready": true
+    }
+  ],
+  "blockers": [
+    "all_skill_run_reports_present",
+    "run_reports_record_date_and_verification",
+    "supporting_inventory_evidence_is_present"
+  ],
+  "releaseConditions": [
+    {
+      "id": "public_identity_hash_secret",
+      "configured": false,
+      "requiredCommand": "release:secrets:preflight:release"
+    },
+    {
+      "id": "public_receipt_token_secret",
+      "configured": false,
+      "requiredCommand": "release:secrets:preflight:release"
+    },
+    {
+      "id": "production_database_target",
+      "configured": false,
+      "requiredCommand": "prisma:migration:release:preflight"
+    }
+  ],
+  "releaseBlockers": [
+    "public_identity_hash_secret",
+    "public_receipt_token_secret",
+    "production_database_target"
+  ],
+  "runReports": [
+    {
+      "skill": "stoquify-service-boundary-ratchet",
+      "file": "what-next/skills-life-cycle/STOQUIFY_SERVICE_BOUNDARY_RATCHET_AUDIT_2026-07-11.md",
+      "exists": false,
+      "bytes": 0,
+      "dated": false,
+      "verificationRecorded": false,
+      "nextStepRecorded": false
+    },
+    {
+      "skill": "stoquify-rbac-tenant-freshauth-enforcer",
+      "file": "what-next/skills-life-cycle/STOQUIFY_RBAC_POS_ACTION_PERMISSION_IMPLEMENTATION_2026-07-11.md",
+      "exists": false,
+      "bytes": 0,
+      "dated": false,
+      "verificationRecorded": false,
+      "nextStepRecorded": false
+    },
+    {
+      "skill": "stoquify-public-api-abuse-boundary/upload",
+      "file": "what-next/skills-life-cycle/STOQUIFY_PUBLIC_API_UPLOAD_ABUSE_BOUNDARY_IMPLEMENTATION_2026-07-11.md",
+      "exists": false,
+      "bytes": 0,
+      "dated": false,
+      "verificationRecorded": false,
+      "nextStepRecorded": false
+    },
+    {
+      "skill": "stoquify-public-api-abuse-boundary/identity",
+      "file": "what-next/skills-life-cycle/STOQUIFY_PUBLIC_IDENTITY_ABUSE_CONTROL_IMPLEMENTATION_2026-07-11.md",
+      "exists": false,
+      "bytes": 0,
+      "dated": false,
+      "verificationRecorded": false,
+      "nextStepRecorded": false
+    },
+    {
+      "skill": "stoquify-ledger-close-truth-guardian",
+      "file": "what-next/skills-life-cycle/STOQUIFY_LEDGER_CLOSE_TRUTH_GUARDIAN_IMPLEMENTATION_2026-07-11.md",
+      "exists": false,
+      "bytes": 0,
+      "dated": false,
+      "verificationRecorded": false,
+      "nextStepRecorded": false
+    },
+    {
+      "skill": "stoquify-payment-recon-cash-truth-moat",
+      "file": "what-next/skills-life-cycle/STOQUIFY_PAYMENT_RECON_CASH_TRUTH_MOAT_IMPLEMENTATION_2026-07-11.md",
+      "exists": false,
+      "bytes": 0,
+      "dated": false,
+      "verificationRecorded": false,
+      "nextStepRecorded": false
+    },
+    {
+      "skill": "stoquify-purchasing-ap-consolidator",
+      "file": "what-next/skills-life-cycle/STOQUIFY_PURCHASING_AP_CONSOLIDATOR_IMPLEMENTATION_2026-07-11.md",
+      "exists": false,
+      "bytes": 0,
+      "dated": false,
+      "verificationRecorded": false,
+      "nextStepRecorded": false
+    },
+    {
+      "skill": "stoquify-offline-pos-fiscal-replay-finalizer",
+      "file": "what-next/skills-life-cycle/STOQUIFY_OFFLINE_POS_FISCAL_REPLAY_FINALIZER_IMPLEMENTATION_2026-07-11.md",
+      "exists": false,
+      "bytes": 0,
+      "dated": false,
+      "verificationRecorded": false,
+      "nextStepRecorded": false
+    },
+    {
+      "skill": "stoquify-statutory-country-pack-production-gate",
+      "file": "what-next/skills-life-cycle/STOQUIFY_STATUTORY_COUNTRY_PACK_PRODUCTION_GATE_IMPLEMENTATION_2026-07-11.md",
+      "exists": false,
+      "bytes": 0,
+      "dated": false,
+      "verificationRecorded": false,
+      "nextStepRecorded": false
+    },
+    {
+      "skill": "stoquify-report-trust-export-certifier",
+      "file": "what-next/skills-life-cycle/STOQUIFY_REPORT_TRUST_EXPORT_CERTIFIER_IMPLEMENTATION_2026-07-11.md",
+      "exists": false,
+      "bytes": 0,
+      "dated": false,
+      "verificationRecorded": false,
+      "nextStepRecorded": false
+    },
+    {
+      "skill": "stoquify-role-based-operating-cockpit-uiux",
+      "file": "what-next/skills-life-cycle/STOQUIFY_ROLE_BASED_OPERATING_COCKPIT_UIUX_IMPLEMENTATION_2026-07-11.md",
+      "exists": false,
+      "bytes": 0,
+      "dated": false,
+      "verificationRecorded": false,
+      "nextStepRecorded": false
+    },
+    {
+      "skill": "stoquify-release-secret-provisioning-preflight",
+      "file": "what-next/skills-life-cycle/STOQUIFY_RELEASE_SECRET_PROVISIONING_PREFLIGHT_IMPLEMENTATION_2026-07-11.md",
+      "exists": false,
+      "bytes": 0,
+      "dated": false,
+      "verificationRecorded": false,
+      "nextStepRecorded": false
+    },
+    {
+      "skill": "stoquify-prisma-production-migration-automation",
+      "file": "what-next/skills-life-cycle/STOQUIFY_PRISMA_PRODUCTION_MIGRATION_AUTOMATION_IMPLEMENTATION_2026-07-11.md",
+      "exists": false,
+      "bytes": 0,
+      "dated": false,
+      "verificationRecorded": false,
+      "nextStepRecorded": false
+    },
+    {
+      "skill": "stoquify-ci-release-gate-modernizer",
+      "file": "what-next/skills-life-cycle/STOQUIFY_CI_RELEASE_GATE_MODERNIZER_IMPLEMENTATION_2026-07-11.md",
+      "exists": false,
+      "bytes": 0,
+      "dated": false,
+      "verificationRecorded": false,
+      "nextStepRecorded": false
+    }
+  ],
+  "readiness": [
+    {
+      "id": "public-identity-abuse",
+      "json": "what-next/public-identity-abuse-readiness.json",
+      "markdown": "what-next/public-identity-abuse-readiness.md",
+      "jsonExists": true,
+      "markdownExists": true,
+      "parseable": true,
+      "status": "ready",
+      "readyCount": 15,
+      "checkCount": 15,
+      "blockerCount": 0,
+      "warningCount": 1
+    },
+    {
+      "id": "ledger-close-truth",
+      "json": "what-next/ledger-close-truth-readiness.json",
+      "markdown": "what-next/ledger-close-truth-readiness.md",
+      "jsonExists": true,
+      "markdownExists": true,
+      "parseable": true,
+      "status": "ready",
+      "readyCount": 10,
+      "checkCount": 10,
+      "blockerCount": 0,
+      "warningCount": 0
+    },
+    {
+      "id": "payment-cash-truth",
+      "json": "what-next/payment-cash-truth-readiness.json",
+      "markdown": "what-next/payment-cash-truth-readiness.md",
+      "jsonExists": true,
+      "markdownExists": true,
+      "parseable": true,
+      "status": "ready",
+      "readyCount": 10,
+      "checkCount": 10,
+      "blockerCount": 0,
+      "warningCount": 0
+    },
+    {
+      "id": "purchasing-ap-consolidation",
+      "json": "what-next/purchasing-ap-consolidation-readiness.json",
+      "markdown": "what-next/purchasing-ap-consolidation-readiness.md",
+      "jsonExists": true,
+      "markdownExists": true,
+      "parseable": true,
+      "status": "ready",
+      "readyCount": 10,
+      "checkCount": 10,
+      "blockerCount": 0,
+      "warningCount": 0
+    },
+    {
+      "id": "offline-pos-fiscal-replay",
+      "json": "what-next/offline-pos-fiscal-replay-readiness.json",
+      "markdown": "what-next/offline-pos-fiscal-replay-readiness.md",
+      "jsonExists": true,
+      "markdownExists": true,
+      "parseable": true,
+      "status": "ready",
+      "readyCount": 10,
+      "checkCount": 10,
+      "blockerCount": 0,
+      "warningCount": 0
+    },
+    {
+      "id": "statutory-country-pack-production",
+      "json": "what-next/statutory-country-pack-production-readiness.json",
+      "markdown": "what-next/statutory-country-pack-production-readiness.md",
+      "jsonExists": true,
+      "markdownExists": true,
+      "parseable": true,
+      "status": "ready",
+      "readyCount": 10,
+      "checkCount": 10,
+      "blockerCount": 0,
+      "warningCount": 0
+    },
+    {
+      "id": "report-trust-export",
+      "json": "what-next/report-trust-export-readiness.json",
+      "markdown": "what-next/report-trust-export-readiness.md",
+      "jsonExists": true,
+      "markdownExists": true,
+      "parseable": true,
+      "status": "ready",
+      "readyCount": 9,
+      "checkCount": 9,
+      "blockerCount": 0,
+      "warningCount": 0
+    },
+    {
+      "id": "role-based-operating-cockpit",
+      "json": "what-next/role-based-operating-cockpit-readiness.json",
+      "markdown": "what-next/role-based-operating-cockpit-readiness.md",
+      "jsonExists": true,
+      "markdownExists": true,
+      "parseable": true,
+      "status": "ready",
+      "readyCount": 9,
+      "checkCount": 9,
+      "blockerCount": 0,
+      "warningCount": 0
+    },
+    {
+      "id": "prisma-migration-deployment",
+      "json": "what-next/prisma-migration-deployment-readiness.json",
+      "markdown": "what-next/prisma-migration-deployment-readiness.md",
+      "jsonExists": true,
+      "markdownExists": true,
+      "parseable": true,
+      "status": "ready",
+      "readyCount": 8,
+      "checkCount": 8,
+      "blockerCount": 0,
+      "warningCount": 0
+    },
+    {
+      "id": "ci-release",
+      "json": "what-next/ci-release-readiness.json",
+      "markdown": "what-next/ci-release-readiness.md",
+      "jsonExists": true,
+      "markdownExists": true,
+      "parseable": true,
+      "status": "ready",
+      "readyCount": 10,
+      "checkCount": 10,
+      "blockerCount": 0,
+      "warningCount": 0
+    }
+  ],
+  "supportingArtifacts": [
+    {
+      "file": "what-next/api-route-guard-inventory.json",
+      "exists": true
+    },
+    {
+      "file": "what-next/api-route-guard-inventory.md",
+      "exists": true
+    },
+    {
+      "file": "what-next/module-surface-inventory.json",
+      "exists": false
+    },
+    {
+      "file": "what-next/module-surface-inventory.md",
+      "exists": false
+    },
+    {
+      "file": "what-next/settings-surface-classification.json",
+      "exists": true
+    },
+    {
+      "file": "what-next/settings-surface-classification.md",
+      "exists": true
+    },
+    {
+      "file": "what-next/release-secret-preflight.json",
+      "exists": true
+    },
+    {
+      "file": "what-next/release-secret-preflight.md",
+      "exists": true
+    },
+    {
+      "file": "prisma/migration-risk-approvals.json",
+      "exists": true
+    }
+  ],
+  "residualRisks": [
+    "Completed skills are focused slices, not a certification of the entire codebase.",
+    "Statutory country-pack readiness prevents unsupported claims; it is not legal certification.",
+    "Accounting report exports remain internal until Close and Assurance certification signs them.",
+    "The Daily Digest cockpit has no authenticated screenshot evidence in this run.",
+    "External provider, authority, hardware, and production-load behavior require environment-specific evidence."
+  ],
+  "nextRecommendation": "Configure release secrets in the deployment environment, run verify:release, and archive the resulting evidence index with the promoted commit."
+}

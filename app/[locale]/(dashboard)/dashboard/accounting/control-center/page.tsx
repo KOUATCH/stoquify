@@ -5,11 +5,13 @@ import {
   type AccountingControlCenterData,
 } from "@/actions/accounting/settings.actions"
 import { AccountingControlCenter } from "@/components/accounting/AccountingControlCenter"
+import { checkPermission } from "@/config/useAuth"
 import type { Locale } from "@/types/bilingual"
 import {
   AccountingLinkButton,
   AccountingPageShell,
 } from "../_components/accounting-ui"
+import { routeByKey, withAccountingSurfaceAccess } from "../accounting-route-access"
 
 type PageProps = {
   params: Promise<{ locale: string }>
@@ -19,7 +21,9 @@ function normalizeLocale(locale: string): Locale {
   return locale === "fr" ? "fr" : "en"
 }
 
-export default async function AccountingControlCenterPage({ params }: PageProps) {
+async function AccountingControlCenterPageImpl({ params }: PageProps) {
+  await checkPermission("accounting.setup.manage")
+
   const { locale } = await params
   const normalizedLocale = normalizeLocale(locale)
   const response = await getAccountingControlCenterAction({})
@@ -49,4 +53,20 @@ export default async function AccountingControlCenterPage({ params }: PageProps)
       />
     </AccountingPageShell>
   )
+}
+
+
+
+export default async function AccountingRoutePage(props: any = {}) {
+  const surface = routeByKey("accounting-control-center")
+
+  if (!surface) {
+    throw new Error("Missing accounting route surface definition: accounting-control-center")
+  }
+
+  return withAccountingSurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => AccountingControlCenterPageImpl(props),
+  })
 }

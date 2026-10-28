@@ -1,4 +1,4 @@
-import { createHash } from "crypto"
+import { createHash, createPublicKey, verify as verifySignature } from "crypto"
 
 import {
   AccountingPostingPurpose,
@@ -40,6 +40,17 @@ type UserScoped<T extends object = Record<string, unknown>> = OrgScoped<T> & {
   userId: string
 }
 
+export type OfflineSyncErrorCode =
+  | "IDEMPOTENCY_CONFLICT"
+  | "SEQUENCE_CONFLICT"
+  | "DEVICE_REVOKED"
+  | "DEVICE_SIGNATURE_INVALID"
+  | "OFFLINE_POLICY_EXPIRED"
+  | "STALE_REFERENCE_SNAPSHOT"
+  | "AUTHORITY_UNAVAILABLE"
+  | "PROVISIONAL_RECEIPT_PENDING"
+  | "SYSTEM_ERROR"
+
 type OfflineTx = Prisma.TransactionClient
 
 export type OfflineSyncDeviceDTO = {
@@ -50,6 +61,11 @@ export type OfflineSyncDeviceDTO = {
   deviceLabel: string
   deviceFingerprintHash: string
   publicKeyFingerprint: string | null
+  signatureVerification: "ENFORCED" | "LEGACY_UNVERIFIED"
+  policySnapshotHash: string | null
+  sourceSnapshotHash: string | null
+  policyExpiresAt: string | null
+  policyStatus: "ACTIVE" | "EXPIRED" | "UNCONFIGURED"
   status: string
   lastSequence: number
   highWaterHash: string | null
@@ -95,6 +111,7 @@ export type OfflineSyncDashboardData = {
     pendingEventCount: number
     openConflictCount: number
     closeBlockerCount: number
+    stalePolicyDeviceCount: number
   }
   devices: OfflineSyncDeviceDTO[]
   conflicts: OfflineSyncConflictDTO[]
@@ -141,6 +158,65 @@ export type OfflineSaleReplayResult = {
 
 function sha256(value: string) {
   return createHash("sha256").update(value).digest("hex")
+}
+
+function normalizedSigningKey(input: {
+  signingPublicKeyPem?: string
+  publicKeyFingerprint?: string
+}) {
+  if (!input.signingPublicKeyPem) {
+    return {
+      signingPublicKeyPem: null,
+      publicKeyFingerprint: input.publicKeyFingerprint ?? null,
+    }
+  }
+
+  try {
+    const key = createPublicKey(input.signingPublicKeyPem)
+    const signingPublicKeyPem = key.export({ format: "pem", type: "spki" }).toString()
+    const fingerprint = sha256(
+      key.export({ format: "der", type: "spki" }).toString("base64"),
+    )
+    if (input.publicKeyFingerprint && input.publicKeyFingerprint !== fingerprint) {
+      throw new BusinessRuleError(
+        "DEVICE_SIGNATURE_INVALID: signing public key fingerprint does not match enrollment evidence.",
+      )
+    }
+    return { signingPublicKeyPem, publicKeyFingerprint: fingerprint }
+  } catch (error) {
+    if (error instanceof BusinessRuleError) throw error
+    throw new BusinessRuleError(
+      "DEVICE_SIGNATURE_INVALID: signing public key could not be validated.",
+    )
+  }
+}
+
+function policyStatus(
+  policyExpiresAt: Date | string | null | undefined,
+  now = new Date(),
+): "ACTIVE" | "EXPIRED" | "UNCONFIGURED" {
+  if (!policyExpiresAt) return "UNCONFIGURED"
+  return new Date(policyExpiresAt) <= now ? "EXPIRED" : "ACTIVE"
+}
+
+function offlineEventSignatureIsValid(
+  signingPublicKeyPem: string | null | undefined,
+  entryHash: string,
+  signature: string | null | undefined,
+) {
+  if (!signingPublicKeyPem) return true
+  if (!signature) return false
+
+  try {
+    return verifySignature(
+      "sha256",
+      Buffer.from(entryHash, "utf8"),
+      createPublicKey(signingPublicKeyPem),
+      Buffer.from(signature, "base64"),
+    )
+  } catch {
+    return false
+  }
 }
 
 export function buildOfflineEventEntryHash(input: {
@@ -289,12 +365,19 @@ function safeErrorMessage(error: unknown) {
   return message.trim().slice(0, 500) || "Offline sale replay could not complete."
 }
 
-function extractCommitSalePayload(payload: unknown): CommitSaleInput {
+function extractCommitSalePayload(payload: unknown, fallbackClientCommitId?: string): CommitSaleInput {
   const candidate = isRecord(payload) && isRecord(payload.commitSale)
     ? payload.commitSale
     : payload
 
-  return commitSaleSchema.parse(candidate)
+  return commitSaleSchema.parse(
+    isRecord(candidate)
+      ? {
+          ...candidate,
+          clientCommitId: candidate.clientCommitId ?? fallbackClientCommitId,
+        }
+      : candidate,
+  )
 }
 
 function dateToString(value: Date | string | null | undefined) {
@@ -310,6 +393,10 @@ function toDeviceDTO(device: {
   deviceLabel: string
   deviceFingerprintHash: string
   publicKeyFingerprint: string | null
+  signingPublicKeyPem?: string | null
+  policySnapshotHash?: string | null
+  sourceSnapshotHash?: string | null
+  policyExpiresAt?: Date | string | null
   status: string
   lastSequence: number
   highWaterHash: string | null
@@ -324,6 +411,11 @@ function toDeviceDTO(device: {
     deviceLabel: device.deviceLabel,
     deviceFingerprintHash: device.deviceFingerprintHash,
     publicKeyFingerprint: device.publicKeyFingerprint,
+    signatureVerification: device.signingPublicKeyPem ? "ENFORCED" : "LEGACY_UNVERIFIED",
+    policySnapshotHash: device.policySnapshotHash ?? null,
+    sourceSnapshotHash: device.sourceSnapshotHash ?? null,
+    policyExpiresAt: dateToString(device.policyExpiresAt),
+    policyStatus: policyStatus(device.policyExpiresAt),
     status: device.status,
     lastSequence: device.lastSequence,
     highWaterHash: device.highWaterHash,
@@ -413,6 +505,48 @@ async function assertTerminalScope(
   }
 }
 
+function requiresActiveCashierSession(events: readonly OfflineSyncEventInput[]) {
+  return events.some((event) =>
+    event.eventType === "OFFLINE_SALE_CAPTURED" ||
+    event.eventType === "OFFLINE_TENDER_CLAIMED" ||
+    event.eventType === "OFFLINE_RECEIPT_PROVISIONED",
+  )
+}
+
+async function assertActiveCashierSession(
+  tx: Pick<OfflineTx, "pOSSession">,
+  input: {
+    organizationId: string
+    sessionId?: string
+    terminalId: string
+    locationId: string
+    userId: string
+  },
+) {
+  if (!input.sessionId) {
+    throw new BusinessRuleError(
+      "Active cashier session evidence is required for offline sale, tender, or receipt sync.",
+    )
+  }
+
+  const session = await tx.pOSSession.findFirst({
+    where: {
+      id: input.sessionId,
+      organizationId: input.organizationId,
+      terminalId: input.terminalId,
+      locationId: input.locationId,
+      userId: input.userId,
+      status: "ACTIVE",
+    },
+    select: { id: true },
+  })
+  if (!session) {
+    throw new BusinessRuleError(
+      "Offline sync session is not active for this cashier, terminal, and location.",
+    )
+  }
+}
+
 async function createConflict(
   tx: OfflineTx,
   input: {
@@ -488,6 +622,7 @@ function acceptedNotification(acceptedCount: number) {
 
 export async function registerOfflineDevice(input: UserScoped<RegisterOfflineDeviceInput>) {
   const parsed = registerOfflineDeviceSchema.parse(input)
+  const signing = normalizedSigningKey(parsed)
 
   return db.$transaction(async (tx) => {
     await assertTerminalScope(tx, {
@@ -516,7 +651,11 @@ export async function registerOfflineDevice(input: UserScoped<RegisterOfflineDev
             terminalId: parsed.terminalId,
             locationId: parsed.locationId,
             deviceLabel: parsed.deviceLabel,
-            publicKeyFingerprint: parsed.publicKeyFingerprint,
+            publicKeyFingerprint: signing.publicKeyFingerprint,
+            signingPublicKeyPem: signing.signingPublicKeyPem ?? existing.signingPublicKeyPem,
+            policySnapshotHash: parsed.policySnapshotHash ?? existing.policySnapshotHash,
+            sourceSnapshotHash: parsed.sourceSnapshotHash ?? existing.sourceSnapshotHash,
+            policyExpiresAt: parsed.policyExpiresAt ?? existing.policyExpiresAt,
             status: existing.status === "SUSPENDED" ? "SUSPENDED" : "ACTIVE",
             lastSeenAt: new Date(),
             metadata: parsed.metadata === undefined ? undefined : safeJson(parsed.metadata),
@@ -529,7 +668,11 @@ export async function registerOfflineDevice(input: UserScoped<RegisterOfflineDev
             locationId: parsed.locationId,
             deviceLabel: parsed.deviceLabel,
             deviceFingerprintHash: parsed.deviceFingerprintHash,
-            publicKeyFingerprint: parsed.publicKeyFingerprint,
+            publicKeyFingerprint: signing.publicKeyFingerprint,
+            signingPublicKeyPem: signing.signingPublicKeyPem,
+            policySnapshotHash: parsed.policySnapshotHash,
+            sourceSnapshotHash: parsed.sourceSnapshotHash,
+            policyExpiresAt: parsed.policyExpiresAt,
             enrolledById: input.userId,
             lastSeenAt: new Date(),
             metadata: parsed.metadata === undefined ? undefined : safeJson(parsed.metadata),
@@ -757,6 +900,7 @@ async function loadOfflineSaleReplayEvent(input: {
         select: {
           id: true,
           lastSequence: true,
+          status: true,
         },
       },
     },
@@ -955,6 +1099,7 @@ async function blockOfflineSaleReplay(input: {
   blockerCode: string
   blockerMessage: string
   severity?: "HIGH" | "CRITICAL"
+  conflictType?: "UNPOSTED_ACCEPTED_EVENT" | "DEVICE_REVOKED"
 }) {
   const result = blockedReplayResult({
     offlineEventId: input.event.id,
@@ -968,7 +1113,7 @@ async function blockOfflineSaleReplay(input: {
       deviceId: input.event.deviceId,
       eventId: input.event.id,
       syncBatchId: input.event.syncBatchId,
-      conflictType: "UNPOSTED_ACCEPTED_EVENT",
+      conflictType: input.conflictType ?? "UNPOSTED_ACCEPTED_EVENT",
       severity: input.severity ?? "HIGH",
       actualSequence: input.event.deviceSeq,
       incomingPayloadHash: input.event.payloadHash,
@@ -1066,7 +1211,20 @@ async function blockOfflineSaleReplay(input: {
   return result
 }
 
+function isOfflinePOSReplayAuthorizedForCurrentDeployment() {
+  return (
+    process.env.NODE_ENV === "test" &&
+    process.env.AQSTOQFLOW_ENABLE_OFFLINE_POS_REPLAY_TESTS === "1"
+  )
+}
+
 export async function replayPendingOfflineSaleEnvelope(input: UserScoped<ReplayOfflineSaleEnvelopeInput>) {
+  if (!isOfflinePOSReplayAuthorizedForCurrentDeployment()) {
+    throw new BusinessRuleError(
+      "Offline POS capture and replay are disabled for the authorized development-only cash pilot.",
+    )
+  }
+
   const parsed = replayOfflineSaleEnvelopeSchema.parse(input)
   const event = await loadOfflineSaleReplayEvent({
     organizationId: input.organizationId,
@@ -1089,6 +1247,17 @@ export async function replayPendingOfflineSaleEnvelope(input: UserScoped<ReplayO
     throw new BusinessRuleError("Only PENDING_REPLAY offline sale envelopes can be converted into POS finalization.")
   }
 
+  if (event.device.status !== "ACTIVE") {
+    return blockOfflineSaleReplay({
+      context: { organizationId: input.organizationId, userId: input.userId },
+      event,
+      blockerCode: "OFFLINE_REPLAY_DEVICE_INACTIVE",
+      blockerMessage: "Offline sale replay is blocked because the enrolled device is not active.",
+      severity: "CRITICAL",
+      conflictType: "DEVICE_REVOKED",
+    })
+  }
+
   const computedPayloadHash = hashBusinessPayload(event.payload)
   if (computedPayloadHash !== event.payloadHash) {
     return blockOfflineSaleReplay({
@@ -1102,7 +1271,7 @@ export async function replayPendingOfflineSaleEnvelope(input: UserScoped<ReplayO
 
   let commitInput: CommitSaleInput
   try {
-    commitInput = extractCommitSalePayload(event.payload)
+    commitInput = extractCommitSalePayload(event.payload, `offline:${event.id}`)
     assertReplayScope(event, commitInput)
   } catch (error) {
     return blockOfflineSaleReplay({
@@ -1143,6 +1312,33 @@ export async function replayPendingOfflineSaleEnvelope(input: UserScoped<ReplayO
       organizationId: input.organizationId,
       userId: input.userId,
     })
+
+    if (!committed.receipt) {
+      const completedAfterCommit = await findCompletedReplayOutcome({
+        organizationId: input.organizationId,
+        event,
+        commitInput,
+      })
+
+      if (!completedAfterCommit) {
+        throw new BusinessRuleError(
+          "POS_SALE_COMMITTED_RECEIPT_RETRY_REQUIRED: the sale is complete, but its receipt evidence must be hydrated before the offline event can be acknowledged.",
+        )
+      }
+
+      return markOfflineSaleReplayed({
+        context: { organizationId: input.organizationId, userId: input.userId },
+        event,
+        receipt: completedAfterCommit.receipt,
+        result: replayResultFromReceipt({
+          offlineEventId: event.id,
+          saleId: completedAfterCommit.saleId,
+          orderNumber: completedAfterCommit.orderNumber,
+          postingBatchId: completedAfterCommit.postingBatchId,
+          receipt: completedAfterCommit.receipt,
+        }),
+      })
+    }
 
     return markOfflineSaleReplayed({
       context: { organizationId: input.organizationId, userId: input.userId },
@@ -1199,6 +1395,15 @@ async function ingestBatchInTx(
     terminalId: parsed.terminalId,
     locationId: parsed.locationId,
   })
+  if (requiresActiveCashierSession(parsed.events)) {
+    await assertActiveCashierSession(tx, {
+      organizationId: context.organizationId,
+      sessionId: parsed.sessionId,
+      terminalId: parsed.terminalId,
+      locationId: parsed.locationId,
+      userId: context.userId,
+    })
+  }
 
   const device = await tx.pOSOfflineDevice.findFirst({
     where: {
@@ -1403,16 +1608,48 @@ async function ingestBatchInTx(
 
     let conflictType: string | null = null
     let conflictMessage: string | null = null
+    let conflictExpectedHash: string | null = null
+    let conflictActualHash: string | null = null
 
-    if (event.deviceSeq !== expectedSequence) {
+    if (device.policyExpiresAt && device.policyExpiresAt <= new Date()) {
+      conflictType = "OFFLINE_POLICY_EXPIRED"
+      conflictMessage = "Offline device policy expired before this event reached the server."
+    } else if (
+      device.policySnapshotHash &&
+      event.policySnapshotHash !== device.policySnapshotHash
+    ) {
+      conflictType = "OFFLINE_POLICY_EXPIRED"
+      conflictMessage = "Offline event policy snapshot does not match the enrolled device policy."
+      conflictExpectedHash = device.policySnapshotHash
+      conflictActualHash = event.policySnapshotHash ?? null
+    } else if (
+      device.sourceSnapshotHash &&
+      event.sourceSnapshotHash !== device.sourceSnapshotHash
+    ) {
+      conflictType = "STALE_REFERENCE_SNAPSHOT"
+      conflictMessage = "Offline event reference snapshot is stale or missing."
+      conflictExpectedHash = device.sourceSnapshotHash
+      conflictActualHash = event.sourceSnapshotHash ?? null
+    } else if (!offlineEventSignatureIsValid(
+      device.signingPublicKeyPem,
+      event.entryHash,
+      event.signature,
+    )) {
+      conflictType = "SIGNATURE_INVALID"
+      conflictMessage = "Offline event signature could not be verified against the enrolled device key."
+    } else if (event.deviceSeq !== expectedSequence) {
       conflictType = "SEQUENCE_GAP"
       conflictMessage = `Expected device sequence ${expectedSequence}, received ${event.deviceSeq}.`
     } else if ((event.prevHash ?? null) !== highWaterHash) {
       conflictType = "HASH_CHAIN_FORK"
       conflictMessage = "Offline event previous hash does not match the server high-water mark."
+      conflictExpectedHash = highWaterHash
+      conflictActualHash = event.prevHash ?? null
     } else if (event.entryHash !== expectedEntryHash) {
       conflictType = "HASH_CHAIN_FORK"
       conflictMessage = "Offline event entry hash does not match the canonical event envelope."
+      conflictExpectedHash = expectedEntryHash
+      conflictActualHash = event.entryHash
     }
 
     const offlineEvent = await tx.pOSOfflineEvent.create({
@@ -1453,8 +1690,8 @@ async function ingestBatchInTx(
         severity: "CRITICAL",
         expectedSequence,
         actualSequence: event.deviceSeq,
-        expectedHash: conflictType === "HASH_CHAIN_FORK" ? highWaterHash : expectedEntryHash,
-        actualHash: conflictType === "HASH_CHAIN_FORK" ? event.prevHash ?? event.entryHash : event.entryHash,
+        expectedHash: conflictExpectedHash,
+        actualHash: conflictActualHash,
         incomingPayloadHash: computedPayloadHash,
         message: conflictMessage ?? "Offline sync conflict detected.",
       })
@@ -1753,15 +1990,27 @@ export async function getOfflineSyncDashboard(input: OrgScoped<OfflineSyncDashbo
   ])
 
   const certificateDTOs = certificates.map(toCertificateDTO)
-  const blockers = certificateDTOs
-    .filter((certificate) => certificate.closeBlocker)
-    .map((certificate) => ({
-      code: certificate.blockerCode ?? "OFFLINE_SYNC_BLOCKED",
-      severity: certificate.conflictCount > 0 ? "critical" as const : "warning" as const,
-      message: certificate.blockerMessage ?? "Offline POS sync requires certification review.",
-      deviceId: certificate.deviceId,
-      terminalId: certificate.terminalId,
-    }))
+  const stalePolicyDevices = devices.filter(
+    (device) => policyStatus(device.policyExpiresAt) === "EXPIRED",
+  )
+  const blockers = [
+    ...certificateDTOs
+      .filter((certificate) => certificate.closeBlocker)
+      .map((certificate) => ({
+        code: certificate.blockerCode ?? "OFFLINE_SYNC_BLOCKED",
+        severity: certificate.conflictCount > 0 ? "critical" as const : "warning" as const,
+        message: certificate.blockerMessage ?? "Offline POS sync requires certification review.",
+        deviceId: certificate.deviceId,
+        terminalId: certificate.terminalId,
+      })),
+    ...stalePolicyDevices.map((device) => ({
+      code: "OFFLINE_POLICY_EXPIRED",
+      severity: "critical" as const,
+      message: "Offline device policy has expired and must be refreshed before synchronization.",
+      deviceId: device.id,
+      terminalId: device.terminalId,
+    })),
+  ]
 
   return {
     asOf: new Date().toISOString(),
@@ -1770,6 +2019,7 @@ export async function getOfflineSyncDashboard(input: OrgScoped<OfflineSyncDashbo
       pendingEventCount,
       openConflictCount,
       closeBlockerCount,
+      stalePolicyDeviceCount: stalePolicyDevices.length,
     },
     devices: devices.map(toDeviceDTO),
     conflicts: conflicts.map(toConflictDTO),

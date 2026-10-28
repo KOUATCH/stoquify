@@ -1,0 +1,77 @@
+{
+  "checkedAt": "2026-08-01T10:01:37.872Z",
+  "auth": {
+    "role": "PAYROLL_E2E",
+    "organizationId": "org_payroll_e2e_local",
+    "fixtureSource": "scripts/seed-payroll-e2e-user.js"
+  },
+  "viewports": [
+    {
+      "name": "mobile",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "name": "tablet",
+      "width": 820,
+      "height": 1180
+    },
+    {
+      "name": "desktop",
+      "width": 1440,
+      "height": 1100
+    }
+  ],
+  "routes": [
+    {
+      "id": "people-directory",
+      "name": "employee directory",
+      "path": "/en/dashboard/people"
+    },
+    {
+      "id": "people-profile",
+      "name": "employee profile",
+      "path": "/en/dashboard/people/payroll_e2e_browser_2026_06_employee"
+    },
+    {
+      "id": "people-self-service",
+      "name": "employee self-service",
+      "path": "/en/dashboard/people/me"
+    },
+    {
+      "id": "people-team",
+      "name": "managed workforce",
+      "path": "/en/dashboard/people/team"
+    },
+    {
+      "id": "people-approvals",
+      "name": "approval inbox",
+      "path": "/en/dashboard/people/approvals"
+    },
+    {
+      "id": "people-history",
+      "name": "movement history",
+      "path": "/en/dashboard/people/history"
+    }
+  ],
+  "results": [
+    {
+      "routeId": "people-history",
+      "routeName": "movement history",
+      "path": "/en/dashboard/people/history",
+      "viewport": "desktop",
+      "screenshot": "what-next/payroll/screenshots/hris-browser-accessibility-rbac-release-2026-07-16/people-history-desktop.png",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/people/history",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 1440,
+        "documentWidth": 1440,
+        "bodyWidth": 1440,
+        "hasDocumentOverflow": false,
+        "overlappingElements": [],
+        "clippedElements": []
+      }
+    }
+  ]
+}

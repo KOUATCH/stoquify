@@ -1,0 +1,115 @@
+{
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-08-20T15:05:50.967Z",
+  "classification": "ENGINEERING_REMEDIATION_EVIDENCE_NOT_PRODUCTION_AUTHORIZATION",
+  "outcome": {
+    "developmentTestingPermitted": true,
+    "coreIntegrationPermitted": true,
+    "productionAuthorized": false,
+    "statutoryOrFiscalCertified": false,
+    "liveAuthoritySubmissionPermitted": false
+  },
+  "gateStatuses": {
+    "countryPackDevelopment": {
+      "status": "READY_FOR_DEVELOPMENT_TESTING",
+      "ready": 11,
+      "total": 11,
+      "blockers": []
+    },
+    "countryPackIntegration": {
+      "status": "READY_FOR_CORE_INTEGRATION",
+      "ready": 9,
+      "total": 9,
+      "blockers": []
+    },
+    "countryAdapterPilot": {
+      "status": "ready",
+      "ready": 16,
+      "total": 16,
+      "productionAuthorityCertified": false
+    },
+    "qualifiedReviewPreflight": {
+      "status": "BLOCKED_PENDING_QUALIFIED_REVIEW",
+      "ready": 4,
+      "total": 12,
+      "blockers": [
+        "reviewer_identity_complete",
+        "review_window_complete",
+        "reviewer_recomputed_source_digests",
+        "fixture_family_decisions_complete",
+        "all_required_fixture_families_approved",
+        "final_decision_consistent",
+        "signed_approval_metadata_complete",
+        "signed_approval_artifact_verified"
+      ]
+    },
+    "countryPackProduction": {
+      "status": "blocked",
+      "ready": 11,
+      "total": 12,
+      "blockers": [
+        "source_artifact_expert_approval"
+      ]
+    }
+  },
+  "engineeringCorrections": [
+    "Removed generated-DOCX self-reference from the source pipeline.",
+    "Added a hash-verified structured source register and machine-readable evidence register.",
+    "Rejected unsupported production and statutory YES claims while preserving their source text.",
+    "Made checker and reviewer identity conflicts explicit and human-owned.",
+    "Separated compliance generation from optional credential-document generation.",
+    "Added neutral machine metadata, atomic writes, lock-safe candidate output, and deterministic DOCX packaging.",
+    "Added an external/qualified-review evidence handoff and verified SHA-256 manifest.",
+    "Added nine focused generator regression tests.",
+    "Removed the duplicate seed:compliance:snapshot package script definition."
+  ],
+  "artifacts": [
+    {
+      "path": "docs/blockers-and-gates/Compliance authorization validation.docx",
+      "sha256": "c69bf980bea55f6ed3a22a125429a805b77f218a1be5d0f92284002cca1853e3"
+    },
+    {
+      "path": "docs/blockers-and-gates/COMPLIANCE_AUTHORIZATION_SUPPLIED_SOURCE_2026-08-20.json",
+      "sha256": "aa93715b04b46f6a7e88652d87f4c60fe2ab9a93c0bd2d0a39bb233240ff5d1e"
+    },
+    {
+      "path": "docs/blockers-and-gates/COMPLIANCE_AUTHORIZATION_EVIDENCE_REGISTER_2026-08-20.json",
+      "sha256": "f60fad8b5a012b5126be009b4bdbdc0da5eceb8a9de0dba71de4745437419e68"
+    },
+    {
+      "path": "docs/blockers-and-gates/COMPLIANCE_AUTHORIZATION_EXTERNAL_EVIDENCE_REQUEST_2026-08-20.md",
+      "sha256": "2300a80418af937afa5c204f6ca3bf866f7a43a65a3b4632eabcb920c2b7580e"
+    },
+    {
+      "path": "docs/blockers-and-gates/COMPLIANCE_AUTHORIZATION_REMEDIATION_ARTIFACTS_2026-08-20.sha256",
+      "sha256": "7d58cb36ec7609d913dbc8d05e18af3e417e3f0eb44a4a0d5ab349abb4d4c697"
+    }
+  ],
+  "verification": [
+    {"check": "generator_regression_tests", "status": "pass", "tests": 9},
+    {"check": "compliance_action_service_tests", "status": "pass", "suites": 11, "tests": 53},
+    {"check": "regulatory_gate_script_tests", "status": "pass", "suites": 10, "tests": 53},
+    {"check": "typecheck", "status": "pass"},
+    {"check": "prisma_validate", "status": "pass"},
+    {"check": "regulatory_boundary", "status": "pass", "filesChecked": 1777},
+    {"check": "regulatory_hardcode", "status": "pass", "activeFindings": 0},
+    {"check": "docx_structure_and_metadata", "status": "pass", "tables": 26, "paragraphs": 46},
+    {"check": "repeat_generation_determinism", "status": "pass"},
+    {"check": "artifact_manifest", "status": "pass"},
+    {"check": "secret_pattern_scan", "status": "pass", "findings": 0},
+    {"check": "package_script_uniqueness", "status": "pass", "definitions": 1},
+    {"check": "focused_git_diff_check", "status": "pass"}
+  ],
+  "preservedExternalBlockers": [
+    "qualified_cameroon_reviewer_identity_capacity_scope_and_signature",
+    "independent_source_digest_and_fixture_tieout_verification",
+    "qualified_accounting_review",
+    "product_controller_operator_checker_authentic_appointments_and_signatures",
+    "restore_rehearsal_execution_evidence",
+    "official_dgi_technical_contract",
+    "regulator_production_credentials",
+    "external_authority_sandbox_conformance",
+    "independent_expert_production_review"
+  ],
+  "productionAuthorizationStatement": "NOT_INDEPENDENTLY_PROVEN_AND_REMAINS_BLOCKED"
+}

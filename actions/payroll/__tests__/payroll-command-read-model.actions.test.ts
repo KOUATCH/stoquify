@@ -69,7 +69,7 @@ function moduleDecision(overrides: Record<string, unknown> = {}) {
     surfaceType: "action",
     surface: "payroll.command.read",
     accessIntent: "read",
-    mode: "enforce",
+    mode: "observe",
     result: "allow",
     allowed: true,
     wouldBlock: false,
@@ -78,7 +78,7 @@ function moduleDecision(overrides: Record<string, unknown> = {}) {
     missingDependencies: [],
     rbacWildcardPresent: false,
     rbacWildcardBypassedEntitlement: false,
-    hardEnforcementEnabled: true,
+    hardEnforcementEnabled: false,
     evaluatedAt: "2026-06-26T00:00:00.000Z",
     ...overrides,
   }
@@ -107,17 +107,12 @@ describe("payroll command read-model action", () => {
     expect(mockGetPayrollCommandReadModel).not.toHaveBeenCalled()
   })
 
-  it("blocks command reads when the payroll module is not entitled", async () => {
-    mockObserveModuleAccess.mockResolvedValue(moduleDecision({ result: "deny", allowed: false, wouldBlock: true, entitlement: null }))
+  it("records module entitlement gaps in report-only mode without blocking command reads", async () => {
+    mockObserveModuleAccess.mockResolvedValue(moduleDecision({ result: "would_block", allowed: true, wouldBlock: true, entitlement: null }))
 
     const result = await getPayrollCommandReadModelAction({ limit: 10 })
 
-    expect(result).toEqual(expect.objectContaining({
-      success: false,
-      data: null,
-      status: 403,
-      code: "FORBIDDEN",
-    }))
+    expect(result.success).toBe(true)
     expect(mockObserveModuleAccess).toHaveBeenCalledWith(expect.objectContaining({
       organizationId: "org-1",
       userId: "command-reader-1",
@@ -125,9 +120,13 @@ describe("payroll command read-model action", () => {
       surfaceType: "action",
       surface: "payroll.command.read",
       accessIntent: "read",
-      mode: "enforce",
+      mode: "observe",
     }))
-    expect(mockGetPayrollCommandReadModel).not.toHaveBeenCalled()
+    expect(mockGetPayrollCommandReadModel).toHaveBeenCalledWith(expect.objectContaining({
+      organizationId: "org-1",
+      actorId: "command-reader-1",
+      limit: 10,
+    }))
   })
 
   it("derives tenant and actor context for the service-owned command read model", async () => {
@@ -138,6 +137,11 @@ describe("payroll command read-model action", () => {
       resource: "PayrollCommandReadModel",
       auditAllowed: false,
     })
+    expect(mockObserveModuleAccess).toHaveBeenCalledWith(expect.objectContaining({
+      moduleSlug: "payroll",
+      surface: "payroll.command.read",
+      mode: "observe",
+    }))
     expect(mockGetPayrollCommandReadModel).toHaveBeenCalledWith({
       organizationId: "org-1",
       actorId: "command-reader-1",

@@ -1,0 +1,200 @@
+{
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-08-03",
+  "workspace": "E:\\ohada saas\\Focused projects\\stoquify",
+  "workspaceState": {
+    "branch": "codex/service-boundary-burndown",
+    "commit": "5dc78f2c007c51e151342de08be34b72994839bb",
+    "trackedChanges": 329,
+    "untrackedEntries": 1232
+  },
+  "coverage": {
+    "pages": 139,
+    "serverActionFilesBroadMatch": 141,
+    "apiRouteFiles": 10,
+    "tanstackRelatedFilesBroadMatch": 41,
+    "tanstackOperationsClassified": 137,
+    "prismaModels": 158,
+    "prismaEnums": 164,
+    "migrationDirectories": 45,
+    "testFilesBroadMatch": 1330,
+    "focusedSuitesRun": 25,
+    "focusedTestsRun": 180,
+    "moduleSurfacesFromExistingInventory": 386,
+    "moduleSurfacesMapped": 352
+  },
+  "modules": [
+    {
+      "id": "identity_tenant",
+      "roles": ["admin", "owner", "all_users"],
+      "owners": ["better-auth", "users", "organizations"],
+      "value": "USEFUL",
+      "maturity": 2,
+      "dangerous": true,
+      "gaps": ["systemic tenant backstop", "hashed invite tokens", "completed MFA"]
+    },
+    {
+      "id": "modules_packages",
+      "roles": ["owner", "admin"],
+      "owners": ["modules", "commercialization"],
+      "value": "USEFUL",
+      "maturity": 2,
+      "dangerous": true,
+      "gaps": ["durable subscription truth", "default-deny entitlement", "deactivation lifecycle"]
+    },
+    {
+      "id": "pos",
+      "roles": ["cashier", "branch_manager"],
+      "owners": ["pos", "payments", "receipts"],
+      "value": "STRONG",
+      "maturity": 3,
+      "dangerous": true,
+      "gaps": ["provider finality", "balance concurrency", "store credit implementation"]
+    },
+    {
+      "id": "offline_pos",
+      "roles": ["cashier", "operations_lead"],
+      "owners": ["offline-sync", "pos"],
+      "value": "USEFUL",
+      "maturity": 3,
+      "dangerous": true,
+      "gaps": ["original actor authority", "module enforcement"]
+    },
+    {
+      "id": "inventory",
+      "roles": ["inventory_manager", "branch_manager"],
+      "owners": ["inventory"],
+      "value": "STRONG",
+      "maturity": 4,
+      "dangerous": false,
+      "gaps": ["systemic tenant backstop", "remaining race/replay proof"]
+    },
+    {
+      "id": "purchasing_ap",
+      "roles": ["buyer", "approver", "ap", "finance_manager"],
+      "owners": ["purchase-order", "purchasing", "accounting"],
+      "value": "STRONG",
+      "maturity": 3,
+      "dangerous": false,
+      "gaps": ["approval CAS", "active exception uniqueness", "route consolidation"]
+    },
+    {
+      "id": "payments_reconciliation",
+      "roles": ["finance_manager", "accountant"],
+      "owners": ["payments", "reconciliation"],
+      "value": "STRONG",
+      "maturity": 3,
+      "dangerous": true,
+      "gaps": ["POS integration", "runtime provider evidence", "canonical settlement states"]
+    },
+    {
+      "id": "finance_dashboards",
+      "roles": ["owner", "finance_manager"],
+      "owners": ["finance", "dashboard", "snapshots"],
+      "value": "WEAK",
+      "maturity": 2,
+      "dangerous": true,
+      "gaps": ["canonical metric semantics", "uncapped aggregates", "freshness/partial indicators"]
+    },
+    {
+      "id": "accounting_close",
+      "roles": ["accountant", "controller"],
+      "owners": ["accounting", "close-assurance"],
+      "value": "STRONG",
+      "maturity": 4,
+      "dangerous": false,
+      "gaps": ["upstream payment truth", "production/statutory evidence"]
+    },
+    {
+      "id": "hris_payroll",
+      "roles": ["hr", "payroll", "manager", "employee", "accountant"],
+      "owners": ["hris", "payroll", "regulatory"],
+      "value": "STRONG",
+      "maturity": 3,
+      "dangerous": false,
+      "gaps": ["provider authority", "expert approval", "broader privacy/runtime proof"]
+    },
+    {
+      "id": "compliance_country_packs",
+      "roles": ["compliance", "accountant"],
+      "owners": ["compliance", "regulatory"],
+      "value": "USEFUL",
+      "maturity": 3,
+      "dangerous": false,
+      "gaps": ["expert approval", "authority conformance", "source provenance completion"]
+    },
+    {
+      "id": "assurance_incidents",
+      "roles": ["operations_lead", "finance_manager", "auditor"],
+      "owners": ["assurance", "signals"],
+      "value": "USEFUL",
+      "maturity": 3,
+      "dangerous": false,
+      "gaps": ["runtime scheduler proof", "alert delivery", "production sink"]
+    },
+    {
+      "id": "owner_command",
+      "roles": ["owner", "branch_manager"],
+      "owners": ["dashboard", "owner-war-room", "manager-action-center", "daily-habit"],
+      "value": "USEFUL",
+      "maturity": 3,
+      "dangerous": true,
+      "gaps": ["underlying metric truth", "permission/package-aware setup"]
+    },
+    {
+      "id": "agents_copilot",
+      "roles": ["authorized_reviewer", "operator"],
+      "owners": ["agents", "ai"],
+      "value": "USEFUL",
+      "maturity": 3,
+      "dangerous": false,
+      "gaps": ["creator self-approval invariant", "production operational evidence"]
+    },
+    {
+      "id": "public_receipt",
+      "roles": ["customer", "authorized_admin"],
+      "owners": ["pos-receipt", "public-token-registry"],
+      "value": "STRONG",
+      "maturity": 4,
+      "dangerous": false,
+      "gaps": ["current runtime/load proof"]
+    },
+    {
+      "id": "uploads_documents",
+      "roles": ["authenticated_tenant_user"],
+      "owners": ["storage", "documents"],
+      "value": "USEFUL",
+      "maturity": 2,
+      "dangerous": true,
+      "gaps": ["private caching", "magic-byte verification", "streaming", "retention/erasure"]
+    },
+    {
+      "id": "settings_admin",
+      "roles": ["admin", "owner"],
+      "owners": ["users", "roles", "locations", "security", "settings"],
+      "value": "WEAK",
+      "maturity": 2,
+      "dangerous": false,
+      "gaps": ["broken user edit route", "localized shell", "access-aware setup", "MFA"]
+    }
+  ],
+  "routeDecisions": [
+    {"surface": "/dashboard/notifications-demo", "decision": "RESTRICT_OR_RETIRE", "reason": "production-facing demo/test surface"},
+    {"surface": "/update", "decision": "RETIRE", "reason": "returns null"},
+    {"surface": "/dashboard/settings/users/update/{id}", "decision": "FIX", "reason": "linked route does not exist"},
+    {"surface": "/dashboard/suppliersSystem", "decision": "REDIRECT", "target": "/dashboard/purchases/suppliers"},
+    {"surface": "/dashboard/purchases/[id]", "decision": "REDIRECT", "target": "/dashboard/purchase-orders/[id]"},
+    {"surface": "registration_v1_v2", "decision": "CONSOLIDATE_AFTER_MEASUREMENT"}
+  ],
+  "queryRisk": {
+    "status": "LIKELY",
+    "finding": "Global QueryClient and query keys without explicit organization context can reuse stale cross-context data unless a reset exists.",
+    "evidence": [
+      "components/Providers.tsx:16-40",
+      "lib/providers/query-provider.tsx:14-58",
+      "types/queryKeys.ts:2-93",
+      "hooks/useCustomerQueries.ts:24-87",
+      "hooks/useCategories.ts:35-106"
+    ]
+  }
+}

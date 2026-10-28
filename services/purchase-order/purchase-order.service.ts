@@ -2,10 +2,20 @@ import "server-only"
 
 import { logger } from "@/lib/logger"
 import { db } from "@/prisma/db"
-import { BusinessRuleError, ConflictError, NotFoundError } from "@/services/_shared/action-errors"
-import { markBusinessEventAppliedInTx, recordBusinessEventInTx } from "@/services/events/business-event.service"
+import {
+  ApplicationError,
+  BusinessRuleError,
+  ConflictError,
+  getPrismaKnownRequest,
+  NotFoundError,
+} from "@/services/_shared/action-errors"
+import {
+  hashBusinessPayload,
+  markBusinessEventAppliedInTx,
+  recordBusinessEventInTx,
+} from "@/services/events/business-event.service"
 import { postGoodsReceiptStock } from "@/services/inventory/inventory-stock-event.service"
-import { type GoodsReceiptStatus, type Prisma, type PurchaseOrderStatus } from "@prisma/client"
+import { Prisma, type GoodsReceiptStatus, type PurchaseOrderStatus } from "@prisma/client"
 import type { Decimal } from "@prisma/client/runtime/library"
 import type {
   BulkStatusUpdateInput,
@@ -14,8 +24,18 @@ import type {
   OrderLineInput,
   POAnalyticsInput,
   ReceiveItemsInput,
+  ResolveGoodsReceiptInspectionInput,
   UpdatePurchaseOrderInput,
 } from "./purchase-order.schemas"
+import type {
+  PurchaseOrderAnalyticsData,
+  PurchaseOrderAnalyticsException,
+  PurchaseOrderAnalyticsStatus,
+} from "@/types/purchase-order-analytics"
+import {
+  allocatePurchaseDocumentNumber,
+  PURCHASE_DOCUMENT_TYPE,
+} from "./purchase-document-number.service"
 
 const toN = (v: Decimal | number | string | null | undefined): number => {
   if (v === null || v === undefined) return 0
@@ -77,6 +97,14 @@ const NON_EDITABLE_STATUSES: PurchaseOrderStatus[] = ["APPROVED", "PARTIALLY_REC
 const NON_DELETABLE_STATUSES: PurchaseOrderStatus[] = ["RECEIVED", "PARTIALLY_RECEIVED", "COMPLETED"]
 const RECEIVABLE_STATUSES: PurchaseOrderStatus[] = ["APPROVED", "PARTIALLY_RECEIVED"]
 const LINE_RECONCILIATION_STATUSES = new Set<PurchaseOrderStatus>(["DRAFT", "SUBMITTED"])
+
+export function canArchivePurchaseOrderStatus(status: PurchaseOrderStatus) {
+  return !NON_DELETABLE_STATUSES.includes(status)
+}
+
+export function canReceivePurchaseOrderStatus(status: PurchaseOrderStatus) {
+  return RECEIVABLE_STATUSES.includes(status)
+}
 
 // ── Calculation helpers ───────────────────────────────────────────────────────
 
@@ -258,28 +286,6 @@ function assertUniqueItems(lines: CreatePurchaseOrderInput["orderLines"]) {
     seen.set(l.itemId, (seen.get(l.itemId) ?? 0) + 1)
     if ((seen.get(l.itemId) ?? 0) > 1) throw new ConflictError(`Duplicate item found at line ${i + 1}`)
   }
-}
-
-// ── PO number generation ──────────────────────────────────────────────────────
-
-async function nextPONumber(organizationId: string): Promise<string> {
-  const last = await db.purchaseOrder.findFirst({
-    where: { organizationId },
-    orderBy: { createdAt: "desc" },
-    select: { orderNumber: true },
-  })
-  const n = last ? parseInt(last.orderNumber.replace("PO-", ""), 10) : NaN
-  return `PO-${(isFinite(n) ? n + 1 : 1).toString().padStart(6, "0")}`
-}
-
-async function nextGRNumber(organizationId: string): Promise<string> {
-  const last = await db.goodsReceipt.findFirst({
-    where: { organizationId },
-    orderBy: { createdAt: "desc" },
-    select: { receiptNumber: true },
-  })
-  const n = last ? parseInt(last.receiptNumber.replace("GR-", ""), 10) : NaN
-  return `GR-${(isFinite(n) ? n + 1 : 1).toString().padStart(6, "0")}`
 }
 
 // ── Search filter ─────────────────────────────────────────────────────────────
@@ -472,6 +478,20 @@ export async function listPurchaseOrders(organizationId: string) {
   return rows.map(transformPO)
 }
 
+export async function getPurchaseOrderCurrency(organizationId: string) {
+  const organization = await db.organization.findFirst({
+    where: { id: organizationId },
+    select: { currency: true },
+  })
+  const currency = organization?.currency?.trim().toUpperCase()
+
+  if (!currency) {
+    throw new BusinessRuleError("Organization currency is required to present purchase-order values.")
+  }
+
+  return currency
+}
+
 export async function getPurchaseOrderById(id: string, organizationId: string) {
   logger.info("purchase-order.get", { id })
   const po = await db.purchaseOrder.findFirst({
@@ -499,11 +519,14 @@ export async function createPurchaseOrder(input: CreatePurchaseOrderInput) {
   if (!location) throw new NotFoundError("Delivery location not found or does not belong to this organisation")
   if (items.length !== input.orderLines.length) throw new NotFoundError("One or more items not found in this organisation")
 
-  const orderNumber = await nextPONumber(input.organizationId)
   const totals      = calcOrderTotals(input.orderLines, input.shippingCost)
 
-  const po = await db.$transaction(async (tx) =>
-    tx.purchaseOrder.create({
+  const po = await db.$transaction(async (tx) => {
+    const orderNumber = await allocatePurchaseDocumentNumber(tx, {
+      organizationId: input.organizationId,
+      documentType: PURCHASE_DOCUMENT_TYPE.PURCHASE_ORDER,
+    })
+    return tx.purchaseOrder.create({
       data: {
         orderNumber,
         organizationId:      input.organizationId,
@@ -539,7 +562,7 @@ export async function createPurchaseOrder(input: CreatePurchaseOrderInput) {
       },
       include: standardInclude,
     })
-  )
+  })
 
   return transformPO(po)
 }
@@ -634,7 +657,7 @@ export async function deletePurchaseOrder(id: string, organizationId: string, de
     select: { id: true, status: true, orderNumber: true, createdById: true, approvedById: true },
   })
   if (!po) throw new NotFoundError("Purchase order not found")
-  if (NON_DELETABLE_STATUSES.includes(po.status)) {
+  if (!canArchivePurchaseOrderStatus(po.status)) {
     throw new BusinessRuleError(`Cannot delete a purchase order with status: ${po.status}`)
   }
   if (!deletedById || deletedById === "system-user") {
@@ -801,177 +824,667 @@ export async function cancelPurchaseOrder(id: string, organizationId: string, re
 
 export async function closePurchaseOrder(id: string, organizationId: string) {
   logger.info("purchase-order.close", { id })
+  const heldReceipt = await db.goodsReceipt.findFirst({
+    where: { purchaseOrderId: id, organizationId, status: "HELD", deletedAt: null },
+    select: { receiptNumber: true },
+  })
+  if (heldReceipt) {
+    throw new BusinessRuleError(
+      `Purchase order cannot be completed while goods receipt ${heldReceipt.receiptNumber} is held for inspection.`,
+    )
+  }
   return transition(id, organizationId, "COMPLETED")
 }
 
 // ── Receive items (goods receipt + inventory update) ──────────────────────────
 
+function receiveItemsPayloadHash(input: ReceiveItemsInput) {
+  return hashBusinessPayload({
+    schemaVersion: 2,
+    purchaseOrderId: input.purchaseOrderId,
+    organizationId: input.organizationId,
+    receivedById: input.receivedById,
+    locationId: input.locationId ?? null,
+    notes: input.notes?.trim() ?? "",
+    inspectionOutcome: input.inspectionOutcome,
+    inspectionReason: input.inspectionReason?.trim() ?? null,
+    inspectionEvidenceNotes: input.inspectionEvidenceNotes?.trim() ?? null,
+    items: input.items
+      .map((item) => ({
+        lineId: item.lineId,
+        receivedQuantity: item.receivedQuantity,
+        unitPrice: item.unitPrice ?? null,
+        notes: item.notes?.trim() ?? "",
+        serialNumbers: [...(item.serialNumbers ?? [])].map((serial) => serial.trim()).sort(),
+        batchNumber: item.batchNumber?.trim() ?? null,
+        expiryDate: item.expiryDate ?? null,
+      }))
+      .sort((left, right) => left.lineId.localeCompare(right.lineId)),
+  })
+}
+
+function assertReceiptReplay(
+  existing: { payloadHash: string | null; purchaseOrderId: string },
+  input: ReceiveItemsInput,
+  payloadHash: string,
+) {
+  if (existing.purchaseOrderId !== input.purchaseOrderId || existing.payloadHash !== payloadHash) {
+    throw new ConflictError("This receipt idempotency key was already used with a different payload.")
+  }
+}
+
 export async function receiveItems(input: ReceiveItemsInput) {
   logger.info("purchase-order.receive", { id: input.purchaseOrderId, orgId: input.organizationId })
+  const payloadHash = receiveItemsPayloadHash(input)
 
-  const po = await db.purchaseOrder.findFirst({
-    where: { id: input.purchaseOrderId, organizationId: input.organizationId, deletedAt: null },
-    include: { ...standardInclude, lines: { include: { item: true } } },
-  })
-  if (!po) throw new NotFoundError("Purchase order not found")
-  if (!RECEIVABLE_STATUSES.includes(po.status)) {
-    throw new BusinessRuleError(`Cannot receive items for a purchase order with status: ${po.status}`)
-  }
+  try {
+    const result = await db.$transaction(async (tx) => {
+      const locked = await tx.$queryRaw<Array<{ id: string }>>(Prisma.sql`
+        SELECT "id"
+        FROM "purchase_orders"
+        WHERE "id" = ${input.purchaseOrderId}
+          AND "organizationId" = ${input.organizationId}
+          AND "deletedAt" IS NULL
+        FOR UPDATE
+      `)
+      if (locked.length !== 1) throw new NotFoundError("Purchase order not found")
 
-  const receiptNumber = await nextGRNumber(input.organizationId)
-  const lineMap = new Map(po.lines.map(l => [l.id, l]))
-  const items = input.items.map((item) => {
-    const line = lineMap.get(item.lineId)
-    if (!line) throw new NotFoundError(`Line ${item.lineId} not found on this purchase order`)
+      const existingReceipt = await tx.goodsReceipt.findFirst({
+        where: {
+          organizationId: input.organizationId,
+          idempotencyKey: input.idempotencyKey,
+        },
+        select: {
+          receiptNumber: true,
+          purchaseOrderId: true,
+          payloadHash: true,
+          status: true,
+        },
+      })
+      if (existingReceipt) {
+        assertReceiptReplay(existingReceipt, input, payloadHash)
+        const replayPurchaseOrder = await tx.purchaseOrder.findFirst({
+          where: { id: input.purchaseOrderId, organizationId: input.organizationId, deletedAt: null },
+          include: standardInclude,
+        })
+        if (!replayPurchaseOrder) throw new NotFoundError("Purchase order not found")
+        return {
+          purchaseOrder: replayPurchaseOrder,
+          receiptNumber: existingReceipt.receiptNumber,
+          receiptStatus: existingReceipt.status,
+          inspectionOutcome: input.inspectionOutcome,
+          replayed: true,
+        }
+      }
 
-    const sku = line.item.sku || line.item.nameEn || line.itemId
-    const normalizedItem = {
-      ...item,
-      batchNumber: item.batchNumber?.trim() || undefined,
-    }
-    const itemWithBatch = line.item.trackBatches && !normalizedItem.batchNumber
-      ? {
-          ...normalizedItem,
-          batchNumber: generateReceiptBatchNumber({
+      const po = await tx.purchaseOrder.findFirst({
+        where: { id: input.purchaseOrderId, organizationId: input.organizationId, deletedAt: null },
+        include: { ...standardInclude, lines: { include: { item: true } } },
+      })
+      if (!po) throw new NotFoundError("Purchase order not found")
+      if (!canReceivePurchaseOrderStatus(po.status)) {
+        throw new BusinessRuleError(`Cannot receive items for a purchase order with status: ${po.status}`)
+      }
+
+      const receiptNumber = await allocatePurchaseDocumentNumber(tx, {
+        organizationId: input.organizationId,
+        documentType: PURCHASE_DOCUMENT_TYPE.GOODS_RECEIPT,
+      })
+      const lineMap = new Map(po.lines.map((line) => [line.id, line]))
+      const items = input.items.map((item) => {
+        const line = lineMap.get(item.lineId)
+        if (!line) throw new NotFoundError(`Line ${item.lineId} not found on this purchase order`)
+
+        const sku = line.item.sku || line.item.nameEn || line.itemId
+        const normalizedItem = {
+          ...item,
+          batchNumber: item.batchNumber?.trim() || undefined,
+        }
+        const itemWithBatch = line.item.trackBatches && !normalizedItem.batchNumber
+          ? {
+              ...normalizedItem,
+              batchNumber: generateReceiptBatchNumber({
+                receiptNumber,
+                sku,
+                lineId: line.id,
+              }),
+            }
+          : normalizedItem
+
+        if (!line.item.trackSerialNumbers) return itemWithBatch
+        return {
+          ...itemWithBatch,
+          serialNumbers: generateReceiptSerials({
             receiptNumber,
             sku,
             lineId: line.id,
+            receivedQuantity: item.receivedQuantity,
+            provided: item.serialNumbers,
           }),
         }
-      : normalizedItem
+      })
 
-    if (!line.item.trackSerialNumbers) return itemWithBatch
+      const heldReceiptQuantities = await tx.goodsReceiptLine.groupBy({
+        by: ["purchaseOrderLineId"],
+        where: {
+          purchaseOrderLineId: { in: items.map((item) => item.lineId) },
+          goodsReceipt: {
+            organizationId: input.organizationId,
+            purchaseOrderId: input.purchaseOrderId,
+            status: "HELD",
+            deletedAt: null,
+          },
+        },
+        _sum: { receivedQuantity: true },
+      })
+      const heldQuantityByLine = new Map(
+        heldReceiptQuantities.map((line) => [line.purchaseOrderLineId, toN(line._sum.receivedQuantity)]),
+      )
 
-    return {
-      ...itemWithBatch,
-      serialNumbers: generateReceiptSerials({
-        receiptNumber,
-        sku,
-        lineId: line.id,
-        receivedQuantity: item.receivedQuantity,
-        provided: item.serialNumbers,
-      }),
-    }
-  })
+      for (const [index, item] of items.entries()) {
+        const line = lineMap.get(item.lineId)
+        if (!line) throw new NotFoundError(`Line ${item.lineId} not found on this purchase order`)
 
-  for (const [i, item] of items.entries()) {
-    const line = lineMap.get(item.lineId)
-    if (!line) throw new NotFoundError(`Line ${item.lineId} not found on this purchase order`)
-
-    const itemName = line.item.nameEn || line.item.sku
-    const remaining = toN(line.orderedQuantity) - toN(line.receivedQuantity)
-    if (item.receivedQuantity > remaining) {
-      throw new BusinessRuleError(`Cannot receive ${item.receivedQuantity} of "${itemName}". Only ${remaining} remaining.`)
-    }
-    if (item.serialNumbers && new Set(item.serialNumbers).size !== item.serialNumbers.length) {
-      throw new ConflictError(`Duplicate serial numbers found for item ${i + 1}`)
-    }
-    if (line.item.trackSerialNumbers) {
-      if (!item.serialNumbers || item.serialNumbers.length !== item.receivedQuantity) {
-        throw new BusinessRuleError(`Serial numbers required and must match received quantity for "${itemName}"`)
+        const itemName = line.item.nameEn || line.item.sku
+        const heldQuantity = heldQuantityByLine.get(line.id) ?? 0
+        const remaining = toN(line.orderedQuantity) - toN(line.receivedQuantity) - heldQuantity
+        if (item.receivedQuantity > remaining) {
+          throw new BusinessRuleError(`Cannot receive ${item.receivedQuantity} of "${itemName}". Only ${remaining} remaining.`)
+        }
+        if (item.serialNumbers && new Set(item.serialNumbers).size !== item.serialNumbers.length) {
+          throw new ConflictError(`Duplicate serial numbers found for item ${index + 1}`)
+        }
+        if (line.item.trackSerialNumbers && item.serialNumbers?.length !== item.receivedQuantity) {
+          throw new BusinessRuleError(`Serial numbers required and must match received quantity for "${itemName}"`)
+        }
+        if (line.item.trackBatches && !item.batchNumber) {
+          throw new BusinessRuleError(`Batch number required for "${itemName}"`)
+        }
+        if (line.item.trackExpiry && (!item.expiryDate || isNaN(new Date(item.expiryDate).getTime()))) {
+          throw new BusinessRuleError(`Valid expiry date required for "${itemName}"`)
+        }
       }
-    }
-    if (line.item.trackBatches && !item.batchNumber) {
-      throw new BusinessRuleError(`Batch number required for "${itemName}"`)
-    }
-    if (line.item.trackExpiry) {
-      if (!item.expiryDate || isNaN(new Date(item.expiryDate).getTime())) {
-        throw new BusinessRuleError(`Valid expiry date required for "${itemName}"`)
+
+      const requestedSerials = items.flatMap((item) => item.serialNumbers ?? [])
+      if (requestedSerials.length) {
+        if (new Set(requestedSerials).size !== requestedSerials.length) {
+          throw new ConflictError("Duplicate serial numbers found in this receipt")
+        }
+        const existingSerials = await tx.serialNumber.findMany({
+          where: {
+            organizationId: input.organizationId,
+            serialNumber: { in: requestedSerials },
+          },
+          select: { serialNumber: true },
+        })
+        if (existingSerials.length) {
+          throw new ConflictError(`Serial number already exists: ${existingSerials.map((serial) => serial.serialNumber).join(", ")}`)
+        }
       }
-    }
-  }
 
-  const requestedSerials = items.flatMap((item) => item.serialNumbers ?? [])
-  if (requestedSerials.length) {
-    if (new Set(requestedSerials).size !== requestedSerials.length) {
-      throw new ConflictError("Duplicate serial numbers found in this receipt")
-    }
-    const existingSerials = await db.serialNumber.findMany({
-      where: {
-        organizationId: input.organizationId,
-        serialNumber: { in: requestedSerials },
-      },
-      select: { serialNumber: true },
-    })
-    if (existingSerials.length) {
-      throw new ConflictError(`Serial number already exists: ${existingSerials.map((serial) => serial.serialNumber).join(", ")}`)
-    }
-  }
-
-  const effectiveLocationId = input.locationId ?? po.locationId
-
-  const result = await db.$transaction(async (tx) => {
-    const receipt = await tx.goodsReceipt.create({
-      data: {
-        receiptNumber,
-        receiptDate:     new Date(),
-        purchaseOrderId: input.purchaseOrderId,
-        locationId:      effectiveLocationId,
-        organizationId:  input.organizationId,
-        receivedById:    input.receivedById,
-        status:          "RECEIVED" as GoodsReceiptStatus,
-        notes:           input.notes ?? "",
-      },
-    })
-
-    for (const item of items) {
-      const line = lineMap.get(item.lineId)!
-      const unitCost = item.unitPrice ?? toN(line.unitCost)
-
-      const receiptLine = await tx.goodsReceiptLine.create({
+      const effectiveLocationId = input.locationId ?? po.locationId
+      const finalizedAt = new Date()
+      const inspectionPassed = input.inspectionOutcome === "PASSED"
+      const receiptStatus: GoodsReceiptStatus = inspectionPassed ? "RECEIVED" : "HELD"
+      const receipt = await tx.goodsReceipt.create({
         data: {
-          goodsReceiptId:      receipt.id,
-          purchaseOrderLineId: line.id,
-          itemId:              line.itemId,
-          receivedQuantity:    item.receivedQuantity,
-          unitCost,
-          lineTotal:           unitCost * item.receivedQuantity,
-          notes:               item.notes ?? "",
-          batchNumber:         item.batchNumber ?? null,
-          expiryDate:          item.expiryDate ? new Date(item.expiryDate) : null,
+          receiptNumber,
+          receiptDate: finalizedAt,
+          purchaseOrderId: input.purchaseOrderId,
+          locationId: effectiveLocationId,
+          organizationId: input.organizationId,
+          receivedById: input.receivedById,
+          status: receiptStatus,
+          idempotencyKey: input.idempotencyKey,
+          payloadHash,
+          finalizedAt,
+          inventoryPostedAt: inspectionPassed ? finalizedAt : null,
+          notes: input.notes ?? "",
         },
       })
 
-      await tx.purchaseOrderLine.update({
-        where: { id: line.id },
-        data: { receivedQuantity: toN(line.receivedQuantity) + item.receivedQuantity },
+      await tx.goodsReceiptInspection.create({
+        data: {
+          organizationId: input.organizationId,
+          goodsReceiptId: receipt.id,
+          outcome: input.inspectionOutcome,
+          inspectedById: input.receivedById,
+          reason: input.inspectionReason?.trim() || null,
+          evidenceNotes: input.inspectionEvidenceNotes?.trim() || null,
+          inspectedAt: finalizedAt,
+        },
       })
 
-      await applyInventoryReceipt(tx, {
-        itemId: line.itemId,
-        locationId: effectiveLocationId,
-        qty: item.receivedQuantity,
-        unitCost,
-        organizationId: input.organizationId,
-        receiptId: receipt.id,
+      for (const item of items) {
+        const line = lineMap.get(item.lineId)!
+        const unitCost = item.unitPrice ?? toN(line.unitCost)
+        const receiptLine = await tx.goodsReceiptLine.create({
+          data: {
+            goodsReceiptId: receipt.id,
+            purchaseOrderLineId: line.id,
+            itemId: line.itemId,
+            receivedQuantity: item.receivedQuantity,
+            unitCost,
+            lineTotal: unitCost * item.receivedQuantity,
+            notes: item.notes ?? "",
+            batchNumber: item.batchNumber ?? null,
+            expiryDate: item.expiryDate ? new Date(item.expiryDate) : null,
+            serialNumbers: item.serialNumbers ?? [],
+          },
+        })
+
+        if (inspectionPassed) { // Only accepted inspection outcomes may post inventory.
+          const lineClaim = await tx.purchaseOrderLine.updateMany({
+            where: {
+              id: line.id,
+              purchaseOrderId: input.purchaseOrderId,
+              receivedQuantity: line.receivedQuantity,
+            },
+            data: {
+              receivedQuantity: { increment: item.receivedQuantity },
+            },
+          })
+          if (lineClaim.count !== 1) {
+            throw new ConflictError("Purchase order receipt quantities changed concurrently. Refresh and retry.")
+          }
+
+          await applyInventoryReceipt(tx, {
+            itemId: line.itemId,
+            locationId: effectiveLocationId,
+            qty: item.receivedQuantity,
+            unitCost,
+            organizationId: input.organizationId,
+            receiptId: receipt.id,
+            receiptNumber,
+            receiptLineId: receiptLine.id,
+            receivedById: input.receivedById,
+            batchNumber: item.batchNumber ?? null,
+            expiryDate: item.expiryDate ? new Date(item.expiryDate) : null,
+            serialNumbers: item.serialNumbers ?? [],
+          })
+        }
+      }
+
+      if (inspectionPassed) {
+        const allLines = await tx.purchaseOrderLine.findMany({
+          where: { purchaseOrderId: input.purchaseOrderId },
+        })
+        const totalOrdered = allLines.reduce((sum, line) => sum + toN(line.orderedQuantity), 0)
+        const totalReceived = allLines.reduce((sum, line) => sum + toN(line.receivedQuantity), 0)
+        const newStatus: PurchaseOrderStatus = totalReceived >= totalOrdered ? "RECEIVED" : "PARTIALLY_RECEIVED"
+        if (newStatus !== po.status) {
+          await tx.purchaseOrder.update({
+            where: { id: input.purchaseOrderId },
+            data: { status: newStatus },
+          })
+        }
+      }
+
+      const purchaseOrder = await tx.purchaseOrder.findUnique({
+        where: { id: input.purchaseOrderId },
+        include: standardInclude,
+      })
+      if (!purchaseOrder) throw new NotFoundError("Purchase order not found")
+      return {
+        purchaseOrder,
         receiptNumber,
-        receiptLineId: receiptLine.id,
-        receivedById: input.receivedById,
-        batchNumber: item.batchNumber ?? null,
-        expiryDate: item.expiryDate ? new Date(item.expiryDate) : null,
-        serialNumbers: item.serialNumbers ?? [],
-      })
+        receiptStatus,
+        inspectionOutcome: input.inspectionOutcome,
+        replayed: false,
+      }
+    })
+
+    return {
+      purchaseOrder: transformPO(result.purchaseOrder),
+      receiptNumber: result.receiptNumber,
+      receiptStatus: result.receiptStatus,
+      inspectionOutcome: result.inspectionOutcome,
+      replayed: result.replayed,
+    }
+  } catch (error) {
+    if (error instanceof ApplicationError) throw error
+    if (getPrismaKnownRequest(error)?.code !== "P2002") {
+      throw new ApplicationError(
+        "INTERNAL_ERROR",
+        "Goods receipt could not be completed safely.",
+        500,
+        false,
+      )
     }
 
-    const allLines    = await tx.purchaseOrderLine.findMany({ where: { purchaseOrderId: input.purchaseOrderId } })
-    const totalOrdered  = allLines.reduce((s, l) => s + toN(l.orderedQuantity), 0)
-    const totalReceived = allLines.reduce((s, l) => s + toN(l.receivedQuantity), 0)
-
-    const newStatus: PurchaseOrderStatus = totalReceived >= totalOrdered ? "RECEIVED" : "PARTIALLY_RECEIVED"
-    if (newStatus !== po.status) {
-      await tx.purchaseOrder.update({ where: { id: input.purchaseOrderId }, data: { status: newStatus } })
+    const existingReceipt = await db.goodsReceipt.findFirst({
+      where: {
+        organizationId: input.organizationId,
+        idempotencyKey: input.idempotencyKey,
+      },
+      select: {
+        receiptNumber: true,
+        purchaseOrderId: true,
+        payloadHash: true,
+        status: true,
+      },
+    })
+    if (!existingReceipt) {
+      throw new ConflictError("A concurrent goods receipt conflict was detected. Refresh and retry.")
     }
+    assertReceiptReplay(existingReceipt, input, payloadHash)
 
-    return tx.purchaseOrder.findUnique({ where: { id: input.purchaseOrderId }, include: standardInclude })
+    const purchaseOrder = await db.purchaseOrder.findFirst({
+      where: { id: input.purchaseOrderId, organizationId: input.organizationId, deletedAt: null },
+      include: standardInclude,
+    })
+    if (!purchaseOrder) throw new NotFoundError("Purchase order not found")
+    return {
+      purchaseOrder: transformPO(purchaseOrder),
+      receiptNumber: existingReceipt.receiptNumber,
+      receiptStatus: existingReceipt.status,
+      inspectionOutcome: input.inspectionOutcome,
+      replayed: true,
+    }
+  }
+}
+
+function inspectionResolutionPayloadHash(input: ResolveGoodsReceiptInspectionInput) {
+  return hashBusinessPayload({
+    schemaVersion: 1,
+    goodsReceiptId: input.goodsReceiptId,
+    organizationId: input.organizationId,
+    resolvedById: input.resolvedById,
+    decision: input.decision,
+    reason: input.reason.trim(),
   })
+}
 
-  return { purchaseOrder: transformPO(result!), receiptNumber }
+function assertInspectionResolutionReplay(
+  existing: { goodsReceiptId: string; payloadHash: string },
+  input: ResolveGoodsReceiptInspectionInput,
+  payloadHash: string,
+) {
+  if (existing.goodsReceiptId !== input.goodsReceiptId || existing.payloadHash !== payloadHash) {
+    throw new ConflictError("This inspection resolution idempotency key was already used with a different payload.")
+  }
+}
+
+export async function resolveGoodsReceiptInspection(input: ResolveGoodsReceiptInspectionInput) {
+  logger.info("purchase-order.resolve-receipt-inspection", {
+    receiptId: input.goodsReceiptId,
+    orgId: input.organizationId,
+    decision: input.decision,
+  })
+  const payloadHash = inspectionResolutionPayloadHash(input)
+
+  try {
+    return await db.$transaction(async (tx) => {
+      const lockedReceipt = await tx.$queryRaw<Array<{ id: string }>>(Prisma.sql`
+        SELECT "id"
+        FROM "goods_receipts"
+        WHERE "id" = ${input.goodsReceiptId}
+          AND "organizationId" = ${input.organizationId}
+          AND "deletedAt" IS NULL
+        FOR UPDATE
+      `)
+      if (lockedReceipt.length !== 1) throw new NotFoundError("Goods receipt not found")
+
+      const existingCommand = await tx.goodsReceiptInspectionResolution.findFirst({
+        where: {
+          organizationId: input.organizationId,
+          idempotencyKey: input.idempotencyKey,
+        },
+        select: {
+          goodsReceiptId: true,
+          payloadHash: true,
+          decision: true,
+          goodsReceipt: {
+            select: { receiptNumber: true, purchaseOrderId: true, status: true },
+          },
+        },
+      })
+      if (existingCommand) {
+        assertInspectionResolutionReplay(existingCommand, input, payloadHash)
+        return {
+          goodsReceiptId: existingCommand.goodsReceiptId,
+          receiptNumber: existingCommand.goodsReceipt.receiptNumber,
+          purchaseOrderId: existingCommand.goodsReceipt.purchaseOrderId,
+          receiptStatus: existingCommand.goodsReceipt.status,
+          decision: existingCommand.decision,
+          replayed: true,
+        }
+      }
+
+      const receipt = await tx.goodsReceipt.findFirst({
+        where: {
+          id: input.goodsReceiptId,
+          organizationId: input.organizationId,
+          deletedAt: null,
+        },
+        select: {
+          id: true,
+          receiptNumber: true,
+          purchaseOrderId: true,
+          locationId: true,
+          status: true,
+          inspection: { select: { id: true, outcome: true } },
+          inspectionResolution: { select: { id: true } },
+          lines: {
+            select: {
+              id: true,
+              purchaseOrderLineId: true,
+              itemId: true,
+              receivedQuantity: true,
+              unitCost: true,
+              batchNumber: true,
+              expiryDate: true,
+              serialNumbers: true,
+            },
+          },
+        },
+      })
+      if (!receipt) throw new NotFoundError("Goods receipt not found")
+      if (!receipt.inspection || receipt.inspection.outcome === "PASSED") {
+        throw new BusinessRuleError("Only a failed or incomplete inspection can be resolved.")
+      }
+      if (receipt.inspectionResolution) {
+        throw new ConflictError("This goods receipt inspection has already been resolved.")
+      }
+      if (receipt.status !== "HELD") {
+        throw new BusinessRuleError(`Cannot resolve a goods receipt with status: ${receipt.status}`)
+      }
+
+      const lockedOrder = await tx.$queryRaw<Array<{ id: string }>>(Prisma.sql`
+        SELECT "id"
+        FROM "purchase_orders"
+        WHERE "id" = ${receipt.purchaseOrderId}
+          AND "organizationId" = ${input.organizationId}
+          AND "deletedAt" IS NULL
+        FOR UPDATE
+      `)
+      if (lockedOrder.length !== 1) throw new NotFoundError("Purchase order not found")
+
+      const resolvedAt = new Date()
+      await tx.goodsReceiptInspectionResolution.create({
+        data: {
+          organizationId: input.organizationId,
+          goodsReceiptId: receipt.id,
+          inspectionId: receipt.inspection.id,
+          decision: input.decision,
+          resolvedById: input.resolvedById,
+          reason: input.reason.trim(),
+          idempotencyKey: input.idempotencyKey,
+          payloadHash,
+          resolvedAt,
+        },
+      })
+
+      if (input.decision === "ACCEPT") {
+        const serialNumbers = receipt.lines.flatMap((line) => line.serialNumbers)
+        if (new Set(serialNumbers).size !== serialNumbers.length) {
+          throw new ConflictError("Duplicate serial numbers found in this held receipt")
+        }
+        if (serialNumbers.length) {
+          const existingSerials = await tx.serialNumber.findMany({
+            where: {
+              organizationId: input.organizationId,
+              serialNumber: { in: serialNumbers },
+            },
+            select: { serialNumber: true },
+          })
+          if (existingSerials.length) {
+            throw new ConflictError(
+              `Serial number already exists: ${existingSerials.map((serial) => serial.serialNumber).join(", ")}`,
+            )
+          }
+        }
+
+        for (const line of receipt.lines) {
+          const orderLine = await tx.purchaseOrderLine.findFirst({
+            where: {
+              id: line.purchaseOrderLineId,
+              purchaseOrderId: receipt.purchaseOrderId,
+            },
+            select: {
+              id: true,
+              orderedQuantity: true,
+              receivedQuantity: true,
+              item: { select: { nameEn: true, sku: true } },
+            },
+          })
+          if (!orderLine) throw new NotFoundError("Purchase order receipt line not found")
+
+          const acceptedQuantity = toN(line.receivedQuantity)
+          const remaining = toN(orderLine.orderedQuantity) - toN(orderLine.receivedQuantity)
+          if (acceptedQuantity > remaining) {
+            throw new BusinessRuleError(
+              `Cannot accept held quantity for "${orderLine.item.nameEn || orderLine.item.sku}". Only ${remaining} remaining.`,
+            )
+          }
+
+          const lineClaim = await tx.purchaseOrderLine.updateMany({
+            where: {
+              id: orderLine.id,
+              purchaseOrderId: receipt.purchaseOrderId,
+              receivedQuantity: orderLine.receivedQuantity,
+            },
+            data: { receivedQuantity: { increment: line.receivedQuantity } },
+          })
+          if (lineClaim.count !== 1) {
+            throw new ConflictError("Purchase order receipt quantities changed concurrently. Refresh and retry.")
+          }
+
+          await applyInventoryReceipt(tx, {
+            itemId: line.itemId,
+            locationId: receipt.locationId,
+            qty: acceptedQuantity,
+            unitCost: toN(line.unitCost),
+            organizationId: input.organizationId,
+            receiptId: receipt.id,
+            receiptNumber: receipt.receiptNumber,
+            receiptLineId: line.id,
+            receivedById: input.resolvedById,
+            batchNumber: line.batchNumber,
+            expiryDate: line.expiryDate,
+            serialNumbers: line.serialNumbers,
+          })
+        }
+
+        const orderLines = await tx.purchaseOrderLine.findMany({
+          where: { purchaseOrderId: receipt.purchaseOrderId },
+          select: { orderedQuantity: true, receivedQuantity: true },
+        })
+        const totalOrdered = orderLines.reduce((sum, line) => sum + toN(line.orderedQuantity), 0)
+        const totalReceived = orderLines.reduce((sum, line) => sum + toN(line.receivedQuantity), 0)
+        const purchaseOrderStatus: PurchaseOrderStatus = totalReceived >= totalOrdered
+          ? "RECEIVED"
+          : "PARTIALLY_RECEIVED"
+        await tx.purchaseOrder.update({
+          where: { id: receipt.purchaseOrderId },
+          data: { status: purchaseOrderStatus },
+        })
+      }
+
+      const receiptStatus: GoodsReceiptStatus = input.decision === "ACCEPT" ? "RECEIVED" : "REJECTED"
+      await tx.goodsReceipt.update({
+        where: { id: receipt.id },
+        data: {
+          status: receiptStatus,
+          inventoryPostedAt: input.decision === "ACCEPT" ? resolvedAt : null,
+        },
+      })
+
+      await tx.auditLog.create({
+        data: {
+          organizationId: input.organizationId,
+          userId: input.resolvedById,
+          entityType: "GoodsReceipt",
+          entityId: receipt.id,
+          action: "RESOLVE_GOODS_RECEIPT_INSPECTION",
+          changes: {
+            inspectionOutcome: receipt.inspection.outcome,
+            decision: input.decision,
+            reason: input.reason.trim(),
+            receiptStatus,
+          },
+        },
+      })
+
+      return {
+        goodsReceiptId: receipt.id,
+        receiptNumber: receipt.receiptNumber,
+        purchaseOrderId: receipt.purchaseOrderId,
+        receiptStatus,
+        decision: input.decision,
+        replayed: false,
+      }
+    })
+  } catch (error) {
+    if (error instanceof ApplicationError) throw error
+    if (getPrismaKnownRequest(error)?.code !== "P2002") {
+      throw new ApplicationError(
+        "INTERNAL_ERROR",
+        "Goods receipt inspection resolution could not be completed safely.",
+        500,
+        false,
+      )
+    }
+
+    const existingCommand = await db.goodsReceiptInspectionResolution.findFirst({
+      where: {
+        organizationId: input.organizationId,
+        idempotencyKey: input.idempotencyKey,
+      },
+      select: {
+        goodsReceiptId: true,
+        payloadHash: true,
+        decision: true,
+        goodsReceipt: {
+          select: { receiptNumber: true, purchaseOrderId: true, status: true },
+        },
+      },
+    })
+    if (!existingCommand) {
+      throw new ConflictError("A concurrent inspection resolution conflict was detected. Refresh and retry.")
+    }
+    assertInspectionResolutionReplay(existingCommand, input, payloadHash)
+    return {
+      goodsReceiptId: existingCommand.goodsReceiptId,
+      receiptNumber: existingCommand.goodsReceipt.receiptNumber,
+      purchaseOrderId: existingCommand.goodsReceipt.purchaseOrderId,
+      receiptStatus: existingCommand.goodsReceipt.status,
+      decision: existingCommand.decision,
+      replayed: true,
+    }
+  }
 }
 
 // ── Bulk status update ────────────────────────────────────────────────────────
 
 export async function bulkUpdateStatus(input: BulkStatusUpdateInput) {
   logger.info("purchase-order.bulk-update", { orgId: input.organizationId, count: input.purchaseOrderIds.length })
+
+  if (input.toStatus === "APPROVED") {
+    throw new BusinessRuleError(
+      "Purchase orders cannot be approved in bulk. Use the canonical approval workflow for each order.",
+    )
+  }
 
   const updated: string[] = []
   const failed: { id: string; error: string }[] = []
@@ -995,7 +1508,6 @@ export async function bulkUpdateStatus(input: BulkStatusUpdateInput) {
         data: {
           status:     input.toStatus,
           updatedAt:  new Date(),
-          approvedAt: input.toStatus === "APPROVED" ? new Date() : undefined,
           notes:      input.reason ? { set: input.reason } : undefined,
         },
       })
@@ -1018,9 +1530,12 @@ export async function clonePurchaseOrder(input: ClonePurchaseOrderInput, created
   if (!source) throw new NotFoundError("Purchase order not found")
 
   const overrides = input.overrides ?? {}
-  const orderNumber = await nextPONumber(input.organizationId)
 
   const cloned = await db.$transaction(async (tx) => {
+    const orderNumber = await allocatePurchaseDocumentNumber(tx, {
+      organizationId: input.organizationId,
+      documentType: PURCHASE_DOCUMENT_TYPE.PURCHASE_ORDER,
+    })
     const po = await tx.purchaseOrder.create({
       data: {
         orderNumber,
@@ -1079,6 +1594,16 @@ export async function getGoodsReceipts(purchaseOrderId: string, organizationId: 
       lines: { include: { item: { select: { id: true, nameEn: true, nameFr: true, sku: true } } } },
       receivedBy: { select: { id: true, firstName: true, lastName: true, email: true } },
       location:   { select: { id: true, name: true, address: true } },
+      inspection: {
+        include: {
+          inspectedBy: { select: { id: true, firstName: true, lastName: true, email: true } },
+        },
+      },
+      inspectionResolution: {
+        include: {
+          resolvedBy: { select: { id: true, firstName: true, lastName: true, email: true } },
+        },
+      },
     },
     orderBy: { createdAt: "desc" },
   })
@@ -1152,56 +1677,450 @@ export async function getRequiringAttention(organizationId: string, limit = 10) 
   }
 }
 
-export async function getAnalytics(input: POAnalyticsInput) {
-  const where: Prisma.PurchaseOrderWhereInput = { organizationId: input.organizationId, deletedAt: null }
-  if (input.from || input.to) {
-    where.orderDate = {}
-    if (input.from) (where.orderDate as Prisma.DateTimeFilter).gte = new Date(input.from)
-    if (input.to)   (where.orderDate as Prisma.DateTimeFilter).lte = new Date(input.to)
+const ANALYTICS_STATUS_ORDER: PurchaseOrderAnalyticsStatus[] = [
+  "DRAFT",
+  "SUBMITTED",
+  "APPROVED",
+  "PARTIALLY_RECEIVED",
+  "RECEIVED",
+  "COMPLETED",
+  "CANCELLED",
+]
+
+const OPEN_ANALYTICS_STATUSES = new Set<PurchaseOrderAnalyticsStatus>([
+  "DRAFT",
+  "SUBMITTED",
+  "APPROVED",
+  "PARTIALLY_RECEIVED",
+])
+
+function analyticsDate(value: string, inclusiveEnd = false) {
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) {
+    throw new BusinessRuleError(`Invalid purchase-order analytics date: ${value}`)
+  }
+  if (inclusiveEnd && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    date.setUTCHours(23, 59, 59, 999)
+  }
+  return date
+}
+
+function roundMetric(value: number, precision = 2) {
+  if (!Number.isFinite(value)) return 0
+  const factor = 10 ** precision
+  return Math.round(value * factor) / factor
+}
+
+function percentMetric(numerator: number, denominator: number) {
+  return denominator > 0 ? roundMetric((numerator / denominator) * 100, 1) : 0
+}
+
+function percentile(values: number[], percentileValue: number) {
+  if (!values.length) return 0
+  const sorted = [...values].sort((a, b) => a - b)
+  const index = Math.max(0, Math.ceil(percentileValue * sorted.length) - 1)
+  return sorted[index] ?? 0
+}
+
+function daysBetween(earlier: Date, later: Date) {
+  return Math.max(0, Math.floor((later.getTime() - earlier.getTime()) / 86_400_000))
+}
+
+export async function getAnalytics(input: POAnalyticsInput): Promise<PurchaseOrderAnalyticsData> {
+  const from = input.from ? analyticsDate(input.from) : null
+  const to = input.to ? analyticsDate(input.to, true) : null
+  const where: Prisma.PurchaseOrderWhereInput = {
+    organizationId: input.organizationId,
+    deletedAt: null,
+    ...(from || to
+      ? {
+          orderDate: {
+            ...(from ? { gte: from } : {}),
+            ...(to ? { lte: to } : {}),
+          },
+        }
+      : {}),
   }
 
-  const [orders, topAgg] = await Promise.all([
+  const [orders, organization] = await Promise.all([
     db.purchaseOrder.findMany({
       where,
-      select: { orderDate: true, total: true, status: true, createdAt: true, approvedAt: true },
+      select: {
+        id: true,
+        orderNumber: true,
+        status: true,
+        orderDate: true,
+        expectedDeliveryDate: true,
+        actualDeliveryDate: true,
+        createdAt: true,
+        updatedAt: true,
+        approvedAt: true,
+        total: true,
+        supplier: { select: { id: true, name: true, code: true } },
+        location: { select: { id: true, name: true } },
+        lines: {
+          select: {
+            orderedQuantity: true,
+            receivedQuantity: true,
+            unitCost: true,
+            lineTotal: true,
+            item: { select: { id: true, sku: true, nameEn: true, nameFr: true } },
+          },
+        },
+        goodsReceipts: {
+          where: { deletedAt: null, status: { not: "CANCELLED" } },
+          select: { receiptDate: true, createdAt: true, status: true },
+          orderBy: { receiptDate: "asc" },
+        },
+      },
       orderBy: { orderDate: "asc" },
     }),
-    db.purchaseOrder.groupBy({
-      by: ["supplierId"],
-      where: { organizationId: input.organizationId, deletedAt: null },
-      _sum: { total: true },
-      _count: { _all: true },
-      orderBy: { _sum: { total: "desc" } },
-      take: input.topSuppliersLimit ?? 5,
+    db.organization.findFirst({
+      where: { id: input.organizationId },
+      select: { currency: true },
     }),
   ])
 
-  const monthKey = (d: Date) => `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`
-  const monthly: Record<string, { total: number; count: number }> = {}
-  for (const o of orders) {
-    const k = monthKey(o.orderDate ?? o.createdAt)
-    monthly[k] ??= { total: 0, count: 0 }
-    monthly[k].total += toN(o.total)
-    monthly[k].count += 1
+  const now = new Date()
+  const activeOrders = orders.filter(order => order.status !== "CANCELLED")
+  const totalSpend = activeOrders.reduce((sum, order) => sum + toN(order.total), 0)
+  let orderedUnits = 0
+  let receivedUnits = 0
+  let openCommitmentValue = 0
+  let overdueValue = 0
+  let overdueOrders = 0
+  let onTimeOrders = 0
+  let onTimeSampleSize = 0
+
+  const approvalHours = orders
+    .filter(order => order.approvedAt)
+    .map(order => Math.max(0, (order.approvedAt!.getTime() - order.createdAt.getTime()) / 3_600_000))
+
+  const monthlyMap = new Map<string, { orderCount: number; totalSpend: number; receivedOrders: number }>()
+  const statusMap = new Map<PurchaseOrderAnalyticsStatus, { orders: number; totalValue: number }>(
+    ANALYTICS_STATUS_ORDER.map(status => [status, { orders: 0, totalValue: 0 }]),
+  )
+  const supplierMap = new Map<string, {
+    supplierId: string
+    name: string
+    code: string
+    orders: number
+    totalSpend: number
+    openCommitmentValue: number
+    overdueOrders: number
+    orderedUnits: number
+    receivedUnits: number
+    onTimeOrders: number
+    onTimeSampleSize: number
+  }>()
+  const locationMap = new Map<string, {
+    locationId: string
+    name: string
+    orders: number
+    totalSpend: number
+    openCommitmentValue: number
+    overdueOrders: number
+    orderedUnits: number
+    receivedUnits: number
+  }>()
+  const itemMap = new Map<string, {
+    itemId: string
+    sku: string
+    nameEn: string
+    nameFr: string | null
+    orderedUnits: number
+    receivedUnits: number
+    totalSpend: number
+  }>()
+  const agingMap = new Map<"0_7" | "8_30" | "31_60" | "61_PLUS", { orders: number; openCommitmentValue: number }>([
+    ["0_7", { orders: 0, openCommitmentValue: 0 }],
+    ["8_30", { orders: 0, openCommitmentValue: 0 }],
+    ["31_60", { orders: 0, openCommitmentValue: 0 }],
+    ["61_PLUS", { orders: 0, openCommitmentValue: 0 }],
+  ])
+  const exceptions: PurchaseOrderAnalyticsException[] = []
+
+  for (const order of orders) {
+    const status = order.status as PurchaseOrderAnalyticsStatus
+    const isCancelled = status === "CANCELLED"
+    const isOpen = OPEN_ANALYTICS_STATUSES.has(status)
+    const orderValue = toN(order.total)
+    const statusEntry = statusMap.get(status)!
+    statusEntry.orders += 1
+    statusEntry.totalValue += orderValue
+
+    const month = `${order.orderDate.getUTCFullYear()}-${String(order.orderDate.getUTCMonth() + 1).padStart(2, "0")}`
+    const monthEntry = monthlyMap.get(month) ?? { orderCount: 0, totalSpend: 0, receivedOrders: 0 }
+    monthEntry.orderCount += 1
+    if (!isCancelled) monthEntry.totalSpend += orderValue
+    if (status === "RECEIVED" || status === "COMPLETED") monthEntry.receivedOrders += 1
+    monthlyMap.set(month, monthEntry)
+
+    let orderOrderedUnits = 0
+    let orderReceivedUnits = 0
+    let orderOpenCommitment = 0
+    for (const line of order.lines) {
+      const lineOrdered = toN(line.orderedQuantity)
+      const lineReceived = Math.min(lineOrdered, toN(line.receivedQuantity))
+      const remaining = Math.max(0, lineOrdered - lineReceived)
+      const unitCost = toN(line.unitCost)
+      orderOrderedUnits += lineOrdered
+      orderReceivedUnits += lineReceived
+      orderOpenCommitment += remaining * unitCost
+
+      if (!isCancelled) {
+        const itemEntry = itemMap.get(line.item.id) ?? {
+          itemId: line.item.id,
+          sku: line.item.sku,
+          nameEn: line.item.nameEn,
+          nameFr: line.item.nameFr,
+          orderedUnits: 0,
+          receivedUnits: 0,
+          totalSpend: 0,
+        }
+        itemEntry.orderedUnits += lineOrdered
+        itemEntry.receivedUnits += lineReceived
+        itemEntry.totalSpend += toN(line.lineTotal)
+        itemMap.set(line.item.id, itemEntry)
+      }
+    }
+
+    if (!isCancelled) {
+      orderedUnits += orderOrderedUnits
+      receivedUnits += orderReceivedUnits
+      if (isOpen) openCommitmentValue += orderOpenCommitment
+    }
+
+    const isOverdue = Boolean(isOpen && order.expectedDeliveryDate && order.expectedDeliveryDate.getTime() < now.getTime())
+    const daysOpen = daysBetween(order.orderDate, now)
+    const daysOverdue = isOverdue && order.expectedDeliveryDate
+      ? daysBetween(order.expectedDeliveryDate, now)
+      : 0
+    if (isOverdue) {
+      overdueOrders += 1
+      overdueValue += orderOpenCommitment
+    }
+
+    const latestReceipt = order.goodsReceipts.length
+      ? order.goodsReceipts.reduce((latest, receipt) => {
+          const receiptDate = receipt.receiptDate ?? receipt.createdAt
+          return receiptDate.getTime() > latest.getTime() ? receiptDate : latest
+        }, order.goodsReceipts[0]!.receiptDate ?? order.goodsReceipts[0]!.createdAt)
+      : null
+    const deliveryEvidence = order.actualDeliveryDate ?? latestReceipt
+    const hasDeliverySample = Boolean(
+      order.expectedDeliveryDate &&
+      deliveryEvidence &&
+      (status === "RECEIVED" || status === "COMPLETED"),
+    )
+    const deliveredOnTime = Boolean(
+      hasDeliverySample &&
+      deliveryEvidence!.getTime() <= order.expectedDeliveryDate!.getTime(),
+    )
+    if (hasDeliverySample) {
+      onTimeSampleSize += 1
+      if (deliveredOnTime) onTimeOrders += 1
+    }
+
+    const supplierEntry = supplierMap.get(order.supplier.id) ?? {
+      supplierId: order.supplier.id,
+      name: order.supplier.name,
+      code: order.supplier.code ?? "",
+      orders: 0,
+      totalSpend: 0,
+      openCommitmentValue: 0,
+      overdueOrders: 0,
+      orderedUnits: 0,
+      receivedUnits: 0,
+      onTimeOrders: 0,
+      onTimeSampleSize: 0,
+    }
+    supplierEntry.orders += 1
+    if (!isCancelled) {
+      supplierEntry.totalSpend += orderValue
+      supplierEntry.orderedUnits += orderOrderedUnits
+      supplierEntry.receivedUnits += orderReceivedUnits
+      if (isOpen) supplierEntry.openCommitmentValue += orderOpenCommitment
+    }
+    if (isOverdue) supplierEntry.overdueOrders += 1
+    if (hasDeliverySample) {
+      supplierEntry.onTimeSampleSize += 1
+      if (deliveredOnTime) supplierEntry.onTimeOrders += 1
+    }
+    supplierMap.set(order.supplier.id, supplierEntry)
+
+    const locationEntry = locationMap.get(order.location.id) ?? {
+      locationId: order.location.id,
+      name: order.location.name,
+      orders: 0,
+      totalSpend: 0,
+      openCommitmentValue: 0,
+      overdueOrders: 0,
+      orderedUnits: 0,
+      receivedUnits: 0,
+    }
+    locationEntry.orders += 1
+    if (!isCancelled) {
+      locationEntry.totalSpend += orderValue
+      locationEntry.orderedUnits += orderOrderedUnits
+      locationEntry.receivedUnits += orderReceivedUnits
+      if (isOpen) locationEntry.openCommitmentValue += orderOpenCommitment
+    }
+    if (isOverdue) locationEntry.overdueOrders += 1
+    locationMap.set(order.location.id, locationEntry)
+
+    if (isOpen) {
+      const bucket = daysOpen <= 7 ? "0_7" : daysOpen <= 30 ? "8_30" : daysOpen <= 60 ? "31_60" : "61_PLUS"
+      const agingEntry = agingMap.get(bucket)!
+      agingEntry.orders += 1
+      agingEntry.openCommitmentValue += orderOpenCommitment
+
+      const issue = isOverdue
+        ? "OVERDUE"
+        : status === "SUBMITTED" && daysOpen >= 3
+          ? "APPROVAL_WAIT"
+          : status === "PARTIALLY_RECEIVED"
+            ? "PARTIAL_RECEIPT"
+            : status === "APPROVED" && daysOpen >= 7
+              ? "RECEIPT_WAIT"
+              : null
+      if (issue) {
+        exceptions.push({
+          id: order.id,
+          orderNumber: order.orderNumber,
+          supplierName: order.supplier.name,
+          locationName: order.location.name,
+          status,
+          issue,
+          risk: isOverdue && daysOverdue > 7 ? "high" : "medium",
+          orderDate: order.orderDate.toISOString(),
+          expectedDeliveryDate: order.expectedDeliveryDate?.toISOString() ?? null,
+          daysOpen,
+          daysOverdue,
+          totalValue: roundMetric(orderValue),
+          openCommitmentValue: roundMetric(orderOpenCommitment),
+          receiptRate: percentMetric(orderReceivedUnits, orderOrderedUnits),
+        })
+      }
+    }
   }
 
-  const approvalMs = orders.filter(o => o.approvedAt).map(o => o.approvedAt!.getTime() - o.createdAt.getTime())
-  const avgApprovalMs = approvalMs.length ? Math.round(approvalMs.reduce((a, b) => a + b, 0) / approvalMs.length) : 0
+  const supplierPerformance = Array.from(supplierMap.values())
+    .map(entry => ({
+      supplierId: entry.supplierId,
+      name: entry.name,
+      code: entry.code,
+      orders: entry.orders,
+      totalSpend: roundMetric(entry.totalSpend),
+      openCommitmentValue: roundMetric(entry.openCommitmentValue),
+      overdueOrders: entry.overdueOrders,
+      receiptRate: percentMetric(entry.receivedUnits, entry.orderedUnits),
+      onTimeRate: percentMetric(entry.onTimeOrders, entry.onTimeSampleSize),
+      onTimeSampleSize: entry.onTimeSampleSize,
+    }))
+    .sort((a, b) => b.totalSpend - a.totalSpend)
+    .slice(0, input.topSuppliersLimit ?? 5)
 
-  const supplierIds = topAgg.map(x => x.supplierId).filter(Boolean) as string[]
-  const suppliers   = supplierIds.length
-    ? await db.supplier.findMany({ where: { id: { in: supplierIds } }, select: { id: true, name: true, code: true } })
-    : []
+  const approvalAverage = approvalHours.length
+    ? approvalHours.reduce((sum, value) => sum + value, 0) / approvalHours.length
+    : 0
+  const completedOrders = orders.filter(order => order.status === "RECEIVED" || order.status === "COMPLETED").length
+  const cancelledOrders = orders.filter(order => order.status === "CANCELLED").length
+  const expectedDeliverySample = activeOrders.filter(order => order.expectedDeliveryDate).length
+  const approvalEvidencePopulation = orders.filter(order =>
+    ["APPROVED", "PARTIALLY_RECEIVED", "RECEIVED", "COMPLETED"].includes(order.status),
+  )
+  const deliveryEvidencePopulation = orders.filter(order => order.status === "RECEIVED" || order.status === "COMPLETED")
+  const deliveryEvidenceCount = deliveryEvidencePopulation.filter(order =>
+    Boolean(order.actualDeliveryDate || order.goodsReceipts.length),
+  ).length
 
-  const topSuppliers = topAgg.map(x => ({
-    supplierId: x.supplierId,
-    name:   suppliers.find(s => s.id === x.supplierId)?.name ?? "Unknown",
-    code:   suppliers.find(s => s.id === x.supplierId)?.code ?? "",
-    total:  toN(x._sum.total),
-    orders: x._count._all,
-  }))
+  exceptions.sort((a, b) => {
+    if (a.risk !== b.risk) return a.risk === "high" ? -1 : 1
+    return b.daysOverdue - a.daysOverdue || b.daysOpen - a.daysOpen
+  })
 
-  return { monthly, avgApprovalMs, topSuppliers }
+  return {
+    generatedAt: now.toISOString(),
+    currency: organization?.currency?.trim().toUpperCase() || "XAF",
+    period: {
+      from: from?.toISOString() ?? null,
+      to: to?.toISOString() ?? null,
+    },
+    totals: {
+      orders: orders.length,
+      activeOrders: activeOrders.length,
+      totalSpend: roundMetric(totalSpend),
+      averageOrderValue: roundMetric(activeOrders.length ? totalSpend / activeOrders.length : 0),
+      openCommitmentValue: roundMetric(openCommitmentValue),
+      overdueOrders,
+      overdueValue: roundMetric(overdueValue),
+      orderedUnits: roundMetric(orderedUnits, 3),
+      receivedUnits: roundMetric(receivedUnits, 3),
+      receiptRate: percentMetric(receivedUnits, orderedUnits),
+      cancellationRate: percentMetric(cancelledOrders, orders.length),
+      completionRate: percentMetric(completedOrders, activeOrders.length),
+      onTimeRate: percentMetric(onTimeOrders, onTimeSampleSize),
+      onTimeSampleSize,
+      supplierConcentrationRate: percentMetric(supplierPerformance[0]?.totalSpend ?? 0, totalSpend),
+      approvalCycle: {
+        averageHours: roundMetric(approvalAverage, 1),
+        medianHours: roundMetric(percentile(approvalHours, 0.5), 1),
+        p90Hours: roundMetric(percentile(approvalHours, 0.9), 1),
+        sampleSize: approvalHours.length,
+      },
+    },
+    monthly: Array.from(monthlyMap.entries()).map(([month, value]) => ({
+      month,
+      orderCount: value.orderCount,
+      totalSpend: roundMetric(value.totalSpend),
+      receivedOrders: value.receivedOrders,
+    })),
+    statusBreakdown: ANALYTICS_STATUS_ORDER.map(status => ({
+      status,
+      orders: statusMap.get(status)!.orders,
+      totalValue: roundMetric(statusMap.get(status)!.totalValue),
+    })),
+    supplierPerformance,
+    locationPerformance: Array.from(locationMap.values())
+      .map(entry => ({
+        locationId: entry.locationId,
+        name: entry.name,
+        orders: entry.orders,
+        totalSpend: roundMetric(entry.totalSpend),
+        openCommitmentValue: roundMetric(entry.openCommitmentValue),
+        overdueOrders: entry.overdueOrders,
+        receiptRate: percentMetric(entry.receivedUnits, entry.orderedUnits),
+      }))
+      .sort((a, b) => b.totalSpend - a.totalSpend),
+    itemPerformance: Array.from(itemMap.values())
+      .map(entry => ({
+        ...entry,
+        orderedUnits: roundMetric(entry.orderedUnits, 3),
+        receivedUnits: roundMetric(entry.receivedUnits, 3),
+        totalSpend: roundMetric(entry.totalSpend),
+        receiptRate: percentMetric(entry.receivedUnits, entry.orderedUnits),
+      }))
+      .sort((a, b) => b.totalSpend - a.totalSpend)
+      .slice(0, 10),
+    aging: Array.from(agingMap.entries()).map(([bucket, value]) => ({
+      bucket,
+      orders: value.orders,
+      openCommitmentValue: roundMetric(value.openCommitmentValue),
+    })),
+    exceptions: exceptions.slice(0, 12),
+    dataQuality: {
+      expectedDeliveryCoverage: percentMetric(expectedDeliverySample, activeOrders.length),
+      approvalEvidenceCoverage: percentMetric(
+        approvalEvidencePopulation.filter(order => order.approvedAt).length,
+        approvalEvidencePopulation.length,
+      ),
+      deliveryEvidenceCoverage: percentMetric(deliveryEvidenceCount, deliveryEvidencePopulation.length),
+      expectedDeliverySampleSize: activeOrders.length,
+      approvalEvidenceSampleSize: approvalEvidencePopulation.length,
+      deliveryEvidenceSampleSize: deliveryEvidencePopulation.length,
+    },
+  }
 }
 
 export async function getStatusHistory(id: string, organizationId: string) {

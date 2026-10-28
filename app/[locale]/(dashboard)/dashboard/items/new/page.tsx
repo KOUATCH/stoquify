@@ -1,17 +1,27 @@
-import { localizePath, pickLocale } from "@/i18n/routing"
+import { pickLocale } from "@/i18n/routing"
+import { localizePath } from "@/i18n/routing"
+import { routeByKey, withItemsSurfaceAccess } from "../items-route-access"
 import { redirect } from "next/navigation"
 
-// Legacy item-create alias. The canonical create page is
-// at /dashboard/inventory/items/create (uses ModernCreateItemForm with the
-// bilingual EN/FR inputs). Forward here so we don't maintain two parallel
-// item-create UIs.
 export default async function NewItemPage({
   params,
 }: {
   params: Promise<{ locale: string }>
 }) {
-  const { locale: rawLocale } = await params
-  const locale = pickLocale(rawLocale)
+  const surface = routeByKey("items-new")
 
-  redirect(localizePath("/dashboard/inventory/items/create", locale))
+  if (!surface) {
+    throw new Error("Missing items route surface definition: items-new")
+  }
+
+  return withItemsSurfaceAccess({
+    params,
+    surface,
+    onAllowed: async () => {
+      const { locale: rawLocale } = await params
+      const locale = pickLocale(rawLocale)
+      redirect(localizePath("/dashboard/inventory/items/create", locale))
+      return null
+    },
+  })
 }

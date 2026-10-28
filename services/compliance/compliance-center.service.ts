@@ -17,6 +17,7 @@ import type {
 import { getTenantOperatingSnapshotFromRelated } from "@/services/snapshots/tenant-operating-snapshot.service"
 
 import { resolveEInvoicingMetadata } from "./country-pack-hooks"
+import { getFiscalizationQueueSummary, type FiscalizationQueueSummary } from "./fiscalization-outbox.service"
 
 type CompliancePayrollForecastReadiness = {
   state: "READY" | "BLOCKED"
@@ -69,6 +70,7 @@ export type ComplianceCenterKernelSnapshot = {
   }>
   queuedSubmissions: Array<{
     id: string
+    adapterConfigId: string | null
     fiscalDocumentId: string
     status: string
     operation: string
@@ -89,7 +91,21 @@ export type ComplianceCenterKernelSnapshot = {
     countryPackVersion: string
     capabilityStatus: string
     credentialReferencePresent: boolean
+    credentialExpiresAt: string | null
+    credentialExpiring: boolean
+    officialSpecRecorded: boolean
+    officialSpecVersion: string | null
+    officialSpecPublishedAt: string | null
+    officialSpecReference: string | null
+    officialSpecHash: string | null
+    reviewStatus: string
+    reviewedAt: string | null
+    reviewEvidenceHash: string | null
+    healthStatus: "HEALTHY" | "DEGRADED" | "BLOCKED" | "DISABLED"
+    openSubmissionCount: number
+    oldestQueueAgeSeconds: number | null
   }>
+  fiscalizationQueue: FiscalizationQueueSummary
   payrollForecastReadiness: CompliancePayrollForecastReadiness
 }
 
@@ -128,6 +144,7 @@ export async function getComplianceCenterKernelSnapshot(input: {
     recentDocuments,
     queuedSubmissions,
     adapterConfigs,
+    fiscalizationQueue,
     payrollForecastReadiness,
   ] =
     await Promise.all([
@@ -201,6 +218,7 @@ export async function getComplianceCenterKernelSnapshot(input: {
         take: limit,
         select: {
           id: true,
+          adapterConfigId: true,
           fiscalDocumentId: true,
           status: true,
           operation: true,
@@ -208,6 +226,7 @@ export async function getComplianceCenterKernelSnapshot(input: {
           environment: true,
           attempts: true,
           nextAttemptAt: true,
+          createdAt: true,
           errorMessage: true,
           rejectionReason: true,
           payloadHash: true,
@@ -230,8 +249,17 @@ export async function getComplianceCenterKernelSnapshot(input: {
           countryPackVersion: true,
           capabilityStatus: true,
           credentialReference: true,
+          credentialExpiresAt: true,
+          officialSpecVersion: true,
+          officialSpecPublishedAt: true,
+          officialSpecReference: true,
+          officialSpecHash: true,
+          reviewStatus: true,
+          reviewedAt: true,
+          reviewEvidenceHash: true,
         },
       }),
+      getFiscalizationQueueSummary(input.organizationId),
       getCompliancePayrollForecastReadiness({ organizationId: input.organizationId }),
     ])
 
@@ -245,8 +273,11 @@ export async function getComplianceCenterKernelSnapshot(input: {
     submissionCounts[status] = count
   })
 
+  const snapshotAt = new Date()
+  const credentialWarningAt = new Date(snapshotAt.getTime() + 30 * 24 * 60 * 60 * 1000)
+
   return {
-    asOf: new Date().toISOString(),
+    asOf: snapshotAt.toISOString(),
     organizationId: input.organizationId,
     filters: {
       countryCode: input.countryCode?.toUpperCase(),
@@ -273,6 +304,7 @@ export async function getComplianceCenterKernelSnapshot(input: {
     })),
     queuedSubmissions: queuedSubmissions.map((submission) => ({
       id: submission.id,
+      adapterConfigId: submission.adapterConfigId,
       fiscalDocumentId: submission.fiscalDocumentId,
       status: submission.status,
       operation: submission.operation,
@@ -283,17 +315,86 @@ export async function getComplianceCenterKernelSnapshot(input: {
       lastError: submission.rejectionReason ?? submission.errorMessage,
       payloadHash: submission.payloadHash,
     })),
-    adapterConfigs: adapterConfigs.map((adapter) => ({
-      id: adapter.id,
-      countryCode: adapter.countryCode,
-      authorityChannel: adapter.authorityChannel,
-      adapterKey: adapter.adapterKey,
-      environment: adapter.environment,
-      status: adapter.status,
-      countryPackVersion: adapter.countryPackVersion,
-      capabilityStatus: adapter.capabilityStatus,
-      credentialReferencePresent: Boolean(adapter.credentialReference),
-    })),
+    adapterConfigs: adapterConfigs.map((adapter) => {
+      const submissions = queuedSubmissions.filter(
+        (submission) => submission.adapterConfigId === adapter.id,
+      )
+      const credentialExpired = Boolean(
+        adapter.credentialExpiresAt && adapter.credentialExpiresAt <= snapshotAt,
+      )
+      const credentialExpiring = Boolean(
+        adapter.credentialExpiresAt &&
+          adapter.credentialExpiresAt > snapshotAt &&
+          adapter.credentialExpiresAt <= credentialWarningAt,
+      )
+      const officialSpecRecorded = Boolean(
+        adapter.officialSpecVersion &&
+          adapter.officialSpecPublishedAt &&
+          adapter.officialSpecReference &&
+          adapter.officialSpecHash,
+      )
+      const hasTerminalProblem = submissions.some((submission) =>
+        ["REJECTED", "FAILED", "DEAD_LETTER"].includes(submission.status),
+      )
+      const hasRetry = submissions.some(
+        (submission) => submission.status === "RETRY_SCHEDULED",
+      )
+      const oldestCreatedAt = submissions.reduce<Date | null>(
+        (oldest, submission) =>
+          !oldest || submission.createdAt < oldest
+            ? submission.createdAt
+            : oldest,
+        null,
+      )
+      const healthStatus =
+        adapter.status === "DISABLED"
+          ? ("DISABLED" as const)
+          : adapter.status !== "ACTIVE" ||
+              !adapter.credentialReference ||
+              credentialExpired ||
+              hasTerminalProblem
+            ? ("BLOCKED" as const)
+            : credentialExpiring ||
+                !officialSpecRecorded ||
+                adapter.reviewStatus === "REQUIRES_EXPERT_REVIEW" ||
+                hasRetry
+              ? ("DEGRADED" as const)
+              : ("HEALTHY" as const)
+
+      return {
+        id: adapter.id,
+        countryCode: adapter.countryCode,
+        authorityChannel: adapter.authorityChannel,
+        adapterKey: adapter.adapterKey,
+        environment: adapter.environment,
+        status: adapter.status,
+        countryPackVersion: adapter.countryPackVersion,
+        capabilityStatus: adapter.capabilityStatus,
+        credentialReferencePresent: Boolean(adapter.credentialReference),
+        credentialExpiresAt: adapter.credentialExpiresAt?.toISOString() ?? null,
+        credentialExpiring,
+        officialSpecRecorded,
+        officialSpecVersion: adapter.officialSpecVersion,
+        officialSpecPublishedAt:
+          adapter.officialSpecPublishedAt?.toISOString() ?? null,
+        officialSpecReference: adapter.officialSpecReference,
+        officialSpecHash: adapter.officialSpecHash,
+        reviewStatus: adapter.reviewStatus,
+        reviewedAt: adapter.reviewedAt?.toISOString() ?? null,
+        reviewEvidenceHash: adapter.reviewEvidenceHash,
+        healthStatus,
+        openSubmissionCount: submissions.length,
+        oldestQueueAgeSeconds: oldestCreatedAt
+          ? Math.max(
+              0,
+              Math.floor(
+                (snapshotAt.getTime() - oldestCreatedAt.getTime()) / 1000,
+              ),
+            )
+          : null,
+      }
+    }),
+    fiscalizationQueue,
     payrollForecastReadiness,
   }
 }

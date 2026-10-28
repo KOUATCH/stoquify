@@ -1,0 +1,144 @@
+{
+  "generatedAt": "2026-07-17T05:04:31.012Z",
+  "dryRunOnly": true,
+  "mutationModeAvailable": false,
+  "status": "BLOCKED",
+  "organizationRef": "organization:0a89d2168fda329b",
+  "compatibilityStorage": "PayrollEmployee_and_related_payroll_source_tables",
+  "targetOwnership": "HRIS_PEOPLE_CORE",
+  "scan": {
+    "requestedMaxEmployees": 250,
+    "scannedEmployees": 1,
+    "truncated": false,
+    "sourceCounts": {
+      "employees": 1,
+      "contracts": 1,
+      "compensationAssignments": 1,
+      "paymentDestinationRequests": 1,
+      "attendanceSnapshots": 2,
+      "payrollRuns": 2
+    },
+    "projectionCounts": {
+      "adoptable": 0,
+      "legacyUnverified": 1
+    }
+  },
+  "gaps": [
+    {
+      "code": "ACTIVE_COMPENSATION_APPROVAL_PROOF_MISSING",
+      "severity": "BLOCKER",
+      "count": 1,
+      "reason": "An active compensation assignment lacks maker-checker approval proof."
+    },
+    {
+      "code": "ACTIVE_CONTRACT_APPROVAL_PROOF_MISSING",
+      "severity": "BLOCKER",
+      "count": 1,
+      "reason": "An active contract lacks HRIS maker-checker activation proof."
+    },
+    {
+      "code": "ACTIVE_CONTRACT_DOCUMENT_PROOF_MISSING",
+      "severity": "BLOCKER",
+      "count": 1,
+      "reason": "An active contract lacks governed signed-document evidence."
+    },
+    {
+      "code": "EMPLOYEE_SOURCE_PROOF_MISSING",
+      "severity": "BLOCKER",
+      "count": 1,
+      "reason": "A compatibility employee row has no complete HRIS source-system, source-record, and source-hash proof."
+    },
+    {
+      "code": "PAYMENT_DESTINATION_APPLIED_PROOF_MISSING",
+      "severity": "BLOCKER",
+      "count": 1,
+      "reason": "The current payment destination is not tied to a complete applied approval record."
+    }
+  ],
+  "blockerCount": 5,
+  "warningCount": 0,
+  "correctionPlan": [
+    {
+      "code": "ACTIVE_COMPENSATION_APPROVAL_PROOF_MISSING",
+      "operation": "APPEND_CORRECTION",
+      "count": 1,
+      "idempotencyKey": "hris-migration-correction:5cd0b1d9c5117c07",
+      "instruction": "Re-review the legacy assignment and append approval evidence and a business event; do not edit historical payroll outputs."
+    },
+    {
+      "code": "ACTIVE_CONTRACT_APPROVAL_PROOF_MISSING",
+      "operation": "APPEND_CORRECTION",
+      "count": 1,
+      "idempotencyKey": "hris-migration-correction:a8ec1a6655f9fb07",
+      "instruction": "Re-review the legacy activation and append approval and activation business-event evidence without rewriting the contract."
+    },
+    {
+      "code": "ACTIVE_CONTRACT_DOCUMENT_PROOF_MISSING",
+      "operation": "APPEND_CORRECTION",
+      "count": 1,
+      "idempotencyKey": "hris-migration-correction:4cbbdd04a68dafbf",
+      "instruction": "Capture and approve signed-document evidence under retention, malware-scan, and legal-hold controls."
+    },
+    {
+      "code": "EMPLOYEE_SOURCE_PROOF_MISSING",
+      "operation": "APPEND_CORRECTION",
+      "count": 1,
+      "idempotencyKey": "hris-migration-correction:c06e9b9da9a47225",
+      "instruction": "Append reviewed HRIS source proof or classify the row as legacy-unverified; never invent historical identity facts."
+    },
+    {
+      "code": "PAYMENT_DESTINATION_APPLIED_PROOF_MISSING",
+      "operation": "APPEND_CORRECTION",
+      "count": 1,
+      "idempotencyKey": "hris-migration-correction:0558ca3b8257934e",
+      "instruction": "Reconcile the destination hash to an applied request with document, approval, and business-event proof."
+    }
+  ],
+  "evidence": {
+    "sourceProjectionHash": "sha256:f2a9f18dbbcc36170bd37221a905f9fb05960892fe381493154a41c522095796",
+    "correctionPlanHash": "sha256:8fd13d3004a375fad5f06d9dc52f1a4be5226edb0f8945a468f7574c1c3fc60f",
+    "immutableEvidenceHashBefore": "sha256:34af8a4c7429451ecdcb66e88319aefba5d8356608a23d57656cbb9fab25a237",
+    "immutableEvidenceHashAfter": "sha256:34af8a4c7429451ecdcb66e88319aefba5d8356608a23d57656cbb9fab25a237",
+    "reconciliationHash": "sha256:5a748cf6e836ca8eb82330021a9a4c6f403a9e08e2172cf84b8f35fd49c25f31",
+    "planHash": "sha256:d7f13d84f046a7796c0c3bdd859442ef2ad7d6182ce21ffd91baf11a0be6ff93"
+  },
+  "rollbackSimulation": {
+    "strategy": "CORRECTION_ONLY",
+    "mutationCount": 0,
+    "destructiveOperations": 0,
+    "immutableEvidencePreserved": true,
+    "result": "NO_OP_DRY_RUN"
+  },
+  "closePack": {
+    "status": "BLOCKED",
+    "requiredSignoffs": [
+      {
+        "role": "hr-owner",
+        "status": "PENDING"
+      },
+      {
+        "role": "payroll-owner",
+        "status": "PENDING"
+      },
+      {
+        "role": "accounting-controller",
+        "status": "PENDING"
+      },
+      {
+        "role": "security-privacy",
+        "status": "PENDING"
+      },
+      {
+        "role": "operations-owner",
+        "status": "PENDING"
+      }
+    ]
+  },
+  "redaction": {
+    "rawPersonDataIncluded": false,
+    "rawSalaryIncluded": false,
+    "rawPaymentDestinationIncluded": false,
+    "rawDocumentContentIncluded": false,
+    "rawProofHashesIncluded": false
+  }
+}

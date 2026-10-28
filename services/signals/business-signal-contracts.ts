@@ -18,6 +18,7 @@ export const BUSINESS_SIGNAL_TYPES = [
   "refund_void_spike",
   "stockout_risk",
   "dead_stock_cash_exposure",
+  "inventory_loss_review",
   "purchase_order_receiving_delay",
   "payroll_exposure",
   "close_blocker",
@@ -88,6 +89,8 @@ export type BusinessSignalFact = {
   signalType: BusinessSignalType
   moduleSlug: CommercialModuleSlug
   sourceModule: SnapshotSourceModule
+  sourceSnapshotKind?: SnapshotKind
+  sourceHash?: string | null
   subjectType: string
   subjectId: string
   title?: string

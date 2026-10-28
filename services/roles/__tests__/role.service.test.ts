@@ -4,9 +4,10 @@ import { getAllPermissions } from "@/config/permissions"
 import { createRoleName } from "@/lib/createRoleName"
 import { logSecurityEvent } from "@/lib/security/audit-log"
 import { db } from "@/prisma/db"
-import { ConflictError, ForbiddenError, NotFoundError } from "@/services/_shared/action-errors"
+import { ConflictError, ForbiddenError } from "@/services/_shared/action-errors"
 import {
   createOrganizationRole,
+  listOrganizationRoles,
   resolveRoleOrganization,
   updateOrganizationRole,
 } from "../role.service"
@@ -80,20 +81,35 @@ describe("role.service organization boundary", () => {
     expect(mockDb.organization.findFirst).not.toHaveBeenCalled()
   })
 
-  it("requires an active target organization for super-user overrides", async () => {
-    mockDb.organization.findFirst.mockResolvedValue(null)
-
+  it("keeps super users inside their active organization without observing the target tenant", async () => {
     await expect(
       resolveRoleOrganization({ ...ctx, isSuperUser: true }, "org-2"),
-    ).rejects.toBeInstanceOf(NotFoundError)
+    ).rejects.toBeInstanceOf(ForbiddenError)
 
-    expect(mockDb.organization.findFirst).toHaveBeenCalledWith({
-      where: {
-        id: "org-2",
-        isActive: true,
-        deletedAt: null,
+    expect(mockDb.organization.findFirst).not.toHaveBeenCalled()
+    expect(mockDb.role.findMany).not.toHaveBeenCalled()
+  })
+
+  it("lists roles when the requested organization matches the active tenant", async () => {
+    const role = {
+      id: "role-1",
+      nameEn: "Cashier",
+      nameFr: null,
+      organizationId: "org-1",
+    }
+    mockDb.role.findMany.mockResolvedValue([role])
+
+    await expect(listOrganizationRoles({
+      ctx: { ...ctx, isSuperUser: true },
+      organizationId: " org-1 ",
+    })).resolves.toEqual([{ ...role, name: "Cashier" }])
+
+    expect(mockDb.organization.findFirst).not.toHaveBeenCalled()
+    expect(mockDb.role.findMany).toHaveBeenCalledWith({
+      where: { organizationId: "org-1" },
+      orderBy: {
+        createdAt: "desc",
       },
-      select: { id: true },
     })
   })
 })

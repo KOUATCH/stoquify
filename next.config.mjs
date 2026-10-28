@@ -1,15 +1,19 @@
 import createNextIntlPlugin from 'next-intl/plugin';
 
 const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
+const configuredDistDir = process.env.NEXT_DIST_DIR?.trim();
+const nextDistDir = configuredDistDir || (process.env.NODE_ENV === 'development' ? '.next-dev' : '.next');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  distDir: nextDistDir,
   serverExternalPackages: [
     'argon2',
     'better-auth',
     '@better-auth/core',
     '@better-auth/prisma-adapter',
     '@better-auth/kysely-adapter',
+    '@prisma/client',
   ],
   experimental: {
     // Reduce memory usage and improve caching
@@ -20,6 +24,7 @@ const nextConfig = {
   },
   // Keep production output self-contained for deployment.
   output: 'standalone',
+  outputFileTracingRoot: process.cwd(),
   poweredByHeader: false,
   devIndicators: false,
   webpack: (config, { isServer, dev, webpack }) => {

@@ -1,0 +1,206 @@
+{
+  "schemaVersion": "1.0",
+  "traceId": "51783d07-4481-4580-be21-7e9312f8d71a",
+  "runId": "th-foundation-inventory-correction-20260715-005",
+  "sliceId": "foundation-inventory",
+  "stageId": "03",
+  "skillName": "stoquify-transaction-history-03-accounting-control-gate",
+  "agentType": "Bookkeeper & Controller",
+  "mode": "implement",
+  "status": "BLOCKED",
+  "activeLanes": [
+    "workbench",
+    "inventory"
+  ],
+  "blockedLanes": [],
+  "inputArtifacts": [
+    {
+      "path": "what-next/transaction-history/runs/th-foundation-inventory-correction-20260715-005/run-manifest.json",
+      "sha256": "sha256:ff51d50c6a41027383e00ab47b56f8cd6cf6bf139461a0f329498e8b25c8ac63"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-foundation-inventory-correction-20260715-005/slices/foundation-inventory/01-architecture-gate.json",
+      "sha256": "sha256:73e28548ce69b8694a85020902adb5ca035f68dc7b13ce1d5f2a4a647a69c36d"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-foundation-inventory-correction-20260715-005/slices/foundation-inventory/01-architecture-gate.md",
+      "sha256": "sha256:3332eb9e599965864d0c0cb7cac59a8b64447b886174d82f011af9aba4263ce9"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-foundation-inventory-correction-20260715-005/slices/foundation-inventory/02-security-proof-gate.json",
+      "sha256": "sha256:3e4af9f9421b85525a8c24289b4b5b9273df1089b8f8aec39aaa3aef9f278dea"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-foundation-inventory-correction-20260715-005/slices/foundation-inventory/02-security-proof-gate.md",
+      "sha256": "sha256:5ef0d67db9098be136588ba147c3d5732c3f342eb55d4b6022fd15e000024eb3"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-foundation-inventory-reconciliation-20260714-003/slices/foundation-inventory/03-accounting-control-gate.json",
+      "sha256": "sha256:bbfe9cedcec4cddcb41395c6d59938b81d325aa337720ad12610bd1ee138ecec"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-foundation-inventory-reconciliation-20260714-003/slices/foundation-inventory/03-accounting-control-gate.md",
+      "sha256": "sha256:e5724f5ce69e27bc5cb001b10885b1e0ba66f46145b517102eabb2e84810ada8"
+    }
+  ],
+  "inputFingerprint": "sha256:f7cd21689df9d6cd70de105b297d0af824363c2153969c2ec819036297cdf562",
+  "allowedEdits": [
+    "prisma/schema.prisma",
+    "prisma/migrations/20260715090000_inventory_correction_reversal_lineage/migration.sql",
+    "services/inventory/inventory-adjustment-reversal.schemas.ts",
+    "services/inventory/inventory-adjustment-reversal.service.ts",
+    "services/inventory/__tests__/inventory-adjustment-reversal.service.test.ts",
+    "what-next/transaction-history/runs/th-foundation-inventory-correction-20260715-005/slices/foundation-inventory/03-accounting-control-gate.json",
+    "what-next/transaction-history/runs/th-foundation-inventory-correction-20260715-005/slices/foundation-inventory/03-accounting-control-gate.md"
+  ],
+  "observedEdits": [
+    "prisma/schema.prisma",
+    "prisma/migrations/20260715090000_inventory_correction_reversal_lineage/migration.sql",
+    "services/inventory/inventory-adjustment-reversal.schemas.ts",
+    "services/inventory/inventory-adjustment-reversal.service.ts",
+    "services/inventory/__tests__/inventory-adjustment-reversal.service.test.ts",
+    "what-next/transaction-history/runs/th-foundation-inventory-correction-20260715-005/slices/foundation-inventory/03-accounting-control-gate.json",
+    "what-next/transaction-history/runs/th-foundation-inventory-correction-20260715-005/slices/foundation-inventory/03-accounting-control-gate.md"
+  ],
+  "repository": {
+    "headBefore": "8a406e93b0e798ed6f476ca5d81df37a2aaa38be",
+    "headAfter": "8a406e93b0e798ed6f476ca5d81df37a2aaa38be",
+    "dirtyFilesBefore": [],
+    "dirtyFilesAfter": [
+      "prisma/schema.prisma",
+      "prisma/migrations/20260715090000_inventory_correction_reversal_lineage/migration.sql",
+      "services/inventory/inventory-adjustment-reversal.schemas.ts",
+      "services/inventory/inventory-adjustment-reversal.service.ts",
+      "services/inventory/__tests__/inventory-adjustment-reversal.service.test.ts"
+    ]
+  },
+  "claims": [
+    {
+      "id": "TH03_CORRECTION_LINEAGE",
+      "result": "PASS",
+      "evidence": [
+        "prisma/schema.prisma",
+        "prisma/migrations/20260715090000_inventory_correction_reversal_lineage/migration.sql",
+        "services/inventory/inventory-adjustment-reversal.service.ts"
+      ]
+    },
+    {
+      "id": "TH03_EXACT_MOVEMENT_REVERSAL",
+      "result": "PASS",
+      "evidence": [
+        "services/inventory/inventory-adjustment-reversal.service.ts",
+        "services/inventory/__tests__/inventory-adjustment-reversal.service.test.ts"
+      ]
+    },
+    {
+      "id": "TH03_EXACT_JOURNAL_REVERSAL",
+      "result": "PASS",
+      "evidence": [
+        "services/inventory/inventory-adjustment-reversal.service.ts",
+        "services/inventory/__tests__/inventory-adjustment-reversal.service.test.ts",
+        "services/accounting/posting.service.ts"
+      ]
+    },
+    {
+      "id": "TH03_IDEMPOTENCY_MAKER_CHECKER",
+      "result": "PASS",
+      "evidence": [
+        "services/inventory/inventory-adjustment-reversal.schemas.ts",
+        "services/inventory/inventory-adjustment-reversal.service.ts",
+        "services/inventory/__tests__/inventory-adjustment-reversal.service.test.ts"
+      ]
+    },
+    {
+      "id": "TH03_CLOSE_INVALIDATION",
+      "result": "PASS",
+      "evidence": [
+        "services/inventory/inventory-adjustment-reversal.service.ts",
+        "services/inventory/inventory-close-invalidation.service.ts",
+        "services/accounting/journal-close-invalidation.service.ts"
+      ]
+    },
+    {
+      "id": "TH03_MIGRATION_DEPLOYMENT",
+      "result": "GAP",
+      "evidence": [
+        "prisma/migrations/20260714194500_inventory_history_accounting_time_controls/migration.sql",
+        "prisma/migrations/20260714203000_session_assurance/migration.sql",
+        "prisma/migrations/20260715090000_inventory_correction_reversal_lineage/migration.sql",
+        "what-next/transaction-history/runs/th-foundation-inventory-correction-20260715-005/slices/foundation-inventory/03-accounting-control-gate.md"
+      ]
+    },
+    {
+      "id": "TH03_SYSTEM_CERTIFICATION",
+      "result": "GAP",
+      "evidence": [
+        "what-next/transaction-history/runs/th-foundation-inventory-correction-20260715-005/slices/foundation-inventory/03-accounting-control-gate.md"
+      ]
+    }
+  ],
+  "verification": [
+    {
+      "command": "npm run prisma:validate",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": null
+    },
+    {
+      "command": "prisma generate --no-engine",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": null
+    },
+    {
+      "command": "jest --runInBand services/inventory/__tests__/inventory-adjustment-reversal.service.test.ts",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": null
+    },
+    {
+      "command": "eslint <new reversal schema service and test>",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": null
+    },
+    {
+      "command": "npm run typecheck -- --pretty false",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": null
+    },
+    {
+      "command": "jest --runInBand <7-suite inventory accounting regression pack>",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": null
+    },
+    {
+      "command": "git diff --check -- <five Stage 03 product paths>",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": null
+    },
+    {
+      "command": "npm run prisma:migrate:status",
+      "status": "FAIL",
+      "exitCode": 1,
+      "logPath": null
+    }
+  ],
+  "outputs": [
+    {
+      "path": "what-next/transaction-history/runs/th-foundation-inventory-correction-20260715-005/slices/foundation-inventory/03-accounting-control-gate.md",
+      "sha256": "sha256:4672a3830448a762584f29b392c2e4ac4b78707eb06910c42376a73795b8b613"
+    }
+  ],
+  "blockers": [
+    {
+      "severity": "high",
+      "code": "MIGRATIONS_NOT_APPLIED",
+      "reason": "The local database reports the inventory accounting-time, session-assurance, and inventory correction-lineage migrations as unapplied; orchestrator policy forbids deployment and Stage 03 requires representative runtime proof before PASS."
+    }
+  ],
+  "nextEligibleStages": [],
+  "startedAt": "2026-07-15T08:24:00.000Z",
+  "completedAt": "2026-07-15T08:45:16.155Z"
+}

@@ -12,16 +12,35 @@ import {
   toLocationTransferDTO,
 } from "@/services/inventory/inventory-read.service"
 import { createStockTransfer, postStockTransfer } from "@/services/inventory/inventory-transfer.service"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import type { CreateTransferPayload, TransactionType, TransferStatus } from "@/types/inventoryMovementTypes"
 import { revalidatePath, revalidateTag } from "next/cache"
 
-async function trustedOrganizationId(inputOrganizationId?: string) {
-  const user = await getAuthenticatedUser()
-  if (!user?.organizationId) throw new AuthRequiredError("Authenticated organization is required")
-  if (inputOrganizationId && inputOrganizationId !== user.organizationId) {
+async function requireInventoryHistoryReadAccess(input: { organizationId: string; resource: string; surface: string }) {
+  const ctx = await requirePermission("inventory.levels.read", {
+    resource: input.resource,
+    auditAllowed: true,
+  })
+  if (input.organizationId !== ctx.orgId) {
     throw new ForbiddenError("Organization mismatch")
   }
-  return user.organizationId
+
+  const moduleDecision = await observeModuleAccess({
+    organizationId: ctx.orgId,
+    userId: ctx.userId,
+    actorPermissions: ctx.permissions,
+    moduleSlug: "inventory",
+    surfaceType: "action",
+    surface: input.surface,
+    accessIntent: "read",
+    mode: "enforce",
+    audit: true,
+  })
+  if (!moduleDecision.allowed) {
+    throw new ForbiddenError("Inventory module is not available for this organization")
+  }
+
+  return ctx
 }
 
 export const createLocationTransfer = inventoryAction(
@@ -131,8 +150,15 @@ export const getTransfers = inventoryAction(
   }): Promise<ServerActionResult<any>> => {
     const { organizationId, filters } = input
     if (!organizationId) throw new BusinessRuleError("Organization ID is required")
-    const trustedOrgId = await trustedOrganizationId(organizationId)
-    const data = await listStockTransfers({ organizationId: trustedOrgId, filters })
+    const ctx = await requireInventoryHistoryReadAccess({
+      organizationId,
+      resource: "StockTransferHistory",
+      surface: "actions/inventory/inventoryMovementActions.ts:getTransfers",
+    })
+    const data = await listStockTransfers({
+      organizationId: ctx.orgId,
+      filters,
+    })
 
     return {
       success: true,
@@ -165,9 +191,13 @@ export const getInventoryTransactionsMovement = inventoryAction(
   }): Promise<ServerActionResult<any>> => {
     const { organizationId, filters } = input
     if (!organizationId) throw new BusinessRuleError("Organization ID is required")
-    const trustedOrgId = await trustedOrganizationId(organizationId)
+    const ctx = await requireInventoryHistoryReadAccess({
+      organizationId,
+      resource: "InventoryTransactionHistory",
+      surface: "actions/inventory/inventoryMovementActions.ts:getInventoryTransactionsMovement",
+    })
     const transactions = await listInventoryTransactionMovements({
-      organizationId: trustedOrgId,
+      organizationId: ctx.orgId,
       filters,
     })
 
@@ -274,9 +304,13 @@ export const getStockMovementSummary = inventoryAction(
   }): Promise<ServerActionResult<any>> => {
     const { organizationId, itemId, locationId, dateFrom, dateTo } = input
     if (!organizationId) throw new BusinessRuleError("Organization ID is required")
-    const trustedOrgId = await trustedOrganizationId(organizationId)
+    const ctx = await requireInventoryHistoryReadAccess({
+      organizationId,
+      resource: "InventoryTransactionHistorySummary",
+      surface: "actions/inventory/inventoryMovementActions.ts:getStockMovementSummary",
+    })
     const summary = await readStockMovementSummary({
-      organizationId: trustedOrgId,
+      organizationId: ctx.orgId,
       filters: { itemId, locationId, dateFrom, dateTo },
     })
 

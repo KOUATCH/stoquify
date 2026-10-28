@@ -12,7 +12,7 @@ export function TrustSection() {
   const t = useTranslations("landing.trust")
 
   return (
-    <section id="trust" className="surface-grid bg-[var(--paper-0)] px-6 py-20 text-[var(--color-text-on-paper)] lg:px-8">
+    <section id="trust" className="surface-grid scroll-mt-20 bg-[var(--paper-0)] px-6 py-20 text-[var(--color-text-on-paper)] lg:px-8">
       <div className="mx-auto max-w-7xl">
         <div className="eyebrow mb-4 !text-[var(--accent)]">{t("eyebrow")}</div>
         <h2 className="display max-w-4xl text-4xl sm:text-5xl">{t("title")}</h2>

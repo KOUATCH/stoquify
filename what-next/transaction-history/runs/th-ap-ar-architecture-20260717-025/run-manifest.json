@@ -1,0 +1,89 @@
+{
+  "schemaVersion": "1.0",
+  "runId": "th-ap-ar-architecture-20260717-025",
+  "traceId": "6c60c7fb-04ab-4e71-bdf9-9d7fae8a84d9",
+  "mode": "audit",
+  "sliceId": "ap-ar",
+  "contractVersion": "2026-07-14",
+  "proposal": {
+    "path": "docs/new ideas/STOQUIFY_TRANSACTION_HISTORY_ANALYTICS_AND_SECURITY_PROPOSAL_2026-07-14.md",
+    "sha256": "sha256:0628f08178fe0441fe22ccbd1a6b429c2bb07b2ea5d278e6dcb799ab117c6979"
+  },
+  "baseCommit": "a27cb0328e044304590cecf20c47832df5e834d5",
+  "runtimeArtifactRoot": "what-next/transaction-history/runs/th-ap-ar-architecture-20260717-025/",
+  "scope": {
+    "lanes": [
+      "ap",
+      "ar"
+    ],
+    "includePaths": [
+      "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx",
+      "app/[locale]/(dashboard)/dashboard/finance/payables/page.tsx",
+      "app/[locale]/(dashboard)/dashboard/finance/receivables/page.tsx",
+      "app/[locale]/(dashboard)/dashboard/purchases/suppliers/page.tsx",
+      "app/[locale]/(dashboard)/dashboard/customers/page.tsx",
+      "actions/purchasing/ap-control.actions.ts",
+      "services/purchasing/ap-control.service.ts",
+      "services/purchasing/ap-control.schemas.ts",
+      "services/supplier/supplier.service.ts",
+      "services/customer/customer.service.ts",
+      "services/accounting/data-trust.service.ts",
+      "services/accounting/customer-ledger.service.ts",
+      "lib/security/rbac-permissions.ts",
+      "config/permissions.ts",
+      "services/assurance/assurance-registry.service.ts"
+    ],
+    "excludePaths": [
+      "prisma/migrations/**",
+      "app/**/suppliersSystem/**"
+    ]
+  },
+  "stageAllowlists": {
+    "01": [
+      "what-next/transaction-history/runs/th-ap-ar-architecture-20260717-025/slices/ap-ar/01-architecture-gate.md",
+      "what-next/transaction-history/runs/th-ap-ar-architecture-20260717-025/slices/ap-ar/01-architecture-gate.json"
+    ],
+    "02": [
+      "what-next/transaction-history/runs/th-ap-ar-architecture-20260717-025/slices/ap-ar/02-security-proof-gate.md",
+      "what-next/transaction-history/runs/th-ap-ar-architecture-20260717-025/slices/ap-ar/02-security-proof-gate.json"
+    ],
+    "03": [
+      "what-next/transaction-history/runs/th-ap-ar-architecture-20260717-025/slices/ap-ar/03-accounting-control-gate.md",
+      "what-next/transaction-history/runs/th-ap-ar-architecture-20260717-025/slices/ap-ar/03-accounting-control-gate.json"
+    ],
+    "04": [
+      "what-next/transaction-history/runs/th-ap-ar-architecture-20260717-025/slices/ap-ar/04-read-model-optimizer.md",
+      "what-next/transaction-history/runs/th-ap-ar-architecture-20260717-025/slices/ap-ar/04-read-model-optimizer.json"
+    ],
+    "05": [
+      "what-next/transaction-history/runs/th-ap-ar-architecture-20260717-025/slices/ap-ar/05-workbench-ux-contract.md",
+      "what-next/transaction-history/runs/th-ap-ar-architecture-20260717-025/slices/ap-ar/05-workbench-ux-contract.json"
+    ],
+    "06": [
+      "what-next/transaction-history/runs/th-ap-ar-architecture-20260717-025/slices/ap-ar/06-frontend-delivery.md",
+      "what-next/transaction-history/runs/th-ap-ar-architecture-20260717-025/slices/ap-ar/06-frontend-delivery.json"
+    ],
+    "07": [
+      "what-next/transaction-history/runs/th-ap-ar-architecture-20260717-025/slices/ap-ar/07-release-review.md",
+      "what-next/transaction-history/runs/th-ap-ar-architecture-20260717-025/slices/ap-ar/07-release-review.json"
+    ]
+  },
+  "orchestratorPolicy": {
+    "productCodeEdits": false,
+    "installSkills": false,
+    "deployMigrations": false
+  },
+  "gates": {
+    "foundationInventory": {
+      "status": "PASS",
+      "evidence": [
+        "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/slices/foundation-inventory/07-release-review.json"
+      ]
+    },
+    "arAccountingPrerequisites": {
+      "status": "PENDING",
+      "evidence": []
+    }
+  },
+  "createdAt": "2026-07-17T06:05:00.0000000Z"
+}

@@ -60,7 +60,7 @@ const copy = {
     channels: "Channels",
     storage: "Storage",
     storageValue: "Browser sound preference; current queue is session memory.",
-    emailPush: "Email, SMS, WhatsApp, push, digest, and persisted inbox remain adapter-ready.",
+    emailPush: "Email, SMS, push, digest, and persisted inbox remain adapter-ready.",
     notConfigured: "Adapter-ready",
     filters: "Filters",
     all: "All",
@@ -105,7 +105,7 @@ const copy = {
     channels: "Canaux",
     storage: "Stockage",
     storageValue: "Preference sonore navigateur; file actuelle en memoire de session.",
-    emailPush: "Email, SMS, WhatsApp, push, digest et inbox persistant restent prets pour adaptateurs.",
+    emailPush: "Email, SMS, push, digest et inbox persistant restent prets pour adaptateurs.",
     notConfigured: "Pret adaptateur",
     filters: "Filtres",
     all: "Toutes",
@@ -520,3 +520,4 @@ function StateRow({ label, value, ok }: { label: string; value: string; ok?: boo
     </div>
   )
 }
+

@@ -329,6 +329,15 @@ describe("postStockAdjustment", () => {
         }),
       }),
     )
+    expect(mockedDb.inventoryTransaction.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          effectiveAt: adjustmentDate,
+          recordedAt: expect.any(Date),
+          timeProvenance: "EXPLICIT_SOURCE_TIME",
+        }),
+      }),
+    )
     expect(mockedDb.businessEvent.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({

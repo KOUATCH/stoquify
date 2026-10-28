@@ -1,21 +1,23 @@
 
 import LocationsManagementDashboard from "@/components/locations/LocationsManagementDashboard"
-import { getAuthenticatedUser } from "@/config/useAuth"
+import { checkPermission, getAuthenticatedUser } from "@/config/useAuth"
 import { localizePath, pickLocale } from "@/i18n/routing"
 import { redirect } from "next/navigation"
+import { routeByKey, withSettingsSurfaceAccess } from "../settings-route-access"
 
 export const metadata = {
   title: "Locations | Stoquify",
   description: "Manage organization locations, stock policies, POS activity, and movement counters.",
 }
 
-export default async function LocationsPage({
+async function LocationsPageImpl({
   params,
 }: {
   params: Promise<{ locale: string }>
 }) {
   const { locale: rawLocale } = await params
   const locale = pickLocale(rawLocale)
+  await checkPermission("locations.read")
   const user = await getAuthenticatedUser()
 
   if (!user.organizationId) {
@@ -32,4 +34,20 @@ export default async function LocationsPage({
       </div>
     </div>
   )
+}
+
+
+
+export default async function SettingsRoutePage(props: any = {}) {
+  const surface = routeByKey("settings-locations")
+
+  if (!surface) {
+    throw new Error("Missing settings route surface definition: settings-locations")
+  }
+
+  return withSettingsSurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => LocationsPageImpl(props),
+  })
 }

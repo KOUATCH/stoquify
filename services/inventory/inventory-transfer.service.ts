@@ -357,6 +357,8 @@ async function createMovement(
     lineValue: Prisma.Decimal
     balanceAfter: Prisma.Decimal
     createdById: string
+    effectiveAt: Date
+    recordedAt: Date
   },
 ) {
   return tx.inventoryTransaction.create({
@@ -377,6 +379,9 @@ async function createMovement(
         input.type === "TRANSFER_OUT"
           ? `Transfer out to ${input.transfer.toLocation.name}`
           : `Transfer in from ${input.transfer.fromLocation.name}`,
+      effectiveAt: input.effectiveAt,
+      recordedAt: input.recordedAt,
+      timeProvenance: "EXPLICIT_SOURCE_TIME",
     },
   })
 }
@@ -386,6 +391,7 @@ async function postPlan(
   transfer: StockTransferWithLines,
   plan: InventoryLevelPlan,
   approvedById: string,
+  effectiveAt: Date,
   now: Date,
 ) {
   const zero = new Prisma.Decimal(0)
@@ -425,6 +431,8 @@ async function postPlan(
     lineValue: plan.lineValue,
     balanceAfter: nextSourceOnHand,
     createdById: approvedById,
+    effectiveAt,
+    recordedAt: now,
   })
 
   let nextDestinationOnHand = plan.quantity
@@ -487,6 +495,8 @@ async function postPlan(
     lineValue: plan.lineValue,
     balanceAfter: nextDestinationOnHand,
     createdById: approvedById,
+    effectiveAt,
+    recordedAt: now,
   })
 
   await tx.stockTransferLine.update({
@@ -791,7 +801,7 @@ export async function postStockTransfer(
     const movementTransactionIds: string[] = []
 
     for (const plan of plans) {
-      const movementIds = await postPlan(tx, transfer, plan, parsed.approvedById, now)
+      const movementIds = await postPlan(tx, transfer, plan, parsed.approvedById, occurredAt, now)
       movementTransactionIds.push(...movementIds)
     }
 

@@ -235,6 +235,7 @@ describe("payroll compensation actions", () => {
       rubriqueId: "rub-1",
       amount: "10000.00",
       effectiveFrom: "2026-07-01",
+      evidenceDocumentHash: "sha256:assignment-evidence",
     })
 
     expect(rubriqueResult.success).toBe(true)

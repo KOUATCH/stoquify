@@ -1,0 +1,66 @@
+{
+  "generatedAt": "2026-08-22T15:54:33.924564+00:00",
+  "classification": "DEVELOPMENT_WORKING_COPY_NON_AUTHORITATIVE",
+  "warning": "DEVELOPMENT WORKING COPY ONLY \u2014 NOT AUTHORITY, APPOINTMENT, QUALIFICATION, SEGREGATION-OF-DUTIES, SIGNATURE, APPROVAL, PRODUCTION ACCESS, OR RELEASE EVIDENCE.",
+  "sources": {
+    "complianceDocx": {
+      "path": "docs\\blockers-and-gates\\hris-payroll-compliance-prefill\\COMPLIANCE_AUTHORIZATION_G1_EVIDENCE_RECONCILED_WORKING_COPY_2026-08-19.docx",
+      "sha256": "8230169b4374159751f58bf7f81b7ae69ac2e5c19e08430f96b3e1a0cdf9f87e"
+    },
+    "compliancePdf": {
+      "path": "docs\\blockers-and-gates\\hris-payroll-compliance-prefill\\COMPLIANCE_AUTHORIZATION_G1_EVIDENCE_RECONCILED_WORKING_COPY_2026-08-19.pdf",
+      "sha256": "b922a40638cb315284d63cbed84a1b0596c3e2073fb17a023bb8d6d3581ad5f7"
+    },
+    "seedCredentials": {
+      "path": ".seed-artifacts\\seed-login-credentials.json",
+      "sha256": "231e39d4dc40ede47c4993b7bd2aa24769ee74f3e9fa0ceff17b890a1bee10f7",
+      "sensitive": true
+    }
+  },
+  "outputs": {
+    "complianceDocx": {
+      "path": "docs\\blockers-and-gates\\hris-payroll-compliance-prefill\\COMPLIANCE_AUTHORIZATION_G1_EVIDENCE_SEEDED_RECONCILIATION_REFRESHED_WORKING_COPY_2026-08-22.docx",
+      "sha256": "fbcd7aada0b3850b603121cae37b4e87521cc53395e325caedc205efdfd62dd2",
+      "containsPasswords": false
+    },
+    "compliancePdf": {
+      "path": "docs\\blockers-and-gates\\hris-payroll-compliance-prefill\\COMPLIANCE_AUTHORIZATION_G1_EVIDENCE_SEEDED_RECONCILIATION_WORKING_COPY_2026-08-22.pdf",
+      "sha256": "4df5422847dc9f1b0c64b43d2e8ca15dc6c26881498bf6b0ad4695a4f3a5a6bd",
+      "containsPasswords": false
+    },
+    "credentialDocx": {
+      "path": ".seed-artifacts\\SEEDED_DEVELOPMENT_LOGIN_CREDENTIALS_2026-08-22.docx",
+      "sha256": "59cf8197784e6b302f9e49d1d31f260d59b4530ee5676dd89ce566418d4353a3",
+      "sensitive": true,
+      "gitIgnoredLocation": true
+    }
+  },
+  "coverage": {
+    "canonical_roles": 17,
+    "canonical_roles_matched_in_all_organizations": 17,
+    "additional_roles": 4,
+    "additional_roles_matched_in_all_organizations": 4,
+    "decision_sheets": 11,
+    "decision_role_rows": 33,
+    "g1_obligations_preserved_from_source": 33,
+    "seed_credentials": 88,
+    "organizations": 2,
+    "distinct_roles": 44
+  },
+  "validation": {
+    "source_docx_tables": 59,
+    "output_docx_tables": 78,
+    "credential_docx_tables": 3,
+    "source_pdf_pages": 26,
+    "output_pdf_pages": 39,
+    "credential_rows": 88,
+    "distinct_passwords": 1,
+    "tracked_password_leaks": 0
+  },
+  "gateDisposition": {
+    "technicalSeedReconciliation": "COMPLETE",
+    "g0HumanInputHandoff": "OPEN",
+    "g1AuthorityAuthorization": "OPEN",
+    "productionAuthorization": "NOT_AUTHORIZED"
+  }
+}

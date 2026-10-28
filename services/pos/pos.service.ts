@@ -12,26 +12,39 @@ import {
   TransactionType,
 } from "@prisma/client"
 import { db } from "@/prisma/db"
-import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
+import { currencyFractionDigits } from "@/lib/i18n/organization-money"
+import { ApplicationError, BusinessRuleError, ConflictError, ForbiddenError, NotFoundError } from "@/services/_shared/action-errors"
 import { postRefund } from "@/services/accounting/postings/post-refund"
 import { postPayment } from "@/services/accounting/postings/post-payment"
 import { postSale } from "@/services/accounting/postings/post-sale"
 import { postVoid } from "@/services/accounting/postings/post-void"
 import { createCustomerLedgerEntry } from "@/services/accounting/customer-ledger.service"
+import {
+  CUSTOMER_RECEIVABLE_REFERENCE_TYPE,
+  ensurePostedCustomerReceivableDocumentInTx,
+} from "@/services/accounting/customer-receivable-document.service"
+import {
+  voidCustomerReceivableDocumentInTx,
+} from "@/services/accounting/customer-receivable-lifecycle.service"
 import { createFiscalDocumentFromPostedSource } from "@/services/compliance/fiscal-document.service"
 import { resolveEInvoicingMetadata } from "@/services/compliance/country-pack-hooks"
-import { recordBusinessEventInTx } from "@/services/events/business-event.service"
+import {
+  hashBusinessPayload,
+  markBusinessEventAppliedInTx,
+  recordBusinessEventInTx,
+} from "@/services/events/business-event.service"
 import {
   postPOSStockIssue,
   postPOSStockReturn,
 } from "@/services/inventory/inventory-stock-event.service"
 import {
-  assertNoDuplicateProviderCapture,
-  assertUniqueProviderCaptureReferences,
-  resolveProviderCaptureEvidence,
-} from "@/services/payments/payment-reconciliation.service"
+  claimPOSElectronicTenderAuthority,
+  resolvePOSElectronicTenderAuthority,
+  type POSElectronicTenderAuthorityEvidence,
+} from "@/services/payments/pos-electronic-tender-authority.service"
 import { addMoney, moneyToNumber, moneyToString, subtractMoney, toDecimal } from "./money"
-import { getSalesReceipt, sendReceipt, type ReceiptDeliveryResult, type SalesReceiptPayload } from "./receipt.service"
+import { getPOSSaleCommitReceipt, type ReceiptDeliveryResult, type SalesReceiptPayload } from "./receipt.service"
+import { requirePOSCustomerAtLocation } from "./pos-customer.service"
 import {
   activeCartSchema,
   activePOSSessionSchema,
@@ -70,6 +83,32 @@ type TenderAllocation = {
   amount: Prisma.Decimal
   tenderedAmount: Prisma.Decimal
   changeGiven: Prisma.Decimal
+}
+
+const STORE_CREDIT_TENDER_UNAVAILABLE_MESSAGE =
+  "Store credit tender is unavailable until an authoritative store-credit instrument ledger is implemented"
+const DEVELOPMENT_RECEIPT_ONLY_MESSAGE =
+  "This development POS pilot supports an on-screen non-statutory receipt only; delivery channels are disabled"
+const POS_SALE_COMMIT_RESULT_SCHEMA_VERSION = 1
+
+function assertSupportedSaleTenders(tenders: POSTenderInput[]) {
+  if (tenders.some((tender) => tender.method === "STORE_CREDIT")) {
+    throw new BusinessRuleError(STORE_CREDIT_TENDER_UNAVAILABLE_MESSAGE)
+  }
+}
+
+function assertSupportedDevelopmentReceipt(receipt: {
+  channel: string
+  destination?: string
+  whatsAppCustomerOptInConfirmed?: boolean
+} | undefined) {
+  if (
+    receipt?.channel !== undefined && receipt.channel !== "NONE" ||
+    Boolean(receipt?.destination?.trim()) ||
+    receipt?.whatsAppCustomerOptInConfirmed !== undefined
+  ) {
+    throw new BusinessRuleError(DEVELOPMENT_RECEIPT_ONLY_MESSAGE)
+  }
 }
 
 type POSSaleForFiscalDocument = {
@@ -337,6 +376,78 @@ function lineMath(input: CartLineInput) {
   return { taxAmount, lineTotal }
 }
 
+type POSSaleMathInput = {
+  subtotal: Prisma.Decimal.Value
+  discount: Prisma.Decimal.Value
+  taxAmount: Prisma.Decimal.Value
+  total: Prisma.Decimal.Value
+  lines: Array<{
+    quantity: Prisma.Decimal.Value
+    unitPrice: Prisma.Decimal.Value
+    discount: Prisma.Decimal.Value
+    taxRate: Prisma.Decimal.Value
+    taxAmount: Prisma.Decimal.Value
+    lineTotal: Prisma.Decimal.Value
+  }>
+}
+
+function assertPOSSaleMath(sale: POSSaleMathInput) {
+  let subtotal = new Prisma.Decimal(0)
+  let discount = new Prisma.Decimal(0)
+  let taxAmount = new Prisma.Decimal(0)
+  let total = new Prisma.Decimal(0)
+
+  for (const line of sale.lines) {
+    const quantity = toDecimal(line.quantity)
+    const unitPrice = toDecimal(line.unitPrice)
+    const lineDiscount = toDecimal(line.discount)
+    const taxRate = toDecimal(line.taxRate)
+    const gross = unitPrice.times(quantity).toDecimalPlaces(2)
+
+    if (
+      quantity.lte(0) ||
+      unitPrice.lt(0) ||
+      lineDiscount.lt(0) ||
+      lineDiscount.gt(gross) ||
+      taxRate.lt(0) ||
+      taxRate.gt(100)
+    ) {
+      throw new ConflictError("Cart line values changed; refresh the cart before completing the sale")
+    }
+
+    const expected = lineMath({ quantity, unitPrice, discount: lineDiscount, taxRate })
+    if (
+      !toDecimal(line.taxAmount).eq(expected.taxAmount) ||
+      !toDecimal(line.lineTotal).eq(expected.lineTotal)
+    ) {
+      throw new ConflictError("Cart line totals changed; refresh the cart before completing the sale")
+    }
+
+    subtotal = subtotal.plus(gross)
+    discount = discount.plus(lineDiscount)
+    taxAmount = taxAmount.plus(expected.taxAmount)
+    total = total.plus(expected.lineTotal)
+  }
+
+  const calculated = {
+    subtotal: subtotal.toDecimalPlaces(2),
+    discount: discount.toDecimalPlaces(2),
+    taxAmount: taxAmount.toDecimalPlaces(2),
+    total: total.toDecimalPlaces(2),
+  }
+
+  if (
+    !toDecimal(sale.subtotal).eq(calculated.subtotal) ||
+    !toDecimal(sale.discount).eq(calculated.discount) ||
+    !toDecimal(sale.taxAmount).eq(calculated.taxAmount) ||
+    !toDecimal(sale.total).eq(calculated.total)
+  ) {
+    throw new ConflictError("Cart totals changed; refresh the cart before completing the sale")
+  }
+
+  return calculated
+}
+
 function stockStatus(available: Prisma.Decimal, minimum: Prisma.Decimal, tracked: boolean) {
   if (!tracked) return "not_tracked" as const
   if (available.lte(0)) return "out" as const
@@ -399,8 +510,342 @@ function allocateTenders(tenders: POSTenderInput[], total: Prisma.Decimal) {
   return { allocations, changeDue }
 }
 
+function assertUniquePOSElectronicTenderAuthority(
+  evidence: Array<POSElectronicTenderAuthorityEvidence | null>,
+) {
+  const transactionIds = new Set<string>()
+  const providerEventIds = new Set<string>()
+
+  for (const entry of evidence) {
+    if (!entry) continue
+    if (
+      transactionIds.has(entry.paymentTransactionId) ||
+      providerEventIds.has(entry.providerEventId)
+    ) {
+      throw new ConflictError("Provider-authoritative electronic tender evidence cannot be reused")
+    }
+    transactionIds.add(entry.paymentTransactionId)
+    providerEventIds.add(entry.providerEventId)
+  }
+}
+
 function cleanJson(input: Record<string, unknown>): Prisma.JsonObject {
   return Object.fromEntries(Object.entries(input).filter(([, value]) => value !== undefined)) as Prisma.JsonObject
+}
+
+function requireLedgerPostingBatchId(value: string | null | undefined, context: string) {
+  const postingBatchId = value?.trim()
+  if (postingBatchId) return postingBatchId
+
+  throw new BusinessRuleError(`${context} did not produce the required ledger posting batch.`)
+}
+
+const POS_SHIFT_CLOSED_EVENT_TYPE = "pos.shift.closed"
+const POS_SHIFT_CLOSED_SCHEMA_VERSION = 1
+
+const shiftCloseSessionSelect = Prisma.validator<Prisma.POSSessionSelect>()({
+  id: true,
+  sessionNumber: true,
+  status: true,
+  startTime: true,
+  endTime: true,
+  terminalId: true,
+  locationId: true,
+  userId: true,
+  openingBalance: true,
+  closingBalance: true,
+  expectedBalance: true,
+  variance: true,
+  totalSales: true,
+  totalTax: true,
+  totalDiscount: true,
+  transactionCount: true,
+  cashTotal: true,
+  cardTotal: true,
+  mobileMoneyTotal: true,
+  bankTransferTotal: true,
+  creditTotal: true,
+  notes: true,
+  terminal: {
+    select: {
+      organizationId: true,
+      locationId: true,
+      currentSessionId: true,
+    },
+  },
+})
+
+type ShiftCloseSession = Prisma.POSSessionGetPayload<{ select: typeof shiftCloseSessionSelect }>
+type ShiftCloseEvent = Prisma.BusinessEventGetPayload<{ include: { outboxMessages: true } }>
+
+export type ClosePOSShiftResult = {
+  sessionId: string
+  terminalId: string
+  locationId: string
+  cashDrawerId: string
+  closingTransactionId: string
+  eventId: string
+  evidenceHash: string
+  variance: number
+  varianceDirection: "BALANCED" | "SHORTAGE" | "OVERAGE"
+  closedAt: string
+  replayed: boolean
+}
+
+class POSShiftTransitionConflict extends Error {}
+
+class POSShiftReplayConflict extends Error {
+  constructor(
+    readonly eventId: string,
+    readonly existingCommandHash: string | null,
+    readonly existingPayloadHash: string,
+    readonly attemptedCommandHash: string,
+  ) {
+    super("POS shift close idempotency conflict")
+  }
+}
+
+function jsonRecord(value: Prisma.JsonValue | undefined): Record<string, Prisma.JsonValue> {
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? (value as Record<string, Prisma.JsonValue>)
+    : {}
+}
+
+function jsonString(value: Prisma.JsonValue | undefined) {
+  return typeof value === "string" ? value : null
+}
+
+function closeVarianceDirection(variance: Prisma.Decimal): ClosePOSShiftResult["varianceDirection"] {
+  if (variance.eq(0)) return "BALANCED"
+  return variance.lt(0) ? "SHORTAGE" : "OVERAGE"
+}
+
+function shiftCloseVariance(
+  actualBalance: Prisma.Decimal,
+  expectedBalance: Prisma.Decimal,
+  currency: string,
+) {
+  const fractionDigits = currencyFractionDigits(currency)
+  return actualBalance
+    .toDecimalPlaces(fractionDigits)
+    .minus(expectedBalance.toDecimalPlaces(fractionDigits))
+    .toDecimalPlaces(fractionDigits)
+}
+
+function shiftCloseCommandHash(input: {
+  organizationId: string
+  sessionId: string
+  actorId: string
+  actualBalance: Prisma.Decimal
+  notes: string | null
+}) {
+  return hashBusinessPayload({
+    evidenceVersion: POS_SHIFT_CLOSED_SCHEMA_VERSION,
+    organizationId: input.organizationId,
+    sessionId: input.sessionId,
+    actorId: input.actorId,
+    countedBalance: moneyToString(input.actualBalance),
+    explanation: input.notes,
+  })
+}
+
+function prismaErrorCode(error: unknown) {
+  if (!error || typeof error !== "object" || !("code" in error)) return null
+  const code = (error as { code?: unknown }).code
+  return typeof code === "string" ? code : null
+}
+
+function inconsistentShiftCloseEvidence(): never {
+  throw new BusinessRuleError("Stored shift-close evidence is incomplete or inconsistent; contact support")
+}
+
+async function readCommittedShiftClose(
+  tx: Prisma.TransactionClient,
+  input: {
+    organizationId: string
+    actorId: string
+    actualBalance: Prisma.Decimal
+    notes: string | null
+    session: ShiftCloseSession
+    event: ShiftCloseEvent
+  },
+): Promise<ClosePOSShiftResult> {
+  const commandHash = shiftCloseCommandHash({
+    organizationId: input.organizationId,
+    sessionId: input.session.id,
+    actorId: input.actorId,
+    actualBalance: input.actualBalance,
+    notes: input.notes,
+  })
+  if (input.event.documentHash !== commandHash) {
+    throw new POSShiftReplayConflict(
+      input.event.id,
+      input.event.documentHash,
+      input.event.payloadHash,
+      commandHash,
+    )
+  }
+
+  const payload = jsonRecord(input.event.payload)
+  const cashDrawerId = jsonString(payload.cashDrawerId)
+  const closingTransactionId = jsonString(payload.closingTransactionId)
+  const closedAt = jsonString(payload.closedAt)
+  const expectedBalance = input.session.expectedBalance
+  const closingBalance = input.session.closingBalance
+  const storedVariance = input.session.variance
+  if (
+    !cashDrawerId ||
+    !closingTransactionId ||
+    !closedAt ||
+    expectedBalance === null ||
+    closingBalance === null ||
+    storedVariance === null
+  ) {
+    return inconsistentShiftCloseEvidence()
+  }
+
+  const organization = await tx.organization.findUnique({ where: { id: input.organizationId }, select: { currency: true } })
+  if (!organization) return inconsistentShiftCloseEvidence()
+  const variance = shiftCloseVariance(input.actualBalance, expectedBalance, organization.currency)
+  const closingTransaction = await tx.cashDrawerTransaction.findFirst({
+    where: { id: closingTransactionId, sessionId: input.session.id, type: "CLOSING_BALANCE" },
+    select: { cashDrawerId: true, userId: true, amount: true, balanceBefore: true, balanceAfter: true },
+  })
+  const outbox = input.event.outboxMessages[0]
+  const closeAudits = await tx.auditLog.findMany({
+    where: {
+      organizationId: input.organizationId,
+      entityType: "POSSession",
+      entityId: input.session.id,
+      action: "POS_SHIFT_CLOSED",
+      userId: input.actorId,
+    },
+    select: { changes: true },
+    take: 2,
+  })
+  const auditAfter = jsonRecord(jsonRecord(closeAudits[0]?.changes ?? undefined).after)
+  const storedExplanation = payload.explanation === null ? null : jsonString(payload.explanation)
+  const totals = jsonRecord(payload.totals)
+  const outboxPayload = jsonRecord(outbox?.payload)
+  const expectedOutboxIdempotencyKey = `POS:${input.event.idempotencyKey}:NOTIFICATION:${POS_SHIFT_CLOSED_EVENT_TYPE}`
+
+  if (
+    !["CLOSED", "RECONCILED"].includes(input.session.status) ||
+    !input.session.endTime ||
+    input.session.endTime.getTime() !== input.event.occurredAt.getTime() ||
+    input.session.notes !== input.notes ||
+    !closingBalance.eq(input.actualBalance) ||
+    !storedVariance.eq(variance) ||
+    input.event.eventType !== POS_SHIFT_CLOSED_EVENT_TYPE ||
+    input.event.eventSource !== "POS" ||
+    input.event.schemaVersion !== POS_SHIFT_CLOSED_SCHEMA_VERSION ||
+    input.event.status !== "APPLIED" ||
+    !input.event.processedAt ||
+    input.event.actorId !== input.actorId ||
+    input.event.locationId !== input.session.locationId ||
+    input.event.registerId !== input.session.terminalId ||
+    input.event.sourceType !== AccountingSourceType.CASH_DRAWER_CLOSE ||
+    input.event.sourceId !== input.session.id ||
+    input.event.payloadHash !== hashBusinessPayload(input.event.payload) ||
+    payload.organizationId !== input.organizationId ||
+    payload.evidenceVersion !== POS_SHIFT_CLOSED_SCHEMA_VERSION ||
+    payload.sessionId !== input.session.id ||
+    payload.sessionNumber !== input.session.sessionNumber ||
+    payload.terminalId !== input.session.terminalId ||
+    payload.locationId !== input.session.locationId ||
+    payload.cashDrawerId !== cashDrawerId ||
+    payload.closingTransactionId !== closingTransactionId ||
+    payload.actorId !== input.actorId ||
+    payload.authorityMode !== "SELF" ||
+    payload.openedAt !== input.session.startTime.toISOString() ||
+    payload.currency !== organization.currency ||
+    payload.openingBalance !== moneyToString(input.session.openingBalance) ||
+    payload.countedBalance !== moneyToString(input.actualBalance) ||
+    payload.expectedBalance !== moneyToString(expectedBalance) ||
+    payload.variance !== moneyToString(variance) ||
+    payload.varianceDirection !== closeVarianceDirection(variance) ||
+    storedExplanation !== input.notes ||
+    closedAt !== input.event.occurredAt.toISOString() ||
+    totals.sales !== moneyToString(input.session.totalSales) ||
+    totals.tax !== moneyToString(input.session.totalTax) ||
+    totals.discount !== moneyToString(input.session.totalDiscount) ||
+    totals.transactionCount !== input.session.transactionCount ||
+    totals.cash !== moneyToString(input.session.cashTotal) ||
+    totals.card !== moneyToString(input.session.cardTotal) ||
+    totals.mobileMoney !== moneyToString(input.session.mobileMoneyTotal) ||
+    totals.bankTransfer !== moneyToString(input.session.bankTransferTotal) ||
+    totals.credit !== moneyToString(input.session.creditTotal) ||
+    input.event.outboxMessages.length !== 1 ||
+    !outbox ||
+    outbox.organizationId !== input.organizationId ||
+    outbox.businessEventId !== input.event.id ||
+    outbox.channel !== "NOTIFICATION" ||
+    outbox.eventName !== POS_SHIFT_CLOSED_EVENT_TYPE ||
+    outbox.idempotencyKey !== expectedOutboxIdempotencyKey ||
+    outbox.payloadHash !== hashBusinessPayload(outbox.payload) ||
+    outboxPayload.sessionId !== input.session.id ||
+    outboxPayload.terminalId !== input.session.terminalId ||
+    outboxPayload.locationId !== input.session.locationId ||
+    outboxPayload.varianceDirection !== closeVarianceDirection(variance) ||
+    outboxPayload.requiresReview !== !variance.eq(0) ||
+    !closingTransaction ||
+    closingTransaction.cashDrawerId !== cashDrawerId ||
+    closingTransaction.userId !== input.actorId ||
+    !closingTransaction.amount.eq(input.actualBalance) ||
+    !closingTransaction.balanceBefore.eq(expectedBalance) ||
+    !closingTransaction.balanceAfter.eq(input.actualBalance) ||
+    closeAudits.length !== 1 ||
+    auditAfter.status !== "CLOSED" ||
+    auditAfter.countedBalance !== moneyToString(input.actualBalance) ||
+    auditAfter.variance !== moneyToString(variance) ||
+    auditAfter.varianceDirection !== closeVarianceDirection(variance) ||
+    auditAfter.explanation !== input.notes ||
+    auditAfter.cashDrawerId !== cashDrawerId ||
+    auditAfter.closingTransactionId !== closingTransactionId ||
+    auditAfter.businessEventId !== input.event.id ||
+    auditAfter.evidenceHash !== input.event.payloadHash
+  ) {
+    return inconsistentShiftCloseEvidence()
+  }
+
+  return {
+    sessionId: input.session.id,
+    terminalId: input.session.terminalId,
+    locationId: input.session.locationId,
+    cashDrawerId,
+    closingTransactionId,
+    eventId: input.event.id,
+    evidenceHash: input.event.payloadHash,
+    variance: moneyToNumber(variance),
+    varianceDirection: closeVarianceDirection(variance),
+    closedAt,
+    replayed: true,
+  }
+}
+
+async function auditShiftCloseReplayConflict(
+  organizationId: string,
+  sessionId: string,
+  actorId: string,
+  conflict: POSShiftReplayConflict,
+) {
+  await db.auditLog.create({
+    data: {
+      entityType: "POSSession",
+      entityId: sessionId,
+      action: "POS_SHIFT_CLOSE_IDEMPOTENCY_CONFLICT",
+      organizationId,
+      userId: actorId,
+      changes: {
+        before: {
+          businessEventId: conflict.eventId,
+          commandHash: conflict.existingCommandHash,
+          payloadHash: conflict.existingPayloadHash,
+        },
+        after: { attemptedCommandHash: conflict.attemptedCommandHash },
+      },
+    },
+  })
 }
 
 async function getWalkInCustomer(tx: Prisma.TransactionClient, organizationId: string) {
@@ -423,6 +868,26 @@ async function getOrCreateDraftCart(
     sessionId?: string
   }>,
 ) {
+  if (!input.sessionId) {
+    throw new BusinessRuleError("Open your cashier shift before adding items to a sale")
+  }
+
+  const activeSession = await tx.pOSSession.findFirst({
+    where: {
+      id: input.sessionId,
+      organizationId: input.organizationId,
+      locationId: input.locationId,
+      terminalId: input.terminalId,
+      userId: input.userId,
+      status: "ACTIVE",
+      terminal: { is: { currentSessionId: input.sessionId } },
+    },
+    select: { id: true },
+  })
+  if (!activeSession) {
+    throw new BusinessRuleError("Use a terminal assigned to your own active cashier shift")
+  }
+
   const existing = await tx.salesOrder.findFirst({
     where: {
       organizationId: input.organizationId,
@@ -627,19 +1092,30 @@ export async function listPOSTerminals(rawInput: OrgScoped) {
   })
 }
 
-export async function getActivePOSSession(rawInput: OrgScoped) {
+export async function getActivePOSSession(rawInput: UserScoped) {
   const input = activePOSSessionSchema.parse(rawInput)
   const session = await db.pOSSession.findFirst({
     where: {
       organizationId: rawInput.organizationId,
-      terminalId: input.terminalId,
+      userId: rawInput.userId,
+      ...(input.terminalId ? { terminalId: input.terminalId } : {}),
       status: "ACTIVE",
     },
+    orderBy: { startTime: "desc" },
     include: {
       user: { select: { id: true, firstName: true, lastName: true, email: true } },
-      terminal: { select: { id: true, name: true, terminalNumber: true } },
+      terminal: {
+        select: {
+          id: true,
+          name: true,
+          terminalNumber: true,
+          locationId: true,
+          currentSessionId: true,
+        },
+      },
       location: { select: { id: true, name: true } },
       cashDrawerTransactions: {
+        where: { type: "OPENING_BALANCE" },
         include: {
           cashDrawer: {
             select: {
@@ -651,14 +1127,32 @@ export async function getActivePOSSession(rawInput: OrgScoped) {
           },
         },
         orderBy: { createdAt: "desc" },
-        take: 1,
+        take: 2,
       },
     },
   })
 
   if (!session) return null
 
+  if (
+    session.terminal.currentSessionId !== session.id ||
+    session.terminal.locationId !== session.locationId
+  ) {
+    throw new BusinessRuleError("Active cashier shift is not linked to the selected terminal")
+  }
+  if (session.cashDrawerTransactions.length !== 1) {
+    throw new BusinessRuleError("Active cashier shift must have exactly one opening cash drawer record")
+  }
+
   const drawer = session.cashDrawerTransactions[0]?.cashDrawer ?? null
+  const expectedBalance = toDecimal(session.expectedBalance).toDecimalPlaces(2)
+  if (
+    !drawer?.isOpen ||
+    !toDecimal(drawer.currentBalance).eq(expectedBalance) ||
+    !toDecimal(drawer.expectedBalance).eq(expectedBalance)
+  ) {
+    throw new BusinessRuleError("Active cashier shift cash drawer evidence is not ready")
+  }
 
   return {
     id: session.id,
@@ -735,6 +1229,20 @@ export async function openPOSShift(rawInput: UserScoped) {
       },
     })
 
+    const terminalClaim = await tx.pOSStation.updateMany({
+      where: {
+        id: input.terminalId,
+        organizationId: rawInput.organizationId,
+        locationId: input.locationId,
+        isActive: true,
+        currentSessionId: null,
+      },
+      data: { currentSessionId: created.id },
+    })
+    if (terminalClaim.count !== 1) {
+      throw new BusinessRuleError("Terminal already has an open shift")
+    }
+
     const drawer = await tx.cashDrawer.findFirst({
       where: {
         terminalId: input.terminalId,
@@ -778,91 +1286,289 @@ export async function openPOSShift(rawInput: UserScoped) {
       },
     })
 
-    await tx.pOSStation.update({
-      where: { id: input.terminalId },
-      data: { currentSessionId: created.id },
-    })
-
     return created
   })
 
-  return getActivePOSSession({ organizationId: rawInput.organizationId, terminalId: session.terminalId })
+  return getActivePOSSession({
+    organizationId: rawInput.organizationId,
+    userId: rawInput.userId,
+    terminalId: session.terminalId,
+  })
 }
 
 export async function closePOSShift(rawInput: UserScoped) {
   const input = closeShiftSchema.parse(rawInput)
-  const actualBalance = toDecimal(input.actualBalance)
+  const actualBalance = toDecimal(input.actualBalance).toDecimalPlaces(2)
+  const notes = input.notes?.trim() || null
+  const idempotencyKey = `pos-shift:${input.sessionId}:closed`
 
-  const session = await db.pOSSession.findFirst({
-    where: {
-      id: input.sessionId,
-      organizationId: rawInput.organizationId,
-      status: "ACTIVE",
-    },
-    include: {
-      terminal: {
-        include: {
-          cashDrawers: {
-            orderBy: { createdAt: "asc" },
-            take: 1,
-          },
-        },
-      },
-    },
-  })
-
-  if (!session) throw new NotFoundError("Open shift not found")
-
-  const expectedBalance = toDecimal(session.expectedBalance)
-  const variance = subtractMoney(actualBalance, expectedBalance)
-
-  await db.$transaction(async (tx) => {
-    await tx.pOSSession.update({
-      where: { id: session.id },
-      data: {
-        status: "CLOSED",
-        endTime: new Date(),
-        closingBalance: actualBalance,
-        variance,
-        notes: input.notes,
-      },
+  const runClose = async (tx: Prisma.TransactionClient): Promise<ClosePOSShiftResult> => {
+    const session = await tx.pOSSession.findFirst({
+      where: { id: input.sessionId, organizationId: rawInput.organizationId },
+      select: shiftCloseSessionSelect,
     })
+    if (!session) throw new NotFoundError("Shift not found")
+    if (session.userId !== rawInput.userId) {
+      throw new ForbiddenError("Only the cashier who opened this shift can close it")
+    }
 
-    const drawer = session.terminal.cashDrawers[0]
-    if (drawer) {
-      await tx.cashDrawer.update({
-        where: { id: drawer.id },
-        data: {
-          currentBalance: actualBalance,
-          isOpen: false,
+    const existingEvent = await tx.businessEvent.findUnique({
+      where: {
+        organizationId_eventSource_idempotencyKey: {
+          organizationId: rawInput.organizationId,
+          eventSource: "POS",
+          idempotencyKey,
         },
-      })
-
-      await tx.cashDrawerTransaction.create({
-        data: {
-          cashDrawerId: drawer.id,
-          sessionId: session.id,
-          userId: rawInput.userId,
-          type: "CLOSING_BALANCE",
-          amount: actualBalance,
-          reason: "Shift closing count",
-          notes: input.notes,
-          balanceBefore: expectedBalance,
-          balanceAfter: actualBalance,
-        },
+      },
+      include: { outboxMessages: true },
+    })
+    if (existingEvent) {
+      return readCommittedShiftClose(tx, {
+        organizationId: rawInput.organizationId,
+        actorId: rawInput.userId,
+        actualBalance,
+        notes,
+        session,
+        event: existingEvent,
       })
     }
 
-    await tx.pOSStation.update({
-      where: { id: session.terminalId },
+    if (session.status !== "ACTIVE") {
+      throw new BusinessRuleError("This legacy shift close has no certified evidence and cannot be replayed")
+    }
+    if (
+      session.terminal.organizationId !== rawInput.organizationId ||
+      session.terminal.locationId !== session.locationId ||
+      session.terminal.currentSessionId !== session.id
+    ) {
+      throw new BusinessRuleError("Terminal and active shift state do not match")
+    }
+    if (session.expectedBalance === null) throw new BusinessRuleError("Shift expected balance is unavailable")
+
+    const openingTransactions = await tx.cashDrawerTransaction.findMany({
+      where: {
+        sessionId: session.id,
+        type: "OPENING_BALANCE",
+        cashDrawer: { is: { terminalId: session.terminalId, locationId: session.locationId } },
+      },
+      select: {
+        cashDrawer: {
+          select: { id: true, isOpen: true, currentBalance: true, expectedBalance: true },
+        },
+      },
+      take: 2,
+    })
+    if (openingTransactions.length !== 1) {
+      throw new BusinessRuleError("Shift must be linked to exactly one cash drawer before close")
+    }
+
+    const drawer = openingTransactions[0].cashDrawer
+    const expectedBalance = toDecimal(session.expectedBalance).toDecimalPlaces(2)
+    if (
+      !drawer.isOpen ||
+      !toDecimal(drawer.currentBalance).eq(expectedBalance) ||
+      !toDecimal(drawer.expectedBalance).eq(expectedBalance)
+    ) {
+      throw new BusinessRuleError("Cash drawer balance evidence does not match the active shift")
+    }
+
+    const organization = await tx.organization.findUnique({
+      where: { id: rawInput.organizationId },
+      select: { currency: true },
+    })
+    if (!organization) throw new NotFoundError("Organization not found")
+    const variance = shiftCloseVariance(actualBalance, expectedBalance, organization.currency)
+    const direction = closeVarianceDirection(variance)
+    if (!variance.eq(0) && !notes) {
+      throw new BusinessRuleError("A variance explanation is required when counted cash differs from expected cash")
+    }
+
+    const closedAt = new Date()
+    const sessionTransition = await tx.pOSSession.updateMany({
+      where: {
+        id: session.id,
+        organizationId: rawInput.organizationId,
+        terminalId: session.terminalId,
+        locationId: session.locationId,
+        userId: rawInput.userId,
+        status: "ACTIVE",
+      },
+      data: { status: "CLOSED", endTime: closedAt, closingBalance: actualBalance, variance, notes },
+    })
+    if (sessionTransition.count !== 1) throw new POSShiftTransitionConflict()
+
+    const drawerTransition = await tx.cashDrawer.updateMany({
+      where: {
+        id: drawer.id,
+        isOpen: true,
+        currentBalance: drawer.currentBalance,
+        expectedBalance: drawer.expectedBalance,
+      },
+      data: { currentBalance: actualBalance, isOpen: false },
+    })
+    if (drawerTransition.count !== 1) throw new POSShiftTransitionConflict()
+
+    const terminalTransition = await tx.pOSStation.updateMany({
+      where: {
+        id: session.terminalId,
+        organizationId: rawInput.organizationId,
+        locationId: session.locationId,
+        currentSessionId: session.id,
+      },
       data: { currentSessionId: null },
     })
-  })
+    if (terminalTransition.count !== 1) throw new POSShiftTransitionConflict()
 
-  return {
-    sessionId: session.id,
-    terminalId: session.terminalId,
-    variance: moneyToNumber(variance),
+    const closingTransaction = await tx.cashDrawerTransaction.create({
+      data: {
+        cashDrawerId: drawer.id,
+        sessionId: session.id,
+        userId: rawInput.userId,
+        type: "CLOSING_BALANCE",
+        amount: actualBalance,
+        reason: `Shift closing count - ${direction.toLowerCase()}`,
+        notes,
+        balanceBefore: expectedBalance,
+        balanceAfter: actualBalance,
+      },
+    })
+    const commandHash = shiftCloseCommandHash({
+      organizationId: rawInput.organizationId,
+      sessionId: session.id,
+      actorId: rawInput.userId,
+      actualBalance,
+      notes,
+    })
+    const eventPayload = cleanJson({
+      evidenceVersion: POS_SHIFT_CLOSED_SCHEMA_VERSION,
+      organizationId: rawInput.organizationId,
+      sessionId: session.id,
+      sessionNumber: session.sessionNumber,
+      terminalId: session.terminalId,
+      locationId: session.locationId,
+      cashDrawerId: drawer.id,
+      closingTransactionId: closingTransaction.id,
+      actorId: rawInput.userId,
+      authorityMode: "SELF",
+      openedAt: session.startTime.toISOString(),
+      closedAt: closedAt.toISOString(),
+      currency: organization.currency,
+      openingBalance: moneyToString(session.openingBalance),
+      expectedBalance: moneyToString(expectedBalance),
+      countedBalance: moneyToString(actualBalance),
+      variance: moneyToString(variance),
+      varianceDirection: direction,
+      explanation: notes,
+      totals: {
+        sales: moneyToString(session.totalSales),
+        tax: moneyToString(session.totalTax),
+        discount: moneyToString(session.totalDiscount),
+        transactionCount: session.transactionCount,
+        cash: moneyToString(session.cashTotal),
+        card: moneyToString(session.cardTotal),
+        mobileMoney: moneyToString(session.mobileMoneyTotal),
+        bankTransfer: moneyToString(session.bankTransferTotal),
+        credit: moneyToString(session.creditTotal),
+      },
+    })
+    const recorded = await recordBusinessEventInTx(tx, {
+      organizationId: rawInput.organizationId,
+      eventType: POS_SHIFT_CLOSED_EVENT_TYPE,
+      eventSource: "POS",
+      schemaVersion: POS_SHIFT_CLOSED_SCHEMA_VERSION,
+      idempotencyKey,
+      actorId: rawInput.userId,
+      locationId: session.locationId,
+      registerId: session.terminalId,
+      sourceType: AccountingSourceType.CASH_DRAWER_CLOSE,
+      sourceId: session.id,
+      documentHash: commandHash,
+      occurredAt: closedAt,
+      payload: eventPayload,
+      outboxMessages: [
+        {
+          channel: "NOTIFICATION",
+          eventName: POS_SHIFT_CLOSED_EVENT_TYPE,
+          payload: {
+            sessionId: session.id,
+            terminalId: session.terminalId,
+            locationId: session.locationId,
+            varianceDirection: direction,
+            requiresReview: !variance.eq(0),
+          },
+        },
+      ],
+    })
+
+    await markBusinessEventAppliedInTx(tx, rawInput.organizationId, recorded.event.id)
+
+    await tx.auditLog.create({
+      data: {
+        entityType: "POSSession",
+        entityId: session.id,
+        action: "POS_SHIFT_CLOSED",
+        organizationId: rawInput.organizationId,
+        userId: rawInput.userId,
+        changes: {
+          before: { status: session.status, expectedBalance: moneyToString(expectedBalance) },
+          after: {
+            status: "CLOSED",
+            closedAt: closedAt.toISOString(),
+            countedBalance: moneyToString(actualBalance),
+            variance: moneyToString(variance),
+            varianceDirection: direction,
+            explanation: notes,
+            cashDrawerId: drawer.id,
+            closingTransactionId: closingTransaction.id,
+            businessEventId: recorded.event.id,
+            evidenceHash: recorded.event.payloadHash,
+          },
+        },
+      },
+    })
+
+    return {
+      sessionId: session.id,
+      terminalId: session.terminalId,
+      locationId: session.locationId,
+      cashDrawerId: drawer.id,
+      closingTransactionId: closingTransaction.id,
+      eventId: recorded.event.id,
+      evidenceHash: recorded.event.payloadHash,
+      variance: moneyToNumber(variance),
+      varianceDirection: direction,
+      closedAt: closedAt.toISOString(),
+      replayed: false,
+    }
+  }
+
+  try {
+    return await db.$transaction(runClose, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable })
+  } catch (error) {
+    if (error instanceof POSShiftReplayConflict) {
+      await auditShiftCloseReplayConflict(rawInput.organizationId, input.sessionId, rawInput.userId, error)
+      throw new ConflictError("Shift close was already recorded with a different count or explanation")
+    }
+    if (!(error instanceof POSShiftTransitionConflict) && !["P2002", "P2034"].includes(prismaErrorCode(error) ?? "")) {
+      if (error instanceof ApplicationError) throw error
+      throw new BusinessRuleError("POS shift close could not be completed safely.")
+    }
+
+    try {
+      return await db.$transaction(runClose, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable })
+    } catch (recoveryError) {
+      if (recoveryError instanceof POSShiftReplayConflict) {
+        await auditShiftCloseReplayConflict(rawInput.organizationId, input.sessionId, rawInput.userId, recoveryError)
+        throw new ConflictError("Shift close was already recorded with a different count or explanation")
+      }
+      if (recoveryError instanceof POSShiftTransitionConflict) {
+        throw new ConflictError("Shift state changed; refresh before closing it")
+      }
+      if (["P2002", "P2034"].includes(prismaErrorCode(recoveryError) ?? "")) {
+        throw new ConflictError("Shift state changed; refresh before closing it")
+      }
+      throw recoveryError
+    }
   }
 }
 
@@ -1157,6 +1863,9 @@ export async function removePOSCartLine(rawInput: UserScoped) {
 }
 
 export type CommitPOSSaleResult = {
+  clientCommitId: string
+  resultSchemaVersion: 1
+  replayed: boolean
   saleId: string
   orderNumber: string
   status: string
@@ -1188,14 +1897,207 @@ export type CommitPOSSaleResult = {
     status: string
     authorityChannel: string | null
   } | null
-  receipt: SalesReceiptPayload
+  fiscalization?: {
+    requestId: string
+    status: "PENDING"
+    authoritative: false
+    watermark: "NOT FOR STATUTORY USE"
+  }
+  receipt: SalesReceiptPayload | null
+  receiptStatus: "READY" | "RETRY_REQUIRED"
   delivery: ReceiptDeliveryResult | null
+}
+
+type POSCommitResultRecord = {
+  id: string
+  organizationId: string
+  locationId: string
+  terminalId: string
+  sessionId: string
+  salesOrderId: string
+  actorId: string
+  clientCommitId: string
+  requestHash: string
+  requestSchemaVersion: number
+  status: "CLAIMED" | "COMMITTED" | "COMPLETED"
+  resultEnvelope: Prisma.JsonValue | null
+  resultHash: string | null
+}
+
+class POSSaleCommitReplayConflict extends Error {
+  constructor(
+    readonly existing: POSCommitResultRecord,
+    readonly attemptedRequestHash: string,
+  ) {
+    super("POS sale commit idempotency conflict")
+  }
+}
+
+function posSaleCommitRequestHash(
+  rawInput: UserScoped,
+  input: Prisma.JsonObject & {
+    salesOrderId: string
+    locationId: string
+    terminalId: string
+    sessionId: string
+    customerId?: string
+    notes?: string
+    tenders: POSTenderInput[]
+    receipt?: { channel: string; locale?: string }
+  },
+) {
+  return hashBusinessPayload({
+    requestSchemaVersion: POS_SALE_COMMIT_RESULT_SCHEMA_VERSION,
+    organizationId: rawInput.organizationId,
+    actorId: rawInput.userId,
+    salesOrderId: input.salesOrderId,
+    locationId: input.locationId,
+    terminalId: input.terminalId,
+    sessionId: input.sessionId,
+    customerId: input.customerId ?? null,
+    notes: input.notes ?? null,
+    tenders: input.tenders.map((tender) => ({
+      method: tender.method,
+      amount: moneyToString(toDecimal(tender.amount)),
+      paymentTransactionId: tender.paymentTransactionId ?? null,
+      reference: tender.reference ?? null,
+      cardLast4: tender.cardLast4 ?? null,
+      cardType: tender.cardType ?? null,
+      authorizationCode: tender.authorizationCode ?? null,
+      mobileMoneyProvider: tender.mobileMoneyProvider ?? null,
+      mobileMoneyPhoneNumber: tender.mobileMoneyPhoneNumber ?? null,
+      bankName: tender.bankName ?? null,
+    })),
+    receipt: {
+      channel: input.receipt?.channel ?? "NONE",
+      locale: input.receipt?.locale ?? null,
+    },
+  })
+}
+
+function commitResultEnvelope(result: CommitPOSSaleResult): Prisma.InputJsonObject {
+  return JSON.parse(JSON.stringify(result)) as Prisma.InputJsonObject
+}
+
+function isJsonObject(value: Prisma.JsonValue | null): value is Prisma.JsonObject {
+  return value !== null && typeof value === "object" && !Array.isArray(value)
+}
+
+function assertPOSCommitRegistryRequest(
+  record: POSCommitResultRecord,
+  rawInput: UserScoped,
+  input: {
+    salesOrderId: string
+    locationId: string
+    terminalId: string
+    sessionId: string
+    clientCommitId: string
+  },
+  requestHash: string,
+) {
+  if (
+    record.organizationId !== rawInput.organizationId ||
+    record.locationId !== input.locationId ||
+    record.terminalId !== input.terminalId ||
+    record.sessionId !== input.sessionId ||
+    record.salesOrderId !== input.salesOrderId ||
+    record.actorId !== rawInput.userId ||
+    record.clientCommitId !== input.clientCommitId ||
+    record.requestSchemaVersion !== POS_SALE_COMMIT_RESULT_SCHEMA_VERSION ||
+    record.requestHash !== requestHash
+  ) {
+    throw new POSSaleCommitReplayConflict(record, requestHash)
+  }
+}
+
+function readStoredPOSCommitResult(
+  record: POSCommitResultRecord,
+  replayed = true,
+): CommitPOSSaleResult {
+  if (
+    record.status === "CLAIMED" ||
+    !record.resultHash ||
+    !isJsonObject(record.resultEnvelope) ||
+    hashBusinessPayload(record.resultEnvelope) !== record.resultHash
+  ) {
+    throw new ApplicationError(
+      "INTERNAL_ERROR",
+      "Stored POS commit result evidence is incomplete or inconsistent",
+      500,
+      false,
+    )
+  }
+
+  const result = record.resultEnvelope as unknown as CommitPOSSaleResult
+  if (
+    result.clientCommitId !== record.clientCommitId ||
+    result.resultSchemaVersion !== POS_SALE_COMMIT_RESULT_SCHEMA_VERSION ||
+    result.replayed !== false ||
+    result.saleId !== record.salesOrderId
+  ) {
+    throw new ApplicationError(
+      "INTERNAL_ERROR",
+      "Stored POS commit result identity is inconsistent",
+      500,
+      false,
+    )
+  }
+
+  return { ...result, replayed }
+}
+
+async function auditPOSSaleCommitReplayConflict(
+  organizationId: string,
+  userId: string,
+  conflict: POSSaleCommitReplayConflict,
+) {
+  await db.auditLog.create({
+    data: {
+      entityType: "POSCommitResult",
+      entityId: conflict.existing.id,
+      action: "POS_SALE_COMMIT_IDEMPOTENCY_CONFLICT",
+      organizationId,
+      userId,
+      changes: {
+        clientCommitId: conflict.existing.clientCommitId,
+        locationId: conflict.existing.locationId,
+        terminalId: conflict.existing.terminalId,
+        sessionId: conflict.existing.sessionId,
+        salesOrderId: conflict.existing.salesOrderId,
+        requestSchemaVersion: conflict.existing.requestSchemaVersion,
+        existingRequestHash: conflict.existing.requestHash,
+        attemptedRequestHash: conflict.attemptedRequestHash,
+      },
+    },
+  })
 }
 
 export async function commitPOSSale(rawInput: UserScoped) {
   const input = commitSaleSchema.parse(rawInput)
+  assertSupportedSaleTenders(input.tenders)
+  assertSupportedDevelopmentReceipt(input.receipt)
+  const requestHash = posSaleCommitRequestHash(rawInput, input)
 
-  const committed = await db.$transaction(async (tx) => {
+  const runCommit = async (tx: Prisma.TransactionClient) => {
+    const existingCommit = await tx.pOSCommitResult.findUnique({
+      where: {
+        organizationId_terminalId_clientCommitId: {
+          organizationId: rawInput.organizationId,
+          terminalId: input.terminalId,
+          clientCommitId: input.clientCommitId,
+        },
+      },
+    })
+    if (existingCommit) {
+      assertPOSCommitRegistryRequest(existingCommit, rawInput, input, requestHash)
+      return {
+        registryId: existingCommit.id,
+        result: readStoredPOSCommitResult(existingCommit, existingCommit.status === "COMPLETED"),
+        needsCompletion: existingCommit.status === "COMMITTED",
+        callerReplayed: true,
+      }
+    }
+
     const sale = await tx.salesOrder.findFirst({
       where: {
         id: input.salesOrderId,
@@ -1248,32 +2150,72 @@ export async function commitPOSSale(rawInput: UserScoped) {
         organizationId: rawInput.organizationId,
         terminalId: input.terminalId,
         locationId: input.locationId,
+        userId: rawInput.userId,
         status: "ACTIVE",
-      },
-      select: { id: true, expectedBalance: true },
-    })
-
-    if (!session) throw new NotFoundError("Active cashier shift not found")
-
-    const customerId = input.customerId || sale.customerId
-    const customer = await tx.customer.findFirst({
-      where: {
-        id: customerId,
-        organizationId: rawInput.organizationId,
-        isActive: true,
-        deletedAt: null,
       },
       select: {
         id: true,
-        code: true,
-        currentBalance: true,
-        creditLimit: true,
+        expectedBalance: true,
+        terminal: {
+          select: {
+            id: true,
+            organizationId: true,
+            locationId: true,
+            currentSessionId: true,
+            isActive: true,
+          },
+        },
+        cashDrawerTransactions: {
+          where: {
+            type: "OPENING_BALANCE",
+            cashDrawer: { is: { terminalId: input.terminalId, locationId: input.locationId } },
+          },
+          select: {
+            cashDrawer: {
+              select: {
+                id: true,
+                isOpen: true,
+                currentBalance: true,
+                expectedBalance: true,
+              },
+            },
+          },
+          take: 2,
+        },
       },
     })
 
-    if (!customer) throw new NotFoundError("Customer not found")
+    if (!session) throw new NotFoundError("Active cashier shift not found")
+    if (
+      !session.terminal.isActive ||
+      session.terminal.organizationId !== rawInput.organizationId ||
+      session.terminal.locationId !== input.locationId ||
+      session.terminal.currentSessionId !== session.id
+    ) {
+      throw new ConflictError("Terminal and active cashier shift state do not match")
+    }
+    if (session.expectedBalance === null || session.cashDrawerTransactions.length !== 1) {
+      throw new ConflictError("Active cashier shift cash drawer evidence is incomplete")
+    }
 
-    const total = toDecimal(sale.total).toDecimalPlaces(2)
+    const activeDrawer = session.cashDrawerTransactions[0].cashDrawer
+    if (
+      !activeDrawer.isOpen ||
+      !toDecimal(activeDrawer.currentBalance).eq(session.expectedBalance) ||
+      !toDecimal(activeDrawer.expectedBalance).eq(session.expectedBalance)
+    ) {
+      throw new ConflictError("Cash drawer balance evidence does not match the active cashier shift")
+    }
+
+    const customerId = input.customerId || sale.customerId
+    const customer = await requirePOSCustomerAtLocation(tx, {
+      customerId,
+      organizationId: rawInput.organizationId,
+      locationId: input.locationId,
+    })
+
+    const saleMath = assertPOSSaleMath(sale)
+    const total = saleMath.total
     if (total.lte(0)) throw new BusinessRuleError("Sale total must be greater than zero")
 
     const { allocations, changeDue } = allocateTenders(input.tenders, total)
@@ -1282,48 +2224,77 @@ export async function commitPOSSale(rawInput: UserScoped) {
       .reduce((sum, allocation) => addMoney(sum, allocation.amount), new Prisma.Decimal(0))
       .toDecimalPlaces(2)
     const amountPaid = total.minus(onAccountAmount).toDecimalPlaces(2)
-    const providerCaptures = allocations.map((allocation) =>
-      resolveProviderCaptureEvidence({
+    const providerAuthorities: Array<POSElectronicTenderAuthorityEvidence | null> = []
+    for (const allocation of allocations) {
+      providerAuthorities.push(await resolvePOSElectronicTenderAuthority(tx, {
         organizationId: rawInput.organizationId,
         paymentMethod: allocation.paymentMethod,
-        reference: allocation.tender.reference,
-        authorizationCode: allocation.tender.authorizationCode,
-        mobileMoneyProvider: allocation.tender.mobileMoneyProvider,
-        bankName: allocation.tender.bankName,
-      }),
-    )
-    assertUniqueProviderCaptureReferences(providerCaptures)
-    for (const capture of providerCaptures) {
-      if (capture) {
-        await assertNoDuplicateProviderCapture(tx, capture)
-      }
+        paymentTransactionId: allocation.tender.paymentTransactionId,
+        amount: allocation.amount,
+        currencyCode: sale.organization.currency,
+      }))
+    }
+    assertUniquePOSElectronicTenderAuthority(providerAuthorities)
+
+    const commitRegistry = await tx.pOSCommitResult.create({
+      data: {
+        organizationId: rawInput.organizationId,
+        locationId: input.locationId,
+        terminalId: input.terminalId,
+        sessionId: input.sessionId,
+        salesOrderId: sale.id,
+        actorId: rawInput.userId,
+        clientCommitId: input.clientCommitId,
+        requestHash,
+        requestSchemaVersion: POS_SALE_COMMIT_RESULT_SCHEMA_VERSION,
+        status: "CLAIMED",
+      },
+    })
+
+    const sessionClaim = await tx.pOSSession.updateMany({
+      where: {
+        id: session.id,
+        organizationId: rawInput.organizationId,
+        terminalId: input.terminalId,
+        locationId: input.locationId,
+        userId: rawInput.userId,
+        status: "ACTIVE",
+        expectedBalance: session.expectedBalance,
+        terminal: {
+          is: {
+            id: input.terminalId,
+            organizationId: rawInput.organizationId,
+            locationId: input.locationId,
+            currentSessionId: input.sessionId,
+            isActive: true,
+          },
+        },
+      },
+      data: { status: "ACTIVE" },
+    })
+    if (sessionClaim.count !== 1) {
+      throw new ConflictError("Active cashier shift changed; refresh before completing the sale")
     }
 
-    if (onAccountAmount.gt(0)) {
-      if (customer.code === "WALK_IN") {
-        throw new BusinessRuleError("On-account tender requires an attached customer")
-      }
-
-      const nextBalance = addMoney(customer.currentBalance, onAccountAmount).toDecimalPlaces(2)
-      if (customer.creditLimit && nextBalance.gt(customer.creditLimit)) {
-        throw new BusinessRuleError("Customer credit limit would be exceeded")
-      }
-
-      await tx.customer.update({
-        where: { id: customer.id },
-        data: { currentBalance: nextBalance },
-      })
-
-      await createCustomerLedgerEntry(tx, {
-        customerId: customer.id,
+    const saleClaim = await tx.salesOrder.updateMany({
+      where: {
+        id: sale.id,
         organizationId: rawInput.organizationId,
-        type: LedgerEntryType.SALE,
-        debit: onAccountAmount,
-        balanceAfter: nextBalance,
-        description: `POS sale ${sale.orderNumber}`,
-        referenceType: "SALES_ORDER",
-        referenceId: sale.id,
-      })
+        locationId: input.locationId,
+        terminalId: input.terminalId,
+        sessionId: input.sessionId,
+        createdById: rawInput.userId,
+        status: "DRAFT",
+        deletedAt: null,
+      },
+      data: { status: "COMPLETED" },
+    })
+    if (saleClaim.count !== 1) {
+      throw new ConflictError("Sale state changed; refresh before completing it")
+    }
+
+    if (onAccountAmount.gt(0) && customer.code === "WALK_IN") {
+      throw new BusinessRuleError("On-account tender requires an attached customer")
     }
 
     const inventoryTransactionIds: string[] = []
@@ -1385,40 +2356,61 @@ export async function commitPOSSale(rawInput: UserScoped) {
       .reduce((sum, allocation) => addMoney(sum, allocation.amount), new Prisma.Decimal(0))
       .toDecimalPlaces(2)
 
+    const sessionTransition = await tx.pOSSession.updateMany({
+      where: {
+        id: session.id,
+        organizationId: rawInput.organizationId,
+        terminalId: input.terminalId,
+        locationId: input.locationId,
+        userId: rawInput.userId,
+        status: "ACTIVE",
+      },
+      data: {
+        totalSales: { increment: total },
+        totalTax: { increment: saleMath.taxAmount },
+        totalDiscount: { increment: saleMath.discount },
+        transactionCount: { increment: 1 },
+        cashTotal: { increment: cashApplied },
+        cardTotal: { increment: cardApplied },
+        mobileMoneyTotal: { increment: mobileMoneyApplied },
+        bankTransferTotal: { increment: bankTransferApplied },
+        creditTotal: { increment: onAccountAmount },
+        expectedBalance: { increment: cashNet },
+      },
+    })
+    if (sessionTransition.count !== 1) {
+      throw new BusinessRuleError("Active cashier shift changed; refresh before completing the sale")
+    }
+
     let drawerId: string | null = null
     if (cashNet.gt(0)) {
-      const drawer = await tx.cashDrawer.findFirst({
-        where: { terminalId: input.terminalId, locationId: input.locationId },
-        orderBy: { createdAt: "asc" },
-        select: {
-          id: true,
+      drawerId = activeDrawer.id
+      const balanceAfter = addMoney(activeDrawer.currentBalance, cashNet).toDecimalPlaces(2)
+      const drawerTransition = await tx.cashDrawer.updateMany({
+        where: {
+          id: activeDrawer.id,
           isOpen: true,
-          currentBalance: true,
-          expectedBalance: true,
+          currentBalance: activeDrawer.currentBalance,
+          expectedBalance: activeDrawer.expectedBalance,
         },
-      })
-
-      if (!drawer?.isOpen) throw new BusinessRuleError("Cash drawer is not open for this terminal")
-
-      drawerId = drawer.id
-      const balanceAfter = addMoney(drawer.currentBalance, cashNet).toDecimalPlaces(2)
-      await tx.cashDrawer.update({
-        where: { id: drawer.id },
         data: {
           currentBalance: balanceAfter,
-          expectedBalance: addMoney(drawer.expectedBalance, cashNet).toDecimalPlaces(2),
+          expectedBalance: addMoney(activeDrawer.expectedBalance, cashNet).toDecimalPlaces(2),
         },
       })
+      if (drawerTransition.count !== 1) {
+        throw new ConflictError("Cash drawer changed; refresh before completing the sale")
+      }
 
       await tx.cashDrawerTransaction.create({
         data: {
-          cashDrawerId: drawer.id,
+          cashDrawerId: activeDrawer.id,
           sessionId: session.id,
           userId: rawInput.userId,
           type: "SALE",
           amount: cashNet,
           reason: `POS sale ${sale.orderNumber}`,
-          balanceBefore: drawer.currentBalance,
+          balanceBefore: activeDrawer.currentBalance,
           balanceAfter,
         },
       })
@@ -1426,7 +2418,7 @@ export async function commitPOSSale(rawInput: UserScoped) {
 
     const capturedPaymentIds: string[] = []
     for (const [index, allocation] of allocations.entries()) {
-      const providerCapture = providerCaptures[index]
+      const providerAuthority = providerAuthorities[index]
       const payment = await tx.payment.create({
         data: {
           paymentNumber: nextPaymentNumber(),
@@ -1441,45 +2433,39 @@ export async function commitPOSSale(rawInput: UserScoped) {
           cardType: allocation.tender.cardType,
           authorizationCode:
             allocation.paymentMethod === "CARD"
-              ? providerCapture?.providerReference ?? allocation.tender.authorizationCode
-              : allocation.tender.authorizationCode,
-          mobileMoneyProvider: allocation.tender.mobileMoneyProvider,
+              ? providerAuthority?.providerReference
+              : undefined,
+          mobileMoneyProvider: providerAuthority?.mobileMoneyProvider ?? undefined,
           mobileMoneyPhoneNumber: allocation.tender.mobileMoneyPhoneNumber,
           mobileMoneyReference:
             allocation.paymentMethod === "MOBILE_MONEY"
-              ? providerCapture?.providerReference ?? allocation.tender.reference
+              ? providerAuthority?.providerReference
               : undefined,
           bankReference:
             allocation.paymentMethod === "BANK_TRANSFER"
-              ? providerCapture?.providerReference ?? allocation.tender.reference
+              ? providerAuthority?.providerReference
               : undefined,
-          bankName: allocation.tender.bankName,
-          transactionId: providerCapture?.providerReference ?? allocation.tender.reference,
+          bankName: allocation.paymentMethod === "BANK_TRANSFER"
+            ? providerAuthority?.providerName
+            : undefined,
+          transactionId: providerAuthority?.providerTransactionId,
           processedAt: allocation.paymentMethod === "CREDIT" ? undefined : now,
           processedById: rawInput.userId,
         },
       })
 
+      if (providerAuthority) {
+        await claimPOSElectronicTenderAuthority(tx, {
+          organizationId: rawInput.organizationId,
+          legacyPaymentId: payment.id,
+          evidence: providerAuthority,
+        })
+      }
+
       if (allocation.paymentMethod !== "CREDIT") {
         capturedPaymentIds.push(payment.id)
       }
     }
-
-    await tx.pOSSession.update({
-      where: { id: session.id },
-      data: {
-        totalSales: { increment: total },
-        totalTax: { increment: sale.taxAmount },
-        totalDiscount: { increment: sale.discount },
-        transactionCount: { increment: 1 },
-        cashTotal: { increment: cashApplied },
-        cardTotal: { increment: cardApplied },
-        mobileMoneyTotal: { increment: mobileMoneyApplied },
-        bankTransferTotal: { increment: bankTransferApplied },
-        creditTotal: { increment: onAccountAmount },
-        expectedBalance: addMoney(session.expectedBalance, cashNet).toDecimalPlaces(2),
-      },
-    })
 
     const paymentStatus = onAccountAmount.gt(0) ? (amountPaid.gt(0) ? "PARTIAL" : "PENDING") : "PAID"
     const updatedSale = await tx.salesOrder.update({
@@ -1492,6 +2478,34 @@ export async function commitPOSSale(rawInput: UserScoped) {
         notes: input.notes,
       },
     })
+    let postedReceivableDocumentId: string | null = null
+
+    if (onAccountAmount.gt(0)) {
+      const receivable = await ensurePostedCustomerReceivableDocumentInTx(tx, {
+        organizationId: rawInput.organizationId,
+        customerId: customer.id,
+        salesOrderId: updatedSale.id,
+        actorId: rawInput.userId,
+        issuedAt: now,
+        initialUnpaidAmount: onAccountAmount,
+        metadata: {
+          source: "POS_COMMIT",
+          sessionId: input.sessionId,
+          terminalId: input.terminalId,
+        },
+      })
+      postedReceivableDocumentId = receivable.document.id
+      await createCustomerLedgerEntry(tx, {
+        customerId: customer.id,
+        organizationId: rawInput.organizationId,
+        type: LedgerEntryType.SALE,
+        debit: onAccountAmount,
+        enforceCreditLimit: true,
+        description: `POS sale ${sale.orderNumber}`,
+        referenceType: CUSTOMER_RECEIVABLE_REFERENCE_TYPE,
+        referenceId: receivable.document.id,
+      })
+    }
 
     const saleJournalEntry = await postSale(
       rawInput.organizationId,
@@ -1519,7 +2533,7 @@ export async function commitPOSSale(rawInput: UserScoped) {
       )
     }
 
-    const revenue = total.minus(sale.taxAmount).toDecimalPlaces(2)
+    const revenue = total.minus(saleMath.taxAmount).toDecimalPlaces(2)
     const journalEntries = [
       { account: "Cash Drawer", debit: cashApplied, credit: new Prisma.Decimal(0) },
       { account: "Card Clearing", debit: cardApplied, credit: new Prisma.Decimal(0) },
@@ -1528,7 +2542,7 @@ export async function commitPOSSale(rawInput: UserScoped) {
       { account: "Store Credit Liability", debit: storeCreditApplied, credit: new Prisma.Decimal(0) },
       { account: "Customer Accounts Receivable", debit: onAccountAmount, credit: new Prisma.Decimal(0) },
       { account: "Sales Revenue", debit: new Prisma.Decimal(0), credit: revenue },
-      { account: "Tax Payable", debit: new Prisma.Decimal(0), credit: sale.taxAmount },
+      { account: "Tax Payable", debit: new Prisma.Decimal(0), credit: saleMath.taxAmount },
       { account: "Cost of Goods Sold", debit: totalCost, credit: new Prisma.Decimal(0) },
       { account: "Inventory Asset", debit: new Prisma.Decimal(0), credit: totalCost },
     ].filter((entry) => toDecimal(entry.debit).gt(0) || toDecimal(entry.credit).gt(0))
@@ -1544,13 +2558,28 @@ export async function commitPOSSale(rawInput: UserScoped) {
       throw new BusinessRuleError("Finance journal is not balanced")
     }
 
-    const fiscalDocument = await createPOSFiscalDocumentInTx(tx, {
-      sale,
-      organizationId: rawInput.organizationId,
-      actorId: rawInput.userId,
-      locationId: input.locationId,
-      terminalId: input.terminalId,
-      issueDate: now,
+    const providerAuthorityEvidence = providerAuthorities
+      .filter((entry): entry is POSElectronicTenderAuthorityEvidence => entry !== null)
+      .map((entry) => ({
+        paymentMethod: entry.paymentMethod,
+        paymentTransactionId: entry.paymentTransactionId,
+        providerEventId: entry.providerEventId,
+        providerAccountId: entry.providerAccountId,
+        state: entry.state,
+      }))
+
+    const postingBatchId = requireLedgerPostingBatchId(
+      saleJournalEntry.postingBatchId,
+      "POS sale posting",
+    )
+    const fiscalizationRequestId = `pos-sale:${sale.id}:fiscalization:v1`
+    const fiscalizationIssueAt = now.toISOString()
+    const fiscalizationSourcePayloadHash = hashBusinessPayload({
+      salesOrderId: sale.id,
+      orderNumber: sale.orderNumber,
+      total: toFiscalDecimal(total),
+      postingBatchId,
+      issueAt: fiscalizationIssueAt,
     })
 
     await tx.auditLog.create({
@@ -1567,8 +2596,8 @@ export async function commitPOSSale(rawInput: UserScoped) {
           saleJournalEntryNumber: saleJournalEntry.entryNumber,
           paymentJournalEntryIds: paymentJournalEntries.map((entry) => entry.id),
           paymentJournalEntryNumbers: paymentJournalEntries.map((entry) => entry.entryNumber),
-          fiscalDocumentId: fiscalDocument?.id ?? null,
-          fiscalDocumentStatus: fiscalDocument?.status ?? null,
+          fiscalizationRequestId,
+          fiscalizationStatus: "PENDING",
           entries: journalEntries.map((entry) => ({
             account: entry.account,
             debit: moneyToString(entry.debit),
@@ -1591,10 +2620,12 @@ export async function commitPOSSale(rawInput: UserScoped) {
           status: updatedSale.status,
           paymentStatus: updatedSale.paymentStatus,
           amountPaid: moneyToString(amountPaid),
+          customerReceivableDocumentId: postedReceivableDocumentId,
           onAccountAmount: moneyToString(onAccountAmount),
           changeDue: moneyToString(changeDue),
-          fiscalDocumentId: fiscalDocument?.id ?? null,
-          fiscalDocumentStatus: fiscalDocument?.status ?? null,
+          providerAuthorityEvidence,
+          fiscalizationRequestId,
+          fiscalizationStatus: "PENDING",
         }),
       },
     })
@@ -1612,6 +2643,7 @@ export async function commitPOSSale(rawInput: UserScoped) {
       postingBatchId: saleJournalEntry.postingBatchId ?? undefined,
       payload: cleanJson({
         salesOrderId: sale.id,
+        customerReceivableDocumentId: postedReceivableDocumentId,
         orderNumber: sale.orderNumber,
         sessionId: input.sessionId,
         terminalId: input.terminalId,
@@ -1623,15 +2655,14 @@ export async function commitPOSSale(rawInput: UserScoped) {
         saleJournalEntryId: saleJournalEntry.id,
         paymentJournalEntryIds: paymentJournalEntries.map((entry) => entry.id),
         capturedPaymentIds,
+        providerAuthorityEvidence,
         inventoryTransactionIds,
-        fiscalDocument: fiscalDocument
-          ? {
-              id: fiscalDocument.id,
-              status: fiscalDocument.status,
-              authorityChannel: fiscalDocument.authorityChannel,
-              submissionStatuses: fiscalDocument.submissions.map((submission) => submission.status),
-            }
-          : null,
+        fiscalization: {
+          requestId: fiscalizationRequestId,
+          status: "PENDING",
+          authoritative: false,
+          watermark: "NOT FOR STATUTORY USE",
+        },
       }),
       outboxMessages: [
         {
@@ -1641,22 +2672,42 @@ export async function commitPOSSale(rawInput: UserScoped) {
             salesOrderId: sale.id,
             orderNumber: sale.orderNumber,
             amountPaid: moneyToString(amountPaid),
-            fiscalDocumentId: fiscalDocument?.id ?? null,
-            fiscalDocumentStatus: fiscalDocument?.status ?? null,
+            fiscalizationRequestId,
+            fiscalizationStatus: "PENDING",
+          },
+        },
+        {
+          channel: "FISCALIZATION",
+          eventName: "pos.sale.fiscalization.requested",
+          idempotencyKey: fiscalizationRequestId,
+          maxAttempts: 10,
+          payload: {
+            organizationId: rawInput.organizationId,
+            salesOrderId: sale.id,
+            orderNumber: sale.orderNumber,
+            actorId: rawInput.userId,
+            locationId: input.locationId,
+            terminalId: input.terminalId,
+            postingBatchId,
+            issueAt: fiscalizationIssueAt,
+            sourcePayloadHash: fiscalizationSourcePayloadHash,
           },
         },
       ],
     })
 
-    return {
+    const result = {
+      clientCommitId: input.clientCommitId,
+      resultSchemaVersion: POS_SALE_COMMIT_RESULT_SCHEMA_VERSION,
+      replayed: false,
       saleId: sale.id,
       orderNumber: sale.orderNumber,
       status: updatedSale.status,
       paymentStatus: updatedSale.paymentStatus,
-      total,
-      amountPaid,
-      onAccountAmount,
-      changeDue,
+      total: moneyToNumber(total),
+      amountPaid: moneyToNumber(amountPaid),
+      onAccountAmount: moneyToNumber(onAccountAmount),
+      changeDue: moneyToNumber(changeDue),
       accountingMovements: {
         saleJournalEntry: {
           id: saleJournalEntry.id,
@@ -1675,61 +2726,186 @@ export async function commitPOSSale(rawInput: UserScoped) {
         totalDebits: moneyToNumber(totalDebits),
         totalCredits: moneyToNumber(totalCredits),
       },
-      fiscalDocument: fiscalDocument
-        ? {
-            id: fiscalDocument.id,
-            status: fiscalDocument.status,
-            authorityChannel: fiscalDocument.authorityChannel,
-          }
-        : null,
-    }
-  })
-
-  const receipt = await getSalesReceipt({
-    salesOrderId: committed.saleId,
-    organizationId: rawInput.organizationId,
-  })
-
-  let delivery: ReceiptDeliveryResult | null = null
-  if (input.receipt) {
-    try {
-      delivery = await sendReceipt({
-        salesOrderId: committed.saleId,
+      fiscalDocument: null,
+      fiscalization: {
+        requestId: fiscalizationRequestId,
+        status: "PENDING" as const,
+        authoritative: false as const,
+        watermark: "NOT FOR STATUTORY USE" as const,
+      },
+      receipt: null,
+      receiptStatus: "RETRY_REQUIRED" as const,
+      delivery: null,
+    } satisfies CommitPOSSaleResult
+    const resultEnvelope = commitResultEnvelope(result)
+    const resultHash = hashBusinessPayload(resultEnvelope)
+    const commitTransition = await tx.pOSCommitResult.updateMany({
+      where: {
+        id: commitRegistry.id,
         organizationId: rawInput.organizationId,
-        userId: rawInput.userId,
-        channel: input.receipt.channel,
-        destination: input.receipt.destination,
-        locale: input.receipt.locale,
-      })
-    } catch (error) {
-      delivery = {
-        channel: input.receipt.channel,
-        status: "FAILED",
-        retryable: false,
-        message: error instanceof Error ? error.message : "Receipt delivery failed",
-        digitalReceiptUrl: receipt.digitalReceiptUrl,
-      }
+        status: "CLAIMED",
+        requestHash,
+      },
+      data: {
+        status: "COMMITTED",
+        resultEnvelope,
+        resultHash,
+        committedAt: now,
+      },
+    })
+    if (commitTransition.count !== 1) {
+      throw new ApplicationError(
+        "DATABASE_CONFLICT",
+        "POS commit result could not be recorded atomically",
+        409,
+      )
+    }
+
+    return {
+      registryId: commitRegistry.id,
+      result,
+      needsCompletion: true,
+      callerReplayed: false,
     }
   }
 
-  return {
-    saleId: committed.saleId,
-    orderNumber: committed.orderNumber,
-    status: committed.status,
-    paymentStatus: committed.paymentStatus,
-    total: moneyToNumber(committed.total),
-    amountPaid: moneyToNumber(committed.amountPaid),
-    onAccountAmount: moneyToNumber(committed.onAccountAmount),
-    changeDue: moneyToNumber(committed.changeDue),
-    accountingMovements: committed.accountingMovements,
-    fiscalDocument: committed.fiscalDocument,
+  let outcome: Awaited<ReturnType<typeof runCommit>> | undefined
+  for (let attempt = 0; attempt < 2 && !outcome; attempt += 1) {
+    try {
+      outcome = await db.$transaction(runCommit, {
+        isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+      })
+    } catch (error) {
+      if (error instanceof POSSaleCommitReplayConflict) {
+        await auditPOSSaleCommitReplayConflict(rawInput.organizationId, rawInput.userId, error)
+        throw new ApplicationError(
+          "DUPLICATE_KEY_CONFLICT",
+          "This POS commit identifier was already used for a different sale request",
+          409,
+        )
+      }
+
+      const errorCode = prismaErrorCode(error)
+      if (["P2002", "P2034"].includes(errorCode ?? "")) {
+        const existingCommit = await db.pOSCommitResult.findUnique({
+          where: {
+            organizationId_terminalId_clientCommitId: {
+              organizationId: rawInput.organizationId,
+              terminalId: input.terminalId,
+              clientCommitId: input.clientCommitId,
+            },
+          },
+        })
+        if (existingCommit) {
+          try {
+            assertPOSCommitRegistryRequest(existingCommit, rawInput, input, requestHash)
+          } catch (recoveryError) {
+            if (recoveryError instanceof POSSaleCommitReplayConflict) {
+              await auditPOSSaleCommitReplayConflict(
+                rawInput.organizationId,
+                rawInput.userId,
+                recoveryError,
+              )
+              throw new ApplicationError(
+                "DUPLICATE_KEY_CONFLICT",
+                "This POS commit identifier was already used for a different sale request",
+                409,
+              )
+            }
+            throw recoveryError
+          }
+          outcome = {
+            registryId: existingCommit.id,
+            result: readStoredPOSCommitResult(existingCommit, existingCommit.status === "COMPLETED"),
+            needsCompletion: existingCommit.status === "COMMITTED",
+            callerReplayed: true,
+          }
+          break
+        }
+        if (errorCode === "P2034" && attempt === 0) continue
+      }
+      if (error instanceof ApplicationError) throw error
+      throw new ApplicationError(
+        "INTERNAL_ERROR",
+        "POS sale could not be completed safely",
+        500,
+        false,
+      )
+    }
+  }
+
+  if (!outcome) {
+    throw new ApplicationError(
+      "DATABASE_CONFLICT",
+      "POS sale could not be serialized safely",
+      409,
+    )
+  }
+  if (!outcome.needsCompletion) return outcome.result
+
+  let receipt: SalesReceiptPayload | null = null
+  let receiptStatus: CommitPOSSaleResult["receiptStatus"] = "READY"
+  try {
+    receipt = await getPOSSaleCommitReceipt({
+      salesOrderId: outcome.result.saleId,
+      organizationId: rawInput.organizationId,
+    })
+  } catch {
+    receiptStatus = "RETRY_REQUIRED"
+  }
+
+  const completedResult = {
+    ...outcome.result,
+    replayed: false,
     receipt,
-    delivery,
+    receiptStatus,
+    delivery: null,
   } satisfies CommitPOSSaleResult
+  const completedEnvelope = commitResultEnvelope(completedResult)
+  const completion = await db.pOSCommitResult.updateMany({
+    where: {
+      id: outcome.registryId,
+      organizationId: rawInput.organizationId,
+      status: "COMMITTED",
+      requestHash,
+    },
+    data: {
+      status: "COMPLETED",
+      resultEnvelope: completedEnvelope,
+      resultHash: hashBusinessPayload(completedEnvelope),
+      completedAt: new Date(),
+    },
+  })
+  if (completion.count === 1) {
+    return { ...completedResult, replayed: outcome.callerReplayed }
+  }
+
+  const racedCompletion = await db.pOSCommitResult.findFirst({
+    where: {
+      id: outcome.registryId,
+      organizationId: rawInput.organizationId,
+      locationId: input.locationId,
+      terminalId: input.terminalId,
+      sessionId: input.sessionId,
+      salesOrderId: input.salesOrderId,
+      actorId: rawInput.userId,
+      clientCommitId: input.clientCommitId,
+      requestHash,
+      status: "COMPLETED",
+    },
+  })
+  if (!racedCompletion) {
+    throw new ApplicationError(
+      "DATABASE_CONFLICT",
+      "POS commit result completion changed unexpectedly",
+      409,
+    )
+  }
+  return readStoredPOSCommitResult(racedCompletion)
 }
 
 const correctionSaleInclude = {
-  customer: { select: { id: true, code: true, currentBalance: true } },
+  customer: { select: { id: true, code: true } },
   lines: {
     include: {
       item: {
@@ -1778,6 +2954,7 @@ export type RefundPOSSaleResult = {
   paymentStatus: string
   refundIds: string[]
   refundJournalEntryIds: string[]
+  refundPostingBatchIds: string[]
   totalRefunded: number
 }
 
@@ -1787,6 +2964,7 @@ export type VoidPOSSaleResult = {
   status: string
   paymentStatus: string
   voidJournalEntryId: string
+  voidPostingBatchId: string
 }
 
 function activeCorrectionPayments(sale: CorrectionSale) {
@@ -1818,6 +2996,7 @@ async function requireActiveCorrectionSession(
     sessionId: string
     terminalId: string
     locationId: string
+    userId: string
   },
 ) {
   const session = await tx.pOSSession.findFirst({
@@ -1826,6 +3005,7 @@ async function requireActiveCorrectionSession(
       organizationId: input.organizationId,
       terminalId: input.terminalId,
       locationId: input.locationId,
+      userId: input.userId,
       status: "ACTIVE",
     },
     select: { id: true, expectedBalance: true },
@@ -2000,7 +3180,11 @@ async function applyCashDrawerOutflow(
 async function reverseSessionTotals(
   tx: Prisma.TransactionClient,
   params: {
+    organizationId: string
+    terminalId: string
+    locationId: string
     sessionId: string
+    userId: string
     sale: CorrectionSale
     payments: CorrectionSale["payments"]
     cashOutflow: Prisma.Decimal
@@ -2008,8 +3192,15 @@ async function reverseSessionTotals(
 ) {
   const totals = paymentMethodTotals(params.payments)
 
-  return tx.pOSSession.update({
-    where: { id: params.sessionId },
+  const sessionTransition = await tx.pOSSession.updateMany({
+    where: {
+      id: params.sessionId,
+      organizationId: params.organizationId,
+      terminalId: params.terminalId,
+      locationId: params.locationId,
+      userId: params.userId,
+      status: "ACTIVE",
+    },
     data: {
       totalSales: { decrement: params.sale.total },
       totalTax: { decrement: params.sale.taxAmount },
@@ -2023,6 +3214,9 @@ async function reverseSessionTotals(
       expectedBalance: { decrement: params.cashOutflow },
     },
   })
+  if (sessionTransition.count !== 1) {
+    throw new BusinessRuleError("Active cashier shift changed; refresh before correcting the sale")
+  }
 }
 
 function assertNoPriorRefunds(sale: CorrectionSale) {
@@ -2052,6 +3246,7 @@ export async function refundPOSSale(rawInput: UserScoped) {
       sessionId: input.sessionId,
       terminalId: input.terminalId,
       locationId: input.locationId,
+      userId: rawInput.userId,
     })
 
     assertNoPriorRefunds(sale)
@@ -2077,6 +3272,37 @@ export async function refundPOSSale(rawInput: UserScoped) {
       throw new BusinessRuleError("Only fully paid, unrefunded POS sales can be refunded in this workflow")
     }
 
+    const cashOutflow = sumPaymentMethod(refundablePayments, PaymentMethod.CASH)
+    await reverseSessionTotals(tx, {
+      organizationId: rawInput.organizationId,
+      terminalId: input.terminalId,
+      locationId: input.locationId,
+      sessionId: input.sessionId,
+      userId: rawInput.userId,
+      sale,
+      payments: refundablePayments,
+      cashOutflow,
+    })
+    const saleTransition = await tx.salesOrder.updateMany({
+      where: {
+        id: sale.id,
+        organizationId: rawInput.organizationId,
+        locationId: input.locationId,
+        terminalId: input.terminalId,
+        sessionId: input.sessionId,
+        status: SalesOrderStatus.COMPLETED,
+        deletedAt: null,
+      },
+      data: {
+        status: SalesOrderStatus.RETURNED,
+        paymentStatus: PaymentStatus.REFUNDED,
+        notes: input.notes || sale.notes,
+      },
+    })
+    if (saleTransition.count !== 1) {
+      throw new ConflictError("Sale state changed; refresh before refunding it")
+    }
+
     const restockCost = await restockSaleInventory(tx, {
       sale,
       organizationId: rawInput.organizationId,
@@ -2085,7 +3311,6 @@ export async function refundPOSSale(rawInput: UserScoped) {
       correctionType: "REFUND",
       now,
     })
-    const cashOutflow = sumPaymentMethod(refundablePayments, PaymentMethod.CASH)
     const drawerId = await applyCashDrawerOutflow(tx, {
       terminalId: input.terminalId,
       locationId: input.locationId,
@@ -2123,22 +3348,6 @@ export async function refundPOSSale(rawInput: UserScoped) {
       })
     }
 
-    const updatedSale = await tx.salesOrder.update({
-      where: { id: sale.id },
-      data: {
-        status: SalesOrderStatus.RETURNED,
-        paymentStatus: PaymentStatus.REFUNDED,
-        notes: input.notes || sale.notes,
-      },
-    })
-
-    await reverseSessionTotals(tx, {
-      sessionId: input.sessionId,
-      sale,
-      payments: refundablePayments,
-      cashOutflow,
-    })
-
     const refundJournalEntries = []
     for (const refundId of refundIds) {
       refundJournalEntries.push(
@@ -2153,6 +3362,9 @@ export async function refundPOSSale(rawInput: UserScoped) {
         ),
       )
     }
+    const refundPostingBatchIds = refundJournalEntries.map((entry, index) =>
+      requireLedgerPostingBatchId(entry.postingBatchId, `POS refund posting ${refundIds[index]}`),
+    )
 
     await tx.auditLog.create({
       data: {
@@ -2167,6 +3379,7 @@ export async function refundPOSSale(rawInput: UserScoped) {
           drawerId,
           refundIds,
           refundJournalEntryIds: refundJournalEntries.map((entry) => entry.id),
+          refundPostingBatchIds,
           restockCost: moneyToString(restockCost),
           totalRefunded: moneyToString(totalRefundable),
         }),
@@ -2183,6 +3396,7 @@ export async function refundPOSSale(rawInput: UserScoped) {
       registerId: input.terminalId,
       sourceType: "POS_REFUND",
       sourceId: sale.id,
+      postingBatchId: refundPostingBatchIds[0],
       payload: cleanJson({
         salesOrderId: sale.id,
         orderNumber: sale.orderNumber,
@@ -2192,6 +3406,7 @@ export async function refundPOSSale(rawInput: UserScoped) {
         drawerId,
         refundIds,
         refundJournalEntryIds: refundJournalEntries.map((entry) => entry.id),
+        refundPostingBatchIds,
         restockCost: moneyToString(restockCost),
         totalRefunded: moneyToString(totalRefundable),
       }),
@@ -2211,10 +3426,11 @@ export async function refundPOSSale(rawInput: UserScoped) {
     return {
       saleId: sale.id,
       orderNumber: sale.orderNumber,
-      status: updatedSale.status,
-      paymentStatus: updatedSale.paymentStatus,
+      status: SalesOrderStatus.RETURNED,
+      paymentStatus: PaymentStatus.REFUNDED,
       refundIds,
       refundJournalEntryIds: refundJournalEntries.map((entry) => entry.id),
+      refundPostingBatchIds,
       totalRefunded: moneyToNumber(totalRefundable),
     } satisfies RefundPOSSaleResult
   })
@@ -2237,11 +3453,43 @@ export async function voidPOSSale(rawInput: UserScoped) {
       sessionId: input.sessionId,
       terminalId: input.terminalId,
       locationId: input.locationId,
+      userId: rawInput.userId,
     })
 
     assertNoPriorRefunds(sale)
     const payments = activeCorrectionPayments(sale)
     if (payments.length === 0) throw new BusinessRuleError("Cannot void a sale without payment rows")
+
+    const cashOutflow = sumPaymentMethod(payments, PaymentMethod.CASH)
+    await reverseSessionTotals(tx, {
+      organizationId: rawInput.organizationId,
+      terminalId: input.terminalId,
+      locationId: input.locationId,
+      sessionId: input.sessionId,
+      userId: rawInput.userId,
+      sale,
+      payments,
+      cashOutflow,
+    })
+    const saleTransition = await tx.salesOrder.updateMany({
+      where: {
+        id: sale.id,
+        organizationId: rawInput.organizationId,
+        locationId: input.locationId,
+        terminalId: input.terminalId,
+        sessionId: input.sessionId,
+        status: SalesOrderStatus.COMPLETED,
+        deletedAt: null,
+      },
+      data: {
+        status: SalesOrderStatus.CANCELLED,
+        paymentStatus: PaymentStatus.CANCELLED,
+        notes: input.notes || sale.notes,
+      },
+    })
+    if (saleTransition.count !== 1) {
+      throw new ConflictError("Sale state changed; refresh before voiding it")
+    }
 
     const restockCost = await restockSaleInventory(tx, {
       sale,
@@ -2251,7 +3499,6 @@ export async function voidPOSSale(rawInput: UserScoped) {
       correctionType: "VOID",
       now,
     })
-    const cashOutflow = sumPaymentMethod(payments, PaymentMethod.CASH)
     const drawerId = await applyCashDrawerOutflow(tx, {
       terminalId: input.terminalId,
       locationId: input.locationId,
@@ -2262,27 +3509,43 @@ export async function voidPOSSale(rawInput: UserScoped) {
       reason: `POS void ${sale.orderNumber}: ${input.reason}`,
     })
     const creditAmount = sumPaymentMethod(payments, PaymentMethod.CREDIT)
+    let voidReceivableDocumentId: string | null = null
 
     if (creditAmount.gt(0)) {
-      const nextBalance = subtractMoney(sale.customer.currentBalance, creditAmount).toDecimalPlaces(2)
-      if (nextBalance.lt(0)) {
-        throw new BusinessRuleError("Customer balance is lower than the on-account amount being voided")
-      }
-
-      await tx.customer.update({
-        where: { id: sale.customer.id },
-        data: { currentBalance: nextBalance },
+      const receivable = await ensurePostedCustomerReceivableDocumentInTx(tx, {
+        organizationId: rawInput.organizationId,
+        customerId: sale.customer.id,
+        salesOrderId: sale.id,
+        actorId: rawInput.userId,
+        initialUnpaidAmount: creditAmount,
+        metadata: {
+          source: "POS_VOID_BACKFILL",
+          sessionId: input.sessionId,
+          terminalId: input.terminalId,
+        },
       })
-
-      await createCustomerLedgerEntry(tx, {
+      const ledgerEntry = await createCustomerLedgerEntry(tx, {
         customerId: sale.customer.id,
         organizationId: rawInput.organizationId,
         type: LedgerEntryType.CREDIT_NOTE,
         credit: creditAmount,
-        balanceAfter: nextBalance,
         description: `POS void ${sale.orderNumber}`,
-        referenceType: "SALES_ORDER",
-        referenceId: sale.id,
+        referenceType: CUSTOMER_RECEIVABLE_REFERENCE_TYPE,
+        referenceId: receivable.document.id,
+      })
+      voidReceivableDocumentId = receivable.document.id
+      await voidCustomerReceivableDocumentInTx(tx, {
+        organizationId: rawInput.organizationId,
+        documentId: receivable.document.id,
+        actorId: rawInput.userId,
+        salesOrderId: sale.id,
+        effectiveAt: now,
+        reason: input.reason,
+        evidenceHash: hashBusinessPayload({
+          customerLedgerEntryId: ledgerEntry.id,
+          creditAmount: moneyToString(creditAmount),
+          reason: input.reason,
+        }),
       })
     }
 
@@ -2293,22 +3556,6 @@ export async function voidPOSSale(rawInput: UserScoped) {
       })
     }
 
-    const updatedSale = await tx.salesOrder.update({
-      where: { id: sale.id },
-      data: {
-        status: SalesOrderStatus.CANCELLED,
-        paymentStatus: PaymentStatus.CANCELLED,
-        notes: input.notes || sale.notes,
-      },
-    })
-
-    await reverseSessionTotals(tx, {
-      sessionId: input.sessionId,
-      sale,
-      payments,
-      cashOutflow,
-    })
-
     const voidJournalEntry = await postVoid(
       rawInput.organizationId,
       {
@@ -2317,6 +3564,10 @@ export async function voidPOSSale(rawInput: UserScoped) {
         postingDate: now,
       },
       tx,
+    )
+    const voidPostingBatchId = requireLedgerPostingBatchId(
+      voidJournalEntry.postingBatchId,
+      "POS void posting",
     )
 
     await tx.auditLog.create({
@@ -2331,6 +3582,7 @@ export async function voidPOSSale(rawInput: UserScoped) {
           reason: input.reason,
           drawerId,
           voidJournalEntryId: voidJournalEntry.id,
+          voidPostingBatchId,
           restockCost: moneyToString(restockCost),
         }),
       },
@@ -2346,14 +3598,17 @@ export async function voidPOSSale(rawInput: UserScoped) {
       registerId: input.terminalId,
       sourceType: "POS_VOID",
       sourceId: sale.id,
+      postingBatchId: voidPostingBatchId,
       payload: cleanJson({
         salesOrderId: sale.id,
+        customerReceivableDocumentId: voidReceivableDocumentId,
         orderNumber: sale.orderNumber,
         sessionId: input.sessionId,
         terminalId: input.terminalId,
         reason: input.reason,
         drawerId,
         voidJournalEntryId: voidJournalEntry.id,
+        voidPostingBatchId,
         restockCost: moneyToString(restockCost),
       }),
       outboxMessages: [
@@ -2372,9 +3627,10 @@ export async function voidPOSSale(rawInput: UserScoped) {
     return {
       saleId: sale.id,
       orderNumber: sale.orderNumber,
-      status: updatedSale.status,
-      paymentStatus: updatedSale.paymentStatus,
+      status: SalesOrderStatus.CANCELLED,
+      paymentStatus: PaymentStatus.CANCELLED,
       voidJournalEntryId: voidJournalEntry.id,
+      voidPostingBatchId,
     } satisfies VoidPOSSaleResult
   })
 }

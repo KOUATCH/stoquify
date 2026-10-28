@@ -7,6 +7,7 @@ import { postOpeningStock } from "@/services/inventory/inventory-stock-event.ser
 import { requestManualItemStockAdjustment } from "@/services/inventory/inventory-adjustment.service"
 import {
   type CreateItemInput,
+  type UpdateItemFromFormInput,
   type ItemWithRelations,
   slugify as slugifyItem,
 } from "@/lib/item/schemas"
@@ -26,6 +27,40 @@ const DEFAULT_IMAGE_URL =
 export type { ItemCreateInput, ItemUpdateInput }
 export type { ItemWithRelations }
 
+
+export type ItemEditDTO = {
+  id: string
+  organizationId: string
+  nameEn: string
+  nameFr: string | null
+  descriptionEn: string | null
+  descriptionFr: string | null
+  imageUrls: string
+  retainedImageUrls: string[]
+  thumbnail: string | null
+  sku: string
+  barcode: string | null
+  dimensions: string | null
+  weight: number | null
+  costPrice: number
+  sellingPrice: number
+  msrp: number | null
+  categoryId: string | null
+  brandId: string | null
+  unitId: string | null
+  taxRateId: string | null
+  trackInventory: boolean
+  minStockLevel: number
+  maxStockLevel: number | null
+  reorderLevel: number
+  reorderQuantity: number | null
+  isActive: boolean
+  isDiscontinued: boolean
+  trackSerialNumbers: boolean
+  trackBatches: boolean
+  trackExpiry: boolean
+  updatedAt: string
+}
 type RelatedItemInput = Pick<
   CreateItemInput,
   "categoryId" | "brandId" | "unitId" | "taxRateId"
@@ -275,6 +310,42 @@ function toDTO(row: ItemModel): ItemDTO {
     isActive: row.isActive,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
+  }
+}
+
+function toItemEditDTO(row: ItemModel): ItemEditDTO {
+  return {
+    id: row.id,
+    organizationId: row.organizationId,
+    nameEn: row.nameEn,
+    nameFr: row.nameFr,
+    descriptionEn: row.descriptionEn,
+    descriptionFr: row.descriptionFr,
+    imageUrls: row.imageUrls[0] ?? row.thumbnail ?? '',
+    retainedImageUrls: row.imageUrls.slice(1),
+    thumbnail: row.thumbnail,
+    sku: row.sku,
+    barcode: row.barcode,
+    dimensions: row.dimensions,
+    weight: row.weight?.toNumber() ?? null,
+    costPrice: row.costPrice.toNumber(),
+    sellingPrice: row.sellingPrice.toNumber(),
+    msrp: row.msrp?.toNumber() ?? null,
+    categoryId: row.categoryId,
+    brandId: row.brandId,
+    unitId: row.unitId,
+    taxRateId: row.taxRateId,
+    trackInventory: row.trackInventory,
+    minStockLevel: row.minStockLevel.toNumber(),
+    maxStockLevel: row.maxStockLevel?.toNumber() ?? null,
+    reorderLevel: row.reorderLevel.toNumber(),
+    reorderQuantity: row.reorderQuantity?.toNumber() ?? null,
+    isActive: row.isActive,
+    isDiscontinued: row.isDiscontinued,
+    trackSerialNumbers: row.trackSerialNumbers,
+    trackBatches: row.trackBatches,
+    trackExpiry: row.trackExpiry,
+    updatedAt: row.updatedAt.toISOString(),
   }
 }
 
@@ -544,7 +615,99 @@ export async function getItem(orgId: string, id: string): Promise<ItemDTO | null
   return row ? toDTO(row) : null
 }
 
-export const getItemEditDTO = getItem
+export async function getItemEditDTO(orgId: string, id: string): Promise<ItemEditDTO | null> {
+  const row = await db.item.findFirst({
+    where: { id, organizationId: orgId, deletedAt: null },
+  })
+  return row ? toItemEditDTO(row) : null
+}
+
+export async function updateItemFromForm(
+  orgId: string,
+  id: string,
+  input: UpdateItemFromFormInput,
+): Promise<ItemEditDTO> {
+  return db.$transaction(async (tx) => {
+    const existing = await tx.item.findFirst({
+      where: { id, organizationId: orgId, deletedAt: null },
+    })
+
+    if (!existing) throw new NotFoundError('Item not found')
+    if (existing.updatedAt.toISOString() !== input.updatedAt) {
+      throw new ConflictError('This item changed after you opened it. Reload the page before saving again.')
+    }
+
+    const barcode = cleanText(input.barcode)
+    const [skuConflict, barcodeConflict] = await Promise.all([
+      tx.item.findFirst({
+        where: { organizationId: orgId, sku: input.sku, deletedAt: null, NOT: { id } },
+        select: { id: true },
+      }),
+      barcode
+        ? tx.item.findFirst({
+            where: { organizationId: orgId, barcode, deletedAt: null, NOT: { id } },
+            select: { id: true },
+          })
+        : Promise.resolve(null),
+    ])
+
+    if (skuConflict) throw new ConflictError('Another item already uses this SKU')
+    if (barcodeConflict) throw new ConflictError('Another item already uses this barcode')
+
+    await assertItemRelations(tx, orgId, input)
+
+    const trackingPolicyChanged =
+      existing.trackInventory !== input.trackInventory ||
+      existing.trackSerialNumbers !== input.trackSerialNumbers ||
+      existing.trackBatches !== input.trackBatches ||
+      existing.trackExpiry !== input.trackExpiry
+
+    if (trackingPolicyChanged) {
+      const [transactionCount, serialCount] = await Promise.all([
+        tx.inventoryTransaction.count({ where: { organizationId: orgId, itemId: id } }),
+        tx.serialNumber.count({ where: { organizationId: orgId, itemId: id } }),
+      ])
+      if (transactionCount > 0 || serialCount > 0) {
+        throw new ConflictError('Tracking policy cannot change after inventory evidence exists')
+      }
+    }
+
+    const updated = await tx.item.update({
+      where: { id },
+      data: {
+        nameEn: input.nameEn,
+        nameFr: cleanText(input.nameFr),
+        descriptionEn: cleanText(input.descriptionEn),
+        descriptionFr: cleanText(input.descriptionFr),
+        imageUrls: [input.imageUrls, ...input.retainedImageUrls.filter((url) => url !== input.imageUrls)],
+        thumbnail: input.imageUrls,
+        sku: input.sku,
+        barcode,
+        dimensions: cleanText(input.dimensions),
+        weight: input.weight == null ? null : decimalInput(input.weight),
+        costPrice: decimalInput(input.costPrice),
+        sellingPrice: decimalInput(input.sellingPrice),
+        msrp: input.msrp == null ? null : decimalInput(input.msrp),
+        categoryId: input.categoryId ?? null,
+        brandId: input.brandId ?? null,
+        unitId: input.unitId ?? null,
+        taxRateId: input.taxRateId ?? null,
+        trackInventory: input.trackInventory,
+        minStockLevel: decimalInput(input.minStockLevel),
+        maxStockLevel: input.maxStockLevel == null ? null : decimalInput(input.maxStockLevel),
+        reorderLevel: decimalInput(input.reorderLevel),
+        reorderQuantity: input.reorderQuantity == null ? null : decimalInput(input.reorderQuantity),
+        isActive: input.isActive,
+        isDiscontinued: input.isDiscontinued,
+        trackSerialNumbers: input.trackSerialNumbers,
+        trackBatches: input.trackBatches,
+        trackExpiry: input.trackExpiry,
+      },
+    })
+
+    return toItemEditDTO(updated)
+  })
+}
 
 export type ItemApiListOptions = {
   page?: number
@@ -922,7 +1085,7 @@ export async function createItemFromForm(
           locationId: inventory.locationId,
           quantity: inventory.quantity,
           unitCost: inventory.unitCost ?? item.costPrice.toNumber(),
-          createdById: inventory.createdById ?? userId,
+          createdById: userId,
           referenceNumber: inventory.referenceNumber ?? sku,
           notes: inventory.notes ?? "Initial item stock",
         },

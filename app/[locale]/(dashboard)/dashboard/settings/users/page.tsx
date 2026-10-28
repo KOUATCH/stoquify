@@ -6,18 +6,20 @@ import { getOrgInvites } from "@/actions/users/getOrgInvites"
 import getOrgUsers from "@/actions/users/getOrgUsers"
 import UserInvitationForm from "@/components/Forms/users/userInvitationForm"
 import { Button } from "@/components/ui/button"
-import { getAuthenticatedUser } from "@/config/useAuth"
+import { checkPermission, getAuthenticatedUser } from "@/config/useAuth"
 import { pickLocale } from "@/i18n/routing"
 import UsersPageClient from "./UsersPageClient"
 import type { UserTableRow } from "./columns"
+import { routeByKey, withSettingsSurfaceAccess } from "../settings-route-access"
 
 type UsersPageProps = {
   params: Promise<{ locale: string }>
 }
 
-export default async function UsersPage({ params }: UsersPageProps) {
+async function UsersPageImpl({ params }: UsersPageProps) {
   const { locale: rawLocale } = await params
   const locale = pickLocale(rawLocale)
+  await checkPermission("READ_USERS")
   const user = await getAuthenticatedUser()
   const organizationId = user?.organizationId ?? ""
 
@@ -96,8 +98,24 @@ export default async function UsersPage({ params }: UsersPageProps) {
           </div>
         </div>
 
-        <UsersPageClient users={userRows} invites={orgInvites} />
+        <UsersPageClient users={userRows} invites={orgInvites} locale={locale} />
       </div>
     </div>
   )
+}
+
+
+
+export default async function SettingsRoutePage(props: any = {}) {
+  const surface = routeByKey("settings-users")
+
+  if (!surface) {
+    throw new Error("Missing settings route surface definition: settings-users")
+  }
+
+  return withSettingsSurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => UsersPageImpl(props),
+  })
 }

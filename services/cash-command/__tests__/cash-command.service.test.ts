@@ -4,6 +4,7 @@ import type { ActionQueueResult } from "@/services/signals/business-signal-contr
 import type {
   CloseReadinessMetrics,
   InventoryCashMetrics,
+  InventoryLossMetrics,
   PaymentTruthMetrics,
   SnapshotFreshness,
   SnapshotResult,
@@ -19,9 +20,93 @@ jest.mock("@/prisma/db", () => ({
   },
 }))
 
-import { composeCashCommandData } from "../cash-command.service"
+jest.mock("@/lib/security/rbac", () => ({
+  auditRbacDecision: jest.fn(),
+  RbacError: class RbacError extends Error {
+    constructor(
+      message: string,
+      public readonly code: string,
+      public readonly status: number,
+    ) {
+      super(message)
+      this.name = "RbacError"
+    }
+  },
+}))
+
+jest.mock("@/services/modules/module-entitlement.service", () => ({
+  getModuleControlCenterData: jest.fn(),
+  observeModuleAccess: jest.fn(),
+}))
+jest.mock("@/services/pos/drawer-dashboard.service", () => ({
+  getCashDrawerDashboard: jest.fn(),
+}))
+jest.mock("@/services/signals/action-queue.service", () => ({
+  buildActionQueue: jest.fn(),
+}))
+jest.mock("@/services/signals/business-signal-rules.service", () => ({
+  ...jest.requireActual("@/services/signals/business-signal-rules.service"),
+  buildBusinessSignalsFromSnapshots: jest.fn(),
+  createBusinessSignalFromFact: jest.fn(),
+}))
+jest.mock("@/services/snapshots/close-readiness-snapshot.service", () => ({
+  getCloseReadinessSnapshot: jest.fn(),
+}))
+jest.mock("@/services/snapshots/inventory-cash-snapshot.service", () => ({
+  getInventoryCashSnapshot: jest.fn(),
+}))
+jest.mock("@/services/snapshots/inventory-loss-snapshot.service", () => ({
+  getInventoryLossSnapshot: jest.fn(),
+}))
+jest.mock("@/services/snapshots/payment-truth-snapshot.service", () => ({
+  getPaymentTruthSnapshot: jest.fn(),
+}))
+jest.mock("@/services/snapshots/tenant-operating-snapshot.service", () => ({
+  getTenantOperatingSnapshot: jest.fn(),
+}))
+
+import { auditRbacDecision } from "@/lib/security/rbac"
+import {
+  getModuleControlCenterData,
+  observeModuleAccess,
+} from "@/services/modules/module-entitlement.service"
+import { getCashDrawerDashboard } from "@/services/pos/drawer-dashboard.service"
+import { buildActionQueue } from "@/services/signals/action-queue.service"
+import {
+  buildBusinessSignalsFromSnapshots,
+  createBusinessSignalFromFact,
+} from "@/services/signals/business-signal-rules.service"
+import { getCloseReadinessSnapshot } from "@/services/snapshots/close-readiness-snapshot.service"
+import { getInventoryCashSnapshot } from "@/services/snapshots/inventory-cash-snapshot.service"
+import { getInventoryLossSnapshot } from "@/services/snapshots/inventory-loss-snapshot.service"
+import { getPaymentTruthSnapshot } from "@/services/snapshots/payment-truth-snapshot.service"
+import { getTenantOperatingSnapshot } from "@/services/snapshots/tenant-operating-snapshot.service"
+import { db } from "@/prisma/db"
+
+import {
+  composeCashCommandData,
+  getCashCommandData,
+} from "../cash-command.service"
 
 const generatedAt = "2026-06-24T08:00:00.000Z"
+
+const mockAuditRbacDecision = auditRbacDecision as jest.Mock
+const mockGetModuleControlCenterData = getModuleControlCenterData as jest.Mock
+const mockObserveModuleAccess = observeModuleAccess as jest.Mock
+const mockGetCashDrawerDashboard = getCashDrawerDashboard as jest.Mock
+const mockBuildActionQueue = buildActionQueue as jest.Mock
+const mockBuildBusinessSignalsFromSnapshots =
+  buildBusinessSignalsFromSnapshots as jest.Mock
+const mockCreateBusinessSignalFromFact = createBusinessSignalFromFact as jest.Mock
+const mockGetCloseReadinessSnapshot = getCloseReadinessSnapshot as jest.Mock
+const mockGetInventoryCashSnapshot = getInventoryCashSnapshot as jest.Mock
+const mockGetInventoryLossSnapshot = getInventoryLossSnapshot as jest.Mock
+const mockGetPaymentTruthSnapshot = getPaymentTruthSnapshot as jest.Mock
+const mockGetTenantOperatingSnapshot = getTenantOperatingSnapshot as jest.Mock
+const mockFindPaymentTransaction = db.paymentTransaction.findFirst as jest.Mock
+const mockFindJournalEntry = db.journalEntry.findFirst as jest.Mock
+const mockFindReconciliationRun = db.reconciliationRun.findFirst as jest.Mock
+const mockFindCloseRun = db.closeRun.findFirst as jest.Mock
 
 describe("cash command service", () => {
   it("composes read-only cash command metrics with evidence, redaction, freshness, actions, and proof links", () => {
@@ -256,6 +341,251 @@ describe("cash command service", () => {
   })
 })
 
+describe("getCashCommandData tenant authority", () => {
+  const sourceMocks = (): jest.Mock[] => [
+    mockGetTenantOperatingSnapshot,
+    mockGetPaymentTruthSnapshot,
+    mockGetInventoryCashSnapshot,
+    mockGetInventoryLossSnapshot,
+    mockGetCloseReadinessSnapshot,
+    mockGetCashDrawerDashboard,
+    mockGetModuleControlCenterData,
+    mockObserveModuleAccess,
+    mockBuildBusinessSignalsFromSnapshots,
+    mockCreateBusinessSignalFromFact,
+    mockBuildActionQueue,
+    mockFindPaymentTransaction,
+    mockFindJournalEntry,
+    mockFindReconciliationRun,
+    mockFindCloseRun,
+  ]
+
+  beforeEach(() => {
+    jest.clearAllMocks()
+    mockAuditRbacDecision.mockResolvedValue(undefined)
+    mockGetTenantOperatingSnapshot.mockResolvedValue(tenantSnapshot())
+    mockGetPaymentTruthSnapshot.mockResolvedValue(paymentSnapshot())
+    mockGetInventoryCashSnapshot.mockResolvedValue(inventorySnapshot())
+    mockGetCloseReadinessSnapshot.mockResolvedValue(closeSnapshot())
+    mockGetCashDrawerDashboard.mockResolvedValue(drawerDashboard())
+    mockGetModuleControlCenterData.mockResolvedValue(moduleControl())
+    mockObserveModuleAccess.mockResolvedValue({ allowed: true })
+    mockGetInventoryLossSnapshot.mockResolvedValue(inventoryLossSnapshot())
+    mockBuildBusinessSignalsFromSnapshots.mockReturnValue([])
+    mockCreateBusinessSignalFromFact.mockReturnValue(null)
+    mockBuildActionQueue.mockReturnValue(actionQueue())
+    mockFindPaymentTransaction.mockResolvedValue(null)
+    mockFindJournalEntry.mockResolvedValue(null)
+    mockFindReconciliationRun.mockResolvedValue(null)
+    mockFindCloseRun.mockResolvedValue(null)
+  })
+
+  it.each([
+    {
+      label: "missing actor",
+      overrides: { actorId: "   " },
+      reason: "Missing actor identity",
+    },
+    {
+      label: "missing permission",
+      overrides: { actorPermissions: [] },
+      reason: "Missing permission",
+    },
+    {
+      label: "manager",
+      overrides: { actorRoleCodes: ["manager"] },
+      reason: "Tenant-wide operating authority required",
+    },
+    {
+      label: "literal owner",
+      overrides: { actorRoleCodes: ["owner"] },
+      reason: "Tenant-wide operating authority required",
+    },
+    {
+      label: "org admin",
+      overrides: { actorRoleCodes: ["org_admin"] },
+      reason: "Tenant-wide operating authority required",
+    },
+  ])("denies $label before every source read", async ({ overrides, reason }) => {
+    const input = {
+      organizationId: "org-1",
+      actorId: "actor-1" as string | null,
+      actorPermissions: ["finance.read"] as readonly string[],
+      actorRoleCodes: ["administrator"] as readonly string[],
+      isSuperUser: false,
+      ...overrides,
+    }
+
+    await expect(getCashCommandData(input)).rejects.toMatchObject({
+      name: "RbacError",
+      code: "FORBIDDEN",
+      status: 403,
+    })
+
+    const actorId = input.actorId?.trim()
+    expect(mockAuditRbacDecision).toHaveBeenCalledWith({
+      ctx: actorId
+        ? {
+            userId: actorId,
+            orgId: "org-1",
+          }
+        : null,
+      permission: "finance.read",
+      result: "denied",
+      resource: "KontavaCashCommand",
+      reason,
+    })
+    for (const sourceMock of sourceMocks()) {
+      expect(sourceMock).not.toHaveBeenCalled()
+    }
+  })
+
+  it.each([
+    {
+      label: "administrator",
+      actorPermissions: ["finance.read"],
+      actorRoleCodes: [" AdMiNiStrAtOr "],
+      isSuperUser: false,
+    },
+    {
+      label: "super-user",
+      actorPermissions: ["dashboard.read"],
+      actorRoleCodes: [],
+      isSuperUser: true,
+    },
+  ])("allows $label authority to load Cash Command", async ({
+    actorPermissions,
+    actorRoleCodes,
+    isSuperUser,
+  }) => {
+    const result = await getCashCommandData({
+      organizationId: "org-1",
+      actorId: "actor-1",
+      actorPermissions,
+      actorRoleCodes,
+      isSuperUser,
+      now: generatedAt,
+    })
+
+    expect(result.organizationId).toBe("org-1")
+    expect(mockAuditRbacDecision).not.toHaveBeenCalled()
+    expect(mockGetTenantOperatingSnapshot).toHaveBeenCalledTimes(1)
+    expect(mockGetPaymentTruthSnapshot).toHaveBeenCalledTimes(1)
+    expect(mockGetInventoryCashSnapshot).toHaveBeenCalledTimes(1)
+    expect(mockGetCloseReadinessSnapshot).toHaveBeenCalledTimes(1)
+    expect(mockGetCashDrawerDashboard).toHaveBeenCalledTimes(1)
+    expect(mockGetModuleControlCenterData).toHaveBeenCalledTimes(1)
+    expect(mockObserveModuleAccess).not.toHaveBeenCalled()
+    expect(mockGetInventoryLossSnapshot).not.toHaveBeenCalled()
+    expect(mockFindPaymentTransaction).toHaveBeenCalledTimes(1)
+    expect(mockFindJournalEntry).toHaveBeenCalledTimes(1)
+    expect(mockFindReconciliationRun).toHaveBeenCalledTimes(1)
+    expect(mockFindCloseRun).toHaveBeenCalledTimes(1)
+  })
+
+  it("adds one tenant-wide Inventory Loss action for an entitled administrator", async () => {
+    const actualSignalRules = jest.requireActual(
+      "@/services/signals/business-signal-rules.service",
+    ) as typeof import("@/services/signals/business-signal-rules.service")
+    const actualActionQueue = jest.requireActual(
+      "@/services/signals/action-queue.service",
+    ) as typeof import("@/services/signals/action-queue.service")
+    const actorPermissions = ["finance.read", "inventory.levels.read"]
+
+    mockBuildBusinessSignalsFromSnapshots.mockImplementation(
+      actualSignalRules.buildBusinessSignalsFromSnapshots,
+    )
+    mockCreateBusinessSignalFromFact.mockImplementation(
+      actualSignalRules.createBusinessSignalFromFact,
+    )
+    mockBuildActionQueue.mockImplementation(actualActionQueue.buildActionQueue)
+
+    const result = await getCashCommandData({
+      organizationId: "org-1",
+      actorId: "actor-1",
+      actorPermissions,
+      actorRoleCodes: [" Administrator "],
+      isSuperUser: false,
+      periodStart: "2026-06-01",
+      periodEnd: "2026-06-20",
+      maxAgeMinutes: 45,
+      now: generatedAt,
+    })
+
+    expect(mockObserveModuleAccess).toHaveBeenCalledTimes(1)
+    expect(mockObserveModuleAccess).toHaveBeenCalledWith({
+      organizationId: "org-1",
+      userId: "actor-1",
+      actorPermissions,
+      moduleSlug: "inventory",
+      surfaceType: "report",
+      surface: "cash-command.inventory-loss",
+      accessIntent: "read",
+      mode: "enforce",
+      audit: true,
+      now: generatedAt,
+    })
+    expect(mockGetInventoryLossSnapshot).toHaveBeenCalledTimes(1)
+    expect(mockGetInventoryLossSnapshot).toHaveBeenCalledWith({
+      organizationId: "org-1",
+      periodStart: "2026-06-01",
+      periodEnd: "2026-06-20",
+      maxAgeMinutes: 45,
+      now: generatedAt,
+    })
+    expect(mockBuildBusinessSignalsFromSnapshots).toHaveBeenCalledWith({
+      organizationId: "org-1",
+      snapshots: expect.arrayContaining([
+        expect.objectContaining({
+          kind: "inventory.loss",
+          organizationId: "org-1",
+          locationId: null,
+        }),
+      ]),
+      now: generatedAt,
+    })
+    expect(result.actionsToday).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          title: "Recorded inventory loss needs review",
+          actionLink: expect.objectContaining({
+            href: "/dashboard/inventory/losses",
+            requiredPermission: "inventory.levels.read",
+            moduleSlug: "inventory",
+          }),
+        }),
+      ]),
+    )
+    expect(result).not.toHaveProperty("inventoryLoss")
+  })
+
+  it("keeps Cash Command available when inventory entitlement denies", async () => {
+    mockObserveModuleAccess.mockResolvedValue({ allowed: false })
+
+    const result = await getCashCommandData({
+      organizationId: "org-1",
+      actorId: "actor-1",
+      actorPermissions: ["finance.read", "inventory.levels.read"],
+      actorRoleCodes: ["administrator"],
+      isSuperUser: false,
+      now: generatedAt,
+    })
+
+    expect(result.organizationId).toBe("org-1")
+    expect(mockObserveModuleAccess).toHaveBeenCalledTimes(1)
+    expect(mockGetInventoryLossSnapshot).not.toHaveBeenCalled()
+    expect(result.actionsToday).not.toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          actionLink: expect.objectContaining({
+            href: "/dashboard/inventory/losses",
+          }),
+        }),
+      ]),
+    )
+  })
+})
+
 function freshness(overrides: Partial<SnapshotFreshness> = {}): SnapshotFreshness {
   return {
     generatedAt,
@@ -386,6 +716,56 @@ function inventorySnapshot(overrides: Partial<InventoryCashMetrics> = {}): Snaps
     metrics: inventoryMetrics(overrides),
     blockers: [],
     redactions: [],
+  }
+}
+
+function inventoryLossSnapshot(
+  overrides: Partial<InventoryLossMetrics> = {},
+): SnapshotResult<InventoryLossMetrics> {
+  return {
+    kind: "inventory.loss",
+    organizationId: "org-1",
+    locationId: null,
+    periodStart: "2026-06-01T00:00:00.000Z",
+    periodEnd: "2026-06-20T23:59:59.999Z",
+    status: "fresh",
+    uiState: "redacted",
+    evidenceGrade: "operational",
+    freshness: freshness(),
+    sourceHash: "inventory-loss-hash",
+    generatedAt,
+    sourceModules: ["inventory"],
+    metrics: {
+      lossLineCount: 2,
+      adjustmentCount: 1,
+      totalLossValue: 45000,
+      currency: "XAF",
+      countVarianceLineCount: 0,
+      damagedLineCount: 2,
+      expiredLineCount: 0,
+      recordedTheftCategoryLineCount: 0,
+      writeOffLineCount: 0,
+      evidenceCoveredLineCount: 2,
+      evidenceCoveragePercent: 100,
+      valuationCoveredLineCount: 2,
+      valuationCoveragePercent: 100,
+      approvalAttributedLineCount: 2,
+      approvalCoveragePercent: 100,
+      missingEvidenceLineCount: 0,
+      missingValuationLineCount: 0,
+      missingApprovalAttributionLineCount: 0,
+      sourceTruncated: false,
+      ...overrides,
+    },
+    blockers: [],
+    redactions: [
+      {
+        id: "inventory-loss-evidence-hashes-redacted",
+        field: "records.evidence.*Hash",
+        reason: "Source evidence hashes remain server-side.",
+        policy: "INVENTORY_LOSS_EVIDENCE_REDACTION",
+      },
+    ],
   }
 }
 

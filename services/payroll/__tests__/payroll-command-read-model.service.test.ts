@@ -1,9 +1,12 @@
 import {
   CloseRunStatus,
+  PayrollAttendanceSnapshotStatus,
   PayrollDeclarationStatus,
   PayrollPaymentBatchStatus,
   PayrollPeriodStatus,
   PayrollRunStatus,
+  PayrollRunTransitionEvidenceStatus,
+  PayrollRunTransitionOrigin,
   Prisma,
 } from "@prisma/client"
 
@@ -57,7 +60,20 @@ const asOf = new Date("2026-06-26T08:00:00.000Z")
 const periodStart = new Date("2026-06-01T00:00:00.000Z")
 const periodEnd = new Date("2026-06-30T23:59:59.000Z")
 const updatedAt = new Date("2026-06-26T07:00:00.000Z")
+const originalTrustSpineWriteSwitch = process.env.PAYROLL_TRUST_SPINE_WRITES_ENABLED
 
+function verifiedTransition(toStatus: PayrollRunStatus, fromVersion: number) {
+  return {
+    toStatus,
+    fromVersion,
+    toVersion: fromVersion + 1,
+    actorId: "actor-" + toStatus.toLowerCase(),
+    transitionedAt: new Date("2026-06-26T07:00:00.000Z"),
+    businessEventId: "event-" + toStatus.toLowerCase(),
+    origin: PayrollRunTransitionOrigin.RUNTIME,
+    evidenceStatus: PayrollRunTransitionEvidenceStatus.VERIFIED,
+  }
+}
 function workbenchData() {
   return {
     organizationId: "org-1",
@@ -422,6 +438,8 @@ function buildClient(
           id: "run-1",
           runNumber: "PR-2026-06",
           status: PayrollRunStatus.CALCULATED,
+          version: 1,
+          transitions: [],
           documentHash: "sha256:run-doc",
           evidenceHash: "sha256:run-evidence",
           calculationHash: "sha256:calc",
@@ -506,6 +524,7 @@ function buildClient(
 }
 
 beforeEach(() => {
+  process.env.PAYROLL_TRUST_SPINE_WRITES_ENABLED = "true"
   jest.clearAllMocks()
   mockGetPayrollWorkbenchData.mockResolvedValue(workbenchData())
   mockGetPayrollEmployeeBalanceWorkbenchData.mockResolvedValue(employeeBalanceWorkbenchData())
@@ -535,6 +554,13 @@ beforeEach(() => {
   })
 })
 
+afterAll(() => {
+  if (originalTrustSpineWriteSwitch === undefined) {
+    delete process.env.PAYROLL_TRUST_SPINE_WRITES_ENABLED
+  } else {
+    process.env.PAYROLL_TRUST_SPINE_WRITES_ENABLED = originalTrustSpineWriteSwitch
+  }
+})
 describe("payroll command read model service", () => {
   it("composes trusted command data with blockers, role scope, redaction, evidence, and audit", async () => {
     const client = buildClient()
@@ -560,6 +586,12 @@ describe("payroll command read model service", () => {
       periodEnd,
       actorPermissions: ["payroll.command.read"],
     }), client)
+    expect(client.payrollAttendanceSnapshot.count).toHaveBeenCalledWith(expect.objectContaining({
+      where: expect.objectContaining({
+        status: PayrollAttendanceSnapshotStatus.FROZEN,
+        sourceHash: { not: "" },
+      }),
+    }))
     expect(mockGetPayrollEmployeeBalanceWorkbenchData).toHaveBeenCalledWith(expect.objectContaining({
       actorId: "command-reader-1",
       actorPermissions: ["payroll.command.read"],
@@ -784,6 +816,50 @@ describe("payroll command read model service", () => {
     expect(JSON.stringify(result)).not.toContain("bankAccountNumber")
   })
 
+  it("treats frozen but uncertified attendance as a readiness gap", async () => {
+    const client = buildClient()
+    client.payrollAttendanceSnapshot.count.mockResolvedValue(2)
+    mockGetPaymentEvidenceReadiness.mockResolvedValueOnce({
+      organizationId: "org-1",
+      asOf: "2026-06-26T07:25:00.000Z",
+      employees: [{ id: "employee-1" }, { id: "employee-2" }],
+      summary: {
+        employeeCount: 2,
+        approvedPaymentDestinationCount: 1,
+        pendingPaymentDestinationCount: 1,
+        missingPaymentDestinationCount: 0,
+        attendanceReadyCount: 0,
+        attendanceDriftCount: 0,
+        blockerCount: 2,
+      },
+    })
+
+    const result = await getPayrollCommandReadModel({
+      organizationId: "org-1",
+      actorId: "command-reader-1",
+      actorPermissions: ["payroll.command.read"],
+      limit: 25,
+      asOf,
+    }, client as never)
+
+    expect(client.payrollAttendanceSnapshot.count).toHaveBeenCalledWith(expect.objectContaining({
+      where: expect.objectContaining({
+        status: PayrollAttendanceSnapshotStatus.FROZEN,
+        sourceHash: { not: "" },
+      }),
+    }))
+    expect(result.blockers).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        code: "PAYROLL_ATTENDANCE_FREEZE_GAP",
+        domain: "attendance",
+      }),
+    ]))
+    expect(result.readiness.attendance).toEqual(expect.objectContaining({
+      state: "ACTION_REQUIRED",
+      blockerCodes: expect.arrayContaining(["PAYROLL_ATTENDANCE_FREEZE_GAP"]),
+    }))
+  })
+
   it("routes declaration country-pack proof gaps to the declaration workbench", async () => {
     const client = buildClient()
     client.payrollDeclaration.findMany.mockResolvedValueOnce([
@@ -989,6 +1065,114 @@ describe("payroll command read model service", () => {
     expect(result.blockers.map((blocker) => blocker.code)).not.toContain("PAYROLL_FINAL_RELEASE_READINESS_BLOCKED")
   })
 
+  it("publishes the next legal Trust Spine stage with server-derived controls", async () => {
+    const client = buildClient()
+
+    const result = await getPayrollCommandReadModel({
+      organizationId: "org-1",
+      actorId: "reviewer-1",
+      actorPermissions: ["payroll.command.read", "payroll.runs.review"],
+      limit: 25,
+      asOf,
+    }, client as never)
+
+    expect(result.readiness.payrollRun).toEqual(expect.objectContaining({
+      state: "ACTION_REQUIRED",
+      source: "payroll.run_lifecycle",
+    }))
+    expect(result.nextActions).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        id: "payroll-run-review",
+        href: "/dashboard/payroll/runs",
+        allowed: true,
+        blockedBy: [],
+        requiredPermission: "payroll.runs.review",
+        requiresFreshAuth: true,
+        requiresSeparateApprover: true,
+      }),
+    ]))
+    expect(result.evidence.latestRun?.lifecycle).toEqual(expect.objectContaining({
+      status: PayrollRunStatus.CALCULATED,
+      version: 1,
+      transitionEvidence: "NOT_APPLICABLE",
+      nextAction: expect.objectContaining({ id: "review" }),
+    }))
+  })
+
+  it("blocks lifecycle advancement when required transition proof is missing", async () => {
+    const client = buildClient()
+    const [baseRun] = await client.payrollRun.findMany()
+    client.payrollRun.findMany.mockResolvedValueOnce([
+      {
+        ...baseRun,
+        status: PayrollRunStatus.APPROVED,
+        version: 3,
+        transitions: [verifiedTransition(PayrollRunStatus.REVIEWED, 1)],
+      },
+    ])
+
+    const result = await getPayrollCommandReadModel({
+      organizationId: "org-1",
+      actorId: "emitter-1",
+      actorPermissions: ["payroll.command.read", "payroll.payslips.emit"],
+      limit: 25,
+      asOf,
+    }, client as never)
+
+    expect(result.blockers).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        code: "PAYROLL_TRANSITION_PROOF_MISSING",
+        domain: "payroll",
+        severity: "critical",
+      }),
+    ]))
+    expect(result.readiness.payrollRun.state).toBe("BLOCKED")
+    expect(result.nextActions).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        id: "payroll-run-emit",
+        allowed: false,
+        blockedBy: ["PAYROLL_TRANSITION_PROOF_MISSING"],
+      }),
+    ]))
+    expect(result.evidence.latestRun?.lifecycle.transitionEvidence).toBe("MISSING_POST_CUTOVER")
+    expect(JSON.stringify(result.evidence.latestRun?.lifecycle)).not.toContain("actor-reviewed")
+  })
+
+  it("marks a posted run ready only when all transition stages are verified", async () => {
+    const client = buildClient()
+    const [baseRun] = await client.payrollRun.findMany()
+    client.payrollRun.findMany.mockResolvedValueOnce([
+      {
+        ...baseRun,
+        status: PayrollRunStatus.POSTED,
+        version: 5,
+        transitions: [
+          verifiedTransition(PayrollRunStatus.REVIEWED, 1),
+          verifiedTransition(PayrollRunStatus.APPROVED, 2),
+          verifiedTransition(PayrollRunStatus.EMITTED, 3),
+          verifiedTransition(PayrollRunStatus.POSTED, 4),
+        ],
+      },
+    ])
+
+    const result = await getPayrollCommandReadModel({
+      organizationId: "org-1",
+      actorId: "command-reader-1",
+      actorPermissions: ["payroll.command.read"],
+      limit: 25,
+      asOf,
+    }, client as never)
+
+    expect(result.readiness.payrollRun.state).toBe("READY")
+    expect(result.evidence.latestRun?.lifecycle).toEqual(expect.objectContaining({
+      transitionEvidence: "VERIFIED",
+      complete: true,
+      nextAction: null,
+    }))
+    expect(result.nextActions.map((action) => action.id)).not.toEqual(
+      expect.arrayContaining(["payroll-run-review", "payroll-run-approve", "payroll-run-emit", "payroll-run-post"]),
+    )
+  })
   it("marks next-action availability from actor permissions", async () => {
     const result = await getPayrollCommandReadModel({
       organizationId: "org-1",

@@ -44,6 +44,7 @@ import { resolveRegulatoryParameter } from "@/services/regulatory/country-packs/
 
 import {
   applyApprovedSalaryChange,
+  approveEmployeeRubriqueAssignment,
   approveSalaryChange,
   assignEmployeeRubrique,
   getCompensationWorkflow,
@@ -68,6 +69,7 @@ function buildTx() {
     payrollEmployee: { findFirst: jest.fn() },
     payrollEmployeeRubriqueAssignment: {
       findMany: jest.fn(),
+      findFirst: jest.fn(),
       create: jest.fn(),
       update: jest.fn(),
     },
@@ -204,7 +206,26 @@ function contractRow(overrides: Record<string, unknown> = {}) {
     convention: "Retail",
     signedDocumentHash: "sha256:contract",
     activatedBusinessEventId: "event-contract",
-    metadata: null,
+    metadata: {
+      hrisContractApproval: {
+        latest: {
+          status: "APPROVED",
+          requestId: "event-contract-request",
+          requestEvidenceHash: "sha256:contract-request",
+          approvalEvidenceHash: "sha256:contract-approval",
+          activationBusinessEventId: "event-contract",
+        },
+      },
+      hrisDocumentEvidence: {
+        current: {
+          status: "APPROVED",
+          artifactHash: "sha256:contract",
+          malwareScanEvidenceHash: "sha256:malware-scan",
+          approvalEvidenceHash: "sha256:document-approval",
+          approvalBusinessEventId: "event-document-approval",
+        },
+      },
+    },
     deletedAt: null,
     createdAt: new Date("2026-01-01T00:00:00.000Z"),
     updatedAt: new Date("2026-06-26T00:00:00.000Z"),
@@ -276,7 +297,14 @@ describe("payroll compensation approval service", () => {
   it("reads compensation workflow data with salary amounts redacted without explicit salary permission", async () => {
     const client = {
       payrollRubrique: { findMany: jest.fn().mockResolvedValue([rubriqueRow()]) },
-      payrollEmployeeRubriqueAssignment: { findMany: jest.fn().mockResolvedValue([assignmentRow()]) },
+      payrollEmployeeRubriqueAssignment: {
+        findMany: jest.fn().mockResolvedValue([
+          assignmentRow({
+            rateBps: 250,
+            quantity: new Prisma.Decimal("2.000"),
+          }),
+        ]),
+      },
       payrollSalaryChangeRequest: { findMany: jest.fn().mockResolvedValue([salaryChangeRow()]) },
       auditLog: { create: jest.fn() },
     }
@@ -291,6 +319,8 @@ describe("payroll compensation approval service", () => {
     )
 
     expect(result.assignments[0].amount).toBe("[REDACTED:PAYROLL]")
+    expect(result.assignments[0].rateBps).toBe("[REDACTED:PAYROLL]")
+    expect(result.assignments[0].quantity).toBe("[REDACTED:PAYROLL]")
     expect(result.salaryChanges[0].proposedBaseSalary).toBe("[REDACTED:PAYROLL]")
     expect(JSON.stringify(result)).not.toContain("180000")
     expect(client.auditLog.create).toHaveBeenCalledWith(
@@ -352,16 +382,25 @@ describe("payroll compensation approval service", () => {
     expect(JSON.stringify(tx.payrollRubrique.create.mock.calls[0][0].data.metadata)).toContain("statutoryFormulaImplemented")
   })
 
-  it("assigns an employee rubrique only inside the tenant and records event evidence", async () => {
+  it("requests an employee rubrique assignment as a draft with evidence", async () => {
     const tx = buildTx()
     useTransaction(tx)
     tx.payrollEmployee.findFirst.mockResolvedValue(employeeRow())
     tx.payrollRubrique.findFirst.mockResolvedValue(rubriqueRow())
-    tx.payrollEmployeeRubriqueAssignment.create.mockImplementation(async ({ data }: { data: any }) =>
-      assignmentRow({ ...data, id: "assignment-1" }),
+    tx.payrollEmployeeRubriqueAssignment.create.mockImplementation(
+      async ({ data }: { data: any }) => assignmentRow({
+        ...data,
+        id: "assignment-1",
+        status: PayrollRubriqueAssignmentStatus.DRAFT,
+        approvalBusinessEventId: null,
+      }),
     )
-    tx.payrollEmployeeRubriqueAssignment.update.mockImplementation(async ({ data }: { data: any }) =>
-      assignmentRow({ approvalBusinessEventId: data.approvalBusinessEventId }),
+    tx.payrollEmployeeRubriqueAssignment.update.mockImplementation(
+      async ({ data }: { data: any }) => assignmentRow({
+        status: PayrollRubriqueAssignmentStatus.DRAFT,
+        approvalBusinessEventId: null,
+        metadata: data.metadata,
+      }),
     )
 
     const result = await assignEmployeeRubrique({
@@ -370,24 +409,230 @@ describe("payroll compensation approval service", () => {
       actorPermissions: ["payroll.compensation.manage"],
       employeeId: "emp-1",
       rubriqueId: "rub-1",
-      status: PayrollRubriqueAssignmentStatus.ACTIVE,
       amount: "10000.00",
       effectiveFrom: "2026-07-01",
       evidenceDocumentHash: "sha256:assignment-evidence",
     })
 
     expect(result.businessEventId).toBe("event-1")
-    expect(result.assignment.amount).toBe("[REDACTED:PAYROLL]")
+    expect(result.assignment).toMatchObject({
+      status: PayrollRubriqueAssignmentStatus.DRAFT,
+      hrisApprovalStatus: "REQUESTED",
+      approvalBusinessEventPresent: false,
+      amount: "[REDACTED:PAYROLL]",
+    })
+    expect(tx.payrollContract.findFirst).not.toHaveBeenCalled()
     expect(mockedRecordBusinessEventInTx).toHaveBeenCalledWith(
       tx,
       expect.objectContaining({
-        eventType: "payroll.rubrique.assignment.created",
+        eventType: "hris.compensation.assignment.requested",
         sourceId: "assignment-1",
         documentHash: "sha256:assignment-evidence",
       }),
     )
   })
 
+  it("blocks direct active rubrique assignment creation", async () => {
+    const tx = buildTx()
+    useTransaction(tx)
+
+    await expect(
+      assignEmployeeRubrique({
+        organizationId: "org-1",
+        actorId: "hr-1",
+        actorPermissions: ["payroll.compensation.manage"],
+        employeeId: "emp-1",
+        rubriqueId: "rub-1",
+        status: PayrollRubriqueAssignmentStatus.ACTIVE,
+        amount: "10000.00",
+        effectiveFrom: "2026-07-01",
+        evidenceDocumentHash: "sha256:assignment-evidence",
+      }),
+    ).rejects.toThrow("must be requested as drafts")
+
+    expect(tx.payrollEmployee.findFirst).not.toHaveBeenCalled()
+    expect(tx.payrollEmployeeRubriqueAssignment.create).not.toHaveBeenCalled()
+  })
+
+  it("approves a requested assignment through maker-checker and contract evidence", async () => {
+    const tx = buildTx()
+    useTransaction(tx)
+    const requested = assignmentRow({
+      status: PayrollRubriqueAssignmentStatus.DRAFT,
+      approvalBusinessEventId: null,
+      metadata: {
+        hrisCompensationApproval: {
+          version: 1,
+          status: "REQUESTED",
+          requestedById: "hr-1",
+          requestBusinessEventId: "event-request",
+        },
+      },
+    })
+    tx.payrollEmployeeRubriqueAssignment.findFirst.mockResolvedValue(requested)
+    tx.payrollContract.findFirst.mockResolvedValue(contractRow())
+    tx.payrollEmployeeRubriqueAssignment.update
+      .mockImplementationOnce(async ({ data }: { data: any }) => assignmentRow({
+        status: data.status,
+        approvalBusinessEventId: null,
+        metadata: data.metadata,
+      }))
+      .mockImplementationOnce(async ({ data }: { data: any }) => assignmentRow({
+        status: PayrollRubriqueAssignmentStatus.ACTIVE,
+        approvalBusinessEventId: data.approvalBusinessEventId,
+        metadata: data.metadata,
+      }))
+
+    const result = await approveEmployeeRubriqueAssignment({
+      organizationId: "org-1",
+      actorId: "checker-1",
+      actorPermissions: ["payroll.compensation.manage"],
+      employeeId: "emp-1",
+      assignmentId: "assignment-1",
+      decisionReasonHash: "sha256:decision-reason",
+      approvalEvidenceHash: "sha256:approval-evidence",
+    })
+
+    expect(result.assignment).toMatchObject({
+      status: PayrollRubriqueAssignmentStatus.ACTIVE,
+      hrisApprovalStatus: "APPROVED",
+      approvalBusinessEventPresent: true,
+    })
+    expect(tx.payrollContract.findFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          organizationId: "org-1",
+          employeeId: "emp-1",
+          status: PayrollContractStatus.ACTIVE,
+          signedDocumentHash: { not: null },
+          activatedBusinessEventId: { not: null },
+        }),
+      }),
+    )
+    expect(mockedRecordBusinessEventInTx).toHaveBeenCalledWith(
+      tx,
+      expect.objectContaining({
+        eventType: "hris.compensation.assignment.approved",
+        documentHash: "sha256:approval-evidence",
+      }),
+    )
+  })
+
+  it("blocks a compensation assignment requester from approving their request", async () => {
+    const tx = buildTx()
+    useTransaction(tx)
+    tx.payrollEmployeeRubriqueAssignment.findFirst.mockResolvedValue(assignmentRow({
+      status: PayrollRubriqueAssignmentStatus.DRAFT,
+      approvalBusinessEventId: null,
+      metadata: {
+        hrisCompensationApproval: {
+          status: "REQUESTED",
+          requestedById: "hr-1",
+          requestBusinessEventId: "event-request",
+        },
+      },
+    }))
+
+    await expect(
+      approveEmployeeRubriqueAssignment({
+        organizationId: "org-1",
+        actorId: "hr-1",
+        actorPermissions: ["payroll.compensation.manage"],
+        employeeId: "emp-1",
+        assignmentId: "assignment-1",
+        decisionReasonHash: "sha256:decision-reason",
+        approvalEvidenceHash: "sha256:approval-evidence",
+      }),
+    ).rejects.toBeInstanceOf(ForbiddenError)
+
+    expect(tx.payrollContract.findFirst).not.toHaveBeenCalled()
+    expect(tx.payrollEmployeeRubriqueAssignment.update).not.toHaveBeenCalled()
+  })
+
+  it("blocks assignment approval when no approved effective contract covers it", async () => {
+    const tx = buildTx()
+    useTransaction(tx)
+    tx.payrollEmployeeRubriqueAssignment.findFirst.mockResolvedValue(assignmentRow({
+      status: PayrollRubriqueAssignmentStatus.DRAFT,
+      approvalBusinessEventId: null,
+      metadata: {
+        hrisCompensationApproval: {
+          status: "REQUESTED",
+          requestedById: "hr-1",
+          requestBusinessEventId: "event-request",
+        },
+      },
+    }))
+    tx.payrollContract.findFirst.mockResolvedValue(null)
+
+    await expect(
+      approveEmployeeRubriqueAssignment({
+        organizationId: "org-1",
+        actorId: "checker-1",
+        actorPermissions: ["payroll.compensation.manage"],
+        employeeId: "emp-1",
+        assignmentId: "assignment-1",
+        decisionReasonHash: "sha256:decision-reason",
+        approvalEvidenceHash: "sha256:approval-evidence",
+      }),
+    ).rejects.toBeInstanceOf(BusinessRuleError)
+
+    expect(tx.payrollEmployeeRubriqueAssignment.update).not.toHaveBeenCalled()
+    expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled()
+  })
+
+  it("blocks active compensation when contract fields exist without HRIS approval proof", async () => {
+    const tx = buildTx()
+    useTransaction(tx)
+    tx.payrollEmployeeRubriqueAssignment.findFirst.mockResolvedValue(assignmentRow({
+      status: PayrollRubriqueAssignmentStatus.DRAFT,
+      approvalBusinessEventId: null,
+      metadata: {
+        hrisCompensationApproval: {
+          status: "REQUESTED",
+          requestedById: "hr-1",
+          requestBusinessEventId: "event-request",
+        },
+      },
+    }))
+    tx.payrollContract.findFirst.mockResolvedValue(contractRow({ metadata: null }))
+
+    await expect(
+      approveEmployeeRubriqueAssignment({
+        organizationId: "org-1",
+        actorId: "checker-1",
+        actorPermissions: ["payroll.compensation.manage"],
+        employeeId: "emp-1",
+        assignmentId: "assignment-1",
+        decisionReasonHash: "sha256:decision-reason",
+        approvalEvidenceHash: "sha256:approval-evidence",
+      }),
+    ).rejects.toThrow(
+      "Active compensation requires complete HRIS contract activation and document approval proof.",
+    )
+
+    expect(tx.payrollEmployeeRubriqueAssignment.update).not.toHaveBeenCalled()
+    expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled()
+  })
+
+  it("blocks compensation assignment requests without evidence", async () => {
+    const tx = buildTx()
+    useTransaction(tx)
+
+    await expect(
+      assignEmployeeRubrique({
+        organizationId: "org-1",
+        actorId: "hr-1",
+        actorPermissions: ["payroll.compensation.manage"],
+        employeeId: "emp-1",
+        rubriqueId: "rub-1",
+        amount: "10000.00",
+        effectiveFrom: "2026-07-01",
+      } as any),
+    ).rejects.toThrow()
+
+    expect(tx.payrollEmployee.findFirst).not.toHaveBeenCalled()
+  })
   it("requests a salary change without mutating the active contract salary", async () => {
     const tx = buildTx()
     useTransaction(tx)
@@ -535,6 +780,27 @@ describe("payroll compensation approval service", () => {
     )
   })
 
+  it("blocks a salary-change approver from applying their own approval", async () => {
+    const tx = buildTx()
+    useTransaction(tx)
+    tx.payrollSalaryChangeRequest.findFirst.mockResolvedValue(salaryChangeRow({
+      status: PayrollSalaryChangeStatus.APPROVED,
+      approvedById: "approver-1",
+      approvalEvidenceHash: "sha256:approval-evidence",
+    }))
+
+    await expect(
+      applyApprovedSalaryChange({
+        organizationId: "org-1",
+        actorId: "approver-1",
+        actorPermissions: ["payroll.salary_changes.apply"],
+        salaryChangeRequestId: "salary-change-1",
+      }),
+    ).rejects.toBeInstanceOf(ForbiddenError)
+
+    expect(tx.payrollContract.update).not.toHaveBeenCalled()
+    expect(tx.payrollContract.create).not.toHaveBeenCalled()
+  })
   it("blocks salary-change application when payroll run lines already cover the effective date", async () => {
     const tx = buildTx()
     useTransaction(tx)

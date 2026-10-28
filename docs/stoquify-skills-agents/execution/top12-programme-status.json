@@ -1,0 +1,310 @@
+{
+  "schemaVersion": 1,
+  "programmeId": "stoquify-top12-2026-08-02",
+  "asOf": "2026-08-03",
+  "roadmap": "docs/stoquify-skills-agents/STOQUIFY_TOP_12_AGENTS_SKILLS_COMPLETE_EXECUTION_ROADMAP_2026-08-02.md",
+  "currentChunk": "PHASE_0_PROGRAMME_CONTROL",
+  "decision": "CONDITIONAL_GO_DEVELOPMENT_ONLY",
+  "policy": {
+    "maximumAutonomy": "L2",
+    "productionActivation": "BLOCKED",
+    "phase3Authority": "UNAUTHORIZED",
+    "externalMessages": "HUMAN_APPROVAL_REQUIRED",
+    "financialMutations": "HUMAN_APPROVAL_REQUIRED",
+    "statutoryRepresentations": "EXPERT_APPROVAL_REQUIRED",
+    "creditDisclosure": "EXPLICIT_PURPOSE_CONSENT_REQUIRED"
+  },
+  "requiredEvidence": [
+    "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_ENTRY_DECISION_2026-07-25.json",
+    "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_EXTERNAL_INPUT_READINESS_2026-07-25.json",
+    "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_SKILL_017_BLOCKER_ELIMINATION_AND_PHASE_3_ENTRY_REPORT_2026-07-27.json",
+    "graphify-out/GRAPH_REPORT.md"
+  ],
+  "runtimeBaseline": {
+    "repositoryHeadObserved": "5dc78f2c007c51e151342de08be34b72994839bb",
+    "repositoryCleanReleaseClaimed": false,
+    "phase2bStatus": "BLOCKED",
+    "phase2bChecks": 23,
+    "phase2bPassed": 2,
+    "phase2bBlockers": 21,
+    "externalInputStatus": "EXTERNAL_INPUTS_REQUIRED",
+    "externalInputChecks": 13,
+    "externalInputPassed": 1,
+    "externalInputBlockers": 102,
+    "definitionAgents": 9,
+    "definitionSkills": 28,
+    "definitionRegistryCapabilities": 37,
+    "evaluationCatalogCases": 999,
+    "evaluationExecutionStatus": "NOT_EXECUTED"
+  },
+  "foundations": [
+    {
+      "id": "F-A",
+      "name": "Runtime and orchestration",
+      "state": "PARTIALLY_PRESENT"
+    },
+    {
+      "id": "F-B",
+      "name": "Security and authorization",
+      "state": "PARTIALLY_PRESENT"
+    },
+    {
+      "id": "F-C",
+      "name": "Evidence and data trust",
+      "state": "PARTIALLY_PRESENT"
+    },
+    {
+      "id": "F-D",
+      "name": "Model controls",
+      "state": "NOT_PROVEN_ACTIVE"
+    },
+    {
+      "id": "F-E",
+      "name": "Evaluation and assurance",
+      "state": "PARTIALLY_PRESENT"
+    },
+    {
+      "id": "F-F",
+      "name": "User experience",
+      "state": "PARTIALLY_PRESENT"
+    },
+    {
+      "id": "F-G",
+      "name": "Growth and commercialization",
+      "state": "PARTIALLY_PRESENT"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "C01",
+      "name": "Receivables and Collections",
+      "state": "DESIGN_AUTHORIZED",
+      "autonomy": "L2",
+      "hardDependencies": [
+        "C08",
+        "F-A",
+        "F-B",
+        "F-C",
+        "F-E"
+      ]
+    },
+    {
+      "id": "C02",
+      "name": "Mobile Document Intake and Evidence Capture",
+      "state": "DESIGN_AUTHORIZED",
+      "autonomy": "L2",
+      "hardDependencies": [
+        "C08",
+        "F-A",
+        "F-B",
+        "F-C",
+        "F-E",
+        "F-F"
+      ]
+    },
+    {
+      "id": "C03",
+      "name": "Advisor Collaboration and Review",
+      "state": "DESIGN_AUTHORIZED",
+      "autonomy": "L2",
+      "hardDependencies": [
+        "C02",
+        "F-A",
+        "F-B",
+        "F-C",
+        "F-E"
+      ]
+    },
+    {
+      "id": "C04",
+      "name": "Cash Forecast and Scenario Planning",
+      "state": "PREPARE",
+      "autonomy": "L1",
+      "hardDependencies": [
+        "C08",
+        "F-C",
+        "F-E"
+      ]
+    },
+    {
+      "id": "C05",
+      "name": "Omnichannel Business Communications",
+      "state": "PREPARE",
+      "autonomy": "L2",
+      "hardDependencies": [
+        "F-A",
+        "F-B",
+        "F-C",
+        "F-E"
+      ]
+    },
+    {
+      "id": "C06",
+      "name": "Continuous Controls and Fraud Signals",
+      "state": "PREPARE",
+      "autonomy": "L1",
+      "hardDependencies": [
+        "C02",
+        "C08",
+        "F-B",
+        "F-C",
+        "F-E"
+      ]
+    },
+    {
+      "id": "C07",
+      "name": "Profitability and Pricing Intelligence",
+      "state": "PREPARE",
+      "autonomy": "L2",
+      "hardDependencies": [
+        "C08",
+        "F-C",
+        "F-E"
+      ]
+    },
+    {
+      "id": "C08",
+      "name": "Connector Health and Data Trust",
+      "state": "BUILD_AUTHORIZED_AFTER_RUNTIME_GATE",
+      "autonomy": "L1",
+      "hardDependencies": [
+        "F-A",
+        "F-B",
+        "F-C",
+        "F-E"
+      ]
+    },
+    {
+      "id": "C09",
+      "name": "Supplier Collaboration Network",
+      "state": "DELAYED",
+      "autonomy": "L2",
+      "hardDependencies": [
+        "C02",
+        "C03",
+        "C05",
+        "F-B"
+      ]
+    },
+    {
+      "id": "C10",
+      "name": "Financing Readiness and Consent Package",
+      "state": "DELAYED",
+      "autonomy": "L2",
+      "hardDependencies": [
+        "C03",
+        "C04",
+        "F-B",
+        "F-C",
+        "F-E"
+      ]
+    },
+    {
+      "id": "C11",
+      "name": "Sales Pipeline-to-Cash",
+      "state": "DELAYED",
+      "autonomy": "L2",
+      "hardDependencies": [
+        "C01",
+        "C05",
+        "C07"
+      ]
+    },
+    {
+      "id": "C12",
+      "name": "Job and Project Margin",
+      "state": "DELAYED",
+      "autonomy": "L2",
+      "hardDependencies": [
+        "C02",
+        "C07",
+        "C11"
+      ]
+    }
+  ],
+  "workItemStates": {
+    "COMPLETE": [
+      "PGM-001",
+      "PGM-002",
+      "RUN-001",
+      "FND-006",
+      "FND-012",
+      "C08-001",
+      "C08-002",
+      "FND-010"
+    ],
+    "IN_PROGRESS": [
+      "PGM-004"
+    ],
+    "EXTERNAL_INPUT_BLOCKED": [
+      "PGM-003",
+      "RUN-002",
+      "RUN-003",
+      "RUN-004",
+      "RUN-005",
+      "RUN-006",
+      "RUN-007"
+    ],
+    "PENDING": [
+      "FND-001",
+      "FND-002",
+      "FND-003",
+      "FND-004",
+      "FND-005",
+      "FND-007",
+      "FND-008",
+      "FND-009",
+      "FND-011",
+      "FND-013",
+      "C08-003",
+      "C02-001",
+      "C02-002",
+      "C02-003",
+      "C05-001",
+      "C05-002",
+      "C05-003",
+      "C01-001",
+      "C01-002",
+      "C01-003",
+      "C03-001",
+      "C03-002",
+      "C03-003",
+      "C04-001",
+      "C04-002",
+      "C04-003",
+      "C07-001",
+      "C07-002",
+      "C06-001",
+      "C06-002",
+      "C06-003",
+      "C09-001",
+      "C09-002",
+      "C09-003",
+      "C10-001",
+      "C10-002",
+      "C10-003",
+      "C11-001",
+      "C11-002",
+      "C11-003",
+      "C12-001",
+      "C12-002",
+      "C12-003",
+      "REL-001",
+      "REL-002",
+      "REL-003",
+      "REL-004"
+    ]
+  },
+  "externalOwnerGroups": [
+    "ENGINEERING_RELEASE",
+    "PRODUCT_AND_SECURITY",
+    "RELEASE_MANAGER",
+    "PLATFORM_SRE",
+    "SECURITY_INCIDENT_AND_SRE",
+    "SECURITY",
+    "SECURITY_AND_PLATFORM",
+    "OHADA_DOMAIN_REVIEWER",
+    "PILOT_AND_RELEASE_AUTHORITY",
+    "ENTERPRISE_RELEASE_AUTHORITY"
+  ]
+}

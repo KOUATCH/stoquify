@@ -1,0 +1,157 @@
+{
+  "schemaVersion": "1.0",
+  "runId": "th-inventory-history-bounded-artifacts-20260715-011",
+  "traceId": "5d4e1190-8264-41a3-9bc8-ec44168bc08e",
+  "stageId": "04",
+  "executedAt": "2026-07-15T14:08:25.156Z",
+  "mode": "read-only",
+  "redaction": {
+    "connectionStringRecorded": false,
+    "databaseNameRecorded": false,
+    "tenantIdentifiersRecorded": false,
+    "rowValuesRecorded": false,
+    "secretsRecorded": false
+  },
+  "environment": {
+    "provider": "postgresql",
+    "serverVersionNumber": 170005,
+    "classification": "development-nonrepresentative",
+    "productionLike": false,
+    "explainAnalyzeExecuted": false,
+    "reason": "Configured cardinality is too small for production plan, throughput, contention, heap, or provider-capacity certification."
+  },
+  "tableStatistics": [
+    {
+      "table": "business_event_outbox",
+      "estimatedRows": -1,
+      "totalBytes": 131072
+    },
+    {
+      "table": "business_events",
+      "estimatedRows": -1,
+      "totalBytes": 196608
+    },
+    {
+      "table": "inventory_transactions",
+      "estimatedRows": 408,
+      "totalBytes": 901120
+    }
+  ],
+  "nonExecutingPlans": [
+    {
+      "query": "tenant-scoped-background-export-worker-candidate",
+      "root": "Limit",
+      "scans": [
+        {
+          "nodeType": "Index Scan",
+          "relation": "business_event_outbox",
+          "index": "business_event_outbox_organizationId_channel_idempotencyKey_key"
+        }
+      ],
+      "explicitSort": true,
+      "planRows": 1,
+      "totalCost": 8.2,
+      "certification": "unverified-small-development-plan"
+    },
+    {
+      "query": "tenant-scoped-background-export-expiry-scan",
+      "root": "Limit",
+      "scans": [
+        {
+          "nodeType": "Index Scan",
+          "relation": "business_event_outbox",
+          "index": "business_event_outbox_organizationId_status_availableAt_idx"
+        }
+      ],
+      "explicitSort": true,
+      "planRows": 1,
+      "totalCost": 8.19,
+      "certification": "unverified-small-development-plan"
+    },
+    {
+      "query": "tenant-and-sequence-scoped-chunk-manifest-page",
+      "root": "Limit",
+      "scans": [
+        {
+          "nodeType": "Index Scan",
+          "relation": "business_events",
+          "index": "business_events_organizationId_eventSource_idempotencyKey_key"
+        }
+      ],
+      "explicitSort": false,
+      "planRows": 1,
+      "totalCost": 8.17,
+      "certification": "unverified-small-development-plan"
+    }
+  ],
+  "measuredFixtures": {
+    "averageNdjsonRowBytesFromRun010": 866,
+    "chunkRows": 100,
+    "chunkManifestBytesAtSequence0": 708,
+    "chunkManifestBytesAtSequence9999": 711,
+    "runningCheckpointBytesAtChunk1": 1071,
+    "runningCheckpointBytesAtChunk10000": 1086,
+    "checkpointGrowthBytes": 15,
+    "maximumEncryptedObjectBytes": 16777216,
+    "manifestReadPageSize": 25,
+    "maximumManifestRecordsMaterializedPerQuery": 26
+  },
+  "capacityModel": [
+    {
+      "rows": 10000,
+      "chunksAt100Rows": 100,
+      "estimatedPrivateObjectCiphertextMiB": 8.259,
+      "estimatedDatabaseChunkManifestMiB": 0.068,
+      "runningCheckpointKiB": 1.061,
+      "cumulativeCheckpointRewriteUpperFixtureMiB": 0.104,
+      "rewriteComplexity": "linear-in-chunk-count"
+    },
+    {
+      "rows": 250000,
+      "chunksAt100Rows": 2500,
+      "estimatedPrivateObjectCiphertextMiB": 206.47,
+      "estimatedDatabaseChunkManifestMiB": 1.695,
+      "runningCheckpointKiB": 1.061,
+      "cumulativeCheckpointRewriteUpperFixtureMiB": 2.589,
+      "rewriteComplexity": "linear-in-chunk-count"
+    },
+    {
+      "rows": 1000000,
+      "chunksAt100Rows": 10000,
+      "estimatedPrivateObjectCiphertextMiB": 825.882,
+      "estimatedDatabaseChunkManifestMiB": 6.781,
+      "runningCheckpointKiB": 1.061,
+      "cumulativeCheckpointRewriteUpperFixtureMiB": 10.357,
+      "rewriteComplexity": "linear-in-chunk-count"
+    }
+  ],
+  "priorRun010Comparison": {
+    "rows": 1000000,
+    "priorEncryptedDatabasePayloadMiB": 1104.584,
+    "priorFinalCheckpointMiB": 1.736,
+    "priorCumulativeCheckpointRewriteLowerBoundMiB": 8683.033,
+    "currentEncryptedDatabasePayloadMiB": 6.781,
+    "currentPrivateObjectCiphertextMiB": 825.882,
+    "currentRunningCheckpointKiB": 1.061,
+    "currentCumulativeCheckpointRewriteUpperFixtureMiB": 10.357
+  },
+  "executedVerification": {
+    "constantCheckpointRegression": "PASS: 101 chunks; metadata byte delta below 256 bytes",
+    "boundedArtifactReads": "PASS: maximum one object read in flight",
+    "ciphertextFreeBusinessEvents": "PASS: encrypted envelope contains no ciphertext body",
+    "deterministicRetryReuse": "PASS: identical custom-ID object verified after upload conflict",
+    "tenantScopedWorkerAndExpiry": "PASS",
+    "cryptoShredDeletionRetry": "PASS: key removed before provider delete; failed deletion remains FAILED/PENDING and retries to CANCELLED/COMPLETE"
+  },
+  "limitations": [
+    "Plans are non-executing and come from a small development database.",
+    "Object-store throughput, cost, lifecycle enforcement, regional residency, and concurrent-worker behavior are not production-certified.",
+    "Capacity values use the sanitized 866-byte average row fixture from run010 and exclude provider metadata, network overhead, audit/WAL, and backup cost.",
+    "No production or customer database was accessed."
+  ],
+  "currentPolicy": {
+    "interimMaximumRows": 250000,
+    "oneMillionRowPathEnabled": false,
+    "reason": "The one-million-row path remains unavailable until representative provider, database, worker, and heap evidence passes."
+  }
+}

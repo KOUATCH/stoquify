@@ -1,0 +1,297 @@
+{
+  "schemaVersion": "1.0",
+  "asOf": "2026-07-27",
+  "sourceDecision": "REJECTED_NO_GO",
+  "developmentDecision": "CONTINUE_WITH_PRODUCTION_CAPABILITIES_FAIL_CLOSED",
+  "criticalPath": [
+    "B01",
+    "B02",
+    "B03",
+    "B04",
+    "B05",
+    "B06",
+    "B07",
+    "B08",
+    "B09",
+    "B10",
+    "B11",
+    "B12"
+  ],
+  "parallelLanes": {
+    "engineering": ["B01", "B02"],
+    "platform": ["B03", "B04", "B08"],
+    "regulatory": ["B05", "B06"],
+    "security": ["B07"],
+    "releaseGovernance": ["B09", "B10", "B11", "B12"]
+  },
+  "blockers": [
+    {
+      "id": "B01",
+      "title": "Production build failure",
+      "ownerRole": "HRIS_PAYROLL_ENGINEERING_OWNER",
+      "scopeBlocked": ["development_integration", "pilot", "production"],
+      "dependencies": [],
+      "currentEvidence": {
+        "file": "actions/hris/operational-time.actions.ts",
+        "nonAsyncExports": [
+          "getOwnOperationalTimeAction",
+          "getManagedOperationalTimeInboxAction"
+        ]
+      },
+      "exitCriteria": [
+        "Both use-server exports are async",
+        "Typecheck passes",
+        "Focused operational-time tests pass",
+        "Application build passes in protected CI"
+      ],
+      "verificationCommands": [
+        "npm run typecheck",
+        "npm run build:app"
+      ]
+    },
+    {
+      "id": "B02",
+      "title": "Payroll immutability runtime gate",
+      "ownerRole": "PAYROLL_ENGINEERING_AND_DATABASE_PLATFORM",
+      "scopeBlocked": ["payroll_release", "pilot", "production"],
+      "dependencies": ["DEDICATED_NON_PRODUCTION_TEST_DATABASE"],
+      "currentEvidence": {
+        "status": "blocked",
+        "migrationExitCode": 1,
+        "requiredTriggersPresent": "0/9",
+        "blocker": "migration_deploy"
+      },
+      "exitCriteria": [
+        "9/9 triggers present",
+        "14/14 prohibited mutations blocked",
+        "3/3 allowed lifecycle mutations succeed",
+        "Zero runtime blockers"
+      ],
+      "verificationCommands": [
+        "npm run prisma:validate",
+        "npm run payroll:immutability:runtime"
+      ]
+    },
+    {
+      "id": "B03",
+      "title": "Production database target absent or unsafe",
+      "ownerRole": "PLATFORM_DATABASE_OWNER",
+      "scopeBlocked": ["production_deployment"],
+      "dependencies": ["APPROVED_ENVIRONMENT", "MANAGED_SECRET_STORE", "BACKUP_RESTORE_RUNBOOK"],
+      "currentEvidence": {
+        "readiness": "7/8",
+        "blockers": ["database_url_missing", "deployment_target_is_safe"]
+      },
+      "exitCriteria": [
+        "Database is configured",
+        "Target is classified safe",
+        "Backup reference exists",
+        "Migration deploy and status pass"
+      ],
+      "verificationCommands": [
+        "npm run prisma:migration:release:preflight",
+        "npm run prisma:migrate:deploy",
+        "npm run prisma:migrate:status"
+      ]
+    },
+    {
+      "id": "B04",
+      "title": "Required production release secrets absent",
+      "ownerRole": "SECURITY_PLATFORM_OWNER",
+      "scopeBlocked": ["production_release"],
+      "dependencies": ["MANAGED_SECRET_STORE"],
+      "currentEvidence": {
+        "readiness": "2/8",
+        "missingSecretReferences": [
+          "PUBLIC_IDENTITY_ABUSE_HASH_SECRET",
+          "AQSTOQFLOW_RECEIPT_TOKEN_SECRET",
+          "AQSTOQFLOW_HISTORY_CURSOR_SECRET"
+        ]
+      },
+      "exitCriteria": [
+        "All three secrets exist as managed references",
+        "Strength checks pass",
+        "Values are distinct and not reused from auth secrets",
+        "Preflight passes 8/8"
+      ],
+      "verificationCommands": ["npm run release:secrets:preflight:release"]
+    },
+    {
+      "id": "B05",
+      "title": "Cameroon source-artifact hash binding",
+      "ownerRole": "QUALIFIED_REVIEWER_AND_AUTHORIZED_ENGINEERING_OPERATOR",
+      "scopeBlocked": ["cameroon_production_statutory_use"],
+      "dependencies": ["B06"],
+      "currentEvidence": {
+        "declaredSourceHashes": 7,
+        "validSourceHashes": 0,
+        "boundSourceHashes": 0,
+        "blocker": "source_artifact_hash_verification"
+      },
+      "exitCriteria": [
+        "Reviewer independently recomputes retained source hashes",
+        "Checker accepts source verification",
+        "Seven implementation hashes are valid sha256 values",
+        "Seven hashes bind to retained manifest artifacts"
+      ],
+      "verificationCommands": [
+        "npm run statutory:country-pack:review:preflight",
+        "npm run statutory:country-pack:gate"
+      ]
+    },
+    {
+      "id": "B06",
+      "title": "Cameroon qualified expert approval",
+      "ownerRole": "COMPLIANCE_LEGAL_OWNER",
+      "scopeBlocked": ["cameroon_production_statutory_use"],
+      "dependencies": ["QUALIFIED_INDEPENDENT_REVIEWER", "SEPARATE_AUTHORIZED_CHECKER"],
+      "currentEvidence": {
+        "readiness": "10/12",
+        "blocker": "source_artifact_expert_approval",
+        "reviewStatus": "PENDING_EXPERT_REVIEW"
+      },
+      "exitCriteria": [
+        "Reviewer identity, qualifications, independence and scope verified",
+        "Four fixture families independently approved with tie-out hashes",
+        "Effective period and production authorization explicit",
+        "Signed approval artifact retained and hash-matched",
+        "Separate checker verifies signature and return",
+        "Country-pack gate passes 12/12"
+      ],
+      "verificationCommands": [
+        "npm run statutory:country-pack:review:preflight",
+        "npm run statutory:country-pack:gate"
+      ]
+    },
+    {
+      "id": "B07",
+      "title": "Credential rotation and revocation evidence",
+      "ownerRole": "SECURITY_OWNER_WITH_SERVICE_OWNERS",
+      "scopeBlocked": ["pilot", "production"],
+      "dependencies": ["B03", "B04", "STABLE_DEPLOYMENT"],
+      "currentEvidence": {
+        "status": "BLOCKED",
+        "credentialClasses": 15,
+        "unresolvedClasses": 15,
+        "blockers": 31
+      },
+      "exitCriteria": [
+        "15/15 credential classes rotated",
+        "New versions active after workload restart",
+        "Old versions revoked and rejected",
+        "Security approval bound to release"
+      ],
+      "verificationCommands": [
+        "npm run agent:credential-rotation:evidence:apply",
+        "npm run agent:credential-rotation:gate"
+      ]
+    },
+    {
+      "id": "B08",
+      "title": "Operational release evidence",
+      "ownerRole": "RELEASE_MANAGER",
+      "scopeBlocked": ["agent_pilot", "production"],
+      "dependencies": ["B03", "B04", "B07", "STABLE_ARTIFACT", "NAMED_OPERATORS"],
+      "currentEvidence": {
+        "status": "BLOCKED",
+        "blockers": 152,
+        "categories": {
+          "release": 14,
+          "ci": 15,
+          "governance": 12,
+          "approvals": 14,
+          "owners": 36,
+          "scheduler": 39,
+          "alerting": 17,
+          "credential": 5
+        }
+      },
+      "exitCriteria": [
+        "Release identity and protected CI are artifact-bound",
+        "Six roles have primary and backup accepted coverage",
+        "Inactive reconciler and scheduler are deployed",
+        "Three unique five-minute windows are healthy",
+        "Invalid-auth rejection is captured",
+        "Alert delivery, acknowledgement, retry, dead letter, recovery and escalation pass",
+        "Operational gate passes"
+      ],
+      "verificationCommands": ["npm run agent:operational-release:gate"]
+    },
+    {
+      "id": "B09",
+      "title": "Stale Phase 2A freeze",
+      "ownerRole": "RELEASE_MANAGER_AND_INDEPENDENT_REVIEWER",
+      "scopeBlocked": ["pilot", "production"],
+      "dependencies": ["B01", "B02", "B03", "B04", "B05", "B06", "B07", "B08"],
+      "currentEvidence": {
+        "matchedFiles": 206,
+        "manifestFiles": 207,
+        "historicalMismatches": 1,
+        "runtimeDriftPaths": 8,
+        "currentChanges": 357
+      },
+      "exitCriteria": [
+        "Clean release source tree",
+        "All manifest files match",
+        "Zero runtime drift",
+        "Immutable artifact and protected CI attest to same commit"
+      ],
+      "verificationCommands": ["npm run agent:phase2a:freeze:gate"]
+    },
+    {
+      "id": "B10",
+      "title": "Governance approvals and operational ownership",
+      "ownerRole": "PRODUCT_SECURITY_AND_RELEASE_AUTHORITIES",
+      "scopeBlocked": ["pilot", "production"],
+      "dependencies": ["B09"],
+      "currentEvidence": {
+        "productApproval": "PENDING",
+        "securityApproval": "PENDING",
+        "unassignedOperationalRoles": 6
+      },
+      "exitCriteria": [
+        "Product and security approvals are distinct and artifact-bound",
+        "ROLLOUT, ROLLBACK, SUPPORT, PILOT, SECURITY_INCIDENT and ON_CALL_BACKUP are assigned",
+        "Every role has acceptance, coverage, escalation and runbook evidence"
+      ],
+      "verificationCommands": ["npm run agent:operational-release:gate"]
+    },
+    {
+      "id": "B11",
+      "title": "Phase 2B entry",
+      "ownerRole": "RELEASE_AUTHORITY",
+      "scopeBlocked": ["controlled_pilot"],
+      "dependencies": ["B01", "B02", "B03", "B04", "B05", "B06", "B07", "B08", "B09", "B10", "ENTERPRISE_GATE_017_GO"],
+      "currentEvidence": {
+        "readiness": "3/23",
+        "blockers": 20
+      },
+      "exitCriteria": [
+        "Phase 2B entry passes 23/23",
+        "Activation is separately authorized",
+        "Tenant and role allowlists are recorded",
+        "Monitoring and rollback are ready"
+      ],
+      "verificationCommands": ["npm run agent:phase2b:entry:gate"]
+    },
+    {
+      "id": "B12",
+      "title": "Phase 3 production decision",
+      "ownerRole": "PRODUCT_SECURITY_FINANCE_DOMAIN_AND_RELEASE_AUTHORITIES",
+      "scopeBlocked": ["production_expansion"],
+      "dependencies": ["B11", "SUCCESSFUL_PHASE_2B_PILOT"],
+      "currentEvidence": {
+        "readiness": "1/34",
+        "blockers": 33
+      },
+      "exitCriteria": [
+        "Pilot observation window complete",
+        "Pilot safety and incidents accepted",
+        "Rollback and support evidence accepted",
+        "Approver segregation preserved",
+        "Explicit artifact-bound Phase 3 GO recorded"
+      ],
+      "verificationCommands": ["RUN_SKILL_017_PHASE_3_READINESS_PROCEDURE"]
+    }
+  ]
+}

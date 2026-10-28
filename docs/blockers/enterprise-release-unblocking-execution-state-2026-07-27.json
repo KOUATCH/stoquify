@@ -1,0 +1,241 @@
+{
+  "schemaVersion": "1.0",
+  "startedOn": "2026-07-27",
+  "sourcePlan": "docs/blockers/ENTERPRISE_RELEASE_BLOCKER_UNBLOCKING_EXECUTION_PLAN_2026-07-27.md",
+  "releasePosture": "DEVELOPMENT_CONTINUES_PRODUCTION_FAIL_CLOSED",
+  "treeClassification": "ACTIVE_DEVELOPMENT_NOT_RELEASE_CANDIDATE",
+  "activeTranche": "PLATFORM_AND_EXTERNAL_HANDOFF",
+  "blockers": {
+    "B01": {
+      "status": "READY",
+      "completedEvidence": [
+        "All exported operational-time server actions are explicit async wrappers",
+        "Focused HRIS verification: 2 suites and 6 tests passed",
+        "Typecheck passed against regenerated Next.js types",
+        "Diagnostic production build exited 0 with valid output and no orphaned processes"
+      ],
+      "evidenceFiles": [
+        "what-next/build-diagnostics/enterprise-unblocking-b01/summary.json",
+        "what-next/build-diagnostics/enterprise-unblocking-b01/summary.md",
+        "what-next/build-diagnostics/enterprise-unblocking-b01/build.stdout.log",
+        "what-next/build-diagnostics/enterprise-unblocking-b01/build.stderr.log"
+      ]
+    },
+    "B02": {
+      "status": "READY",
+      "completedEvidence": [
+        "Canonical payroll immutability npm gate passed",
+        "Required triggers: 9/9",
+        "Forbidden mutations blocked: 14/14",
+        "Allowed lifecycle mutations: 3/3",
+        "Focused safety and migration verification: 4 suites and 35 tests passed"
+      ],
+      "evidenceFiles": [
+        "what-next/payroll/payroll-immutability-runtime-check.md",
+        "what-next/payroll/payroll-immutability-runtime-check.json"
+      ]
+    },
+    "B03": {
+      "status": "BLOCKED_EXTERNAL_CONFIG",
+      "requiredInput": "Approved production database target and backup/restore evidence",
+      "preflight": {
+        "ready": 8,
+        "total": 9,
+        "blockers": ["deployment_target_is_safe", "database_url_missing"],
+        "evidence": "what-next/blocker-execution/prisma-migration-production-preflight-2026-07-27.json"
+      },
+      "historyHealthContract": {
+        "command": "npm run prisma:migration:history:health",
+        "checks": 8,
+        "postDeployRequired": true,
+        "protectedOrderRatcheted": true,
+        "localNegativeProof": {
+          "status": "BLOCKED_AS_EXPECTED",
+          "ready": 5,
+          "total": 8,
+          "unfinished": 1,
+          "missing": 3,
+          "checksumMismatches": 1,
+          "mutationPerformed": false
+        },
+        "evidence": "what-next/prisma-migration-history-health.json"
+      }
+    },
+    "B04": {
+      "status": "BLOCKED_EXTERNAL_CONFIG",
+      "requiredInput": "Three independently generated managed release secrets",
+      "preflight": {
+        "ready": 2,
+        "total": 8,
+        "blockers": 6,
+        "secretValuesPrinted": false,
+        "evidence": "what-next/release-secret-preflight.json"
+      }
+    },
+    "B05": {
+      "status": "REQUIRES_EXPERT_REVIEW",
+      "requiredInput": "Independent source hash verification",
+      "productionGate": {
+        "ready": 10,
+        "total": 12,
+        "declaredHashes": 7,
+        "validHashes": 0,
+        "boundHashes": 0
+      }
+    },
+    "B06": {
+      "status": "REQUIRES_EXPERT_REVIEW",
+      "requiredInput": "Qualified expert approval and separate checker verification",
+      "reviewPreflight": {
+        "ready": 4,
+        "total": 12,
+        "productionUseAllowed": false,
+        "operatorUpdatesAllowed": false
+      }
+    },
+    "B07": {
+      "status": "BLOCKED_DEPENDENCY",
+      "dependsOn": ["B03", "B04", "STABLE_DEPLOYMENT"],
+      "currentGate": {
+        "credentialClasses": 15,
+        "blockers": 31,
+        "status": "BLOCKED"
+      }
+    },
+    "B08": {
+      "status": "BLOCKED_DEPENDENCY",
+      "dependsOn": ["B03", "B04", "B07", "STABLE_ARTIFACT", "NAMED_OPERATORS"],
+      "currentGate": {
+        "blockers": 152,
+        "activationAuthorized": false,
+        "readyForIndependentReview": false
+      }
+    },
+    "B09": {
+      "status": "WAIT_FOR_B03_B08_AND_STABLE_TREE",
+      "dependsOn": ["B01", "B02", "B03", "B04", "B05", "B06", "B07", "B08"],
+      "currentFreezeSnapshot": {
+        "status": "BLOCKED_ACTIVE_DEVELOPMENT_TREE",
+        "manifestVerified": 206,
+        "manifestTotal": 207,
+        "phase2aRuntimeDrift": 8,
+        "currentChanges": 406,
+        "activationAuthorized": false
+      }
+    },
+    "B10": {
+      "status": "BLOCKED_DEPENDENCY",
+      "dependsOn": ["B09"]
+    },
+    "B11": {
+      "status": "BLOCKED_DEPENDENCY",
+      "dependsOn": [
+        "B01",
+        "B02",
+        "B03",
+        "B04",
+        "B05",
+        "B06",
+        "B07",
+        "B08",
+        "B09",
+        "B10",
+        "ENTERPRISE_GATE_017_GO"
+      ],
+      "currentPhase2bSnapshot": {
+        "passed": 2,
+        "total": 23,
+        "blockers": 21,
+        "eligible": false,
+        "activationAuthorizedByGate": false
+      }
+    },
+    "B12": {
+      "status": "NOT_STARTED",
+      "dependsOn": ["B11", "SUCCESSFUL_PHASE_2B_PILOT"]
+    }
+  },
+  "nextActions": [
+    "Obtain authentic owner acceptance for the prepared B03-B08 handoffs",
+    "Execute B03 production-target provisioning in the authorized external environment",
+    "Execute B04 managed-secret provisioning in the authorized external environment",
+    "Dispatch the existing Cameroon review packet to a qualified reviewer and separate checker"
+  ],
+  "safetyEvents": [
+    {
+      "scope": "LOCAL_DEVELOPMENT_DATABASE",
+      "databaseName": "dbakesman",
+      "productionContacted": false,
+      "event": "A direct diagnostic applied four pending migrations and stopped at offline POS migration because POSOfflineDeviceStatus already existed",
+      "requiredFollowUp": "Reconciled by read-only diagnosis; dbakesman is quarantined from release evidence. Separately authorize replacement or full equivalence-audited recovery if needed.",
+      "status": "RECONCILED_AND_QUARANTINED",
+      "unfinishedMigration": "20260727110000_offline_pos_sync_foundation",
+      "evidence": "what-next/blocker-execution/local-development-migration-history-diagnostic-2026-07-27.json"
+    }
+  ],
+  "integrationGateState": {
+    "status": "READY",
+    "blockerCode": "NONE",
+    "domainControlFailure": false,
+    "constituentGatesPassed": [
+      "inventory_boundary",
+      "service_boundary",
+      "regulatory_boundary",
+      "api_route_guard",
+      "public_identity_abuse_non_release",
+      "ledger_close_truth",
+      "payment_cash_truth",
+      "purchasing_ap",
+      "offline_pos_replay",
+      "country_adapter_pilot_development",
+      "ai_copilot_guardrails",
+      "country_pack_core_integration",
+      "report_trust_export",
+      "role_cockpit",
+      "settings_surface",
+      "workflow_assurance_runtime",
+      "receipt_token_non_release",
+      "payroll_presence",
+      "payroll_immutability",
+      "hard_delete",
+      "regulatory_hardcode",
+      "demo_trust",
+      "raw_error_boundary",
+      "local_prisma_migration_safety"
+    ],
+    "remainingEvidence": "None for the development integration tranche; production release gates remain separate and fail-closed",
+    "command": "npm run policy:gates:integration",
+    "exitCode": 0,
+    "gateCount": 24,
+    "passedCount": 24,
+    "verifiedOn": "2026-07-27",
+    "retryBehavior": "Fail-closed retries resolved four transient Windows report-write errors; no gate was skipped",
+    "migrationHistoryHardening": "26 focused tests passed; static migration safety 9/9; full integration rerun 24/24"
+  },
+  "externalHandoff": {
+    "status": "PREPARED_AWAITING_REAL_OWNER_ACCEPTANCE",
+    "markdown": "docs/blockers/ENTERPRISE_RELEASE_EXTERNAL_WORKSTREAM_HANDOFF_2026-07-27.md",
+    "json": "docs/blockers/enterprise-release-external-workstream-handoff-2026-07-27.json"
+  },
+  "phasedExecutionAudit": {
+    "status": "BLOCKED_STALE_FREEZE",
+    "satisfied": 36,
+    "total": 37,
+    "repositoryBlockerCount": 4,
+    "externalBlockerCount": 6,
+    "interpretation": "The one incomplete requirement is the historical freeze attestation; runtime implementation controls remain present."
+  },
+  "externalInputOrchestrator": {
+    "status": "EXTERNAL_INPUTS_REQUIRED",
+    "passed": 1,
+    "total": 13,
+    "blockers": 102,
+    "activationAuthorized": false,
+    "phase3Authorized": false,
+    "humanInterventions": 9,
+    "evidenceReady": 0,
+    "safeguardsIntact": true,
+    "readinessReport": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_EXTERNAL_INPUT_READINESS_2026-07-25.json",
+    "interventionPlan": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_HUMAN_INTERVENTION_PLAN_2026-07-25.json"
+  }
+}

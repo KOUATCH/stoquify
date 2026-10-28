@@ -1,10 +1,12 @@
-import { z } from "zod"
+import { z } from "zod";
 
-const requiredId = z.string().trim().min(1)
-const decimalInput = z.union([z.number(), z.string()]).transform((value) => String(value))
+const requiredId = z.string().trim().min(1);
+const decimalInput = z
+  .union([z.number(), z.string()])
+  .transform((value) => String(value));
 const positiveDecimalInput = decimalInput.refine((value) => Number(value) > 0, {
   message: "Value must be greater than zero",
-})
+});
 
 export const adjustmentTypeSchema = z.enum([
   "CYCLE_COUNT",
@@ -16,7 +18,7 @@ export const adjustmentTypeSchema = z.enum([
   "FOUND",
   "CORRECTION",
   "OTHER",
-])
+]);
 
 export const postStockTransferInputSchema = z.object({
   organizationId: requiredId,
@@ -26,16 +28,20 @@ export const postStockTransferInputSchema = z.object({
   occurredAt: z.date().optional(),
   documentHash: requiredId.optional(),
   correlationId: requiredId.optional(),
-})
+});
 
-export type PostStockTransferInput = z.input<typeof postStockTransferInputSchema>
-export type ParsedPostStockTransferInput = z.output<typeof postStockTransferInputSchema>
+export type PostStockTransferInput = z.input<
+  typeof postStockTransferInputSchema
+>;
+export type ParsedPostStockTransferInput = z.output<
+  typeof postStockTransferInputSchema
+>;
 
 export const createStockTransferLineInputSchema = z.object({
   itemId: requiredId,
   requestedQuantity: positiveDecimalInput,
   notes: z.string().trim().optional(),
-})
+});
 
 export const createStockTransferInputSchema = z.object({
   organizationId: requiredId,
@@ -45,10 +51,14 @@ export const createStockTransferInputSchema = z.object({
   requestedDate: z.coerce.date().optional(),
   notes: z.string().trim().optional(),
   lines: z.array(createStockTransferLineInputSchema).min(1),
-})
+});
 
-export type CreateStockTransferInput = z.input<typeof createStockTransferInputSchema>
-export type ParsedCreateStockTransferInput = z.output<typeof createStockTransferInputSchema>
+export type CreateStockTransferInput = z.input<
+  typeof createStockTransferInputSchema
+>;
+export type ParsedCreateStockTransferInput = z.output<
+  typeof createStockTransferInputSchema
+>;
 
 export const rebuildInventoryProjectionInputSchema = z.object({
   organizationId: requiredId,
@@ -57,10 +67,15 @@ export const rebuildInventoryProjectionInputSchema = z.object({
   asOf: z.date().optional(),
   toleranceQuantity: z.union([z.number(), z.string()]).optional(),
   toleranceValue: z.union([z.number(), z.string()]).optional(),
-})
+  recordedThrough: z.date().optional(),
+});
 
-export type RebuildInventoryProjectionInput = z.input<typeof rebuildInventoryProjectionInputSchema>
-export type ParsedRebuildInventoryProjectionInput = z.output<typeof rebuildInventoryProjectionInputSchema>
+export type RebuildInventoryProjectionInput = z.input<
+  typeof rebuildInventoryProjectionInputSchema
+>;
+export type ParsedRebuildInventoryProjectionInput = z.output<
+  typeof rebuildInventoryProjectionInputSchema
+>;
 
 export const reconcileInventoryClass3InputSchema = z.object({
   organizationId: requiredId,
@@ -68,10 +83,15 @@ export const reconcileInventoryClass3InputSchema = z.object({
   locationId: requiredId.optional(),
   currency: z.string().trim().min(1).default("XAF"),
   toleranceValue: z.union([z.number(), z.string()]).optional(),
-})
+  recordedThrough: z.date().optional(),
+});
 
-export type ReconcileInventoryClass3Input = z.input<typeof reconcileInventoryClass3InputSchema>
-export type ParsedReconcileInventoryClass3Input = z.output<typeof reconcileInventoryClass3InputSchema>
+export type ReconcileInventoryClass3Input = z.input<
+  typeof reconcileInventoryClass3InputSchema
+>;
+export type ParsedReconcileInventoryClass3Input = z.output<
+  typeof reconcileInventoryClass3InputSchema
+>;
 
 export const createStockAdjustmentLineInputSchema = z.object({
   itemId: requiredId,
@@ -83,7 +103,7 @@ export const createStockAdjustmentLineInputSchema = z.object({
   evidenceHash: requiredId.optional(),
   stockCountLineId: requiredId.optional(),
   metadata: z.unknown().optional(),
-})
+});
 
 export const createStockAdjustmentInputSchema = z.object({
   organizationId: requiredId,
@@ -98,10 +118,14 @@ export const createStockAdjustmentInputSchema = z.object({
   sourceCountSessionId: requiredId.optional(),
   metadata: z.unknown().optional(),
   lines: z.array(createStockAdjustmentLineInputSchema).min(1),
-})
+});
 
-export type CreateStockAdjustmentInput = z.input<typeof createStockAdjustmentInputSchema>
-export type ParsedCreateStockAdjustmentInput = z.output<typeof createStockAdjustmentInputSchema>
+export type CreateStockAdjustmentInput = z.input<
+  typeof createStockAdjustmentInputSchema
+>;
+export type ParsedCreateStockAdjustmentInput = z.output<
+  typeof createStockAdjustmentInputSchema
+>;
 
 export const postStockAdjustmentInputSchema = z.object({
   organizationId: requiredId,
@@ -112,10 +136,14 @@ export const postStockAdjustmentInputSchema = z.object({
   evidenceHash: requiredId.optional(),
   documentHash: requiredId.optional(),
   correlationId: requiredId.optional(),
-})
+});
 
-export type PostStockAdjustmentInput = z.input<typeof postStockAdjustmentInputSchema>
-export type ParsedPostStockAdjustmentInput = z.output<typeof postStockAdjustmentInputSchema>
+export type PostStockAdjustmentInput = z.input<
+  typeof postStockAdjustmentInputSchema
+>;
+export type ParsedPostStockAdjustmentInput = z.output<
+  typeof postStockAdjustmentInputSchema
+>;
 
 export const createStockCountSessionInputSchema = z.object({
   organizationId: requiredId,
@@ -126,10 +154,14 @@ export const createStockCountSessionInputSchema = z.object({
   notes: z.string().trim().optional(),
   itemIds: z.array(requiredId).optional(),
   metadata: z.unknown().optional(),
-})
+});
 
-export type CreateStockCountSessionInput = z.input<typeof createStockCountSessionInputSchema>
-export type ParsedCreateStockCountSessionInput = z.output<typeof createStockCountSessionInputSchema>
+export type CreateStockCountSessionInput = z.input<
+  typeof createStockCountSessionInputSchema
+>;
+export type ParsedCreateStockCountSessionInput = z.output<
+  typeof createStockCountSessionInputSchema
+>;
 
 export const submitStockCountLineInputSchema = z.object({
   lineId: requiredId.optional(),
@@ -138,7 +170,7 @@ export const submitStockCountLineInputSchema = z.object({
   reasonCode: z.string().trim().optional(),
   evidenceHash: requiredId.optional(),
   metadata: z.unknown().optional(),
-})
+});
 
 export const submitStockCountSessionInputSchema = z.object({
   organizationId: requiredId,
@@ -146,10 +178,14 @@ export const submitStockCountSessionInputSchema = z.object({
   submittedById: requiredId,
   countSheetHash: requiredId,
   lines: z.array(submitStockCountLineInputSchema).min(1),
-})
+});
 
-export type SubmitStockCountSessionInput = z.input<typeof submitStockCountSessionInputSchema>
-export type ParsedSubmitStockCountSessionInput = z.output<typeof submitStockCountSessionInputSchema>
+export type SubmitStockCountSessionInput = z.input<
+  typeof submitStockCountSessionInputSchema
+>;
+export type ParsedSubmitStockCountSessionInput = z.output<
+  typeof submitStockCountSessionInputSchema
+>;
 
 export const postStockCountInputSchema = z.object({
   organizationId: requiredId,
@@ -159,12 +195,14 @@ export const postStockCountInputSchema = z.object({
   occurredAt: z.date().optional(),
   countSheetHash: requiredId.optional(),
   correlationId: requiredId.optional(),
-})
+});
 
-export type PostStockCountInput = z.input<typeof postStockCountInputSchema>
-export type ParsedPostStockCountInput = z.output<typeof postStockCountInputSchema>
+export type PostStockCountInput = z.input<typeof postStockCountInputSchema>;
+export type ParsedPostStockCountInput = z.output<
+  typeof postStockCountInputSchema
+>;
 
 export const stockAdjustmentEvidenceInputSchema = z.object({
   evidenceHash: requiredId,
   value: positiveDecimalInput.optional(),
-})
+});

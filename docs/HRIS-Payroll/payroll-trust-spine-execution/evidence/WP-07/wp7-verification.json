@@ -1,0 +1,70 @@
+{
+  "workPackage": "WP7",
+  "decision": "APPROVED_FOR_WP8_INTERNAL_RATIFICATION_ONLY",
+  "productionAuthorized": false,
+  "verifiedAt": "2026-08-22",
+  "scope": "payroll_gate_ratchet_and_disposable_postgresql_certification",
+  "verification": {
+    "trustSpineGate": "READY_6_OF_6",
+    "trustSpineGateTests": "PASS_9_OF_9",
+    "focusedSuites": "PASS_6_OF_6",
+    "focusedTests": "PASS_69_OF_69",
+    "postgresCertification": "READY_3_OF_3",
+    "migrationReplay": "PASS_76_OF_76",
+    "typecheck": "PASS_NO_DIAGNOSTICS",
+    "prismaValidate": "PASS",
+    "focusedLint": "PASS_ZERO_FINDINGS",
+    "focusedDiffCheck": "PASS",
+    "serviceBoundary": "PASS_0_ACTIVE",
+    "payrollPresence": "READY_14_OF_14",
+    "purchasingAp": "READY_11_OF_11",
+    "reportTrust": "READY_35_OF_35_UNLOCKED_EVIDENCE_PATH",
+    "offlinePos": "READY_16_OF_16",
+    "workflowAssuranceStatic": "READY_38_OF_38",
+    "ciRelease": "READY_11_OF_11_UNLOCKED_EVIDENCE_PATH",
+    "policyWiringTests": "PASS_11_OF_11",
+    "monolithicPolicyChain": "BLOCKED_BY_UNRELATED_GENERATED_REPORT_FILE_LOCK"
+  },
+  "postgres": {
+    "target": "localhost/stockflow_immutability_test",
+    "scope": "ISOLATED_LOCAL_DISPOSABLE_POSTGRESQL",
+    "concurrentApproval": {
+      "winners": 1,
+      "losers": 1,
+      "loserSqlState": "40001",
+      "transitionCount": 1,
+      "eventCount": 1,
+      "outboxCount": 1,
+      "auditCount": 1
+    },
+    "duplicateEvidence": {
+      "rejectedSqlState": "23505",
+      "transitionCountAfter": 1
+    },
+    "failureInjection": {
+      "point": "AFTER_CAS_BEFORE_COMMIT",
+      "runStatusAfter": "REVIEWED",
+      "runVersionAfter": 2,
+      "transitionCount": 0,
+      "eventCount": 0,
+      "outboxCount": 0,
+      "auditCount": 0
+    }
+  },
+  "sourceHashesSha256": {
+    "package.json": "027A1338A916A44CEB344A8FA90CF1E0692458C1E772502BA901CDD1825B3CF8",
+    "scripts/payroll-trust-spine-readiness-gate.js": "88D01D147B3B5C6F8328F3CE8FA69168348ECCFDCA346AD79CAEC9782609DD30",
+    "scripts/payroll-trust-spine-postgres-certification.js": "F0171E050A716767C69FAFA2A189D387D2A7130261EDF86E206AA47DAB216E4E",
+    "scripts/__tests__/payroll-trust-spine-readiness-gate.test.js": "28DB33A0EFA1AA910649255DC9D079A8E2DAE1392BACD076C9D1D734CB55FFD5",
+    "scripts/__tests__/payroll-trust-spine-postgres-certification.test.js": "A96C05371B968CBA580F053ED0018193024517B25C9CAB2B23133B8C7F69A309"
+  },
+  "externalOrInheritedBlockers": [
+    "qualified_statutory_source_artifact_expert_approval_missing",
+    "broad_inherited_dirty_state_blocks_clean_candidate",
+    "inherited_destructive_migration_exact_hash_approvals_missing",
+    "inherited_raw_error_gate_8_findings",
+    "external_production_credentials_and_provider_evidence_missing",
+    "windows_generated_report_file_lock_on_monolithic_policy_replay"
+  ],
+  "wp8Authorized": true
+}

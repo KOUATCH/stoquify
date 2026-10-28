@@ -8,6 +8,7 @@ export const SNAPSHOT_KINDS = [
   "branch.operating",
   "payment.truth",
   "inventory.cash",
+  "inventory.loss",
   "close.readiness",
 ] as const;
 
@@ -40,6 +41,7 @@ export type SnapshotSourceModule =
   | "compliance"
   | "dashboard"
   | "finance"
+  | "hris"
   | "inventory"
   | "payments"
   | "payroll"
@@ -142,6 +144,28 @@ export type InventoryCashMetrics = {
   periodTransferCount: number;
 };
 
+export type InventoryLossMetrics = {
+  lossLineCount: number;
+  adjustmentCount: number;
+  totalLossValue: number;
+  currency: string;
+  countVarianceLineCount: number;
+  damagedLineCount: number;
+  expiredLineCount: number;
+  recordedTheftCategoryLineCount: number;
+  writeOffLineCount: number;
+  evidenceCoveredLineCount: number;
+  evidenceCoveragePercent: number;
+  valuationCoveredLineCount: number;
+  valuationCoveragePercent: number;
+  approvalAttributedLineCount: number;
+  approvalCoveragePercent: number;
+  missingEvidenceLineCount: number;
+  missingValuationLineCount: number;
+  missingApprovalAttributionLineCount: number;
+  sourceTruncated: boolean;
+};
+
 export type CloseReadinessMetrics = {
   accountingPeriodCount: number;
   openPeriodCount: number;
@@ -197,6 +221,9 @@ export type PayrollFinanceForecastMetrics = {
   declarationCount: number;
   sourceLinkCount: number;
   evidenceHashCount: number;
+  certifiedInputRunCount: number;
+  certifiedInputProofHashCount: number;
+  registerToLedgerRunCount: number;
   nextPayDate: string | null;
   nextDeclarationDueDate: string | null;
   personLevelAmountsRedacted: true;
@@ -286,6 +313,7 @@ export type SnapshotBuildRunResult = {
     | SnapshotResult<BranchOperatingMetrics>
     | SnapshotResult<PaymentTruthMetrics>
     | SnapshotResult<InventoryCashMetrics>
+    | SnapshotResult<InventoryLossMetrics>
     | SnapshotResult<CloseReadinessMetrics>
   >;
   blockers: SnapshotBlocker[];

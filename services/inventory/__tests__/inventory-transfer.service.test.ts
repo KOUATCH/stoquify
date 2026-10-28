@@ -349,6 +349,29 @@ describe("postStockTransfer", () => {
     )
     expect(mockedDb.inventoryLevel.updateMany).toHaveBeenCalledTimes(2)
     expect(mockedDb.inventoryTransaction.create).toHaveBeenCalledTimes(2)
+    expect(mockedDb.inventoryTransaction.create).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        data: expect.objectContaining({
+          effectiveAt: transferDate,
+          recordedAt: expect.any(Date),
+          timeProvenance: "EXPLICIT_SOURCE_TIME",
+        }),
+      }),
+    )
+    expect(mockedDb.inventoryTransaction.create).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        data: expect.objectContaining({
+          effectiveAt: transferDate,
+          recordedAt: expect.any(Date),
+          timeProvenance: "EXPLICIT_SOURCE_TIME",
+        }),
+      }),
+    )
+    expect(mockedDb.inventoryTransaction.create.mock.calls[0][0].data.recordedAt).toBe(
+      mockedDb.inventoryTransaction.create.mock.calls[1][0].data.recordedAt,
+    )
     expect(mockedDb.stockTransfer.update).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({

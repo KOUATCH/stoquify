@@ -20,6 +20,7 @@ import {
 
 import { db } from "@/prisma/db"
 import type { EvidenceGrade } from "@/services/evidence/evidence-contracts"
+import { payrollCertifiedInputProofFromMetadata } from "@/services/payroll/certified-input-proof"
 import type {
   CloseReadinessMetrics,
   InventoryCashMetrics,
@@ -46,7 +47,10 @@ import {
   weakestEvidenceGrade,
 } from "./snapshot-utils"
 
-const COMPLETED_SALES_STATUSES = [SalesOrderStatus.COMPLETED, SalesOrderStatus.DELIVERED]
+const COMPLETED_SALES_STATUSES = [
+  SalesOrderStatus.COMPLETED,
+  SalesOrderStatus.DELIVERED,
+]
 const CASH_COLLECTED_STATUSES = [PaymentStatus.PAID, PaymentStatus.PARTIAL]
 const PENDING_PURCHASE_STATUSES = [
   PurchaseOrderStatus.SUBMITTED,
@@ -89,24 +93,34 @@ const LEDGER_TRUST_INCIDENT_WORKFLOWS: WorkflowAssuranceWorkflow[] = [
   WorkflowAssuranceWorkflow.COMPLIANCE,
 ]
 const PAYROLL_FINANCE_FORECAST_HORIZON_DAYS = 30
-const PAYROLL_FINANCE_FORECAST_RUN_STATUSES: PayrollRunStatus[] = [PayrollRunStatus.POSTED, PayrollRunStatus.PAID, PayrollRunStatus.ARCHIVED]
+const PAYROLL_FINANCE_FORECAST_RUN_STATUSES: PayrollRunStatus[] = [
+  PayrollRunStatus.POSTED,
+  PayrollRunStatus.PAID,
+  PayrollRunStatus.ARCHIVED,
+]
 const PAYROLL_FINANCE_FORECAST_PAYMENT_STATUSES: PayrollPaymentBatchStatus[] = [
   PayrollPaymentBatchStatus.RELEASED,
   PayrollPaymentBatchStatus.PARTIALLY_SETTLED,
   PayrollPaymentBatchStatus.SETTLED,
 ]
-const PAYROLL_FINANCE_FORECAST_DECLARATION_STATUSES: PayrollDeclarationStatus[] = [
-  PayrollDeclarationStatus.PREPARED,
-  PayrollDeclarationStatus.SUBMITTED,
-  PayrollDeclarationStatus.ACCEPTED,
-  PayrollDeclarationStatus.PAYMENT_DUE,
-]
-const PAYROLL_FINANCE_FORECAST_DECLARATION_BLOCKED_STATUSES: PayrollDeclarationStatus[] = [PayrollDeclarationStatus.REJECTED]
+const PAYROLL_FINANCE_FORECAST_DECLARATION_STATUSES: PayrollDeclarationStatus[] =
+  [
+    PayrollDeclarationStatus.PREPARED,
+    PayrollDeclarationStatus.SUBMITTED,
+    PayrollDeclarationStatus.ACCEPTED,
+    PayrollDeclarationStatus.PAYMENT_DUE,
+  ]
+const PAYROLL_FINANCE_FORECAST_DECLARATION_BLOCKED_STATUSES: PayrollDeclarationStatus[] =
+  [PayrollDeclarationStatus.REJECTED]
 
 export async function getTenantOperatingSnapshot(
   input: SnapshotScopeInput,
 ): Promise<SnapshotResult<TenantOperatingMetrics>> {
   const scope = normalizeSnapshotScope(input)
+  if (scope.locationId) {
+    return buildLocationScopeUnsupportedSnapshot(scope)
+  }
+
   const [paymentTruth, inventoryCash, closeReadiness] = await Promise.all([
     getPaymentTruthSnapshot(scope),
     getInventoryCashSnapshot(scope),
@@ -129,9 +143,146 @@ export async function getTenantOperatingSnapshotFromRelated(
     closeReadiness: SnapshotResult<CloseReadinessMetrics>
   },
 ): Promise<SnapshotResult<TenantOperatingMetrics>> {
+  const scope = normalizeSnapshotScope(input)
+  if (scope.locationId) {
+    return buildLocationScopeUnsupportedSnapshot(scope)
+  }
+
   return buildTenantOperatingSnapshot({
-    scope: normalizeSnapshotScope(input),
+    scope,
     ...related,
+  })
+}
+
+function buildLocationScopeUnsupportedSnapshot(
+  scope: NormalizedSnapshotScope,
+): SnapshotResult<TenantOperatingMetrics> {
+  const reasonCode = "TENANT_OPERATING_LOCATION_SCOPE_UNSUPPORTED"
+
+  return buildSnapshotResult({
+    kind: "tenant.operating",
+    scope,
+    status: "blocked",
+    evidenceGrade: "blocked",
+    sourceModules: [
+      "dashboard",
+      "sales",
+      "payments",
+      "inventory",
+      "purchasing",
+      "hris",
+      "payroll",
+      "accounting",
+      "close",
+      "compliance",
+    ],
+    metrics: {
+      activeLocationCount: 0,
+      completedSalesCount: 0,
+      completedSalesRevenue: 0,
+      cashCollected: 0,
+      pendingPurchaseOrderCount: 0,
+      approvedOrPaidPayrollRunCount: 0,
+      activeEmployeeBalanceCaseCount: 0,
+      openEmployeeBalanceCaseCount: 0,
+      partiallySettledEmployeeBalanceCaseCount: 0,
+      employeeBalanceOutstandingAmount: 0,
+      periodEmployeeBalanceSettlementCount: 0,
+      periodEmployeeBalanceSettlementAmount: 0,
+      postedJournalEntryCount: 0,
+      sourceLinkCount: 0,
+      payrollFinanceForecast: {
+        status: "NON_AUTHORITATIVE",
+        authoritative: false,
+        reasonCode,
+        message:
+          "Tenant operating truth is not available for a location-scoped request.",
+        horizonStart: scope.periodStart.toISOString(),
+        horizonEnd: scope.periodEnd.toISOString(),
+        upcomingNetPayAmount: 0,
+        upcomingStatutoryLiabilityAmount: 0,
+        totalUpcomingAmount: 0,
+        payrollPeriodCount: 0,
+        payrollRunCount: 0,
+        paymentBatchCount: 0,
+        declarationCount: 0,
+        sourceLinkCount: 0,
+        evidenceHashCount: 0,
+        certifiedInputRunCount: 0,
+        certifiedInputProofHashCount: 0,
+        registerToLedgerRunCount: 0,
+        nextPayDate: null,
+        nextDeclarationDueDate: null,
+        personLevelAmountsRedacted: true,
+        blockerCodes: [reasonCode],
+      },
+      paymentTruth: {
+        providerAccountCount: 0,
+        activeProviderAccountCount: 0,
+        recentRunCount: 0,
+        readyForSignoffCount: 0,
+        signedRunCount: 0,
+        openExceptionCount: 0,
+        criticalExceptionCount: 0,
+        openSuspenseCount: 0,
+        openSuspenseAmount: 0,
+        pendingTransactionCount: 0,
+      },
+      inventoryCash: {
+        trackedItemCount: 0,
+        inventoryLevelCount: 0,
+        quantityOnHand: 0,
+        quantityAvailable: 0,
+        quantityReserved: 0,
+        quantityInTransit: 0,
+        quantityOnOrder: 0,
+        inventoryValue: 0,
+        zeroStockLevelCount: 0,
+        negativeStockLevelCount: 0,
+        periodTransactionCount: 0,
+        periodAdjustmentCount: 0,
+        periodTransferCount: 0,
+      },
+      closeReadiness: {
+        accountingPeriodCount: 0,
+        openPeriodCount: 0,
+        recentCloseRunCount: 0,
+        certifiedCloseRunCount: 0,
+        blockedCloseRunCount: 0,
+        averageReadinessScore: null,
+        openFindingCount: 0,
+        criticalOpenFindingCount: 0,
+        unavailableEvidenceCount: 0,
+      },
+    },
+    blockers: [
+      blocker({
+        id: "tenant-operating-location-scope-unsupported",
+        severity: "high",
+        gate: "tenant_operating_scope",
+        title: "Location-scoped tenant operating truth is unavailable",
+        detail:
+          "Tenant operating sources cannot yet prove a complete location allocation, so no tenant-wide values are returned for this location.",
+        sourceTables: [
+          "locations",
+          "sales_orders",
+          "payments",
+          "purchase_orders",
+          "payroll_runs",
+          "journal_entries",
+          "accounting_source_links",
+          "workflow_assurance_incidents",
+        ],
+        nextAction:
+          "Use branch operating truth until every tenant operating source supports location allocation.",
+      }),
+    ],
+    redactions: [],
+    sourceMaxUpdatedAt: null,
+    sourceHashParts: {
+      scopeSupport: "TENANT_ONLY",
+      reasonCode,
+    },
   })
 }
 
@@ -357,9 +508,13 @@ async function buildTenantOperatingSnapshot(input: {
     activeEmployeeBalanceCaseCount,
     openEmployeeBalanceCaseCount,
     partiallySettledEmployeeBalanceCaseCount,
-    employeeBalanceOutstandingAmount: toNumber(employeeBalanceOutstanding._sum.outstandingAmount),
+    employeeBalanceOutstandingAmount: toNumber(
+      employeeBalanceOutstanding._sum.outstandingAmount,
+    ),
     periodEmployeeBalanceSettlementCount,
-    periodEmployeeBalanceSettlementAmount: toNumber(periodEmployeeBalanceSettlement._sum.amount),
+    periodEmployeeBalanceSettlementAmount: toNumber(
+      periodEmployeeBalanceSettlement._sum.amount,
+    ),
     postedJournalEntryCount,
     sourceLinkCount,
     payrollFinanceForecast: payrollFinanceForecast.metrics,
@@ -380,7 +535,8 @@ async function buildTenantOperatingSnapshot(input: {
             severity: "medium",
             gate: "tenant_operating_snapshot",
             title: "No active location is configured",
-            detail: "Tenant operating truth is partial until at least one active branch or warehouse exists.",
+            detail:
+              "Tenant operating truth is partial until at least one active branch or warehouse exists.",
             sourceTables: ["locations"],
             nextAction: "Create or reactivate a location.",
           }),
@@ -393,9 +549,11 @@ async function buildTenantOperatingSnapshot(input: {
             severity: "high",
             gate: "ledger_evidence",
             title: "Posted ledger activity lacks source links",
-            detail: "Posted entries exist in the period, but source-link evidence coverage is zero.",
+            detail:
+              "Posted entries exist in the period, but source-link evidence coverage is zero.",
             sourceTables: ["journal_entries", "accounting_source_links"],
-            nextAction: "Backfill or repair accounting source links for posted entries.",
+            nextAction:
+              "Backfill or repair accounting source links for posted entries.",
           }),
         ]
       : []),
@@ -407,8 +565,12 @@ async function buildTenantOperatingSnapshot(input: {
             gate: "workflow_assurance",
             title: "Ledger assurance incidents are open",
             detail: `${ledgerTrustIncidentCount} unresolved ledger, business-event, or compliance assurance incident(s) are blocking trusted operating intelligence.`,
-            sourceTables: ["workflow_assurance_incidents", "workflow_assurance_check_runs"],
-            nextAction: "Open Manager Action Center and resolve the blocking assurance incidents before relying on BI snapshots.",
+            sourceTables: [
+              "workflow_assurance_incidents",
+              "workflow_assurance_check_runs",
+            ],
+            nextAction:
+              "Open Manager Action Center and resolve the blocking assurance incidents before relying on BI snapshots.",
           }),
         ]
       : []),
@@ -422,8 +584,12 @@ async function buildTenantOperatingSnapshot(input: {
             detail: `${activeEmployeeBalanceCaseCount} active employee balance case(s) have ${metricsBase.employeeBalanceOutstandingAmount.toFixed(
               2,
             )} outstanding.`,
-            sourceTables: ["payroll_employee_balance_cases", "payroll_employee_balance_events"],
-            nextAction: "Open payroll payments and settle, refund, or review employee balance recovery cases.",
+            sourceTables: [
+              "payroll_employee_balance_cases",
+              "payroll_employee_balance_events",
+            ],
+            nextAction:
+              "Open payroll payments and settle, refund, or review employee balance recovery cases.",
           }),
         ]
       : []),
@@ -445,14 +611,25 @@ async function buildTenantOperatingSnapshot(input: {
 
   const redactions = [...paymentTruth.redactions]
   const status =
-    completedSalesCount === 0 && postedJournalEntryCount === 0 && activeLocationCount === 0
+    completedSalesCount === 0 &&
+    postedJournalEntryCount === 0 &&
+    activeLocationCount === 0
       ? "empty"
-      : [paymentTruth.status, inventoryCash.status, closeReadiness.status].includes("blocked") ||
-          blockers.some((item) => item.severity === "critical" || item.severity === "high")
+      : [
+            paymentTruth.status,
+            inventoryCash.status,
+            closeReadiness.status,
+          ].includes("blocked") ||
+          blockers.some(
+            (item) => item.severity === "critical" || item.severity === "high",
+          )
         ? "blocked"
-        : [paymentTruth.status, inventoryCash.status, closeReadiness.status].some((status) =>
-              ["partial", "empty"].includes(status),
-            ) || blockers.length > 0
+        : [
+              paymentTruth.status,
+              inventoryCash.status,
+              closeReadiness.status,
+            ].some((status) => ["partial", "empty"].includes(status)) ||
+            blockers.length > 0
           ? "partial"
           : "fresh"
 
@@ -477,6 +654,7 @@ async function buildTenantOperatingSnapshot(input: {
       "payments",
       "inventory",
       "purchasing",
+      "hris",
       "payroll",
       "accounting",
       "close",
@@ -507,16 +685,21 @@ async function buildTenantOperatingSnapshot(input: {
       closeReadiness: closeReadiness.sourceHash,
       ledgerTrustIncidentCount,
       latestLedgerTrustIncidentId: latestLedgerTrustIncident?.id ?? null,
-      latestLedgerTrustIncidentCheckKey: latestLedgerTrustIncident?.checkKey ?? null,
+      latestLedgerTrustIncidentCheckKey:
+        latestLedgerTrustIncident?.checkKey ?? null,
       activeEmployeeBalanceCaseCount,
       openEmployeeBalanceCaseCount,
       partiallySettledEmployeeBalanceCaseCount,
-      employeeBalanceOutstandingAmount: metrics.employeeBalanceOutstandingAmount,
+      employeeBalanceOutstandingAmount:
+        metrics.employeeBalanceOutstandingAmount,
       periodEmployeeBalanceSettlementCount,
-      periodEmployeeBalanceSettlementAmount: metrics.periodEmployeeBalanceSettlementAmount,
+      periodEmployeeBalanceSettlementAmount:
+        metrics.periodEmployeeBalanceSettlementAmount,
       payrollFinanceForecast: payrollFinanceForecast.metrics,
-      latestEmployeeBalanceCaseUpdatedAt: latestEmployeeBalanceCase?.updatedAt ?? null,
-      latestEmployeeBalanceEventCreatedAt: latestEmployeeBalanceEvent?.createdAt ?? null,
+      latestEmployeeBalanceCaseUpdatedAt:
+        latestEmployeeBalanceCase?.updatedAt ?? null,
+      latestEmployeeBalanceEventCreatedAt:
+        latestEmployeeBalanceEvent?.createdAt ?? null,
     },
   })
 }
@@ -791,8 +974,10 @@ async function getPayrollFinanceForecast(input: {
   const blockers = new Set<string>()
 
   for (const period of periods) {
-    if (period.runs.length === 0) blockers.add("PAYROLL_FORECAST_POSTED_RUN_MISSING")
-    if (period.runs.length > 1) blockers.add("PAYROLL_FORECAST_MULTIPLE_POSTED_RUNS")
+    if (period.runs.length === 0)
+      blockers.add("PAYROLL_FORECAST_POSTED_RUN_MISSING")
+    if (period.runs.length > 1)
+      blockers.add("PAYROLL_FORECAST_MULTIPLE_POSTED_RUNS")
   }
 
   if (periods.length === 0 && runs.length === 0) {
@@ -800,23 +985,36 @@ async function getPayrollFinanceForecast(input: {
       metrics: payrollFinanceForecastMetrics({
         status: "AUTHORITATIVE",
         reasonCode: "PAYROLL_FORECAST_NO_UPCOMING_PERIODS",
-        message: "No upcoming payroll periods, payment batches, or statutory declaration due dates are visible in the forecast horizon.",
+        message:
+          "No upcoming payroll periods, payment batches, or statutory declaration due dates are visible in the forecast horizon.",
         horizon,
       }),
       sourceMaxUpdatedAt: null,
     }
   }
 
-  const paymentBatchIds = Array.from(new Set(runs.flatMap((run) => run.paymentBatches.map((batch) => batch.id))))
+  const paymentBatchIds = Array.from(
+    new Set(runs.flatMap((run) => run.paymentBatches.map((batch) => batch.id))),
+  )
   const sourceLinks = await db.accountingSourceLink.findMany({
     where: {
       organizationId: input.scope.organizationId,
       OR: [
         ...(runs.length
-          ? [{ sourceType: AccountingSourceType.PAYROLL_RUN, sourceId: { in: runs.map((run) => run.id) } }]
+          ? [
+              {
+                sourceType: AccountingSourceType.PAYROLL_RUN,
+                sourceId: { in: runs.map((run) => run.id) },
+              },
+            ]
           : []),
         ...(paymentBatchIds.length
-          ? [{ sourceType: AccountingSourceType.PAYROLL_PAYMENT, sourceId: { in: paymentBatchIds } }]
+          ? [
+              {
+                sourceType: AccountingSourceType.PAYROLL_PAYMENT,
+                sourceId: { in: paymentBatchIds },
+              },
+            ]
           : []),
       ],
     },
@@ -831,40 +1029,108 @@ async function getPayrollFinanceForecast(input: {
   const postedSourceLinksByKey = new Set<string>()
   for (const link of sourceLinks) {
     if (link.postingBatch.status === LedgerPostingBatchStatus.POSTED) {
-      postedSourceLinksByKey.add(payrollSourceLinkKey(link.sourceType, link.sourceId))
+      postedSourceLinksByKey.add(
+        payrollSourceLinkKey(link.sourceType, link.sourceId),
+      )
     }
   }
 
   const paymentBatches = runs.flatMap((run) =>
-    run.paymentBatches.filter((batch) => isDateInRange(batch.paymentDate, horizon.start, horizon.end)).map((batch) => ({ run, batch })),
+    run.paymentBatches
+      .filter((batch) =>
+        isDateInRange(batch.paymentDate, horizon.start, horizon.end),
+      )
+      .map((batch) => ({ run, batch })),
   )
   const declarations = runs.flatMap((run) =>
     run.declarations
-      .filter((declaration) => declaration.dueDate && isDateInRange(declaration.dueDate, horizon.start, horizon.end))
+      .filter(
+        (declaration) =>
+          declaration.dueDate &&
+          isDateInRange(declaration.dueDate, horizon.start, horizon.end),
+      )
       .map((declaration) => ({ run, declaration })),
   )
   const evidenceHashes = new Set<string>()
+  const certifiedInputProofHashes = new Set<string>()
+  let certifiedInputRunCount = 0
+  let registerToLedgerRunCount = 0
 
   if (paymentBatches.length > 0) {
     const providerProofReady =
       input.paymentTruth.status !== "blocked" &&
       input.paymentTruth.metrics.providerAccountCount > 0 &&
       input.paymentTruth.metrics.activeProviderAccountCount > 0
-    if (!providerProofReady) blockers.add("PAYROLL_FORECAST_PROVIDER_PROOF_MISSING")
+    if (!providerProofReady)
+      blockers.add("PAYROLL_FORECAST_PROVIDER_PROOF_MISSING")
   }
 
   for (const run of runs) {
-    const runSourceKey = payrollSourceLinkKey(AccountingSourceType.PAYROLL_RUN, run.id)
-    if (!run.ledgerPostingBatchId || !run.postedBusinessEventId || !postedSourceLinksByKey.has(runSourceKey)) {
+    const runSourceKey = payrollSourceLinkKey(
+      AccountingSourceType.PAYROLL_RUN,
+      run.id,
+    )
+    const hasPostedRunSourceLink =
+      Boolean(run.ledgerPostingBatchId) &&
+      Boolean(run.postedBusinessEventId) &&
+      postedSourceLinksByKey.has(runSourceKey)
+    if (!hasPostedRunSourceLink) {
       blockers.add("PAYROLL_FORECAST_LEDGER_PROOF_MISSING")
     }
 
-    const runPayDateInHorizon = isDateInRange(run.payrollPeriod.payDate, horizon.start, horizon.end)
-    const runPaymentBatches = paymentBatches.filter((item) => item.run.id === run.id)
-    if (runPayDateInHorizon && toNumber(run.netPayableAmount) > 0 && runPaymentBatches.length === 0) {
+    const certifiedInputProof = payrollCertifiedInputProofFromMetadata(
+      run.metadata,
+    )
+    if (!certifiedInputProof) {
+      blockers.add("PAYROLL_FORECAST_CERTIFIED_HRIS_INPUT_PROOF_MISSING")
+    } else {
+      certifiedInputRunCount += 1
+      certifiedInputProofHashes.add(
+        certifiedInputProof.hrisPayrollReadinessHash,
+      )
+      certifiedInputProofHashes.add(
+        certifiedInputProof.payrollInputReadinessHash,
+      )
+      certifiedInputProofHashes.add(
+        certifiedInputProof.payrollEngineInputSnapshotHash,
+      )
+      for (const hash of certifiedInputProof.payrollEngineInputHashes) {
+        certifiedInputProofHashes.add(hash)
+      }
+    }
+
+    const runMetadata = payrollForecastMetadataRecord(run.metadata)
+    const hasMatchedRegisterProof =
+      payrollForecastMetadataString(runMetadata.componentRegisterProofHash) !==
+        null &&
+      payrollForecastMetadataString(
+        runMetadata.componentRegisterProofStatus,
+      ) === "MATCHED"
+    if (!hasMatchedRegisterProof || !hasPostedRunSourceLink) {
+      blockers.add("PAYROLL_FORECAST_REGISTER_LEDGER_TIEOUT_MISSING")
+    } else {
+      registerToLedgerRunCount += 1
+    }
+
+    const runPayDateInHorizon = isDateInRange(
+      run.payrollPeriod.payDate,
+      horizon.start,
+      horizon.end,
+    )
+    const runPaymentBatches = paymentBatches.filter(
+      (item) => item.run.id === run.id,
+    )
+    if (
+      runPayDateInHorizon &&
+      toNumber(run.netPayableAmount) > 0 &&
+      runPaymentBatches.length === 0
+    ) {
       blockers.add("PAYROLL_FORECAST_PAYMENT_BATCH_MISSING")
     }
-    if (toNumber(run.employerChargeAmount) > 0 && run.declarations.length === 0) {
+    if (
+      toNumber(run.employerChargeAmount) > 0 &&
+      run.declarations.length === 0
+    ) {
       blockers.add("PAYROLL_FORECAST_DECLARATION_MISSING")
     }
   }
@@ -873,7 +1139,10 @@ async function getPayrollFinanceForecast(input: {
     if (batch.evidenceHash) evidenceHashes.add(batch.evidenceHash)
     if (batch.bankFileHash) evidenceHashes.add(batch.bankFileHash)
     if (batch.documentHash) evidenceHashes.add(batch.documentHash)
-    const paymentSourceKey = payrollSourceLinkKey(AccountingSourceType.PAYROLL_PAYMENT, batch.id)
+    const paymentSourceKey = payrollSourceLinkKey(
+      AccountingSourceType.PAYROLL_PAYMENT,
+      batch.id,
+    )
     if (
       !PAYROLL_FINANCE_FORECAST_PAYMENT_STATUSES.includes(batch.status) ||
       !batch.evidenceHash ||
@@ -887,20 +1156,32 @@ async function getPayrollFinanceForecast(input: {
 
   for (const { declaration } of declarations) {
     const latestEvidence = declaration.evidenceItems[0] ?? null
-    if (declaration.status === PayrollDeclarationStatus.REJECTED) blockers.add("PAYROLL_FORECAST_DECLARATION_REJECTED")
-    if (!PAYROLL_FINANCE_FORECAST_DECLARATION_STATUSES.includes(declaration.status)) continue
-    if (latestEvidence?.evidenceHash) evidenceHashes.add(latestEvidence.evidenceHash)
-    if (latestEvidence?.sourceRegisterHash) evidenceHashes.add(latestEvidence.sourceRegisterHash)
-    if (latestEvidence?.authorityResponseHash) evidenceHashes.add(latestEvidence.authorityResponseHash)
-    if (latestEvidence?.portalReceiptHash) evidenceHashes.add(latestEvidence.portalReceiptHash)
-    if (latestEvidence?.supportingFileHash) evidenceHashes.add(latestEvidence.supportingFileHash)
+    if (declaration.status === PayrollDeclarationStatus.REJECTED)
+      blockers.add("PAYROLL_FORECAST_DECLARATION_REJECTED")
+    if (
+      !PAYROLL_FINANCE_FORECAST_DECLARATION_STATUSES.includes(
+        declaration.status,
+      )
+    )
+      continue
+    if (latestEvidence?.evidenceHash)
+      evidenceHashes.add(latestEvidence.evidenceHash)
+    if (latestEvidence?.sourceRegisterHash)
+      evidenceHashes.add(latestEvidence.sourceRegisterHash)
+    if (latestEvidence?.authorityResponseHash)
+      evidenceHashes.add(latestEvidence.authorityResponseHash)
+    if (latestEvidence?.portalReceiptHash)
+      evidenceHashes.add(latestEvidence.portalReceiptHash)
+    if (latestEvidence?.supportingFileHash)
+      evidenceHashes.add(latestEvidence.supportingFileHash)
     if (
       !declaration.dueDate ||
       !declaration.payloadHash ||
       !declaration.countryPackResolutionHash ||
       !latestEvidence?.evidenceHash ||
       !latestEvidence.sourceRegisterHash ||
-      latestEvidence.countryPackResolutionHash !== declaration.countryPackResolutionHash
+      latestEvidence.countryPackResolutionHash !==
+        declaration.countryPackResolutionHash
     ) {
       blockers.add("PAYROLL_FORECAST_DECLARATION_PROOF_MISSING")
     }
@@ -912,7 +1193,9 @@ async function getPayrollFinanceForecast(input: {
     ...runs.map((run) => run.updatedAt),
     ...paymentBatches.map(({ batch }) => batch.updatedAt),
     ...declarations.map(({ declaration }) => declaration.updatedAt),
-    ...declarations.flatMap(({ declaration }) => declaration.evidenceItems.map((item) => item.createdAt)),
+    ...declarations.flatMap(({ declaration }) =>
+      declaration.evidenceItems.map((item) => item.createdAt),
+    ),
     ...sourceLinks.map((link) => link.createdAt),
   ])
   const blockerCodes = Array.from(blockers).sort()
@@ -922,7 +1205,11 @@ async function getPayrollFinanceForecast(input: {
     : 0
   const upcomingStatutoryLiabilityAmount = authoritative
     ? declarations
-        .filter(({ declaration }) => PAYROLL_FINANCE_FORECAST_DECLARATION_STATUSES.includes(declaration.status))
+        .filter(({ declaration }) =>
+          PAYROLL_FINANCE_FORECAST_DECLARATION_STATUSES.includes(
+            declaration.status,
+          ),
+        )
         .reduce((sum, { declaration }) => sum + toNumber(declaration.amount), 0)
     : 0
 
@@ -944,66 +1231,77 @@ async function getPayrollFinanceForecast(input: {
       declarationCount: declarations.length,
       sourceLinkCount: sourceLinks.length,
       evidenceHashCount: evidenceHashes.size,
-      nextPayDate: minDateString([...periods.map((period) => period.payDate), ...paymentBatches.map(({ batch }) => batch.paymentDate)]),
-      nextDeclarationDueDate: minDateString(declarations.map(({ declaration }) => declaration.dueDate)),
+      certifiedInputRunCount,
+      certifiedInputProofHashCount: certifiedInputProofHashes.size,
+      registerToLedgerRunCount,
+      nextPayDate: minDateString([
+        ...periods.map((period) => period.payDate),
+        ...paymentBatches.map(({ batch }) => batch.paymentDate),
+      ]),
+      nextDeclarationDueDate: minDateString(
+        declarations.map(({ declaration }) => declaration.dueDate),
+      ),
       blockerCodes,
     }),
     sourceMaxUpdatedAt,
   }
 }
 
-const PAYROLL_FORECAST_RUN_INCLUDE = Prisma.validator<Prisma.PayrollRunInclude>()({
-  payrollPeriod: {
-    select: {
-      id: true,
-      name: true,
-      periodStart: true,
-      periodEnd: true,
-      payDate: true,
-      updatedAt: true,
+const PAYROLL_FORECAST_RUN_INCLUDE =
+  Prisma.validator<Prisma.PayrollRunInclude>()({
+    payrollPeriod: {
+      select: {
+        id: true,
+        name: true,
+        periodStart: true,
+        periodEnd: true,
+        payDate: true,
+        updatedAt: true,
+      },
     },
-  },
-  paymentBatches: {
-    select: {
-      id: true,
-      status: true,
-      amount: true,
-      paymentDate: true,
-      evidenceHash: true,
-      bankFileHash: true,
-      documentHash: true,
-      ledgerPostingBatchId: true,
-      postedBusinessEventId: true,
-      updatedAt: true,
+    paymentBatches: {
+      select: {
+        id: true,
+        status: true,
+        amount: true,
+        paymentDate: true,
+        evidenceHash: true,
+        bankFileHash: true,
+        documentHash: true,
+        ledgerPostingBatchId: true,
+        postedBusinessEventId: true,
+        updatedAt: true,
+      },
     },
-  },
-  declarations: {
-    select: {
-      id: true,
-      status: true,
-      amount: true,
-      dueDate: true,
-      payloadHash: true,
-      countryPackResolutionHash: true,
-      updatedAt: true,
-      evidenceItems: {
-        orderBy: { createdAt: "desc" },
-        take: 1,
-        select: {
-          evidenceHash: true,
-          sourceRegisterHash: true,
-          countryPackResolutionHash: true,
-          authorityResponseHash: true,
-          portalReceiptHash: true,
-          supportingFileHash: true,
-          createdAt: true,
+    declarations: {
+      select: {
+        id: true,
+        status: true,
+        amount: true,
+        dueDate: true,
+        payloadHash: true,
+        countryPackResolutionHash: true,
+        updatedAt: true,
+        evidenceItems: {
+          orderBy: { createdAt: "desc" },
+          take: 1,
+          select: {
+            evidenceHash: true,
+            sourceRegisterHash: true,
+            countryPackResolutionHash: true,
+            authorityResponseHash: true,
+            portalReceiptHash: true,
+            supportingFileHash: true,
+            createdAt: true,
+          },
         },
       },
     },
-  },
-})
+  })
 
-type PayrollForecastRun = Prisma.PayrollRunGetPayload<{ include: typeof PAYROLL_FORECAST_RUN_INCLUDE }>
+type PayrollForecastRun = Prisma.PayrollRunGetPayload<{
+  include: typeof PAYROLL_FORECAST_RUN_INCLUDE
+}>
 type PayrollForecastPeriod = Prisma.PayrollPeriodGetPayload<{
   include: {
     runs: {
@@ -1024,12 +1322,16 @@ function payrollFinanceForecastMetrics(input: {
   declarationCount?: number
   sourceLinkCount?: number
   evidenceHashCount?: number
+  certifiedInputRunCount?: number
+  certifiedInputProofHashCount?: number
+  registerToLedgerRunCount?: number
   nextPayDate?: string | null
   nextDeclarationDueDate?: string | null
   blockerCodes?: string[]
 }): PayrollFinanceForecastMetrics {
   const upcomingNetPayAmount = input.upcomingNetPayAmount ?? 0
-  const upcomingStatutoryLiabilityAmount = input.upcomingStatutoryLiabilityAmount ?? 0
+  const upcomingStatutoryLiabilityAmount =
+    input.upcomingStatutoryLiabilityAmount ?? 0
   return {
     status: input.status,
     authoritative: input.status === "AUTHORITATIVE",
@@ -1039,13 +1341,17 @@ function payrollFinanceForecastMetrics(input: {
     horizonEnd: input.horizon.end.toISOString(),
     upcomingNetPayAmount,
     upcomingStatutoryLiabilityAmount,
-    totalUpcomingAmount: upcomingNetPayAmount + upcomingStatutoryLiabilityAmount,
+    totalUpcomingAmount:
+      upcomingNetPayAmount + upcomingStatutoryLiabilityAmount,
     payrollPeriodCount: input.payrollPeriodCount ?? 0,
     payrollRunCount: input.payrollRunCount ?? 0,
     paymentBatchCount: input.paymentBatchCount ?? 0,
     declarationCount: input.declarationCount ?? 0,
     sourceLinkCount: input.sourceLinkCount ?? 0,
     evidenceHashCount: input.evidenceHashCount ?? 0,
+    certifiedInputRunCount: input.certifiedInputRunCount ?? 0,
+    certifiedInputProofHashCount: input.certifiedInputProofHashCount ?? 0,
+    registerToLedgerRunCount: input.registerToLedgerRunCount ?? 0,
     nextPayDate: input.nextPayDate ?? null,
     nextDeclarationDueDate: input.nextDeclarationDueDate ?? null,
     personLevelAmountsRedacted: true,
@@ -1053,7 +1359,9 @@ function payrollFinanceForecastMetrics(input: {
   }
 }
 
-function payrollForecastBlockers(metrics: PayrollFinanceForecastMetrics): SnapshotBlocker[] {
+function payrollForecastBlockers(
+  metrics: PayrollFinanceForecastMetrics,
+): SnapshotBlocker[] {
   return metrics.blockerCodes.map((code) => {
     const copy = payrollForecastBlockerCopy(code)
     return blocker({
@@ -1065,6 +1373,7 @@ function payrollForecastBlockers(metrics: PayrollFinanceForecastMetrics): Snapsh
       sourceTables: [
         "payroll_periods",
         "payroll_runs",
+        "payroll_run_lines",
         "payroll_payment_batches",
         "payroll_declarations",
         "payroll_declaration_evidence",
@@ -1088,54 +1397,108 @@ function payrollForecastBlockerCopy(code: string): {
       return {
         severity: "high",
         title: "Payroll provider proof is missing",
-        detail: "Upcoming payroll net-pay is withheld until an active payment provider evidence path is visible.",
-        nextAction: "Open payment provider evidence and payroll payment batches before relying on payroll cash forecasts.",
+        detail:
+          "Upcoming payroll net-pay is withheld until an active payment provider evidence path is visible.",
+        nextAction:
+          "Open payment provider evidence and payroll payment batches before relying on payroll cash forecasts.",
       }
     case "PAYROLL_FORECAST_DECLARATION_PROOF_MISSING":
     case "PAYROLL_FORECAST_DECLARATION_MISSING":
       return {
         severity: "high",
         title: "Payroll declaration proof is missing",
-        detail: "Upcoming statutory liability is withheld until declaration payload, due date, country-pack, and lifecycle evidence are complete.",
-        nextAction: "Open payroll declarations and attach source-register-backed declaration evidence.",
+        detail:
+          "Upcoming statutory liability is withheld until declaration payload, due date, country-pack, and lifecycle evidence are complete.",
+        nextAction:
+          "Open payroll declarations and attach source-register-backed declaration evidence.",
       }
     case "PAYROLL_FORECAST_LEDGER_PROOF_MISSING":
       return {
         severity: "high",
         title: "Payroll ledger proof is missing",
-        detail: "Payroll forecast amounts are withheld until payroll run and payment source links point to posted ledger batches.",
-        nextAction: "Repair payroll posting and accounting source links before using the cash forecast.",
+        detail:
+          "Payroll forecast amounts are withheld until payroll run and payment source links point to posted ledger batches.",
+        nextAction:
+          "Repair payroll posting and accounting source links before using the cash forecast.",
+      }
+    case "PAYROLL_FORECAST_CERTIFIED_HRIS_INPUT_PROOF_MISSING":
+      return {
+        severity: "critical",
+        title: "Certified HRIS payroll input proof is missing",
+        detail:
+          "Payroll forecast amounts are withheld until every included run is bound to certified HRIS readiness and payroll engine input hashes.",
+        nextAction:
+          "Recalculate and post payroll from a certified HRIS readiness export before relying on finance or close assurance.",
+      }
+    case "PAYROLL_FORECAST_REGISTER_LEDGER_TIEOUT_MISSING":
+      return {
+        severity: "critical",
+        title: "Payroll register-to-ledger tie-out is incomplete",
+        detail:
+          "Payroll forecast amounts are withheld until matched component-register proof is linked to a posted payroll ledger source.",
+        nextAction:
+          "Repair payroll component-register proof and posted accounting source links before close.",
       }
     case "PAYROLL_FORECAST_PAYMENT_EVIDENCE_MISSING":
     case "PAYROLL_FORECAST_PAYMENT_BATCH_MISSING":
       return {
         severity: "high",
         title: "Payroll payment proof is missing",
-        detail: "Upcoming net-pay forecast is withheld until released payment batches include immutable payment and ledger evidence.",
-        nextAction: "Open payroll payments and complete payment release evidence.",
+        detail:
+          "Upcoming net-pay forecast is withheld until released payment batches include immutable payment and ledger evidence.",
+        nextAction:
+          "Open payroll payments and complete payment release evidence.",
       }
     default:
       return {
         severity: "high",
         title: "Payroll finance forecast is blocked",
         detail: `Payroll forecast proof failed closed with blocker ${code}.`,
-        nextAction: "Open payroll finance evidence and clear the forecast blocker.",
+        nextAction:
+          "Open payroll finance evidence and clear the forecast blocker.",
       }
   }
 }
 
 function payrollForecastHorizon(scope: NormalizedSnapshotScope) {
-  const start = startOfUtcDay(scope.periodStart > scope.now ? scope.periodStart : scope.now)
+  const start = startOfUtcDay(
+    scope.periodStart > scope.now ? scope.periodStart : scope.now,
+  )
   const requestedEnd = scope.periodEnd > start ? scope.periodEnd : null
-  const fallbackEnd = endOfUtcDay(addUtcDays(start, PAYROLL_FINANCE_FORECAST_HORIZON_DAYS))
-  return { start, end: requestedEnd && requestedEnd > start ? requestedEnd : fallbackEnd }
+  const fallbackEnd = endOfUtcDay(
+    addUtcDays(start, PAYROLL_FINANCE_FORECAST_HORIZON_DAYS),
+  )
+  return {
+    start,
+    end: requestedEnd && requestedEnd > start ? requestedEnd : fallbackEnd,
+  }
 }
 
-function payrollSourceLinkKey(sourceType: AccountingSourceType, sourceId: string) {
+function payrollSourceLinkKey(
+  sourceType: AccountingSourceType,
+  sourceId: string,
+) {
   return `${sourceType}:${sourceId}`
 }
 
-function isDateInRange(value: Date | string | null | undefined, start: Date, end: Date) {
+function payrollForecastMetadataRecord(
+  value: unknown,
+): Record<string, unknown> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return {}
+  return value as Record<string, unknown>
+}
+
+function payrollForecastMetadataString(value: unknown): string | null {
+  if (typeof value !== "string") return null
+  const trimmed = value.trim()
+  return trimmed.length > 0 ? trimmed : null
+}
+
+function isDateInRange(
+  value: Date | string | null | undefined,
+  start: Date,
+  end: Date,
+) {
   if (!value) return false
   const date = value instanceof Date ? value : new Date(value)
   return !Number.isNaN(date.getTime()) && date >= start && date <= end

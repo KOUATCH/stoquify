@@ -1,0 +1,160 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:stoquify:run-checkpoint/v1",
+  "title": "Stoquify Run Checkpoint v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "workflow_instance_id",
+    "run_id",
+    "run_version",
+    "call_stack",
+    "lease_owner",
+    "lease_expires_at",
+    "step_id",
+    "state",
+    "completed_steps",
+    "step_output_fingerprints",
+    "side_effect_class",
+    "evidence_fingerprints",
+    "updated_at",
+    "in_flight_step",
+    "approval_ref",
+    "idempotency_key",
+    "provider_operation_id"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "workflow_instance_id": {
+      "type": "string"
+    },
+    "run_id": {
+      "type": "string"
+    },
+    "run_version": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "call_stack": {
+      "type": "array",
+      "maxItems": 12,
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "lease_owner": {
+      "type": "string"
+    },
+    "lease_expires_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "step_id": {
+      "type": "string"
+    },
+    "state": {
+      "type": "string",
+      "enum": [
+        "queued",
+        "running",
+        "approval_required",
+        "blocked",
+        "retryable",
+        "failed",
+        "cancelled",
+        "degraded",
+        "denied",
+        "partial",
+        "unavailable",
+        "provisional",
+        "unknown_outcome",
+        "completed"
+      ]
+    },
+    "completed_steps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "step_output_fingerprints": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "in_flight_step": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "side_effect_class": {
+      "type": "string",
+      "enum": [
+        "none",
+        "read",
+        "control_plane",
+        "business_write",
+        "ambiguous_business_write"
+      ]
+    },
+    "evidence_fingerprints": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "approval_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "idempotency_key": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "client_operation_key": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "provider_operation_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "compensation_disposition": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "active_lease_owner": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "active_lease_expires_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    }
+  }
+}

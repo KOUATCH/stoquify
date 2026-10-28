@@ -1,0 +1,54 @@
+import { requireApiModuleAccess, requireApiSessionForOrg, requireAppPermission } from "@/lib/security/server-authz"
+import { listBriefItemApiDTOs } from "@/services/item/item.service"
+import { jsonAuthzError, jsonErrorResponse, jsonMethodNotAllowed } from "@/lib/error-handling/route-response"
+import { type NextRequest, NextResponse } from "next/server"
+
+export const GET = async (
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) => {
+  try {
+    const orgId = (await params).id
+    const authz = await requireApiSessionForOrg(orgId)
+    if (authz.error) {
+      return jsonAuthzError(authz.error, authz.status, "GET /api/v1/organisations/[id]/briefItems")
+    }
+
+    const user = authz.session?.user
+    if (!user) {
+      return jsonAuthzError("Unauthorized", 401, "GET /api/v1/organisations/[id]/briefItems")
+    }
+
+    const moduleAccess = await requireApiModuleAccess({
+      organizationId: orgId,
+      user,
+      moduleSlug: "inventory",
+      surface: "GET /api/v1/organisations/[id]/briefItems",
+      surfaceType: "api",
+      accessIntent: "read",
+      audit: true,
+    })
+    if (!moduleAccess.allowed) {
+      return jsonAuthzError(moduleAccess.error, moduleAccess.status, "GET /api/v1/organisations/[id]/briefItems")
+    }
+
+    try {
+      requireAppPermission(user, "inventory.items.read")
+    } catch {
+      return jsonAuthzError("Forbidden", 403, "GET /api/v1/organisations/[id]/briefItems")
+    }
+
+    const searchParams = request.nextUrl.searchParams
+    const page = Math.max(parseInt(searchParams.get("page") || "1", 10) || 1, 1)
+    const limit = Math.min(Math.max(parseInt(searchParams.get("limit") || "10", 10) || 10, 1), 100)
+    const response = await listBriefItemApiDTOs(orgId, { page, limit })
+
+    return NextResponse.json(response)
+  } catch (error) {
+    return jsonErrorResponse(error, { endpoint: "GET /api/v1/organisations/[id]/briefItems" })
+  }
+}
+
+export async function POST() {
+  return jsonMethodNotAllowed("POST")
+}

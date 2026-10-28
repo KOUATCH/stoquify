@@ -1,0 +1,141 @@
+{
+  "schemaVersion": 1,
+  "contract": "payroll-trust-spine",
+  "initialStatus": "CALCULATED",
+  "terminalStatus": "POSTED",
+  "sequence": ["CALCULATED", "REVIEWED", "APPROVED", "EMITTED", "POSTED"],
+  "clientAllowedFields": [
+    "payrollRunId",
+    "expectedVersion",
+    "idempotencyKey",
+    "correlationId",
+    "evidenceHash",
+    "documentHash"
+  ],
+  "serverDerivedFields": [
+    "organizationId",
+    "actorUserId",
+    "permissions",
+    "moduleAccess",
+    "freshAuthAt",
+    "now",
+    "workerAttestation"
+  ],
+  "transitions": [
+    {
+      "command": "reviewPayrollRun",
+      "from": "CALCULATED",
+      "to": "REVIEWED",
+      "permission": "payroll.runs.review",
+      "sensitiveAction": "payroll.run.review",
+      "freshAuthMaxAgeSeconds": 300,
+      "actor": "HUMAN",
+      "sod": ["reviewerUserId != preparedByUserId"],
+      "eventType": "PAYROLL_RUN_REVIEWED",
+      "outboxRequired": true,
+      "artifacts": ["reviewedAt", "reviewedByUserId", "reviewedBusinessEventId"]
+    },
+    {
+      "command": "approvePayrollRun",
+      "from": "REVIEWED",
+      "to": "APPROVED",
+      "permission": "payroll.runs.approve",
+      "sensitiveAction": "payroll.run.approve",
+      "freshAuthMaxAgeSeconds": 300,
+      "actor": "HUMAN",
+      "sod": [
+        "approvedByUserId != preparedByUserId",
+        "approvedByUserId != reviewedByUserId"
+      ],
+      "eventType": "PAYROLL_RUN_APPROVED",
+      "outboxRequired": true,
+      "artifacts": ["approvedAt", "approvedByUserId", "approvedBusinessEventId"]
+    },
+    {
+      "command": "emitPayrollPayslips",
+      "from": "APPROVED",
+      "to": "EMITTED",
+      "permission": "payroll.payslips.emit",
+      "sensitiveAction": "payroll.payslips.emit",
+      "freshAuthMaxAgeSeconds": 300,
+      "actor": "HUMAN_OR_ATTESTED_WORKER",
+      "sod": [
+        "emitter may equal approver only when the approved batch is unchanged"
+      ],
+      "eventType": "PAYSLIP_EMITTED",
+      "outboxRequired": true,
+      "artifacts": [
+        "emittedAt",
+        "emittedByUserId",
+        "emittedBusinessEventId",
+        "payslips",
+        "payslipDocumentHashes"
+      ]
+    },
+    {
+      "command": "postPayrollRun",
+      "from": "EMITTED",
+      "to": "POSTED",
+      "permission": "payroll.runs.post",
+      "sensitiveAction": "payroll.run.post",
+      "freshAuthMaxAgeSeconds": 300,
+      "actor": "HUMAN",
+      "sod": [
+        "postedByUserId != preparedByUserId",
+        "postedByUserId != approvedByUserId"
+      ],
+      "eventType": "PAYROLL_POSTED",
+      "outboxRequired": true,
+      "artifacts": [
+        "postedAt",
+        "postedByUserId",
+        "postedBusinessEventId",
+        "journalEntryId",
+        "postingSourceLinkId",
+        "postingEvidenceId",
+        "postingDocumentHash"
+      ]
+    }
+  ],
+  "transaction": {
+    "isolation": "SERIALIZABLE",
+    "maxRetries": 3,
+    "compareAndSetFields": ["organizationId", "id", "status", "version"],
+    "versionIncrement": 1,
+    "idempotency": {
+      "scope": ["organizationId", "idempotencyKey"],
+      "payloadHashRequired": true,
+      "samePayloadReturnsPriorResult": true,
+      "differentPayloadFails": true,
+      "markAppliedLast": true
+    },
+    "atomicEvidence": [
+      "stage artifacts",
+      "business event",
+      "outbox",
+      "audit evidence",
+      "transition ledger",
+      "close invalidation",
+      "run compare-and-set"
+    ]
+  },
+  "correctionPolicy": {
+    "inPlaceMutationAfterPosting": false,
+    "requiresNewVersionedCorrectionFlow": true
+  },
+  "writeControl": {
+    "environmentVariable": "PAYROLL_TRUST_SPINE_WRITES_ENABLED",
+    "enabledValue": "true",
+    "default": "disabled"
+  },
+  "errors": [
+    "INVALID_TRANSITION",
+    "CONCURRENCY_CONFLICT",
+    "IDEMPOTENCY_CONFLICT",
+    "SOD_VIOLATION",
+    "FRESH_AUTH_REQUIRED",
+    "TENANT_SCOPE_VIOLATION",
+    "PAYROLL_TRANSITION_EVIDENCE_MISSING",
+    "PAYROLL_LIFECYCLE_WRITES_DISABLED"
+  ]
+}

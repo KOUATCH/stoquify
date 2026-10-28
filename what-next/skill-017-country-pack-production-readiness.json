@@ -1,0 +1,77 @@
+{
+  "summary": {
+    "generatedAt": "2026-07-27T05:34:17.123Z",
+    "mode": "fail",
+    "status": "blocked",
+    "checkCount": 12,
+    "readyCount": 10,
+    "blockerCount": 2
+  },
+  "checks": [
+    {
+      "id": "country_pack_provenance_schema",
+      "ready": true
+    },
+    {
+      "id": "published_effective_resolution",
+      "ready": true
+    },
+    {
+      "id": "publish_requires_reviewed_evidence",
+      "ready": true
+    },
+    {
+      "id": "source_artifact_hash_verification",
+      "ready": false
+    },
+    {
+      "id": "source_artifact_expert_approval",
+      "ready": false
+    },
+    {
+      "id": "cameroon_automation_claim_blocked",
+      "ready": true
+    },
+    {
+      "id": "payroll_tax_fail_closed",
+      "ready": true
+    },
+    {
+      "id": "sandbox_only_adapter_registry",
+      "ready": true
+    },
+    {
+      "id": "fiscal_creation_blocks_production",
+      "ready": true
+    },
+    {
+      "id": "enqueue_and_worker_block_production",
+      "ready": true
+    },
+    {
+      "id": "sandbox_adapters_self_enforce_environment",
+      "ready": true
+    },
+    {
+      "id": "hardcode_and_policy_wiring",
+      "ready": true
+    }
+  ],
+  "sourceEvidence": {
+    "manifestFound": true,
+    "manifestPath": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/manifest.json",
+    "artifactCount": 2,
+    "verifiedArtifactCount": 2,
+    "artifactHashesVerified": true,
+    "declaredSourceHashCount": 7,
+    "validDeclaredSourceHashCount": 0,
+    "boundDeclaredSourceHashCount": 0,
+    "hashesVerified": false,
+    "approvalArtifactVerified": false,
+    "expertApprovalComplete": false
+  },
+  "blockers": [
+    "source_artifact_hash_verification",
+    "source_artifact_expert_approval"
+  ]
+}

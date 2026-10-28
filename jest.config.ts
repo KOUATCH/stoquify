@@ -12,9 +12,12 @@ const config: Config = {
   testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   testPathIgnorePatterns: [
+    '<rootDir>/.codex-tmp/',
     '<rootDir>/.next/',
     '<rootDir>/node_modules/',
     '<rootDir>/e2e/',
+    '<rootDir>/tests/e2e/',
+    '<rootDir>/what-next/',
   ],
   collectCoverageFrom: [
     'components/**/*.{js,jsx,ts,tsx}',

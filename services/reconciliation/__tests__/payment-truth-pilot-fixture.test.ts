@@ -17,14 +17,14 @@ jest.mock("@/prisma/db", () => ({
     $transaction: jest.fn(),
     providerAccount: { findFirst: jest.fn(), count: jest.fn() },
     providerEvent: { findFirst: jest.fn(), create: jest.fn(), findMany: jest.fn(), update: jest.fn() },
-    statementFile: { findFirst: jest.fn(), create: jest.fn() },
+    statementFile: { findFirst: jest.fn(), create: jest.fn(), findMany: jest.fn() },
     statementLine: { findMany: jest.fn(), createMany: jest.fn(), update: jest.fn() },
     paymentTransaction: { findMany: jest.fn(), count: jest.fn(), findFirst: jest.fn() },
     payment: { aggregate: jest.fn() },
-    matchRecord: { create: jest.fn(), count: jest.fn(), aggregate: jest.fn(), findFirst: jest.fn() },
+    matchRecord: { create: jest.fn(), count: jest.fn(), aggregate: jest.fn(), findFirst: jest.fn(), findMany: jest.fn() },
     reconciliationRun: { findFirst: jest.fn(), create: jest.fn(), update: jest.fn(), count: jest.fn() },
-    paymentException: { create: jest.fn(), count: jest.fn(), findFirst: jest.fn() },
-    suspenseItem: { create: jest.fn(), count: jest.fn(), aggregate: jest.fn(), findFirst: jest.fn() },
+    paymentException: { create: jest.fn(), count: jest.fn(), findFirst: jest.fn(), findMany: jest.fn() },
+    suspenseItem: { create: jest.fn(), count: jest.fn(), aggregate: jest.fn(), findFirst: jest.fn(), findMany: jest.fn() },
     paymentReconciliationInboxItem: { upsert: jest.fn() },
     businessEvent: { findUnique: jest.fn(), create: jest.fn(), update: jest.fn() },
     ledgerAuditEvent: { create: jest.fn() },
@@ -52,14 +52,14 @@ const mockedDb = db as unknown as {
   $transaction: jest.Mock
   providerAccount: { findFirst: jest.Mock; count: jest.Mock }
   providerEvent: { findFirst: jest.Mock; create: jest.Mock; findMany: jest.Mock; update: jest.Mock }
-  statementFile: { findFirst: jest.Mock; create: jest.Mock }
+  statementFile: { findFirst: jest.Mock; create: jest.Mock; findMany: jest.Mock }
   statementLine: { findMany: jest.Mock; createMany: jest.Mock; update: jest.Mock }
   paymentTransaction: { findMany: jest.Mock; count: jest.Mock; findFirst: jest.Mock }
   payment: { aggregate: jest.Mock }
-  matchRecord: { create: jest.Mock; count: jest.Mock; aggregate: jest.Mock; findFirst: jest.Mock }
+  matchRecord: { create: jest.Mock; count: jest.Mock; aggregate: jest.Mock; findFirst: jest.Mock; findMany: jest.Mock }
   reconciliationRun: { findFirst: jest.Mock; create: jest.Mock; update: jest.Mock; count: jest.Mock }
-  paymentException: { create: jest.Mock; count: jest.Mock; findFirst: jest.Mock }
-  suspenseItem: { create: jest.Mock; count: jest.Mock; aggregate: jest.Mock; findFirst: jest.Mock }
+  paymentException: { create: jest.Mock; count: jest.Mock; findFirst: jest.Mock; findMany: jest.Mock }
+  suspenseItem: { create: jest.Mock; count: jest.Mock; aggregate: jest.Mock; findFirst: jest.Mock; findMany: jest.Mock }
   paymentReconciliationInboxItem: { upsert: jest.Mock }
   businessEvent: { findUnique: jest.Mock; create: jest.Mock; update: jest.Mock }
   ledgerAuditEvent: { create: jest.Mock }
@@ -182,6 +182,10 @@ function arrangePilotState() {
     organizationId: "org-1",
     providerCode: "mtn-momo",
     paymentRailId: "rail-mobile-money",
+    paymentRail: { id: "rail-mobile-money", isActive: true },
+    settlementLedgerAccountId: "settlement-ledger-1",
+    suspenseLedgerAccountId: "suspense-ledger-1",
+    settlementAccounts: [{ id: "settlement-account-1" }],
     currencyCode: "XAF",
     status: ProviderAccountStatus.ACTIVE,
     archivedAt: null,
@@ -219,6 +223,13 @@ function arrangePilotState() {
   mockedDb.statementFile.findFirst.mockImplementation(async ({ where }: { where: StoredRow }) =>
     statementFiles.find((file) => file.fileHash === where.fileHash) ?? null,
   )
+  mockedDb.statementFile.findMany.mockImplementation(async () => statementFiles.map((file) => ({
+    ...file,
+    _count: { lines: statementLines.filter((line) => line.statementFileId === file.id).length },
+  })))
+  mockedDb.matchRecord.findMany.mockImplementation(async () => matchRecords)
+  mockedDb.paymentException.findMany.mockImplementation(async () => paymentExceptions)
+  mockedDb.suspenseItem.findMany.mockImplementation(async () => suspenseItems)
   mockedDb.statementFile.create.mockImplementation(async ({ data }: { data: StoredRow }) => {
     const file = {
       id: `statement-file-${statementFiles.length + 1}`,

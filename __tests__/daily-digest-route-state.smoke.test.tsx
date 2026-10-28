@@ -77,6 +77,7 @@ const authContext = {
   orgId: "org-1",
   userId: "user-1",
   permissions: ["dashboard.read", "finance.read"],
+  roles: [{ code: "MANAGER" }],
 }
 
 function params(locale = "en") {
@@ -106,13 +107,13 @@ describe("daily digest dashboard route state smoke", () => {
     expect(screen.getByText("fr")).toBeInTheDocument()
     expect(screen.getByText("digest-data")).toBeInTheDocument()
     expect(requireAnyPermission).toHaveBeenCalledWith(
-      ["dashboard.read", "finance.read", "accounting.close.read", "inventory.read"],
+      ["dashboard.read", "finance.read", "accounting.close.read", "inventory.read", "analytics.read"],
       { resource: "KontavaDailyHabitDigest" },
     )
     expect(getDailyHabitDigestData).toHaveBeenCalledWith({
       organizationId: "org-1",
       actorPermissions: ["dashboard.read", "finance.read"],
-      currency: "XAF",
+      actorRoleCodes: ["MANAGER"],
     })
   })
 

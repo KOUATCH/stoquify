@@ -1,0 +1,127 @@
+{
+  "status": "PASS",
+  "checkedAt": "2026-08-10T14:30:04.997Z",
+  "project": "supplier-authenticated-tablet",
+  "viewport": "tablet",
+  "scenarios": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "createdSupplierId": "cmsnbtlzc01mpmakoe2qbhujq",
+  "fixture": {
+    "source": "scripts/supplier-e2e-fixture.js",
+    "productionBackfill": false,
+    "organizationId": "org_supplier_e2e_local",
+    "foreignOrganizationId": "org_supplier_e2e_foreign",
+    "lifecycleSupplierId": "supplier_supplier_e2e_archive_tablet"
+  },
+  "results": [
+    {
+      "surface": "list",
+      "viewport": "tablet",
+      "path": "/en/dashboard/purchases/suppliers",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/purchases/suppliers",
+      "screenshot": "what-next/evidence/supplier-workflow-2026-08-10/list-tablet.png",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 834,
+        "documentWidth": 834,
+        "bodyWidth": 834,
+        "hasDocumentOverflow": false,
+        "clippedActions": [],
+        "overlappingActions": []
+      }
+    },
+    {
+      "surface": "mutation-dialog",
+      "viewport": "tablet",
+      "path": "/en/dashboard/purchases/suppliers",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/purchases/suppliers",
+      "screenshot": "what-next/evidence/supplier-workflow-2026-08-10/mutation-dialog-tablet.png",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 834,
+        "documentWidth": 834,
+        "bodyWidth": 834,
+        "hasDocumentOverflow": false,
+        "clippedActions": [],
+        "overlappingActions": []
+      }
+    },
+    {
+      "surface": "create-page",
+      "viewport": "tablet",
+      "path": "/en/dashboard/purchases/suppliers/create",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/purchases/suppliers/create",
+      "screenshot": "what-next/evidence/supplier-workflow-2026-08-10/create-page-tablet.png",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 834,
+        "documentWidth": 834,
+        "bodyWidth": 834,
+        "hasDocumentOverflow": false,
+        "clippedActions": [],
+        "overlappingActions": []
+      }
+    },
+    {
+      "surface": "detail-page",
+      "viewport": "tablet",
+      "path": "/en/dashboard/purchases/suppliers/cmsnbtlzc01mpmakoe2qbhujq",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/purchases/suppliers/cmsnbtlzc01mpmakoe2qbhujq",
+      "screenshot": "what-next/evidence/supplier-workflow-2026-08-10/detail-page-tablet.png",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 834,
+        "documentWidth": 834,
+        "bodyWidth": 834,
+        "hasDocumentOverflow": false,
+        "clippedActions": [],
+        "overlappingActions": []
+      }
+    },
+    {
+      "surface": "edit-page",
+      "viewport": "tablet",
+      "path": "/en/dashboard/purchases/suppliers/cmsnbtlzc01mpmakoe2qbhujq/edit",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/purchases/suppliers/cmsnbtlzc01mpmakoe2qbhujq/edit",
+      "screenshot": "what-next/evidence/supplier-workflow-2026-08-10/edit-page-tablet.png",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 834,
+        "documentWidth": 834,
+        "bodyWidth": 834,
+        "hasDocumentOverflow": false,
+        "clippedActions": [],
+        "overlappingActions": []
+      }
+    },
+    {
+      "surface": "history-page",
+      "viewport": "tablet",
+      "path": "/en/dashboard/purchases/payables/history",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/purchases/payables/history?supplierId=cmsnbtlzc01mpmakoe2qbhujq",
+      "screenshot": "what-next/evidence/supplier-workflow-2026-08-10/history-page-tablet.png",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 834,
+        "documentWidth": 834,
+        "bodyWidth": 834,
+        "hasDocumentOverflow": false,
+        "clippedActions": [],
+        "overlappingActions": []
+      }
+    }
+  ]
+}

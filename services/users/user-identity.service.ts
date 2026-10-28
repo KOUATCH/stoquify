@@ -3,6 +3,7 @@ import "server-only"
 import VerifyEmail from "@/components/email-templates/verify-email"
 import { ResetPasswordEmail } from "@/components/email-templates/reset-password"
 import UserInvitation from "@/components/email-templates/user-invite"
+import { adminPermissions } from "@/config/permissions"
 import { generateOtp } from "@/lib/generateOtp"
 import { generateSlug } from "@/lib/generateSlug"
 import { logger } from "@/lib/logger"
@@ -14,10 +15,17 @@ import {
   verifyUserCredentialPassword,
 } from "@/lib/security/auth-credentials"
 import { logSecurityEvent, SecurityEventType } from "@/lib/security/audit-log"
+import type { PublicIdentityRequestContext } from "@/lib/security/public-request-context"
 import { safeUserSelect } from "@/lib/security/server-authz"
 import { generateToken } from "@/lib/token"
 import { db } from "@/prisma/db"
+import { recordReferralConversionInTx } from "@/services/referrals/referral-attribution.service"
 import { BusinessRuleError } from "@/services/_shared/action-errors"
+import { enforcePublicIdentityAbuseLimits } from "@/services/security/public-identity-abuse.service"
+import {
+  evaluateRoleGrantAuthority,
+  evaluateRoleGrantPolicy,
+} from "@/services/security/role-grant-policy.service"
 import type { OrgDataProps, RegisterUserProps, RegisterWorkflowData, UserProps } from "@/types/types"
 import { InviteStatus, Locale as PrismaLocale, LocationType, type Prisma } from "@prisma/client"
 import { randomBytes, randomUUID } from "crypto"
@@ -29,7 +37,7 @@ const ADMIN_USER_ROLE = {
   nameEn: "Admin",
   nameFr: "Administrateur",
   description: "Default Admin role with all permissions",
-  permissions: ["*"],
+  permissions: ["*", ...adminPermissions],
 }
 
 type StatusResult<T = null> = {
@@ -57,6 +65,7 @@ type InviteActor = {
 
 type InviteWorkflowInput = {
   actor: InviteActor
+  actorPermissions: readonly string[]
   email: string
   roleId: string
   roleName?: string | null
@@ -94,7 +103,7 @@ function addDetail(target: Record<string, unknown>, key: string, value: unknown)
   target[key] = value
 }
 
-const REGISTER_MODULE_DEFAULTS = ["POS", "Inventory", "Accounting", "Payment reconciliation", "Payroll"]
+const REGISTER_MODULE_DEFAULTS = ["POS", "Sales", "Inventory", "Accounting", "Payment reconciliation", "Payroll"]
 
 function normalizeRequestedModules(value?: string[] | null) {
   const modules = (value?.length ? value : REGISTER_MODULE_DEFAULTS)
@@ -102,7 +111,14 @@ function normalizeRequestedModules(value?: string[] | null) {
     .filter((module): module is string => Boolean(module))
     .map((module) => module.slice(0, 80))
 
-  return [...new Set(modules)].slice(0, 12)
+  const uniqueModules = [...new Set(modules)]
+  const posIndex = uniqueModules.findIndex((module) => module.toLowerCase() === "pos")
+  const hasSales = uniqueModules.some((module) => module.toLowerCase() === "sales")
+  if (posIndex >= 0 && !hasSales) {
+    uniqueModules.splice(posIndex + 1, 0, "Sales")
+  }
+
+  return uniqueModules.slice(0, 12)
 }
 
 function normalizeRegistrationOnboarding(data: RegisterUserProps): RegisterWorkflowData["onboarding"] {
@@ -232,10 +248,23 @@ async function sendVerificationEmail(input: {
 export async function createOrganizationOwner(
   data: UserProps,
   orgData: OrgDataProps,
+  requestContext?: PublicIdentityRequestContext | null,
 ): Promise<StatusResult<{ id: string; email: string; organizationId: string }>> {
   const { email, password, firstName, lastName, phone, image } = data
   const normalizedEmail = email.trim().toLowerCase()
   const normalizedPhone = phone.trim()
+  const abuseDecision = await enforcePublicIdentityAbuseLimits({
+    operation: "registration",
+    subject: normalizedEmail,
+    requestContext,
+  })
+  if (!abuseDecision.allowed) {
+    return {
+      error: AUTH_MESSAGES.registrationUnavailable,
+      status: 429,
+      data: null,
+    }
+  }
   const passwordPolicy = await hashPolicyCompliantPassword({
     password,
     email: normalizedEmail,
@@ -404,7 +433,10 @@ export async function createOrganizationOwner(
   }
 }
 
-export async function registerOrganizationAccount(data: RegisterUserProps) {
+export async function registerOrganizationAccount(
+  data: RegisterUserProps,
+  requestContext?: PublicIdentityRequestContext | null,
+) {
   const validationError = validateRegistrationInput(data)
   if (validationError) {
     return {
@@ -414,6 +446,17 @@ export async function registerOrganizationAccount(data: RegisterUserProps) {
   }
 
   const email = data.email.trim().toLowerCase()
+  const abuseDecision = await enforcePublicIdentityAbuseLimits({
+    operation: "registration",
+    subject: email,
+    requestContext,
+  })
+  if (!abuseDecision.allowed) {
+    return {
+      success: false,
+      error: AUTH_MESSAGES.registrationUnavailable,
+    }
+  }
   const phone = data.phone.trim()
   const companyName = data.companyName.trim()
   const firstName = data.firstName.trim()
@@ -499,7 +542,7 @@ export async function registerOrganizationAccount(data: RegisterUserProps) {
         nameFr: "Administrateur",
         code: "administrator",
         description: "Organization administrator with full access",
-        permissions: ["*"],
+        permissions: ADMIN_USER_ROLE.permissions,
         organizationId: organization.id,
         updatedAt: now,
       },
@@ -571,6 +614,16 @@ export async function registerOrganizationAccount(data: RegisterUserProps) {
       passwordHash: hashedPassword,
     })
 
+    await recordReferralConversionInTx(tx, {
+      referralCode: data.referralCode,
+      targetOrganizationId: organization.id,
+      subject: user.email,
+      targetUserId: user.id,
+      accountantInviteToken: data.accountantInviteToken,
+      accountantInviteAccepted: data.accountantInviteAccepted === true,
+      now,
+    })
+
     return { user, organization, role: adminRole, defaultLocation }
   })
 
@@ -614,16 +667,39 @@ export async function sendInviteWorkflow(input: InviteWorkflowInput): Promise<St
   const email = input.email.trim().toLowerCase()
   const roleName = input.roleName ?? "assigned"
   const organizationId = input.actor.organizationId
+  const authorityDecision = evaluateRoleGrantAuthority(input.actorPermissions)
+
+  if (!authorityDecision.allowed) {
+    return {
+      error: authorityDecision.safeMessage ?? "You are not allowed to invite users with roles",
+      status: 403,
+      data: null,
+    }
+  }
 
   return db.$transaction(async (tx) => {
     const role = await tx.role.findFirst({
       where: { id: input.roleId, organizationId },
-      select: { id: true, nameEn: true, nameFr: true, code: true },
+      select: { id: true, nameEn: true, nameFr: true, code: true, organizationId: true, permissions: true },
     })
 
     if (!role) {
       return {
         error: "Invalid role for this organization",
+        status: 403,
+        data: null,
+      }
+    }
+
+    const grantDecision = evaluateRoleGrantPolicy({
+      actorOrganizationId: organizationId,
+      actorPermissions: input.actorPermissions,
+      targetRole: role,
+    })
+
+    if (!grantDecision.allowed) {
+      return {
+        error: grantDecision.safeMessage ?? "You cannot grant the selected role",
         status: 403,
         data: null,
       }
@@ -718,7 +794,21 @@ export async function sendInviteWorkflow(input: InviteWorkflowInput): Promise<St
 
 export async function acceptInvitationWorkflow(
   data: InvitedUserInput,
+  requestContext?: PublicIdentityRequestContext | null,
 ): Promise<StatusResult<{ id: string; email: string; organizationId: string; inviteId: string; roleId: string }>> {
+  const abuseDecision = await enforcePublicIdentityAbuseLimits({
+    operation: "invitation_redemption",
+    subject: data.token,
+    requestContext,
+  })
+  if (!abuseDecision.allowed) {
+    return {
+      error: "Too many invitation attempts. Please try again later.",
+      status: 429,
+      data: null,
+    }
+  }
+
   return db.$transaction(async (tx) => {
     const invite = await tx.invite.findUnique({
       where: { token: data.token },
@@ -972,13 +1062,23 @@ export async function changeUserPasswordWorkflow(input: PasswordChangeInput) {
   return { error: null, status: 200 }
 }
 
-export async function requestPasswordResetLinkWorkflow(email: string): Promise<StatusResult> {
+export async function requestPasswordResetLinkWorkflow(
+  email: string,
+  requestContext?: PublicIdentityRequestContext | null,
+): Promise<StatusResult> {
   const normalizedEmail = email.trim().toLowerCase()
   const genericResponse = {
     status: 200,
     error: null,
     data: null,
   }
+  const abuseDecision = await enforcePublicIdentityAbuseLimits({
+    operation: "password_reset_request",
+    subject: normalizedEmail,
+    requestContext,
+  })
+  if (!abuseDecision.allowed) return genericResponse
+
   const user = await db.user.findFirst({
     where: { email: { equals: normalizedEmail, mode: "insensitive" } },
   })
@@ -1031,10 +1131,25 @@ export async function completePasswordResetWorkflow(
   email: string,
   token: string,
   newPassword: string,
+  requestContext?: PublicIdentityRequestContext | null,
 ): Promise<StatusResult> {
+  const normalizedEmail = email.trim().toLowerCase()
+  const abuseDecision = await enforcePublicIdentityAbuseLimits({
+    operation: "password_reset_completion",
+    subject: normalizedEmail,
+    requestContext,
+  })
+  if (!abuseDecision.allowed) {
+    return {
+      status: 429,
+      error: "Too many password reset attempts. Please try again later.",
+      data: null,
+    }
+  }
+
   const user = await db.user.findFirst({
     where: {
-      email: { equals: email.trim().toLowerCase(), mode: "insensitive" },
+      email: { equals: normalizedEmail, mode: "insensitive" },
       verificationToken: token,
       verificationTokenExpires: { gt: new Date() },
     },
@@ -1095,7 +1210,18 @@ export async function completePasswordResetWorkflow(
   }
 }
 
-export async function verifyEmailOtpWorkflow(userId: string, otp: string) {
+export async function verifyEmailOtpWorkflow(
+  userId: string,
+  otp: string,
+  requestContext?: PublicIdentityRequestContext | null,
+) {
+  const abuseDecision = await enforcePublicIdentityAbuseLimits({
+    operation: "email_otp_verification",
+    subject: userId,
+    requestContext,
+  })
+  if (!abuseDecision.allowed) return { status: 429 }
+
   const user = await db.user.findUnique({
     where: {
       id: userId,

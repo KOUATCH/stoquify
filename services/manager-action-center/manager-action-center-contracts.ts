@@ -23,8 +23,17 @@ import type {
   SnapshotResult,
   TenantOperatingMetrics,
 } from "@/services/snapshots/snapshot-contracts"
+import type {
+  PaymentReconciliationSignOffCommandCandidate,
+  PaymentReconciliationSignOffCommandStateResult,
+} from "@/services/reconciliation/payment-reconciliation-sign-off-command-state-contracts"
+import type { ClientMissingCloseEvidenceRequestQueue } from "@/services/accounting/missing-close-evidence-request-queue-contracts"
 
-export type ManagerActionDueState = "overdue" | "due_today" | "due_soon" | "scheduled"
+export type ManagerActionDueState =
+  | "overdue"
+  | "due_today"
+  | "due_soon"
+  | "scheduled"
 
 export type ManagerActionRunSheetGroupId =
   | "overdue"
@@ -34,8 +43,24 @@ export type ManagerActionRunSheetGroupId =
   | "waiting"
   | "assigned"
   | "routine"
+export type ClientMissingProofActionCenterSource =
+  | {
+      state: "AVAILABLE"
+      queue: ClientMissingCloseEvidenceRequestQueue
+      reason: null
+    }
+  | {
+      state: "HIDDEN"
+      queue: null
+      reason: "RBAC_REQUIRED" | "MODULE_UNAVAILABLE"
+    }
+  | {
+      state: "UNAVAILABLE"
+      queue: null
+      reason: "SOURCE_READ_FAILED"
+    }
 
-export type ManagerActionCenterAction = {
+type ManagerActionCenterActionBase = {
   id: string
   signalId: string
   title: string
@@ -47,6 +72,7 @@ export type ManagerActionCenterAction = {
   severityScore: number
   assignedRole: SignalOwnerRole
   dueAt: string
+  waitingOn?: "ACCOUNTANT_REVIEW"
   dueState: ManagerActionDueState
   evidenceGrade: EvidenceGrade
   trustState: BITrustState
@@ -55,6 +81,23 @@ export type ManagerActionCenterAction = {
   redactions: SnapshotRedaction[]
   actionLink: BIActionLink
 }
+
+export type ManagerActionCenterAction =
+  | (ManagerActionCenterActionBase & {
+      origin: "SIGNAL" | "ASSURANCE" | "ACCOUNTANT_REQUEST"
+      kind: "LINK"
+      sourceCommand: null
+    })
+  | (ManagerActionCenterActionBase & {
+      origin: "SOURCE_COMMAND"
+      kind: "LINK"
+      sourceCommand: null
+    })
+  | (ManagerActionCenterActionBase & {
+      origin: "SOURCE_COMMAND"
+      kind: "PAYMENT_RECONCILIATION_SIGN_OFF"
+      sourceCommand: PaymentReconciliationSignOffCommandCandidate
+    })
 
 export type ManagerActionRunSheetGroup = {
   id: ManagerActionRunSheetGroupId
@@ -76,6 +119,7 @@ export type ManagerActionCenterSummary = {
   redacted: number
   blocked: number
   overdue: number
+  dueToday: number
   hiddenByPermission: number
 }
 
@@ -90,6 +134,7 @@ export type ManagerActionCenterData = {
   insights: BIInsight[]
   actionItems: ManagerActionCenterAction[]
   actionQueue: ActionQueueResult
+  clientMissingProofSource: ClientMissingProofActionCenterSource | null
   summary: ManagerActionCenterSummary
   assuranceIncidents: AssuranceControlTowerIncident[]
 }
@@ -108,4 +153,6 @@ export type ComposeManagerActionCenterInput = {
   actionQueue: ActionQueueResult
   assuranceIncidents?: AssuranceControlTowerIncident[]
   assuranceHiddenByPermission?: number
+  paymentReconciliationSignOff?: PaymentReconciliationSignOffCommandStateResult | null
+  clientMissingProofSource?: ClientMissingProofActionCenterSource | null
 }

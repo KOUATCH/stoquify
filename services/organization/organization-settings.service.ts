@@ -2,7 +2,9 @@ import "server-only"
 
 import { randomUUID } from "crypto"
 
+import { adminPermissions } from "@/config/permissions"
 import { generateSlug } from "@/lib/generateSlug"
+import { hasAnyRbacPermission, hasRbacPermission } from "@/lib/security/rbac-permissions"
 import { db } from "@/prisma/db"
 import { BusinessRuleError } from "@/services/_shared/action-errors"
 import { Locale as PrismaLocale, PaymentStatus } from "@prisma/client"
@@ -86,7 +88,7 @@ export function canReadOrganizations(actor: OrganizationSettingsActor) {
   const permissions = actor.permissions || []
 
   return (
-    permissions.includes("*") ||
+    hasAnyRbacPermission(permissions, ["system.organization.read", "system.organization.update"]) ||
     permissions.includes("organizations.read") ||
     permissions.includes("organizations.create") ||
     permissions.includes("organizations.manage") ||
@@ -98,7 +100,7 @@ export function canCreateOrganizations(actor: OrganizationSettingsActor) {
   const permissions = actor.permissions || []
 
   return (
-    permissions.includes("*") ||
+    hasRbacPermission(permissions, "system.organization.update") ||
     permissions.includes("organizations.create") ||
     permissions.includes("organizations.manage") ||
     permissions.includes("settings.organization.manage")
@@ -254,7 +256,7 @@ export async function createOrganizationForSettings(
         nameFr: "Administrateur",
         code: "administrator",
         description: "Organization administrator with full access",
-        permissions: ["*"],
+        permissions: ["*", ...adminPermissions],
         organizationId: createdOrganization.id,
         updatedAt: now,
       },

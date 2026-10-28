@@ -26,6 +26,10 @@ const incidentTransitionSchema = z.object({
   note: z.string().min(3).max(1200).optional(),
 })
 
+const resolveIncidentSchema = incidentTransitionSchema.extend({
+  currentSourceHash: z.string().min(12).max(160),
+})
+
 const assignIncidentSchema = z.object({
   incidentId: idSchema,
   ownerId: idSchema,
@@ -52,6 +56,7 @@ const approveWaiverSchema = z.object({
 })
 
 export type WorkflowAssuranceIncidentTransitionInput = z.input<typeof incidentTransitionSchema>
+export type ResolveWorkflowAssuranceIncidentActionInput = z.input<typeof resolveIncidentSchema>
 export type AssignWorkflowAssuranceIncidentActionInput = z.input<typeof assignIncidentSchema>
 export type SuppressWorkflowAssuranceIncidentActionInput = z.input<typeof suppressIncidentSchema>
 export type RequestWorkflowAssuranceWaiverActionInput = z.input<typeof requestWaiverSchema>
@@ -91,7 +96,7 @@ const assignIncident = protect<AssignWorkflowAssuranceIncidentActionInput, Workf
   },
 )
 
-const resolveIncident = protect<WorkflowAssuranceIncidentTransitionInput, WorkflowAssuranceIncidentDto>(
+const resolveIncident = protect<ResolveWorkflowAssuranceIncidentActionInput, WorkflowAssuranceIncidentDto>(
   {
     permission: "controls.manage",
     auditResource: "WorkflowAssuranceIncident",
@@ -100,7 +105,7 @@ const resolveIncident = protect<WorkflowAssuranceIncidentTransitionInput, Workfl
     tenantGuard: "handler-derived",
   },
   async (input, ctx) => {
-    const parsed = incidentTransitionSchema.parse(input)
+    const parsed = resolveIncidentSchema.parse(input)
     return resolveWorkflowAssuranceIncident({
       ...parsed,
       organizationId: ctx.orgId,
@@ -188,7 +193,7 @@ export async function assignWorkflowAssuranceIncidentAction(input: AssignWorkflo
   return assignIncident(input)
 }
 
-export async function resolveWorkflowAssuranceIncidentAction(input: WorkflowAssuranceIncidentTransitionInput) {
+export async function resolveWorkflowAssuranceIncidentAction(input: ResolveWorkflowAssuranceIncidentActionInput) {
   return resolveIncident(input)
 }
 

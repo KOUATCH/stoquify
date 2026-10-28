@@ -17,8 +17,10 @@ import {
   getModuleCatalogEntry,
   normalizeRequestedModuleSlugs,
 } from "../modules/module-catalog.service";
-import { getCountryPack } from "../regulatory/country-packs/registry";
-import { resolveRegulatoryParameter } from "../regulatory/country-packs/resolve";
+import {
+  getCountryPack,
+  resolveRegulatoryParameter,
+} from "../regulatory/regulatory-capability.service";
 import { validatePayrollCountryPackCalculationFixtures } from "./payroll-country-pack-fixture-runner";
 import {
   buildPayrollStatutoryReviewedProofChain,

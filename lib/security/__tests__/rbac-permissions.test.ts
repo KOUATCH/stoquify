@@ -1,3 +1,4 @@
+import { PERMISSION_GROUPS, ROLE_TEMPLATES } from "@/lib/permissions"
 import {
   expandPermissions,
   hasAllRbacPermissions,
@@ -20,17 +21,36 @@ describe("rbac permission compatibility", () => {
     expect(hasRbacPermission(["customers.read"], "READ_CUSTOMERS")).toBe(true)
   })
 
+  it("keeps customer order read permission compatible with legacy sales order grants", () => {
+    expect(isKnownPermission("customers.orders.read")).toBe(true)
+    expect(permissionCandidates("customers.orders.read")).toEqual(
+      expect.arrayContaining(["customers.orders.read", "READ_SALES_ORDERS"]),
+    )
+    expect(hasRbacPermission(["READ_SALES_ORDERS"], "customers.orders.read")).toBe(true)
+    expect(hasRbacPermission(["customers.read"], "customers.orders.read")).toBe(false)
+  })
   it("does not let wildcard grants bypass high-risk or critical permissions", () => {
     expect(hasRbacPermission(["*"], "dashboard.read")).toBe(true)
     expect(hasRbacPermission(["*"], "roles.permissions.assign")).toBe(false)
+    expect(hasRbacPermission(["*"], "branch.daily-close.sign")).toBe(false)
     expect(hasRbacPermission(["*"], "accounting.period.close")).toBe(false)
+    expect(hasRbacPermission(["*"], "pos.receipts.revoke")).toBe(false)
     expect(hasAnyRbacPermission(["*"], ["users.delete", "roles.delete"])).toBe(false)
     expect(hasAllRbacPermissions(["*"], ["users.delete", "roles.delete"])).toBe(false)
     expect(hasRbacPermission(["*", "roles.permissions.assign"], "roles.permissions.assign")).toBe(true)
+    expect(hasRbacPermission(["*", "branch.daily-close.sign"], "branch.daily-close.sign")).toBe(true)
+    expect(hasRbacPermission(["*", "pos.receipts.revoke"], "pos.receipts.revoke")).toBe(true)
+  })
+
+  it("registers branch daily-close sign-off as canonical critical authority", () => {
+    expect(isKnownPermission("branch.daily-close.sign")).toBe(true)
+    expect(permissionRisk("branch.daily-close.sign")).toBe("crit")
+    expect(hasRbacPermission(["branch.daily-close.sign"], "branch.daily-close.sign")).toBe(true)
   })
 
   it("fails closed for unknown permission keys", () => {
     expect(isKnownPermission("purchases.orders.receive")).toBe(true)
+    expect(isKnownPermission("pos.receipts.revoke")).toBe(true)
     expect(isKnownPermission("unknown.module.action")).toBe(false)
     expect(hasRbacPermission(["unknown.module.action"], "unknown.module.action")).toBe(false)
     expect(hasRbacPermission(["*"], "unknown.module.action")).toBe(false)
@@ -48,6 +68,20 @@ describe("rbac permission compatibility", () => {
   it("keeps accounting permissions compatible with legacy finance grants", () => {
     expect(hasRbacPermission(["POST_JOURNAL_ENTRIES"], "accounting.journal.post")).toBe(true)
     expect(hasRbacPermission(["accounting.reports.read"], "VIEW_FINANCIAL_REPORTS")).toBe(true)
+  })
+
+  it("registers missing-proof requests as explicit high-risk accounting authority", () => {
+    expect(isKnownPermission("accounting.close.evidence.request")).toBe(true)
+    expect(permissionRisk("accounting.close.evidence.request")).toBe("high")
+    expect(
+      hasRbacPermission(
+        ["MANAGE_FINANCIAL_CONTROLS"],
+        "accounting.close.evidence.request",
+      ),
+    ).toBe(true)
+    expect(
+      hasRbacPermission(["*"], "accounting.close.evidence.request"),
+    ).toBe(false)
   })
 
   it("does not let reconciliation run permission imply certified evidence powers", () => {
@@ -113,10 +147,40 @@ describe("rbac permission compatibility", () => {
     expect(hasRbacPermission(["EMPLOYEE_SALARY_READ"], "payroll.payslips.self.read")).toBe(true)
     expect(hasRbacPermission(["PAYROLL_APPROVE"], "payroll.runs.approve")).toBe(true)
     expect(hasRbacPermission(["PAYROLL_PROCESS"], "payroll.runs.calculate")).toBe(true)
+    expect(hasRbacPermission(["PAYROLL_PROCESS"], "payroll.payments.request")).toBe(true)
+    expect(hasRbacPermission(["PAYROLL_APPROVE"], "payroll.payments.approve")).toBe(true)
     expect(hasRbacPermission(["MANAGE_FINANCIAL_CONTROLS"], "payroll.payments.release")).toBe(true)
     expect(hasRbacPermission(["MANAGE_FINANCIAL_CONTROLS"], "payroll.payments.reconcile")).toBe(true)
     expect(hasRbacPermission(["PAYROLL_APPROVE"], "payroll.declarations.manage")).toBe(true)
     expect(hasRbacPermission(["EMPLOYEE_SALARY_READ"], "payroll.payslips.read")).toBe(true)
+  })
+
+  it("keeps HRIS people permissions independent from payroll permissions", () => {
+    expect(isKnownPermission("hris.self_service.read")).toBe(true)
+    expect(isKnownPermission("hris.self_service.request")).toBe(true)
+    expect(hasRbacPermission(["hris.self_service.read"], "hris.self_service.read")).toBe(true)
+    expect(hasRbacPermission(["hris.self_service.read"], "hris.people.read")).toBe(false)
+    expect(isKnownPermission("hris.people.read")).toBe(true)
+    expect(isKnownPermission("hris.people.manage")).toBe(true)
+    expect(hasRbacPermission(["hris.people.read"], "hris.people.read")).toBe(true)
+    expect(hasRbacPermission(["hris.people.read"], "hris.people.manage")).toBe(false)
+    expect(hasRbacPermission(["payroll.employees.read", "payroll.command.read"], "hris.people.read")).toBe(false)
+    expect(hasRbacPermission(["hris.people.read"], "payroll.employees.read")).toBe(false)
+    expect(hasRbacPermission(["*"], "hris.people.read")).toBe(false)
+    expect(hasRbacPermission(["*", "hris.people.read"], "hris.people.read")).toBe(true)
+  })
+
+  it("keeps legacy role templates aligned with the own-record permission catalog", () => {
+    for (const role of ["ADMIN", "MANAGER", "SUPERVISOR", "EMPLOYEE", "CASHIER", "VIEWER"] as const) {
+      expect(ROLE_TEMPLATES[role].permissions).toEqual(expect.arrayContaining([
+        "hris.self_service.read",
+        "hris.self_service.request",
+      ]))
+    }
+    expect(PERMISSION_GROUPS.HRIS_PEOPLE_CORE.permissions).toEqual(expect.arrayContaining([
+      "hris.self_service.read",
+      "hris.self_service.request",
+    ]))
   })
 
   it("classifies role mutation permissions as critical", () => {
@@ -137,7 +201,21 @@ describe("rbac permission compatibility", () => {
     expect(permissionRisk("reports.financial.export")).toBe("crit")
     expect(permissionRisk("reports.audit.view")).toBe("high")
     expect(permissionRisk("payroll.payments.release")).toBe("crit")
+    expect(permissionRisk("payroll.payments.request")).toBe("crit")
+    expect(permissionRisk("payroll.payments.approve")).toBe("crit")
     expect(permissionRisk("payroll.payments.reconcile")).toBe("crit")
     expect(permissionRisk("payroll.declarations.manage")).toBe("crit")
+    expect(permissionRisk("hris.self_service.read")).toBe("low")
+    expect(permissionRisk("hris.self_service.request")).toBe("high")
+    expect(permissionRisk("hris.people.read")).toBe("high")
+    expect(permissionRisk("hris.people.manage")).toBe("crit")
+    expect(permissionRisk("pos.receipts.revoke")).toBe("high")
+  })
+  it("requires explicit organization management authority for cross-org resolver permission", () => {
+    expect(permissionRisk("system.organization.update")).toBe("high")
+    expect(hasRbacPermission(["COMPANY_READ"], "system.organization.read")).toBe(true)
+    expect(hasRbacPermission(["*"], "system.organization.update")).toBe(false)
+    expect(hasRbacPermission(["MANAGE_ORGANIZATION"], "system.organization.update")).toBe(true)
+    expect(hasRbacPermission(["system.organization.update"], "system.organization.update")).toBe(true)
   })
 })

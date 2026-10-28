@@ -17,15 +17,29 @@ import {
 } from "@prisma/client"
 import { randomUUID } from "node:crypto"
 
+import { hasRbacPermission } from "@/lib/security/rbac-permissions"
 import { db } from "@/prisma/db"
-import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
+import { recordBusinessEventInTx } from "@/services/events/business-event.service"
+import {
+  ApplicationError,
+  BusinessRuleError,
+  ConflictError,
+  ForbiddenError,
+  getPrismaKnownRequest,
+  isApplicationError,
+  NotFoundError,
+} from "@/services/_shared/action-errors"
 import { getAccountantPortalData } from "./data-trust.service"
+import { resolveAccountantClientAccess } from "./accountant-access.service"
 import {
   getPeriodClosePreflight,
   getPeriodClosePreflightFailures,
   type PeriodClosePreflight,
 } from "./periods.service"
-import { reconcileLedger, type LedgerReconciliationResult } from "./reconciliations.service"
+import {
+  reconcileLedger,
+  type LedgerReconciliationResult,
+} from "./reconciliations.service"
 import { getPaymentReconciliationDashboardData } from "@/services/reconciliation/payment-reconciliation-dashboard.service"
 import {
   reconcileInventoryClass3,
@@ -40,22 +54,131 @@ import type {
 import {
   assertFindingCanReceiveComment,
   CloseAssuranceError,
+  type AcceptMissingCloseEvidenceResponseInput,
   type ApproveCloseWaiverInput,
   type AssignCloseFindingInput,
   type CloseAssurancePeriodInput,
   type CloseEvidenceGraphInput,
   type CommentOnCloseFindingInput,
+  type RequestMissingCloseEvidenceInput,
+  type RespondToMissingCloseEvidenceInput,
   type RequestCloseWaiverInput,
   type UpdateAccountantReviewInput,
 } from "./close-assurance.schemas"
+import {
+  MISSING_CLOSE_EVIDENCE_RESPONSE_TYPE,
+  MISSING_CLOSE_EVIDENCE_RESPONSE_VISIBILITY,
+  MISSING_CLOSE_EVIDENCE_REQUEST_TYPE,
+  MISSING_CLOSE_EVIDENCE_VISIBILITY,
+} from "./missing-close-evidence-request-queue-contracts"
+import {
+  ACCOUNTANT_MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE,
+  MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE_TYPE,
+  MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE_VISIBILITY,
+  type MissingCloseEvidenceResponseAcceptanceDto,
+} from "./missing-close-evidence-response-acceptance-contracts"
 
 type DbClient = typeof db | Prisma.TransactionClient
+
+type CloseFreshAuthControl = {
+  actorId: string
+  organizationId: string
+  lastAuthAt: Date | number | string
+}
 
 type CloseControlContext = {
   actorId?: string | null
   actorPermissions?: readonly string[]
-  lastAuthAt?: Date | number | string | null
   now?: Date | number | string | null
+}
+
+type CloseWaiverControlContext = Omit<CloseControlContext, "now"> & {
+  freshAuth?: CloseFreshAuthControl | null
+}
+
+type MissingCloseEvidenceAcceptanceControlContext = Omit<
+  CloseControlContext,
+  "now"
+> & {
+  freshAuth?: CloseFreshAuthControl | null
+}
+
+const CLOSE_WAIVER_FRESH_AUTH_MAX_AGE_MS = 5 * 60 * 1000
+const MISSING_CLOSE_EVIDENCE_ACCEPTANCE_FRESH_AUTH_MAX_AGE_MS =
+  ACCOUNTANT_MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE.freshAuthMaxAgeSeconds *
+  1000
+
+function requireFreshWaiverControl(
+  organizationId: string,
+  control: CloseWaiverControlContext,
+  now: Date,
+) {
+  const actorId = control.actorId
+  const freshAuth = control.freshAuth
+  const rawLastAuthAt = freshAuth?.lastAuthAt
+  const lastAuthAt =
+    rawLastAuthAt instanceof Date
+      ? rawLastAuthAt.getTime()
+      : rawLastAuthAt === null || rawLastAuthAt === undefined
+        ? Number.NaN
+        : new Date(rawLastAuthAt).getTime()
+  const nowTime = now.getTime()
+
+  if (
+    !actorId ||
+    !freshAuth ||
+    freshAuth.actorId !== actorId ||
+    freshAuth.organizationId !== organizationId ||
+    !Number.isFinite(nowTime) ||
+    !Number.isFinite(lastAuthAt) ||
+    lastAuthAt <= 0 ||
+    lastAuthAt > nowTime ||
+    nowTime - lastAuthAt > CLOSE_WAIVER_FRESH_AUTH_MAX_AGE_MS
+  ) {
+    throw new BusinessRuleError(
+      "Fresh authentication is required to approve a close waiver.",
+      "FRESH_AUTH_REQUIRED",
+    )
+  }
+
+  return actorId
+}
+
+function requireFreshMissingEvidenceAcceptanceControl(
+  homeOrganizationId: string,
+  control: MissingCloseEvidenceAcceptanceControlContext,
+  now: Date,
+): string {
+  const actorId = control.actorId?.trim()
+  const freshAuth = control.freshAuth
+  const rawLastAuthAt = freshAuth?.lastAuthAt
+  const lastAuthAt =
+    rawLastAuthAt instanceof Date
+      ? rawLastAuthAt.getTime()
+      : rawLastAuthAt === null || rawLastAuthAt === undefined
+        ? Number.NaN
+        : new Date(rawLastAuthAt).getTime()
+  const nowTime = now.getTime()
+
+  if (
+    !actorId ||
+    !freshAuth ||
+    freshAuth.actorId !== actorId ||
+    freshAuth.organizationId !== homeOrganizationId ||
+    !Number.isFinite(nowTime) ||
+    !Number.isFinite(lastAuthAt) ||
+    lastAuthAt <= 0 ||
+    lastAuthAt > nowTime ||
+    nowTime - lastAuthAt >
+      MISSING_CLOSE_EVIDENCE_ACCEPTANCE_FRESH_AUTH_MAX_AGE_MS
+  ) {
+    throw new BusinessRuleError(
+      "Fresh authentication is required to accept missing-proof evidence.",
+      "FRESH_AUTH_REQUIRED",
+    )
+  }
+
+  return actorId
 }
 
 type ClosePeriodSummary = {
@@ -128,6 +251,38 @@ export type CloseAssuranceCommentDto = {
   authorId: string | null
   body: string
   visibility: string
+  createdAt: string
+}
+
+export type MissingCloseEvidenceRequestDto = {
+  id: string
+  organizationId: string
+  periodId: string
+  closeRunId: string
+  findingId: string
+  requestedById: string
+  requestedFromId: string
+  requestText: string
+  dueAt: string
+  status: "OPEN"
+  correlationId: string
+  createdAt: string
+}
+
+export type MissingCloseEvidenceResponseDto = {
+  id: string
+  requestId: string
+  organizationId: string
+  periodId: string
+  closeRunId: string
+  findingId: string
+  requestedById: string
+  requestedFromId: string
+  respondedById: string
+  responseText: string
+  requestCorrelationId: string
+  status: "SUBMITTED"
+  correlationId: string
   createdAt: string
 }
 
@@ -226,19 +381,37 @@ export type CloseAssuranceDashboardData = {
   }
 }
 
-type AssessmentDraft = Omit<CloseAssuranceDashboardData, "comments" | "reviews"> & {
+type AssessmentDraft = Omit<
+  CloseAssuranceDashboardData,
+  "comments" | "reviews"
+> & {
   raw: {
     period: Awaited<ReturnType<typeof resolveTargetPeriod>>
     checklist: Array<Omit<CloseAssuranceChecklistDto, "id">>
-    findings: Array<Omit<CloseAssuranceFindingDto, "id" | "checklistItemId" | "assignedAt" | "waiverRequestedById" | "waiverApprovedById"> & { checklistKey: string }>
-    evidenceItems: Array<Omit<CloseEvidenceItemDto, "id" | "checklistItemId" | "findingId"> & { checklistKey?: string }>
+    findings: Array<
+      Omit<
+        CloseAssuranceFindingDto,
+        | "id"
+        | "checklistItemId"
+        | "assignedAt"
+        | "waiverRequestedById"
+        | "waiverApprovedById"
+      > & { checklistKey: string }
+    >
+    evidenceItems: Array<
+      Omit<CloseEvidenceItemDto, "id" | "checklistItemId" | "findingId"> & {
+        checklistKey?: string
+      }
+    >
   }
 }
 
 type DraftChecklistItem = AssessmentDraft["raw"]["checklist"][number]
 type DraftFinding = AssessmentDraft["raw"]["findings"][number]
 type DraftEvidenceItem = AssessmentDraft["raw"]["evidenceItems"][number]
-type PayrollForecastSnapshot = SnapshotResult<TenantOperatingMetrics> | { error: unknown }
+type PayrollForecastSnapshot =
+  | SnapshotResult<TenantOperatingMetrics>
+  | { error: unknown }
 
 type InventoryValuationAnnexMetadata = {
   organizationId: string
@@ -250,7 +423,10 @@ type InventoryValuationAnnexMetadata = {
   inventorySubledgerValueTotal: string | null
   mismatchAmount: string | null
   sourceHash: string | null
-  blockerStatus: "PASSED" | "INVENTORY_VALUATION_MISMATCH" | "EVIDENCE_UNAVAILABLE"
+  blockerStatus:
+    | "PASSED"
+    | "INVENTORY_VALUATION_MISMATCH"
+    | "EVIDENCE_UNAVAILABLE"
   failures: Array<{
     type: InventoryClass3Failure["type"] | "INVENTORY_VALUATION_UNAVAILABLE"
     severity: InventoryClass3Failure["severity"]
@@ -274,6 +450,7 @@ const CLOSE_SOURCE_TABLES = [
   "stock_count_sessions",
   "payroll_periods",
   "payroll_runs",
+  "payroll_run_transitions",
   "payroll_payment_batches",
   "payroll_declarations",
   "payroll_declaration_evidence",
@@ -289,6 +466,12 @@ const openFindingStatuses = [
   CloseFindingStatus.REOPENED,
 ] as const
 
+const missingCloseEvidenceResponseStatuses = new Set<CloseFindingStatus>([
+  CloseFindingStatus.OPEN,
+  CloseFindingStatus.ASSIGNED,
+  CloseFindingStatus.REOPENED,
+])
+
 function iso(value: Date | string | null | undefined) {
   return value ? new Date(value).toISOString() : null
 }
@@ -297,34 +480,170 @@ function jsonObject(value: Record<string, unknown>): Prisma.InputJsonObject {
   return value as Prisma.InputJsonObject
 }
 
-function decimalNumber(value: Prisma.Decimal | number | string | null | undefined) {
+type CloseWorkflowEventInput = {
+  eventType: string
+  idempotencyKey: string
+  organizationId: string
+  actorId?: string | null
+  sourceType: string
+  sourceId: string
+  message: string
+  severity: "INFO" | "MEDIUM" | "HIGH" | "CRITICAL"
+  closeRunId?: string | null
+  periodId?: string | null
+  findingId?: string | null
+  ownerId?: string | null
+  dueAt?: Date | string | null
+  documentHash?: string | null
+  correlationId?: string | null
+  payload?: Record<string, unknown>
+}
+
+const CLOSE_WORKFLOW_ACCOUNTING_SOURCE_TYPE = "MANUAL"
+
+function optionalString(value: string | null | undefined) {
+  const trimmed = value?.trim()
+  return trimmed ? trimmed : undefined
+}
+
+function closeEventPayload(params: CloseWorkflowEventInput) {
+  return {
+    closeRunId: params.closeRunId ?? null,
+    periodId: params.periodId ?? null,
+    findingId: params.findingId ?? null,
+    ownerId: params.ownerId ?? null,
+    severity: params.severity,
+    message: params.message,
+    dueAt: iso(params.dueAt),
+    correlationId: params.correlationId ?? null,
+    ...(params.payload ?? {}),
+  }
+}
+
+async function recordCloseWorkflowEventInTx(
+  tx: Prisma.TransactionClient,
+  params: CloseWorkflowEventInput,
+) {
+  const payload = closeEventPayload(params)
+  await recordBusinessEventInTx(
+    tx as Parameters<typeof recordBusinessEventInTx>[0],
+    {
+      organizationId: params.organizationId,
+      eventType: params.eventType,
+      eventSource: "SYSTEM",
+      idempotencyKey: params.idempotencyKey,
+      payload,
+      actorId: optionalString(params.actorId),
+      sourceType: CLOSE_WORKFLOW_ACCOUNTING_SOURCE_TYPE,
+      sourceId: params.sourceId,
+      documentHash: optionalString(params.documentHash),
+      metadata: {
+        closeRunId: params.closeRunId ?? null,
+        periodId: params.periodId ?? null,
+        findingId: params.findingId ?? null,
+        sourceType: params.sourceType,
+        sourceId: params.sourceId,
+        severity: params.severity,
+        correlationId: params.correlationId ?? null,
+      },
+      outboxMessages: [
+        {
+          channel: "NOTIFICATION",
+          eventName: params.eventType,
+          idempotencyKey: `${params.idempotencyKey}:notification`,
+          payload: {
+            notification: {
+              type: params.eventType,
+              severity: params.severity,
+              ownerId: params.ownerId ?? null,
+              dueAt: iso(params.dueAt),
+              status: "UNREAD",
+            },
+            evidenceRef: {
+              closeRunId: params.closeRunId ?? null,
+              periodId: params.periodId ?? null,
+              findingId: params.findingId ?? null,
+            },
+            message: params.message,
+            correlationId: params.correlationId ?? null,
+          },
+          metadata: {
+            sourceType: params.sourceType,
+            sourceId: params.sourceId,
+            correlationId: params.correlationId ?? null,
+          },
+        },
+      ],
+    },
+  )
+}
+
+function isDueSoon(dueAt: Date | string | null | undefined, now = new Date()) {
+  if (!dueAt) return false
+  const due = new Date(dueAt).getTime()
+  if (!Number.isFinite(due)) return false
+  const diffMs = due - now.getTime()
+  return diffMs >= 0 && diffMs <= 48 * 60 * 60 * 1000
+}
+
+function notificationSeverity(severity: CloseFindingSeverity) {
+  switch (severity) {
+    case CloseFindingSeverity.CRITICAL:
+      return "CRITICAL"
+    case CloseFindingSeverity.HIGH:
+      return "HIGH"
+    case CloseFindingSeverity.MEDIUM:
+      return "MEDIUM"
+    default:
+      return "INFO"
+  }
+}
+
+function decimalNumber(
+  value: Prisma.Decimal | number | string | null | undefined,
+) {
   if (value === null || value === undefined) return null
   if (typeof value === "number") return value
   return Number(value)
 }
 
-function closeRunStatusFromFindings(findings: Array<{ severity: CloseFindingSeverity; status: CloseFindingStatus }>) {
+function closeRunStatusFromFindings(
+  findings: Array<{
+    severity: CloseFindingSeverity
+    status: CloseFindingStatus
+  }>,
+) {
   const blockers = findings.filter(
     (finding) =>
-      openFindingStatuses.includes(finding.status as (typeof openFindingStatuses)[number]) &&
-      (finding.severity === CloseFindingSeverity.CRITICAL || finding.severity === CloseFindingSeverity.HIGH),
+      openFindingStatuses.includes(
+        finding.status as (typeof openFindingStatuses)[number],
+      ) &&
+      (finding.severity === CloseFindingSeverity.CRITICAL ||
+        finding.severity === CloseFindingSeverity.HIGH),
   )
 
   return blockers.length > 0 ? CloseRunStatus.BLOCKED : CloseRunStatus.READY
 }
 
-function severityFromStatus(status: CloseChecklistStatus, fallback: CloseFindingSeverity) {
+function severityFromStatus(
+  status: CloseChecklistStatus,
+  fallback: CloseFindingSeverity,
+) {
   if (status === CloseChecklistStatus.FAILED) return fallback
-  if (status === CloseChecklistStatus.WARNING) return CloseFindingSeverity.MEDIUM
-  if (status === CloseChecklistStatus.UNAVAILABLE) return CloseFindingSeverity.MEDIUM
+  if (status === CloseChecklistStatus.WARNING)
+    return CloseFindingSeverity.MEDIUM
+  if (status === CloseChecklistStatus.UNAVAILABLE)
+    return CloseFindingSeverity.MEDIUM
   return CloseFindingSeverity.INFO
 }
 
 const PAYROLL_FORECAST_CHECKLIST_KEY = "payroll-finance-forecast-proof"
-const PAYROLL_FORECAST_SOURCE_SERVICE = "services/snapshots/tenant-operating-snapshot.service.ts"
+const PAYROLL_FORECAST_SOURCE_SERVICE =
+  "services/snapshots/tenant-operating-snapshot.service.ts"
 const PAYROLL_FORECAST_SOURCE_TABLES = [
   "payroll_periods",
   "payroll_runs",
+  "payroll_run_lines",
   "payroll_payment_batches",
   "payroll_declarations",
   "payroll_declaration_evidence",
@@ -333,13 +652,21 @@ const PAYROLL_FORECAST_SOURCE_TABLES = [
   "ledger_posting_batches",
 ] as const
 
-function payrollForecastUnavailable(snapshot: PayrollForecastSnapshot): snapshot is { error: unknown } {
+function payrollForecastUnavailable(
+  snapshot: PayrollForecastSnapshot,
+): snapshot is { error: unknown } {
   return "error" in snapshot
 }
 
 function payrollForecastActionHref(blockerCodes: readonly string[]) {
-  if (blockerCodes.some((code) => code.includes("DECLARATION"))) return "/dashboard/payroll/declarations"
-  if (blockerCodes.some((code) => code.includes("PAYMENT") || code.includes("PROVIDER"))) return "/dashboard/payroll/payments"
+  if (blockerCodes.some((code) => code.includes("DECLARATION")))
+    return "/dashboard/payroll/declarations"
+  if (
+    blockerCodes.some(
+      (code) => code.includes("PAYMENT") || code.includes("PROVIDER"),
+    )
+  )
+    return "/dashboard/payroll/payments"
   return "/dashboard/payroll/runs"
 }
 
@@ -358,7 +685,8 @@ function payrollForecastRedactions(snapshot: PayrollForecastSnapshot) {
     {
       id: "close-payroll-forecast-person-level-redacted",
       field: "payroll.personLevelAmounts",
-      reason: "Close assurance exposes aggregate payroll cash and statutory obligations only; person-level payroll values stay inside payroll.",
+      reason:
+        "Close assurance exposes aggregate payroll cash and statutory obligations only; person-level payroll values stay inside payroll.",
       policy: "KONTAVA_SENSITIVE_PAYROLL_EVIDENCE",
     },
   ])
@@ -366,10 +694,17 @@ function payrollForecastRedactions(snapshot: PayrollForecastSnapshot) {
 
 function payrollForecastSeverity(snapshot: PayrollForecastSnapshot) {
   if (payrollForecastUnavailable(snapshot)) return CloseFindingSeverity.HIGH
-  const blockers = snapshot.blockers.filter((blocker) => blocker.gate === "payroll_finance_forecast")
-  if (blockers.some((blocker) => blocker.severity === "critical")) return CloseFindingSeverity.CRITICAL
-  if (blockers.some((blocker) => blocker.severity === "high")) return CloseFindingSeverity.HIGH
-  if (!snapshot.metrics.payrollFinanceForecast.authoritative || snapshot.metrics.payrollFinanceForecast.blockerCodes.length > 0) {
+  const blockers = snapshot.blockers.filter(
+    (blocker) => blocker.gate === "payroll_finance_forecast",
+  )
+  if (blockers.some((blocker) => blocker.severity === "critical"))
+    return CloseFindingSeverity.CRITICAL
+  if (blockers.some((blocker) => blocker.severity === "high"))
+    return CloseFindingSeverity.HIGH
+  if (
+    !snapshot.metrics.payrollFinanceForecast.authoritative ||
+    snapshot.metrics.payrollFinanceForecast.blockerCodes.length > 0
+  ) {
     return CloseFindingSeverity.HIGH
   }
   return CloseFindingSeverity.INFO
@@ -378,17 +713,28 @@ function payrollForecastSeverity(snapshot: PayrollForecastSnapshot) {
 function payrollForecastBlocked(snapshot: PayrollForecastSnapshot) {
   if (payrollForecastUnavailable(snapshot)) return true
   const forecast = snapshot.metrics.payrollFinanceForecast
-  return !forecast.authoritative || forecast.blockerCodes.length > 0 || snapshot.blockers.some((blocker) => blocker.gate === "payroll_finance_forecast")
+  return (
+    !forecast.authoritative ||
+    forecast.blockerCodes.length > 0 ||
+    snapshot.blockers.some(
+      (blocker) => blocker.gate === "payroll_finance_forecast",
+    )
+  )
 }
 
 function payrollForecastMessage(snapshot: PayrollForecastSnapshot) {
   if (payrollForecastUnavailable(snapshot)) {
-    return messageFromError(snapshot.error, "Payroll finance forecast proof could not be loaded.")
+    return messageFromError(
+      snapshot.error,
+      "Payroll finance forecast proof could not be loaded.",
+    )
   }
   return snapshot.metrics.payrollFinanceForecast.message
 }
 
-function payrollForecastChecklist(snapshot: PayrollForecastSnapshot): DraftChecklistItem {
+function payrollForecastChecklist(
+  snapshot: PayrollForecastSnapshot,
+): DraftChecklistItem {
   const unavailable = payrollForecastUnavailable(snapshot)
   const blocked = payrollForecastBlocked(snapshot)
   const forecast = unavailable ? null : snapshot.metrics.payrollFinanceForecast
@@ -406,7 +752,7 @@ function payrollForecastChecklist(snapshot: PayrollForecastSnapshot): DraftCheck
       ? "Payroll forecast proof is unavailable, so close assurance cannot rely on payroll cash or statutory forecast amounts."
       : forecast?.authoritative
         ? `Aggregate payroll forecast is authoritative through ${forecast.horizonEnd}; net pay ${forecast.upcomingNetPayAmount}, statutory liabilities ${forecast.upcomingStatutoryLiabilityAmount}.`
-        : forecast?.message ?? "Payroll forecast proof is incomplete.",
+        : (forecast?.message ?? "Payroll forecast proof is incomplete."),
     sourceService: PAYROLL_FORECAST_SOURCE_SERVICE,
     evidenceCount: unavailable ? 0 : 1,
     blockerReason: blocked ? payrollForecastMessage(snapshot) : null,
@@ -416,49 +762,60 @@ function payrollForecastChecklist(snapshot: PayrollForecastSnapshot): DraftCheck
   }
 }
 
-function payrollForecastFindings(snapshot: PayrollForecastSnapshot): DraftFinding[] {
+function payrollForecastFindings(
+  snapshot: PayrollForecastSnapshot,
+): DraftFinding[] {
   if (!payrollForecastBlocked(snapshot)) return []
   if (payrollForecastUnavailable(snapshot)) {
-    return [{
-      checklistKey: PAYROLL_FORECAST_CHECKLIST_KEY,
-      domain: CloseFindingDomain.PAYROLL,
-      severity: CloseFindingSeverity.HIGH,
-      status: CloseFindingStatus.OPEN,
-      title: "Payroll forecast proof is unavailable",
-      detail: payrollForecastMessage(snapshot),
-      sourceService: PAYROLL_FORECAST_SOURCE_SERVICE,
-      sourceType: "payroll_finance_forecast",
-      sourceId: null,
-      ownerId: null,
-      assignedById: null,
-      dueAt: null,
-      correlationId: null,
-    }]
+    return [
+      {
+        checklistKey: PAYROLL_FORECAST_CHECKLIST_KEY,
+        domain: CloseFindingDomain.PAYROLL,
+        severity: CloseFindingSeverity.HIGH,
+        status: CloseFindingStatus.OPEN,
+        title: "Payroll forecast proof is unavailable",
+        detail: payrollForecastMessage(snapshot),
+        sourceService: PAYROLL_FORECAST_SOURCE_SERVICE,
+        sourceType: "payroll_finance_forecast",
+        sourceId: null,
+        ownerId: null,
+        assignedById: null,
+        dueAt: null,
+        correlationId: null,
+      },
+    ]
   }
 
-  const blockers = snapshot.blockers.filter((blocker) => blocker.gate === "payroll_finance_forecast")
+  const blockers = snapshot.blockers.filter(
+    (blocker) => blocker.gate === "payroll_finance_forecast",
+  )
   if (blockers.length === 0) {
-    return [{
-      checklistKey: PAYROLL_FORECAST_CHECKLIST_KEY,
-      domain: CloseFindingDomain.PAYROLL,
-      severity: payrollForecastSeverity(snapshot),
-      status: CloseFindingStatus.OPEN,
-      title: "Payroll finance forecast proof is blocked",
-      detail: snapshot.metrics.payrollFinanceForecast.message,
-      sourceService: PAYROLL_FORECAST_SOURCE_SERVICE,
-      sourceType: "payroll_finance_forecast",
-      sourceId: snapshot.sourceHash,
-      ownerId: null,
-      assignedById: null,
-      dueAt: null,
-      correlationId: null,
-    }]
+    return [
+      {
+        checklistKey: PAYROLL_FORECAST_CHECKLIST_KEY,
+        domain: CloseFindingDomain.PAYROLL,
+        severity: payrollForecastSeverity(snapshot),
+        status: CloseFindingStatus.OPEN,
+        title: "Payroll finance forecast proof is blocked",
+        detail: snapshot.metrics.payrollFinanceForecast.message,
+        sourceService: PAYROLL_FORECAST_SOURCE_SERVICE,
+        sourceType: "payroll_finance_forecast",
+        sourceId: snapshot.sourceHash,
+        ownerId: null,
+        assignedById: null,
+        dueAt: null,
+        correlationId: null,
+      },
+    ]
   }
 
   return blockers.map((blocker) => ({
     checklistKey: PAYROLL_FORECAST_CHECKLIST_KEY,
     domain: CloseFindingDomain.PAYROLL,
-    severity: blocker.severity === "critical" ? CloseFindingSeverity.CRITICAL : CloseFindingSeverity.HIGH,
+    severity:
+      blocker.severity === "critical"
+        ? CloseFindingSeverity.CRITICAL
+        : CloseFindingSeverity.HIGH,
     status: CloseFindingStatus.OPEN,
     title: blocker.title,
     detail: blocker.detail,
@@ -472,7 +829,10 @@ function payrollForecastFindings(snapshot: PayrollForecastSnapshot): DraftFindin
   }))
 }
 
-function payrollForecastEvidence(snapshot: PayrollForecastSnapshot, now: Date): DraftEvidenceItem {
+function payrollForecastEvidence(
+  snapshot: PayrollForecastSnapshot,
+  now: Date,
+): DraftEvidenceItem {
   if (payrollForecastUnavailable(snapshot)) {
     const message = payrollForecastMessage(snapshot)
     return {
@@ -518,10 +878,15 @@ function payrollForecastEvidence(snapshot: PayrollForecastSnapshot, now: Date): 
     declarationCount: forecast.declarationCount,
     sourceLinkCount: forecast.sourceLinkCount,
     evidenceHashCount: forecast.evidenceHashCount,
+    certifiedInputRunCount: forecast.certifiedInputRunCount,
+    certifiedInputProofHashCount: forecast.certifiedInputProofHashCount,
+    registerToLedgerRunCount: forecast.registerToLedgerRunCount,
     nextPayDate: forecast.nextPayDate,
     nextDeclarationDueDate: forecast.nextDeclarationDueDate,
     blockerCodes: forecast.blockerCodes,
-    blockers: snapshot.blockers.filter((blocker) => blocker.gate === "payroll_finance_forecast"),
+    blockers: snapshot.blockers.filter(
+      (blocker) => blocker.gate === "payroll_finance_forecast",
+    ),
     redactions: payrollForecastRedactions(snapshot),
     sourceHash: snapshot.sourceHash,
     generatedAt: snapshot.generatedAt,
@@ -563,7 +928,9 @@ function payrollForecastProvenance(
   }
 }
 
-function scoreFromChecklist(checklist: Array<{ status: CloseChecklistStatus }>) {
+function scoreFromChecklist(
+  checklist: Array<{ status: CloseChecklistStatus }>,
+) {
   if (checklist.length === 0) return 0
   const score = checklist.reduce((sum, item) => {
     if (item.status === CloseChecklistStatus.PASSED) return sum + 1
@@ -571,16 +938,31 @@ function scoreFromChecklist(checklist: Array<{ status: CloseChecklistStatus }>) 
     if (item.status === CloseChecklistStatus.NOT_APPLICABLE) return sum + 1
     return sum
   }, 0)
-  return Math.max(0, Math.min(100, Math.round((score / checklist.length) * 100)))
+  return Math.max(
+    0,
+    Math.min(100, Math.round((score / checklist.length) * 100)),
+  )
 }
 
-function coverageFromChecklist(checklist: Array<{ status: CloseChecklistStatus; evidenceCount: number }>) {
-  const applicable = checklist.filter((item) => item.status !== CloseChecklistStatus.NOT_APPLICABLE)
+function coverageFromChecklist(
+  checklist: Array<{ status: CloseChecklistStatus; evidenceCount: number }>,
+) {
+  const applicable = checklist.filter(
+    (item) => item.status !== CloseChecklistStatus.NOT_APPLICABLE,
+  )
   if (applicable.length === 0) return null
-  return Number(((applicable.filter((item) => item.evidenceCount > 0).length / applicable.length) * 100).toFixed(2))
+  return Number(
+    (
+      (applicable.filter((item) => item.evidenceCount > 0).length /
+        applicable.length) *
+      100
+    ).toFixed(2),
+  )
 }
 
-function periodSummary(period: Awaited<ReturnType<typeof resolveTargetPeriod>>): ClosePeriodSummary | null {
+function periodSummary(
+  period: Awaited<ReturnType<typeof resolveTargetPeriod>>,
+): ClosePeriodSummary | null {
   if (!period) return null
   return {
     id: period.id,
@@ -591,7 +973,11 @@ function periodSummary(period: Awaited<ReturnType<typeof resolveTargetPeriod>>):
   }
 }
 
-async function listRecentPeriods(organizationId: string, client: DbClient = db, now = new Date()) {
+async function listRecentPeriods(
+  organizationId: string,
+  client: DbClient = db,
+  now = new Date(),
+) {
   const periods = await client.accountingPeriod.findMany({
     where: { organizationId },
     orderBy: [{ startDate: "desc" }],
@@ -605,7 +991,12 @@ async function listRecentPeriods(organizationId: string, client: DbClient = db, 
     },
   })
   const currentOpenPeriod =
-    periods.find((period) => period.status === AccountingPeriodStatus.OPEN && period.startDate <= now && period.endDate >= now) ??
+    periods.find(
+      (period) =>
+        period.status === AccountingPeriodStatus.OPEN &&
+        period.startDate <= now &&
+        period.endDate >= now,
+    ) ??
     periods.find((period) => period.status === AccountingPeriodStatus.OPEN) ??
     null
 
@@ -615,11 +1006,22 @@ async function listRecentPeriods(organizationId: string, client: DbClient = db, 
   }
 }
 
-async function resolveTargetPeriod(organizationId: string, periodId?: string | null, client: DbClient = db, now = new Date()) {
+async function resolveTargetPeriod(
+  organizationId: string,
+  periodId?: string | null,
+  client: DbClient = db,
+  now = new Date(),
+) {
   if (periodId) {
     const period = await client.accountingPeriod.findFirst({
       where: { organizationId, id: periodId },
-      select: { id: true, name: true, status: true, startDate: true, endDate: true },
+      select: {
+        id: true,
+        name: true,
+        status: true,
+        startDate: true,
+        endDate: true,
+      },
     })
     if (!period) throw new NotFoundError("Accounting period not found")
     return period
@@ -632,7 +1034,13 @@ async function resolveTargetPeriod(organizationId: string, periodId?: string | n
       endDate: { gte: now },
     },
     orderBy: { startDate: "desc" },
-    select: { id: true, name: true, status: true, startDate: true, endDate: true },
+    select: {
+      id: true,
+      name: true,
+      status: true,
+      startDate: true,
+      endDate: true,
+    },
   })
 
   if (current) return current
@@ -640,11 +1048,20 @@ async function resolveTargetPeriod(organizationId: string, periodId?: string | n
   return client.accountingPeriod.findFirst({
     where: { organizationId, status: AccountingPeriodStatus.OPEN },
     orderBy: { startDate: "desc" },
-    select: { id: true, name: true, status: true, startDate: true, endDate: true },
+    select: {
+      id: true,
+      name: true,
+      status: true,
+      startDate: true,
+      endDate: true,
+    },
   })
 }
 
-async function getPreflightSafe(organizationId: string, period: NonNullable<Awaited<ReturnType<typeof resolveTargetPeriod>>>) {
+async function getPreflightSafe(
+  organizationId: string,
+  period: NonNullable<Awaited<ReturnType<typeof resolveTargetPeriod>>>,
+) {
   if (period.status !== AccountingPeriodStatus.OPEN) {
     return {
       preflight: null,
@@ -655,9 +1072,16 @@ async function getPreflightSafe(organizationId: string, period: NonNullable<Awai
 
   try {
     const preflight = await getPeriodClosePreflight(organizationId, period.id)
-    return { preflight, error: null, failures: getPeriodClosePreflightFailures(preflight) }
+    return {
+      preflight,
+      error: null,
+      failures: getPeriodClosePreflightFailures(preflight),
+    }
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Period close preflight is unavailable."
+    const message = messageFromError(
+      error,
+      "Period close preflight is unavailable.",
+    )
     return { preflight: null, error: message, failures: [message] }
   }
 }
@@ -665,8 +1089,26 @@ async function getPreflightSafe(organizationId: string, period: NonNullable<Awai
 function buildPreflightFindings(
   preflight: PeriodClosePreflight | null,
   failures: string[],
-): Array<Omit<CloseAssuranceFindingDto, "id" | "checklistItemId" | "assignedAt" | "waiverRequestedById" | "waiverApprovedById"> & { checklistKey: string }> {
-  const findings: Array<Omit<CloseAssuranceFindingDto, "id" | "checklistItemId" | "assignedAt" | "waiverRequestedById" | "waiverApprovedById"> & { checklistKey: string }> = []
+): Array<
+  Omit<
+    CloseAssuranceFindingDto,
+    | "id"
+    | "checklistItemId"
+    | "assignedAt"
+    | "waiverRequestedById"
+    | "waiverApprovedById"
+  > & { checklistKey: string }
+> {
+  const findings: Array<
+    Omit<
+      CloseAssuranceFindingDto,
+      | "id"
+      | "checklistItemId"
+      | "assignedAt"
+      | "waiverRequestedById"
+      | "waiverApprovedById"
+    > & { checklistKey: string }
+  > = []
 
   if (!preflight) {
     return failures.map((failure) => ({
@@ -686,19 +1128,54 @@ function buildPreflightFindings(
     }))
   }
 
-  const entries: Array<[number, string, CloseFindingDomain, CloseFindingSeverity]> = [
-    [preflight.draftEntryCount, "Draft journal entries remain open", CloseFindingDomain.LEDGER, CloseFindingSeverity.HIGH],
-    [preflight.unresolvedPostingBatchCount, "Pending or failed posting batches remain unresolved", CloseFindingDomain.LEDGER, CloseFindingSeverity.CRITICAL],
-    [preflight.unlinkedPostedEntryCount, "Posted entries are missing posting batch links", CloseFindingDomain.LEDGER, CloseFindingSeverity.CRITICAL],
-    [preflight.openReconciliationExceptionCount, "Open payment reconciliation exceptions block close", CloseFindingDomain.PAYMENT_RECONCILIATION, CloseFindingSeverity.CRITICAL],
-    [preflight.openReconciliationSuspenseCount, "Open payment suspense items block close", CloseFindingDomain.SUSPENSE, CloseFindingSeverity.CRITICAL],
-    [preflight.unsignedReconciliationRunCount, "Unsigned reconciliation runs block close", CloseFindingDomain.PAYMENT_RECONCILIATION, CloseFindingSeverity.HIGH],
+  const entries: Array<
+    [number, string, CloseFindingDomain, CloseFindingSeverity]
+  > = [
+    [
+      preflight.draftEntryCount,
+      "Draft journal entries remain open",
+      CloseFindingDomain.LEDGER,
+      CloseFindingSeverity.HIGH,
+    ],
+    [
+      preflight.unresolvedPostingBatchCount,
+      "Pending or failed posting batches remain unresolved",
+      CloseFindingDomain.LEDGER,
+      CloseFindingSeverity.CRITICAL,
+    ],
+    [
+      preflight.unlinkedPostedEntryCount,
+      "Posted entries are missing posting batch links",
+      CloseFindingDomain.LEDGER,
+      CloseFindingSeverity.CRITICAL,
+    ],
+    [
+      preflight.openReconciliationExceptionCount,
+      "Open payment reconciliation exceptions block close",
+      CloseFindingDomain.PAYMENT_RECONCILIATION,
+      CloseFindingSeverity.CRITICAL,
+    ],
+    [
+      preflight.openReconciliationSuspenseCount,
+      "Open payment suspense items block close",
+      CloseFindingDomain.SUSPENSE,
+      CloseFindingSeverity.CRITICAL,
+    ],
+    [
+      preflight.unsignedReconciliationRunCount,
+      "Unsigned reconciliation runs block close",
+      CloseFindingDomain.PAYMENT_RECONCILIATION,
+      CloseFindingSeverity.HIGH,
+    ],
   ]
 
   for (const [count, title, domain, severity] of entries) {
     if (count <= 0) continue
     findings.push({
-      checklistKey: domain === CloseFindingDomain.SUSPENSE ? "suspense-exceptions" : "period-close-preflight",
+      checklistKey:
+        domain === CloseFindingDomain.SUSPENSE
+          ? "suspense-exceptions"
+          : "period-close-preflight",
       domain,
       severity,
       status: CloseFindingStatus.OPEN,
@@ -736,24 +1213,60 @@ function buildPreflightFindings(
 }
 
 function buildLedgerFindings(
-  ledger: LedgerReconciliationResult,
-): Array<Omit<CloseAssuranceFindingDto, "id" | "checklistItemId" | "assignedAt" | "waiverRequestedById" | "waiverApprovedById"> & { checklistKey: string }> {
+  ledger: LedgerReconciliationResult | null,
+  unavailableReason?: string | null,
+): Array<
+  Omit<
+    CloseAssuranceFindingDto,
+    | "id"
+    | "checklistItemId"
+    | "assignedAt"
+    | "waiverRequestedById"
+    | "waiverApprovedById"
+  > & { checklistKey: string }
+> {
+  if (!ledger) {
+    return [
+      {
+        checklistKey: "ledger-reconciliation",
+        domain: CloseFindingDomain.LEDGER,
+        severity: CloseFindingSeverity.CRITICAL,
+        status: CloseFindingStatus.OPEN,
+        title: "Ledger reconciliation unavailable",
+        detail:
+          unavailableReason ??
+          "Ledger reconciliation evidence could not be loaded.",
+        sourceService: "services/accounting/reconciliations.service.ts",
+        sourceType: "LedgerReconciliation",
+        sourceId: null,
+        ownerId: null,
+        assignedById: null,
+        dueAt: null,
+        correlationId: null,
+      },
+    ]
+  }
+
   return ledger.failures.map((failure) => ({
     checklistKey: "ledger-reconciliation",
     domain: CloseFindingDomain.LEDGER,
-    severity: failure.severity === "critical" ? CloseFindingSeverity.CRITICAL : CloseFindingSeverity.HIGH,
+    severity:
+      failure.severity === "critical"
+        ? CloseFindingSeverity.CRITICAL
+        : CloseFindingSeverity.HIGH,
     status: CloseFindingStatus.OPEN,
     title: failure.type.replaceAll("_", " ").toLowerCase(),
     detail: failure.message,
     sourceService: "services/accounting/reconciliations.service.ts",
     sourceType: failure.type,
-    sourceId: typeof failure.metadata?.journalEntryId === "string"
-      ? failure.metadata.journalEntryId
-      : typeof failure.metadata?.postingBatchId === "string"
-        ? failure.metadata.postingBatchId
-        : typeof failure.metadata?.sourceLinkId === "string"
-          ? failure.metadata.sourceLinkId
-          : null,
+    sourceId:
+      typeof failure.metadata?.journalEntryId === "string"
+        ? failure.metadata.journalEntryId
+        : typeof failure.metadata?.postingBatchId === "string"
+          ? failure.metadata.postingBatchId
+          : typeof failure.metadata?.sourceLinkId === "string"
+            ? failure.metadata.sourceLinkId
+            : null,
     ownerId: null,
     assignedById: null,
     dueAt: null,
@@ -762,27 +1275,33 @@ function buildLedgerFindings(
 }
 
 function messageFromError(error: unknown, fallback: string) {
-  return error instanceof Error && error.message.trim() ? error.message : fallback
+  if (isApplicationError(error) && error.expose && error.message.trim()) {
+    return error.message
+  }
+  return fallback
 }
 
 function sourceIdFromInventoryFailure(failure: InventoryClass3Failure) {
   const metadata = failure.metadata ?? {}
-  for (const key of ["inventoryTransactionId", "journalEntryId", "entryNumber", "referenceId"]) {
+  for (const key of [
+    "inventoryTransactionId",
+    "journalEntryId",
+    "entryNumber",
+    "referenceId",
+  ]) {
     const value = metadata[key]
     if (typeof value === "string" && value.trim()) return value
   }
   return null
 }
 
-function buildInventoryValuationAnnex(
-  params: {
-    organizationId: string
-    periodId: string
-    asOf: string
-    result?: InventoryClass3ReconciliationResult
-    unavailableReason?: string
-  },
-): InventoryValuationAnnexMetadata {
+function buildInventoryValuationAnnex(params: {
+  organizationId: string
+  periodId: string
+  asOf: string
+  result?: InventoryClass3ReconciliationResult
+  unavailableReason?: string
+}): InventoryValuationAnnexMetadata {
   if (!params.result) {
     return {
       organizationId: params.organizationId,
@@ -795,11 +1314,15 @@ function buildInventoryValuationAnnex(
       mismatchAmount: null,
       sourceHash: null,
       blockerStatus: "EVIDENCE_UNAVAILABLE",
-      failures: [{
-        type: "INVENTORY_VALUATION_UNAVAILABLE",
-        severity: "high",
-        message: params.unavailableReason ?? "Inventory valuation assurance could not be loaded.",
-      }],
+      failures: [
+        {
+          type: "INVENTORY_VALUATION_UNAVAILABLE",
+          severity: "high",
+          message:
+            params.unavailableReason ??
+            "Inventory valuation assurance could not be loaded.",
+        },
+      ],
     }
   }
 
@@ -813,7 +1336,10 @@ function buildInventoryValuationAnnex(
     inventorySubledgerValueTotal: params.result.inventoryValue,
     mismatchAmount: params.result.driftAmount,
     sourceHash: params.result.reportHash,
-    blockerStatus: params.result.status === "PASSED" ? "PASSED" : "INVENTORY_VALUATION_MISMATCH",
+    blockerStatus:
+      params.result.status === "PASSED"
+        ? "PASSED"
+        : "INVENTORY_VALUATION_MISMATCH",
     failures: params.result.failures.map((failure) => ({
       type: failure.type,
       severity: failure.severity,
@@ -825,24 +1351,64 @@ function buildInventoryValuationAnnex(
 
 function buildInventoryValuationFindings(
   annex: InventoryValuationAnnexMetadata,
-): Array<Omit<CloseAssuranceFindingDto, "id" | "checklistItemId" | "assignedAt" | "waiverRequestedById" | "waiverApprovedById"> & { checklistKey: string }> {
+): Array<
+  Omit<
+    CloseAssuranceFindingDto,
+    | "id"
+    | "checklistItemId"
+    | "assignedAt"
+    | "waiverRequestedById"
+    | "waiverApprovedById"
+  > & { checklistKey: string }
+> {
   return annex.failures.map((failure) => ({
     checklistKey: "inventory-valuation",
     domain: CloseFindingDomain.INVENTORY_VALUATION,
-    severity: failure.severity === "critical" ? CloseFindingSeverity.CRITICAL : CloseFindingSeverity.HIGH,
+    severity:
+      failure.severity === "critical"
+        ? CloseFindingSeverity.CRITICAL
+        : CloseFindingSeverity.HIGH,
     status: CloseFindingStatus.OPEN,
     title: failure.type.replaceAll("_", " ").toLowerCase(),
     detail: failure.message,
     sourceService: "services/inventory/inventory-valuation.service.ts",
     sourceType: failure.type,
-    sourceId: failure.type === "INVENTORY_VALUATION_UNAVAILABLE"
-      ? annex.accountingPeriodId
-      : sourceIdFromInventoryFailure(failure as InventoryClass3Failure),
+    sourceId:
+      failure.type === "INVENTORY_VALUATION_UNAVAILABLE"
+        ? annex.accountingPeriodId
+        : sourceIdFromInventoryFailure(failure as InventoryClass3Failure),
     ownerId: null,
     assignedById: null,
     dueAt: null,
     correlationId: null,
   }))
+}
+
+function unavailableDomainFinding(params: {
+  checklistKey: string
+  domain: CloseFindingDomain
+  title: string
+  detail: string
+  sourceService: string
+  sourceType: string
+  periodId: string
+  severity?: CloseFindingSeverity
+}): DraftFinding {
+  return {
+    checklistKey: params.checklistKey,
+    domain: params.domain,
+    severity: params.severity ?? CloseFindingSeverity.HIGH,
+    status: CloseFindingStatus.OPEN,
+    title: params.title,
+    detail: params.detail,
+    sourceService: params.sourceService,
+    sourceType: params.sourceType,
+    sourceId: params.periodId,
+    ownerId: null,
+    assignedById: null,
+    dueAt: null,
+    correlationId: null,
+  }
 }
 
 function statutoryCertificationBlockerMetadata() {
@@ -904,48 +1470,56 @@ async function buildAssessment(
         evidenceCount: 0,
         commentCount: 0,
       },
-      provenance: [{
-        label: "Accounting period",
-        provenance: "UNAVAILABLE",
-        asOf: now.toISOString(),
-        periodStatus: "UNAVAILABLE",
-        sourceTables: ["accounting_periods"],
-        reason: "No accounting period is available for this organization.",
-      }],
-      checklist: [{
-        id: null,
-        key: "period",
-        domain: CloseFindingDomain.LEDGER,
-        status: CloseChecklistStatus.UNAVAILABLE,
-        severity: CloseFindingSeverity.CRITICAL,
-        label: "Accounting period",
-        detail: "No accounting period is available for close assessment.",
-        sourceService: "services/accounting/periods.service.ts",
-        evidenceCount: 0,
-        blockerReason: "Create fiscal periods before running close assurance.",
-        nextActionHref: "/dashboard/accounting/setup",
-        ownerId: null,
-        dueAt: null,
-      }],
-      findings: [{
-        id: null,
-        checklistItemId: null,
-        domain: CloseFindingDomain.LEDGER,
-        severity: CloseFindingSeverity.CRITICAL,
-        status: CloseFindingStatus.OPEN,
-        title: "No accounting period",
-        detail: "Close readiness requires an organization-scoped accounting period.",
-        sourceService: "services/accounting/periods.service.ts",
-        sourceType: "AccountingPeriod",
-        sourceId: null,
-        ownerId: null,
-        assignedById: null,
-        assignedAt: null,
-        dueAt: null,
-        waiverRequestedById: null,
-        waiverApprovedById: null,
-        correlationId: null,
-      }],
+      provenance: [
+        {
+          label: "Accounting period",
+          provenance: "UNAVAILABLE",
+          asOf: now.toISOString(),
+          periodStatus: "UNAVAILABLE",
+          sourceTables: ["accounting_periods"],
+          reason: "No accounting period is available for this organization.",
+        },
+      ],
+      checklist: [
+        {
+          id: null,
+          key: "period",
+          domain: CloseFindingDomain.LEDGER,
+          status: CloseChecklistStatus.UNAVAILABLE,
+          severity: CloseFindingSeverity.CRITICAL,
+          label: "Accounting period",
+          detail: "No accounting period is available for close assessment.",
+          sourceService: "services/accounting/periods.service.ts",
+          evidenceCount: 0,
+          blockerReason:
+            "Create fiscal periods before running close assurance.",
+          nextActionHref: "/dashboard/accounting/setup",
+          ownerId: null,
+          dueAt: null,
+        },
+      ],
+      findings: [
+        {
+          id: null,
+          checklistItemId: null,
+          domain: CloseFindingDomain.LEDGER,
+          severity: CloseFindingSeverity.CRITICAL,
+          status: CloseFindingStatus.OPEN,
+          title: "No accounting period",
+          detail:
+            "Close readiness requires an organization-scoped accounting period.",
+          sourceService: "services/accounting/periods.service.ts",
+          sourceType: "AccountingPeriod",
+          sourceId: null,
+          ownerId: null,
+          assignedById: null,
+          assignedAt: null,
+          dueAt: null,
+          waiverRequestedById: null,
+          waiverApprovedById: null,
+          correlationId: null,
+        },
+      ],
       evidenceItems: [],
       controls: closeControls(),
       raw: {
@@ -957,12 +1531,27 @@ async function buildAssessment(
     }
   }
 
-  const [preflightResult, ledger, paymentDashboard, dataTrust, inventoryValuation, payrollForecastSnapshot] = await Promise.all([
+  const [
+    preflightResult,
+    ledger,
+    paymentDashboard,
+    dataTrust,
+    inventoryValuation,
+    payrollForecastSnapshot,
+  ] = await Promise.all([
     getPreflightSafe(organizationId, period),
-    reconcileLedger(organizationId, { periodId: period.id }),
-    getPaymentReconciliationDashboardData(organizationId).catch((error) => ({ error })),
-    getAccountantPortalData({ organizationId, periodId: period.id, limit: 12 }, db, now).catch((error) => ({ error })),
-    reconcileInventoryClass3({ organizationId, periodId: period.id }).catch((error) => ({ error })),
+    reconcileLedger(organizationId, { periodId: period.id }).catch((error) => ({ error })) as Promise<LedgerReconciliationResult | { error: unknown }>,
+    getPaymentReconciliationDashboardData(organizationId).catch((error) => ({
+      error,
+    })),
+    getAccountantPortalData(
+      { organizationId, periodId: period.id, limit: 12 },
+      db,
+      now,
+    ).catch((error) => ({ error })),
+    reconcileInventoryClass3({ organizationId, periodId: period.id }).catch(
+      (error) => ({ error }),
+    ),
     getTenantOperatingSnapshot({
       organizationId,
       periodStart: period.startDate,
@@ -972,11 +1561,34 @@ async function buildAssessment(
   ])
 
   const preflight = preflightResult.preflight
+  const ledgerUnavailable = "error" in ledger
+  const ledgerResult = ledgerUnavailable ? null : ledger
+  const ledgerUnavailableReason = ledgerUnavailable
+    ? messageFromError(
+        ledger.error,
+        "Ledger reconciliation evidence could not be loaded.",
+      )
+    : null
   const paymentUnavailable = "error" in paymentDashboard
+  const paymentUnavailableReason = paymentUnavailable
+    ? messageFromError(
+        paymentDashboard.error,
+        "Payment reconciliation dashboard data is unavailable.",
+      )
+    : null
   const dataTrustUnavailable = "error" in dataTrust
+  const dataTrustUnavailableReason = dataTrustUnavailable
+    ? messageFromError(
+        dataTrust.error,
+        "Accountant data-trust service is unavailable.",
+      )
+    : null
   const inventoryUnavailable = "error" in inventoryValuation
   const inventoryUnavailableReason = inventoryUnavailable
-    ? messageFromError(inventoryValuation.error, "Inventory valuation assurance could not be loaded.")
+    ? messageFromError(
+        inventoryValuation.error,
+        "Inventory valuation assurance could not be loaded.",
+      )
     : null
   const inventoryAnnex = buildInventoryValuationAnnex({
     organizationId,
@@ -985,30 +1597,52 @@ async function buildAssessment(
     result: inventoryUnavailable ? undefined : inventoryValuation,
     unavailableReason: inventoryUnavailableReason ?? undefined,
   })
-  const dataTrustLevel = dataTrustUnavailable ? "T0" : dataTrust.certificate.level
+  const dataTrustLevel = dataTrustUnavailable
+    ? "T0"
+    : dataTrust.certificate.level
   const dataTrustBlockers = dataTrustUnavailable ? [] : dataTrust.blockers
-  const dataTrustCritical = dataTrustBlockers.filter((blocker) => blocker.severity === "critical").length
-  const dataTrustHigh = dataTrustBlockers.filter((blocker) => blocker.severity === "high").length
+  const dataTrustCritical = dataTrustBlockers.filter(
+    (blocker) => blocker.severity === "critical",
+  ).length
+  const dataTrustHigh = dataTrustBlockers.filter(
+    (blocker) => blocker.severity === "high",
+  ).length
   const paymentEvidenceCount = paymentUnavailable
     ? 0
-    : Number(paymentDashboard.source.providerEvidenceAvailable) + Number(paymentDashboard.source.statementEvidenceAvailable) + paymentDashboard.summary.signedRunCount
-  const paymentOpenSuspense = paymentUnavailable ? 0 : paymentDashboard.summary.openSuspenseCount
-  const paymentCriticalExceptions = paymentUnavailable ? 0 : paymentDashboard.summary.criticalExceptionCount
+    : Number(paymentDashboard.source.providerEvidenceAvailable) +
+      Number(paymentDashboard.source.statementEvidenceAvailable) +
+      paymentDashboard.summary.signedRunCount
+  const paymentOpenSuspense = paymentUnavailable
+    ? 0
+    : paymentDashboard.summary.openSuspenseCount
+  const paymentCriticalExceptions = paymentUnavailable
+    ? 0
+    : paymentDashboard.summary.criticalExceptionCount
   const paymentUnsignedRuns = preflight?.unsignedReconciliationRunCount ?? 0
 
   const checklist: Array<Omit<CloseAssuranceChecklistDto, "id">> = [
     {
       key: "period-state",
       domain: CloseFindingDomain.LEDGER,
-      status: period.status === AccountingPeriodStatus.OPEN ? CloseChecklistStatus.PASSED : CloseChecklistStatus.WARNING,
-      severity: period.status === AccountingPeriodStatus.OPEN ? CloseFindingSeverity.INFO : CloseFindingSeverity.MEDIUM,
+      status:
+        period.status === AccountingPeriodStatus.OPEN
+          ? CloseChecklistStatus.PASSED
+          : CloseChecklistStatus.WARNING,
+      severity:
+        period.status === AccountingPeriodStatus.OPEN
+          ? CloseFindingSeverity.INFO
+          : CloseFindingSeverity.MEDIUM,
       label: "Accounting period state",
-      detail: period.status === AccountingPeriodStatus.OPEN
-        ? `${period.name} is open and available for close readiness.`
-        : `${period.name} is ${period.status}; the center can review evidence but close actions require an open period.`,
+      detail:
+        period.status === AccountingPeriodStatus.OPEN
+          ? `${period.name} is open and available for close readiness.`
+          : `${period.name} is ${period.status}; the center can review evidence but close actions require an open period.`,
       sourceService: "services/accounting/periods.service.ts",
       evidenceCount: 1,
-      blockerReason: period.status === AccountingPeriodStatus.OPEN ? null : "Period is not OPEN.",
+      blockerReason:
+        period.status === AccountingPeriodStatus.OPEN
+          ? null
+          : "Period is not OPEN.",
       nextActionHref: "/dashboard/accounting/setup",
       ownerId: null,
       dueAt: null,
@@ -1021,9 +1655,16 @@ async function buildAssessment(
         : preflightResult.failures.length > 0
           ? CloseChecklistStatus.FAILED
           : CloseChecklistStatus.PASSED,
-      severity: preflightResult.failures.length > 0 ? CloseFindingSeverity.CRITICAL : CloseFindingSeverity.INFO,
+      severity:
+        preflightResult.failures.length > 0
+          ? CloseFindingSeverity.CRITICAL
+          : CloseFindingSeverity.INFO,
       label: "Period close preflight",
-      detail: preflightResult.error ?? (preflightResult.failures.length ? preflightResult.failures.join("; ") : "No period close preflight blockers were detected."),
+      detail:
+        preflightResult.error ??
+        (preflightResult.failures.length
+          ? preflightResult.failures.join("; ")
+          : "No period close preflight blockers were detected."),
       sourceService: "services/accounting/periods.service.ts",
       evidenceCount: preflight ? 1 : 0,
       blockerReason: preflightResult.failures[0] ?? null,
@@ -1034,13 +1675,31 @@ async function buildAssessment(
     {
       key: "ledger-reconciliation",
       domain: CloseFindingDomain.LEDGER,
-      status: ledger.isClean ? CloseChecklistStatus.PASSED : CloseChecklistStatus.FAILED,
-      severity: ledger.failures.some((failure) => failure.severity === "critical") ? CloseFindingSeverity.CRITICAL : CloseFindingSeverity.HIGH,
+      status: ledgerUnavailable
+        ? CloseChecklistStatus.UNAVAILABLE
+        : ledgerResult!.isClean
+          ? CloseChecklistStatus.PASSED
+          : CloseChecklistStatus.FAILED,
+      severity: ledgerUnavailable
+        ? CloseFindingSeverity.CRITICAL
+        : ledgerResult!.failures.some(
+              (failure) => failure.severity === "critical",
+            )
+          ? CloseFindingSeverity.CRITICAL
+          : CloseFindingSeverity.HIGH,
       label: "Ledger balance and traceability",
-      detail: ledger.isClean ? "Posted ledger entries balance and retain posting/source traceability." : ledger.failures.map((failure) => failure.message).join("; "),
+      detail: ledgerUnavailable
+        ? (ledgerUnavailableReason ??
+          "Ledger reconciliation evidence could not be loaded.")
+        : ledgerResult!.isClean
+          ? "Posted ledger entries balance and retain posting/source traceability."
+          : ledgerResult!.failures.map((failure) => failure.message).join("; "),
       sourceService: "services/accounting/reconciliations.service.ts",
-      evidenceCount: ledger.totalsByCurrency.length,
-      blockerReason: ledger.failures[0]?.message ?? null,
+      evidenceCount: ledgerResult?.totalsByCurrency.length ?? 0,
+      blockerReason: ledgerUnavailable
+        ? (ledgerUnavailableReason ??
+          "Ledger reconciliation evidence could not be loaded.")
+        : (ledgerResult!.failures[0]?.message ?? null),
       nextActionHref: "/dashboard/accounting/reports/trial-balance",
       ownerId: null,
       dueAt: null,
@@ -1052,13 +1711,17 @@ async function buildAssessment(
         ? CloseChecklistStatus.UNAVAILABLE
         : paymentUnsignedRuns > 0 || paymentCriticalExceptions > 0
           ? CloseChecklistStatus.FAILED
-          : paymentDashboard.summary.readyForSignoffCount > 0 || paymentEvidenceCount === 0
+          : paymentDashboard.summary.readyForSignoffCount > 0 ||
+              paymentEvidenceCount === 0
             ? CloseChecklistStatus.WARNING
             : CloseChecklistStatus.PASSED,
-      severity: paymentUnsignedRuns > 0 || paymentCriticalExceptions > 0 ? CloseFindingSeverity.CRITICAL : CloseFindingSeverity.MEDIUM,
+      severity:
+        paymentUnsignedRuns > 0 || paymentCriticalExceptions > 0
+          ? CloseFindingSeverity.CRITICAL
+          : CloseFindingSeverity.MEDIUM,
       label: "Payment reconciliation sign-off",
       detail: paymentUnavailable
-        ? "Payment reconciliation dashboard data is unavailable."
+        ? (paymentUnavailableReason ?? "Payment reconciliation dashboard data is unavailable.")
         : paymentUnsignedRuns > 0
           ? `${paymentUnsignedRuns} reconciliation run${paymentUnsignedRuns === 1 ? "" : "s"} must be signed or voided.`
           : paymentCriticalExceptions > 0
@@ -1066,9 +1729,13 @@ async function buildAssessment(
             : paymentDashboard.summary.readyForSignoffCount > 0
               ? `${paymentDashboard.summary.readyForSignoffCount} run${paymentDashboard.summary.readyForSignoffCount === 1 ? "" : "s"} await sign-off.`
               : "Payment reconciliation evidence is available for close review.",
-      sourceService: "services/reconciliation/payment-reconciliation-dashboard.service.ts",
+      sourceService:
+        "services/reconciliation/payment-reconciliation-dashboard.service.ts",
       evidenceCount: paymentEvidenceCount,
-      blockerReason: paymentUnsignedRuns > 0 || paymentCriticalExceptions > 0 ? "Payment reconciliation is not fully signed off." : null,
+      blockerReason:
+        paymentUnsignedRuns > 0 || paymentCriticalExceptions > 0
+          ? "Payment reconciliation is not fully signed off."
+          : null,
       nextActionHref: "/dashboard/finance/reconciliation",
       ownerId: null,
       dueAt: null,
@@ -1078,19 +1745,30 @@ async function buildAssessment(
       domain: CloseFindingDomain.SUSPENSE,
       status: paymentUnavailable
         ? CloseChecklistStatus.UNAVAILABLE
-        : (preflight?.openReconciliationSuspenseCount ?? paymentOpenSuspense) > 0
+        : (preflight?.openReconciliationSuspenseCount ?? paymentOpenSuspense) >
+            0
           ? CloseChecklistStatus.FAILED
           : CloseChecklistStatus.PASSED,
-      severity: (preflight?.openReconciliationSuspenseCount ?? paymentOpenSuspense) > 0 ? CloseFindingSeverity.CRITICAL : CloseFindingSeverity.INFO,
+      severity:
+        (preflight?.openReconciliationSuspenseCount ?? paymentOpenSuspense) > 0
+          ? CloseFindingSeverity.CRITICAL
+          : CloseFindingSeverity.INFO,
       label: "Suspense and payment exceptions",
       detail: paymentUnavailable
         ? "Suspense workflow data is unavailable."
-        : (preflight?.openReconciliationSuspenseCount ?? paymentOpenSuspense) > 0
+        : (preflight?.openReconciliationSuspenseCount ?? paymentOpenSuspense) >
+            0
           ? `${preflight?.openReconciliationSuspenseCount ?? paymentOpenSuspense} open suspense item${(preflight?.openReconciliationSuspenseCount ?? paymentOpenSuspense) === 1 ? "" : "s"} block close.`
           : "No open close-blocking suspense items were detected.",
-      sourceService: "services/reconciliation/payment-suspense-workflow.service.ts",
-      evidenceCount: paymentUnavailable ? 0 : paymentDashboard.suspenseQueue.length,
-      blockerReason: (preflight?.openReconciliationSuspenseCount ?? paymentOpenSuspense) > 0 ? "Suspense must be resolved or approved through the suspense workflow." : null,
+      sourceService:
+        "services/reconciliation/payment-suspense-workflow.service.ts",
+      evidenceCount: paymentUnavailable
+        ? 0
+        : paymentDashboard.suspenseQueue.length,
+      blockerReason:
+        (preflight?.openReconciliationSuspenseCount ?? paymentOpenSuspense) > 0
+          ? "Suspense must be resolved or approved through the suspense workflow."
+          : null,
       nextActionHref: "/dashboard/finance/reconciliation",
       ownerId: null,
       dueAt: null,
@@ -1105,13 +1783,22 @@ async function buildAssessment(
           : dataTrustHigh > 0 || dataTrustLevel !== "T4"
             ? CloseChecklistStatus.WARNING
             : CloseChecklistStatus.PASSED,
-      severity: dataTrustCritical > 0 ? CloseFindingSeverity.CRITICAL : dataTrustHigh > 0 ? CloseFindingSeverity.HIGH : CloseFindingSeverity.MEDIUM,
+      severity:
+        dataTrustCritical > 0
+          ? CloseFindingSeverity.CRITICAL
+          : dataTrustHigh > 0
+            ? CloseFindingSeverity.HIGH
+            : CloseFindingSeverity.MEDIUM,
       label: "Data trust and provenance",
       detail: dataTrustUnavailable
-        ? "Accountant data-trust service is unavailable."
+        ? (dataTrustUnavailableReason ?? "Accountant data-trust service is unavailable.")
         : `Data-trust level ${dataTrustLevel}; ${dataTrustBlockers.length} blocker${dataTrustBlockers.length === 1 ? "" : "s"} detected.`,
       sourceService: "services/accounting/data-trust.service.ts",
-      evidenceCount: dataTrustUnavailable ? 0 : dataTrust.latestSourceLinks.length + dataTrust.latestAuditEvents.length + 1,
+      evidenceCount: dataTrustUnavailable
+        ? 0
+        : dataTrust.latestSourceLinks.length +
+          dataTrust.latestAuditEvents.length +
+          1,
       blockerReason: dataTrustBlockers[0]?.detail ?? null,
       nextActionHref: "/dashboard/accounting/accountant-portal",
       ownerId: null,
@@ -1127,22 +1814,29 @@ async function buildAssessment(
           : CloseChecklistStatus.FAILED,
       severity: inventoryUnavailable
         ? CloseFindingSeverity.HIGH
-        : inventoryValuation.failures.some((failure) => failure.severity === "critical")
+        : inventoryValuation.failures.some(
+              (failure) => failure.severity === "critical",
+            )
           ? CloseFindingSeverity.CRITICAL
           : inventoryValuation.failures.length > 0
             ? CloseFindingSeverity.HIGH
             : CloseFindingSeverity.INFO,
       label: "Inventory valuation readiness",
       detail: inventoryUnavailable
-        ? inventoryUnavailableReason ?? "Inventory valuation assurance could not be loaded."
+        ? (inventoryUnavailableReason ??
+          "Inventory valuation assurance could not be loaded.")
         : inventoryValuation.status === "PASSED"
           ? `Inventory subledger value ${inventoryValuation.inventoryValue} reconciles to class 3 ledger value ${inventoryValuation.ledgerClass3Value} ${inventoryValuation.currency}.`
-          : inventoryValuation.failures.map((failure) => failure.message).join("; "),
+          : inventoryValuation.failures
+              .map((failure) => failure.message)
+              .join("; "),
       sourceService: "services/inventory/inventory-valuation.service.ts",
       evidenceCount: inventoryUnavailable ? 0 : 1,
-      blockerReason: inventoryAnnex.blockerStatus === "PASSED"
-        ? null
-        : inventoryAnnex.failures[0]?.message ?? "Inventory valuation assurance blocks close certification.",
+      blockerReason:
+        inventoryAnnex.blockerStatus === "PASSED"
+          ? null
+          : (inventoryAnnex.failures[0]?.message ??
+            "Inventory valuation assurance blocks close certification."),
       nextActionHref: "/dashboard/inventory",
       ownerId: null,
       dueAt: null,
@@ -1153,38 +1847,98 @@ async function buildAssessment(
       domain: CloseFindingDomain.TAX,
       status: dataTrustUnavailable
         ? CloseChecklistStatus.UNAVAILABLE
-        : dataTrust.moduleEvidence.some((module) => module.status === "blocked" && ["purchasing", "payroll", "compliance"].includes(module.module))
+        : dataTrust.moduleEvidence.some(
+              (module) =>
+                module.status === "blocked" &&
+                ["purchasing", "payroll", "compliance"].includes(module.module),
+            )
           ? CloseChecklistStatus.FAILED
-          : dataTrust.moduleEvidence.some((module) => module.status === "needs_review" && ["purchasing", "payroll", "compliance"].includes(module.module))
+          : dataTrust.moduleEvidence.some(
+                (module) =>
+                  module.status === "needs_review" &&
+                  ["purchasing", "payroll", "compliance"].includes(
+                    module.module,
+                  ),
+              )
             ? CloseChecklistStatus.WARNING
             : CloseChecklistStatus.PASSED,
       severity: CloseFindingSeverity.HIGH,
       label: "AP, payroll, and compliance exposure",
       detail: dataTrustUnavailable
-        ? "AP/payroll/tax readiness data is unavailable."
+        ? (dataTrustUnavailableReason ?? "AP/payroll/tax readiness data is unavailable.")
         : dataTrust.moduleEvidence
-            .filter((module) => ["purchasing", "payroll", "compliance"].includes(module.module))
+            .filter((module) =>
+              ["purchasing", "payroll", "compliance"].includes(module.module),
+            )
             .map((module) => `${module.label}: ${module.status}`)
             .join("; "),
       sourceService: "services/accounting/data-trust.service.ts",
-      evidenceCount: dataTrustUnavailable ? 0 : dataTrust.moduleEvidence.filter((module) => ["purchasing", "payroll", "compliance"].includes(module.module)).length,
-      blockerReason: dataTrustBlockers.find((blocker) => ["purchasing", "payroll", "compliance"].some((gate) => blocker.gate.includes(gate)))?.detail ?? null,
+      evidenceCount: dataTrustUnavailable
+        ? 0
+        : dataTrust.moduleEvidence.filter((module) =>
+            ["purchasing", "payroll", "compliance"].includes(module.module),
+          ).length,
+      blockerReason:
+        dataTrustBlockers.find((blocker) =>
+          ["purchasing", "payroll", "compliance"].some((gate) =>
+            blocker.gate.includes(gate),
+          ),
+        )?.detail ?? null,
       nextActionHref: "/dashboard/accounting/accountant-portal",
       ownerId: null,
       dueAt: null,
     },
-  ].map((item) => ({ ...item, severity: severityFromStatus(item.status, item.severity) }))
+  ].map((item) => ({
+    ...item,
+    severity: severityFromStatus(item.status, item.severity),
+  }))
 
   const findings = [
     ...buildPreflightFindings(preflight, preflightResult.failures),
-    ...buildLedgerFindings(ledger),
+    ...buildLedgerFindings(ledgerResult, ledgerUnavailableReason),
+    ...(paymentUnavailable
+      ? [
+          unavailableDomainFinding({
+            checklistKey: "payment-reconciliation",
+            domain: CloseFindingDomain.PAYMENT_RECONCILIATION,
+            title: "Payment reconciliation evidence unavailable",
+            detail:
+              paymentUnavailableReason ??
+              "Payment reconciliation dashboard data is unavailable.",
+            sourceService:
+              "services/reconciliation/payment-reconciliation-dashboard.service.ts",
+            sourceType: "PaymentReconciliationDashboard",
+            periodId: period.id,
+          }),
+        ]
+      : []),
+    ...(dataTrustUnavailable
+      ? [
+          unavailableDomainFinding({
+            checklistKey: "data-trust-provenance",
+            domain: CloseFindingDomain.DATA_TRUST,
+            title: "Data-trust evidence unavailable",
+            detail:
+              dataTrustUnavailableReason ??
+              "Accountant data-trust service is unavailable.",
+            sourceService: "services/accounting/data-trust.service.ts",
+            sourceType: "AccountantPortalDataTrust",
+            periodId: period.id,
+          }),
+        ]
+      : []),
     ...buildInventoryValuationFindings(inventoryAnnex),
     ...payrollForecastFindings(payrollForecastSnapshot),
     ...(!dataTrustUnavailable
       ? dataTrustBlockers
-          .filter((blocker) => blocker.severity === "critical" || blocker.severity === "high")
+          .filter(
+            (blocker) =>
+              blocker.severity === "critical" || blocker.severity === "high",
+          )
           .map((blocker) => ({
-            checklistKey: blocker.gate.includes("payment") ? "payment-reconciliation" : "data-trust-provenance",
+            checklistKey: blocker.gate.includes("payment")
+              ? "payment-reconciliation"
+              : "data-trust-provenance",
             domain: blocker.gate.includes("payment")
               ? CloseFindingDomain.PAYMENT_RECONCILIATION
               : blocker.gate.includes("payroll")
@@ -1194,7 +1948,10 @@ async function buildAssessment(
                   : blocker.gate.includes("compliance")
                     ? CloseFindingDomain.TAX
                     : CloseFindingDomain.DATA_TRUST,
-            severity: blocker.severity === "critical" ? CloseFindingSeverity.CRITICAL : CloseFindingSeverity.HIGH,
+            severity:
+              blocker.severity === "critical"
+                ? CloseFindingSeverity.CRITICAL
+                : CloseFindingSeverity.HIGH,
             status: CloseFindingStatus.OPEN,
             title: blocker.title,
             detail: blocker.detail,
@@ -1209,112 +1966,167 @@ async function buildAssessment(
       : []),
   ]
 
-  const evidenceItems: Array<Omit<CloseEvidenceItemDto, "id" | "checklistItemId" | "findingId"> & { checklistKey?: string }> = [
-    ...ledger.totalsByCurrency.map((total) => ({
-      checklistKey: "ledger-reconciliation",
-      evidenceType: CloseEvidenceType.REPORT_EXPORT,
-      sourceTable: "journal_entry_lines",
-      sourceType: "TrialBalanceCurrency",
-      sourceId: total.currency,
-      sourceLabel: `Trial balance ${total.currency}: debit ${total.debit} / credit ${total.credit}`,
-      sourceDate: now.toISOString(),
-      sourceHash: null,
-      provenance: "POSTED",
-      available: true,
-      unavailableReason: null,
-      correlationId: null,
-    })),
+  const evidenceItems: Array<
+    Omit<CloseEvidenceItemDto, "id" | "checklistItemId" | "findingId"> & {
+      checklistKey?: string
+    }
+  > = [
+    ...(ledgerResult
+      ? ledgerResult.totalsByCurrency.map((total) => ({
+          checklistKey: "ledger-reconciliation",
+          evidenceType: CloseEvidenceType.REPORT_EXPORT,
+          sourceTable: "journal_entry_lines",
+          sourceType: "TrialBalanceCurrency",
+          sourceId: total.currency,
+          sourceLabel: `Trial balance ${total.currency}: debit ${total.debit} / credit ${total.credit}`,
+          sourceDate: now.toISOString(),
+          sourceHash: null,
+          provenance: "POSTED",
+          available: true,
+          unavailableReason: null,
+          correlationId: null,
+        }))
+      : [
+          {
+            checklistKey: "ledger-reconciliation",
+            evidenceType: CloseEvidenceType.REPORT_EXPORT,
+            sourceTable: "journal_entry_lines",
+            sourceType: "LedgerReconciliation",
+            sourceId: period.id,
+            sourceLabel: "Ledger reconciliation evidence unavailable",
+            sourceDate: now.toISOString(),
+            sourceHash: null,
+            provenance: "UNAVAILABLE",
+            available: false,
+            unavailableReason:
+              ledgerUnavailableReason ??
+              "Ledger reconciliation evidence could not be loaded.",
+            correlationId: null,
+          },
+        ]),
     ...(!paymentUnavailable
       ? paymentDashboard.recentRuns.map((run) => ({
-        checklistKey: "payment-reconciliation",
-        evidenceType: CloseEvidenceType.RECONCILIATION_CERTIFICATE,
-        sourceTable: "reconciliation_runs",
-        sourceType: "ReconciliationRun",
-        sourceId: run.id,
-        sourceLabel: `Reconciliation run ${run.businessDate.slice(0, 10)} - ${run.status}`,
-        sourceDate: run.businessDate,
-        sourceHash: run.certificateHash,
-        provenance: run.signedAt ? "POSTED" : "OPERATIONAL",
-        available: true,
-        unavailableReason: null,
-        correlationId: null,
-      }))
-      : [{
-        checklistKey: "payment-reconciliation",
-        evidenceType: CloseEvidenceType.RECONCILIATION_CERTIFICATE,
-        sourceTable: "reconciliation_runs",
-        sourceType: "PaymentReconciliationDashboard",
-        sourceId: null,
-        sourceLabel: "Payment reconciliation evidence unavailable",
-        sourceDate: now.toISOString(),
-        sourceHash: null,
-        provenance: "UNAVAILABLE",
-        available: false,
-        unavailableReason: "Payment reconciliation dashboard could not be loaded.",
-        correlationId: null,
-      }]),
+          checklistKey: "payment-reconciliation",
+          evidenceType: CloseEvidenceType.RECONCILIATION_CERTIFICATE,
+          sourceTable: "reconciliation_runs",
+          sourceType: "ReconciliationRun",
+          sourceId: run.id,
+          sourceLabel: `Reconciliation run ${run.businessDate.slice(0, 10)} - ${run.status}`,
+          sourceDate: run.businessDate,
+          sourceHash: run.certificateHash,
+          provenance: run.signedAt ? "POSTED" : "OPERATIONAL",
+          available: true,
+          unavailableReason: null,
+          correlationId: null,
+        }))
+      : [
+          {
+            checklistKey: "payment-reconciliation",
+            evidenceType: CloseEvidenceType.RECONCILIATION_CERTIFICATE,
+            sourceTable: "reconciliation_runs",
+            sourceType: "PaymentReconciliationDashboard",
+            sourceId: null,
+            sourceLabel: "Payment reconciliation evidence unavailable",
+            sourceDate: now.toISOString(),
+            sourceHash: null,
+            provenance: "UNAVAILABLE",
+            available: false,
+            unavailableReason:
+              paymentUnavailableReason ?? "Payment reconciliation dashboard could not be loaded.",
+            correlationId: null,
+          },
+        ]),
     ...(!paymentUnavailable
       ? paymentDashboard.suspenseQueue.map((item) => ({
-        checklistKey: "suspense-exceptions",
-        evidenceType: CloseEvidenceType.SUSPENSE_ITEM,
-        sourceTable: "suspense_items",
-        sourceType: "SuspenseItem",
-        sourceId: item.id,
-        sourceLabel: `${item.type} ${item.amount} ${item.currencyCode} - ${item.status}`,
-        sourceDate: item.slaDeadline ?? now.toISOString(),
-        sourceHash: null,
-        provenance: "OPERATIONAL",
-        available: true,
-        unavailableReason: null,
-        correlationId: item.correlationId,
-      }))
+          checklistKey: "suspense-exceptions",
+          evidenceType: CloseEvidenceType.SUSPENSE_ITEM,
+          sourceTable: "suspense_items",
+          sourceType: "SuspenseItem",
+          sourceId: item.id,
+          sourceLabel: `${item.type} ${item.amount} ${item.currencyCode} - ${item.status}`,
+          sourceDate: item.slaDeadline ?? now.toISOString(),
+          sourceHash: null,
+          provenance: "OPERATIONAL",
+          available: true,
+          unavailableReason: null,
+          correlationId: item.correlationId,
+        }))
       : []),
     ...(!dataTrustUnavailable
       ? [
-        {
-          checklistKey: "data-trust-provenance",
-          evidenceType: CloseEvidenceType.DATA_TRUST_CERTIFICATE,
-          sourceTable: "ledger_audit_events",
-          sourceType: "DataTrustCertificate",
-          sourceId: dataTrust.certificate.surface,
-          sourceLabel: `Data trust ${dataTrust.certificate.level} - ${dataTrust.certificate.verdict}`,
-          sourceDate: dataTrust.certificate.generatedAt,
-          sourceHash: dataTrust.source.scopeHash,
-          provenance: dataTrust.certificate.level === "T0" ? "UNAVAILABLE" : "POSTED",
-          available: dataTrust.certificate.level !== "T0",
-          unavailableReason: dataTrust.certificate.level === "T0" ? "Critical data-trust blockers are open." : null,
-          correlationId: null,
-        },
-        ...dataTrust.latestSourceLinks.map((link) => ({
-          checklistKey: "data-trust-provenance",
-          evidenceType: CloseEvidenceType.SOURCE_LINK,
-          sourceTable: "accounting_source_links",
-          sourceType: link.sourceType,
-          sourceId: link.sourceId,
-          sourceLabel: `${link.sourceType} ${link.sourceNumber ?? link.sourceId}`,
-          sourceDate: link.createdAt,
-          sourceHash: null,
-          provenance: "POSTED",
-          available: true,
-          unavailableReason: null,
-          correlationId: null,
-        })),
-        ...dataTrust.latestAuditEvents.map((event) => ({
-          checklistKey: "data-trust-provenance",
-          evidenceType: CloseEvidenceType.AUDIT_LOG,
-          sourceTable: event.source === "ledger" ? "ledger_audit_events" : "audit_logs",
-          sourceType: event.resourceType,
-          sourceId: event.resourceId,
-          sourceLabel: `${event.action} - ${event.status}`,
-          sourceDate: event.createdAt,
-          sourceHash: null,
-          provenance: "POSTED",
-          available: true,
-          unavailableReason: null,
-          correlationId: null,
-        })),
-      ]
-      : []),
+          {
+            checklistKey: "data-trust-provenance",
+            evidenceType: CloseEvidenceType.DATA_TRUST_CERTIFICATE,
+            sourceTable: "ledger_audit_events",
+            sourceType: "DataTrustCertificate",
+            sourceId: dataTrust.certificate.surface,
+            sourceLabel: `Data trust ${dataTrust.certificate.level} - ${dataTrust.certificate.verdict}`,
+            sourceDate: dataTrust.certificate.generatedAt,
+            sourceHash: dataTrust.source.scopeHash,
+            provenance:
+              dataTrust.certificate.level === "T0" ? "UNAVAILABLE" : "POSTED",
+            available: dataTrust.certificate.level !== "T0",
+            unavailableReason:
+              dataTrust.certificate.level === "T0"
+                ? "Critical data-trust blockers are open."
+                : null,
+            correlationId: null,
+          },
+          ...dataTrust.latestSourceLinks.map((link) => ({
+            checklistKey: "data-trust-provenance",
+            evidenceType: CloseEvidenceType.SOURCE_LINK,
+            sourceTable: "accounting_source_links",
+            sourceType: link.sourceType,
+            sourceId: link.sourceId,
+            sourceLabel: `${link.sourceType} ${link.sourceNumber ?? link.sourceId}`,
+            sourceDate: link.createdAt,
+            sourceHash: null,
+            provenance: "POSTED",
+            available: true,
+            unavailableReason: null,
+            correlationId: null,
+            metadata: {
+              sourceLinkId: link.id,
+              sourceNumber: link.sourceNumber,
+              journalEntryNumber: link.journalEntryNumber,
+              postingBatchId: link.postingBatchId,
+              postingStatus: link.postingStatus,
+            } as Prisma.JsonValue,
+          })),
+          ...dataTrust.latestAuditEvents.map((event) => ({
+            checklistKey: "data-trust-provenance",
+            evidenceType: CloseEvidenceType.AUDIT_LOG,
+            sourceTable:
+              event.source === "ledger" ? "ledger_audit_events" : "audit_logs",
+            sourceType: event.resourceType,
+            sourceId: event.resourceId,
+            sourceLabel: `${event.action} - ${event.status}`,
+            sourceDate: event.createdAt,
+            sourceHash: null,
+            provenance: "POSTED",
+            available: true,
+            unavailableReason: null,
+            correlationId: null,
+          })),
+        ]
+      : [
+          {
+            checklistKey: "data-trust-provenance",
+            evidenceType: CloseEvidenceType.DATA_TRUST_CERTIFICATE,
+            sourceTable: "ledger_audit_events",
+            sourceType: "AccountantPortalDataTrust",
+            sourceId: period.id,
+            sourceLabel: "Data-trust evidence unavailable",
+            sourceDate: now.toISOString(),
+            sourceHash: null,
+            provenance: "UNAVAILABLE",
+            available: false,
+            unavailableReason:
+              dataTrustUnavailableReason ??
+              "Accountant data-trust service is unavailable.",
+            correlationId: null,
+          },
+        ]),
     {
       checklistKey: "inventory-valuation",
       evidenceType: CloseEvidenceType.REPORT_EXPORT,
@@ -1337,10 +2149,17 @@ async function buildAssessment(
 
   const checklistWithEvidence = checklist.map((item) => ({
     ...item,
-    evidenceCount: evidenceItems.filter((evidence) => evidence.checklistKey === item.key && evidence.available).length || item.evidenceCount,
+    evidenceCount:
+      evidenceItems.filter(
+        (evidence) => evidence.checklistKey === item.key && evidence.available,
+      ).length || item.evidenceCount,
   }))
-  const criticalBlockerCount = findings.filter((finding) => finding.severity === CloseFindingSeverity.CRITICAL).length
-  const highBlockerCount = findings.filter((finding) => finding.severity === CloseFindingSeverity.HIGH).length
+  const criticalBlockerCount = findings.filter(
+    (finding) => finding.severity === CloseFindingSeverity.CRITICAL,
+  ).length
+  const highBlockerCount = findings.filter(
+    (finding) => finding.severity === CloseFindingSeverity.HIGH,
+  ).length
   const status = closeRunStatusFromFindings(findings)
   const readinessScore = scoreFromChecklist(checklistWithEvidence)
   const evidenceCoveragePct = coverageFromChecklist(checklistWithEvidence)
@@ -1352,7 +2171,15 @@ async function buildAssessment(
       organizationScoped: true,
       persisted: false,
       trustLevel: dataTrustLevel,
-      provenance: dataTrustUnavailable || paymentUnavailable ? "MIXED" : "POSTED",
+      provenance:
+        ledgerUnavailable ||
+        paymentUnavailable ||
+        dataTrustUnavailable ||
+        inventoryUnavailable ||
+        payrollForecastUnavailable(payrollForecastSnapshot) ||
+        payrollForecastBlocked(payrollForecastSnapshot)
+          ? "MIXED"
+          : "POSTED",
       sourceTables: [...CLOSE_SOURCE_TABLES],
     },
     period: periodSummary(period),
@@ -1374,34 +2201,64 @@ async function buildAssessment(
     provenance: [
       {
         label: "Ledger and period close",
-        provenance: "POSTED",
+        provenance:
+          ledgerUnavailable || preflightResult.error ? "UNAVAILABLE" : "POSTED",
         asOf: now.toISOString(),
         periodStatus: period.status,
-        sourceTables: ["accounting_periods", "journal_entries", "journal_entry_lines", "ledger_posting_batches"],
+        sourceTables: [
+          "accounting_periods",
+          "journal_entries",
+          "journal_entry_lines",
+          "ledger_posting_batches",
+        ],
+        reason:
+          ledgerUnavailable || preflightResult.error
+            ? (ledgerUnavailableReason ?? preflightResult.error ?? undefined)
+            : undefined,
       },
       {
         label: "Payment reconciliation",
         provenance: paymentUnavailable ? "UNAVAILABLE" : "OPERATIONAL",
         asOf: now.toISOString(),
         periodStatus: period.status,
-        sourceTables: ["reconciliation_runs", "suspense_items", "payment_exceptions"],
-        reason: paymentUnavailable ? "Payment reconciliation dashboard failed to load." : undefined,
+        sourceTables: [
+          "reconciliation_runs",
+          "suspense_items",
+          "payment_exceptions",
+        ],
+        reason: paymentUnavailable
+          ? (paymentUnavailableReason ?? "Payment reconciliation dashboard failed to load.")
+          : undefined,
       },
       {
         label: "Data trust",
         provenance: dataTrustUnavailable ? "UNAVAILABLE" : "POSTED",
         asOf: now.toISOString(),
         periodStatus: period.status,
-        sourceTables: dataTrustUnavailable ? ["ledger_audit_events", "audit_logs"] : dataTrust.source.sourceTables,
-        reason: dataTrustUnavailable ? "Accountant data-trust service failed to load." : undefined,
+        sourceTables: dataTrustUnavailable
+          ? ["ledger_audit_events", "audit_logs"]
+          : dataTrust.source.sourceTables,
+        reason: dataTrustUnavailable
+          ? (dataTrustUnavailableReason ?? "Accountant data-trust service failed to load.")
+          : undefined,
       },
       {
         label: "Inventory valuation",
         provenance: inventoryUnavailable ? "UNAVAILABLE" : "POSTED",
         asOf: now.toISOString(),
         periodStatus: period.status,
-        sourceTables: ["inventory_levels", "inventory_transactions", "stock_adjustments", "stock_count_sessions", "journal_entry_lines", "business_events"],
-        reason: inventoryAnnex.blockerStatus === "PASSED" ? undefined : inventoryAnnex.failures[0]?.message,
+        sourceTables: [
+          "inventory_levels",
+          "inventory_transactions",
+          "stock_adjustments",
+          "stock_count_sessions",
+          "journal_entry_lines",
+          "business_events",
+        ],
+        reason:
+          inventoryAnnex.blockerStatus === "PASSED"
+            ? undefined
+            : inventoryAnnex.failures[0]?.message,
       },
       payrollForecastProvenance(payrollForecastSnapshot, period.status, now),
     ],
@@ -1438,37 +2295,62 @@ function summaryFrom(
 ) {
   return {
     checklistCount: checklist.length,
-    passedCount: checklist.filter((item) => item.status === CloseChecklistStatus.PASSED).length,
-    failedCount: checklist.filter((item) => item.status === CloseChecklistStatus.FAILED).length,
-    warningCount: checklist.filter((item) => item.status === CloseChecklistStatus.WARNING).length,
-    unavailableCount: checklist.filter((item) => item.status === CloseChecklistStatus.UNAVAILABLE).length,
+    passedCount: checklist.filter(
+      (item) => item.status === CloseChecklistStatus.PASSED,
+    ).length,
+    failedCount: checklist.filter(
+      (item) => item.status === CloseChecklistStatus.FAILED,
+    ).length,
+    warningCount: checklist.filter(
+      (item) => item.status === CloseChecklistStatus.WARNING,
+    ).length,
+    unavailableCount: checklist.filter(
+      (item) => item.status === CloseChecklistStatus.UNAVAILABLE,
+    ).length,
     findingCount: findings.length,
-    openFindingCount: findings.filter((finding) => openFindingStatuses.includes(finding.status as (typeof openFindingStatuses)[number])).length,
+    openFindingCount: findings.filter((finding) =>
+      openFindingStatuses.includes(
+        finding.status as (typeof openFindingStatuses)[number],
+      ),
+    ).length,
     evidenceCount: evidenceItems.filter((item) => item.available).length,
     commentCount,
   }
 }
 
-function closeControls(params: {
-  persisted?: boolean
-  status?: CloseRunStatus
-  criticalBlockerCount?: number
-  highBlockerCount?: number
-  checklist?: Array<{ status: CloseChecklistStatus; severity: CloseFindingSeverity }>
-  findings?: Array<{ status: CloseFindingStatus; severity: CloseFindingSeverity }>
-} = {}): CloseAssuranceDashboardData["controls"] {
+function closeControls(
+  params: {
+    persisted?: boolean
+    status?: CloseRunStatus
+    criticalBlockerCount?: number
+    highBlockerCount?: number
+    checklist?: Array<{
+      status: CloseChecklistStatus
+      severity: CloseFindingSeverity
+    }>
+    findings?: Array<{
+      status: CloseFindingStatus
+      severity: CloseFindingSeverity
+    }>
+  } = {},
+): CloseAssuranceDashboardData["controls"] {
   const persisted = params.persisted ?? false
   const criticalBlockers = params.criticalBlockerCount ?? 0
   const highBlockers = params.highBlockerCount ?? 0
   const openHighRiskFindings = (params.findings ?? []).filter(
     (finding) =>
-      openFindingStatuses.includes(finding.status as (typeof openFindingStatuses)[number]) &&
-      (finding.severity === CloseFindingSeverity.CRITICAL || finding.severity === CloseFindingSeverity.HIGH),
+      openFindingStatuses.includes(
+        finding.status as (typeof openFindingStatuses)[number],
+      ) &&
+      (finding.severity === CloseFindingSeverity.CRITICAL ||
+        finding.severity === CloseFindingSeverity.HIGH),
   ).length
   const unavailableHighRiskChecklist = (params.checklist ?? []).filter(
     (item) =>
-      (item.status === CloseChecklistStatus.FAILED || item.status === CloseChecklistStatus.UNAVAILABLE) &&
-      (item.severity === CloseFindingSeverity.CRITICAL || item.severity === CloseFindingSeverity.HIGH),
+      (item.status === CloseChecklistStatus.FAILED ||
+        item.status === CloseChecklistStatus.UNAVAILABLE) &&
+      (item.severity === CloseFindingSeverity.CRITICAL ||
+        item.severity === CloseFindingSeverity.HIGH),
   ).length
   const certificationAvailable =
     persisted &&
@@ -1512,7 +2394,10 @@ export async function runCloseAssurance(
   const draft = await buildAssessment(organizationId, input.periodId, now)
 
   if (!draft.raw.period) {
-    throw new CloseAssuranceError("CloseBlocked", "An accounting period is required before close assurance can run.")
+    throw new CloseAssuranceError(
+      "CloseBlocked",
+      "An accounting period is required before close assurance can run.",
+    )
   }
 
   const persisted = await db.$transaction(async (tx) => {
@@ -1524,7 +2409,10 @@ export async function runCloseAssurance(
         readinessScore: draft.run.readinessScore,
         criticalBlockerCount: draft.run.criticalBlockerCount,
         highBlockerCount: draft.run.highBlockerCount,
-        evidenceCoveragePct: draft.run.evidenceCoveragePct === null ? null : new Prisma.Decimal(draft.run.evidenceCoveragePct),
+        evidenceCoveragePct:
+          draft.run.evidenceCoveragePct === null
+            ? null
+            : new Prisma.Decimal(draft.run.evidenceCoveragePct),
         asOf: now,
         startedAt: now,
         completedAt: now,
@@ -1536,8 +2424,14 @@ export async function runCloseAssurance(
           sourceTables: draft.source.sourceTables,
           trustLevel: draft.source.trustLevel,
           controlPermissions: control.actorPermissions ?? [],
-          inventoryValuationAnnex: draft.raw.evidenceItems.find((item) => item.sourceType === "InventoryValuationAnnex")?.metadata ?? null,
-          payrollFinanceForecastProof: draft.raw.evidenceItems.find((item) => item.sourceType === "PayrollFinanceForecastProof")?.metadata ?? null,
+          inventoryValuationAnnex:
+            draft.raw.evidenceItems.find(
+              (item) => item.sourceType === "InventoryValuationAnnex",
+            )?.metadata ?? null,
+          payrollFinanceForecastProof:
+            draft.raw.evidenceItems.find(
+              (item) => item.sourceType === "PayrollFinanceForecastProof",
+            )?.metadata ?? null,
           statutoryCertification: statutoryCertificationBlockerMetadata(),
         }),
       },
@@ -1570,37 +2464,47 @@ export async function runCloseAssurance(
     const findings: CloseAssuranceFinding[] = []
     for (const finding of draft.raw.findings) {
       const checklistItem = checklistByKey.get(finding.checklistKey) ?? null
-      findings.push(await tx.closeAssuranceFinding.create({
-        data: {
-          organizationId,
-          periodId: closeRun.periodId,
-          closeRunId: closeRun.id,
-          checklistItemId: checklistItem?.id ?? null,
-          domain: finding.domain,
-          severity: finding.severity,
-          status: finding.status,
-          title: finding.title,
-          detail: finding.detail,
-          sourceService: finding.sourceService,
-          sourceType: finding.sourceType,
-          sourceId: finding.sourceId,
-          ownerId: finding.ownerId,
-          assignedById: finding.assignedById,
-          dueAt: finding.dueAt ? new Date(finding.dueAt) : null,
-          correlationId: finding.correlationId ?? correlationId,
-        },
-      }))
+      findings.push(
+        await tx.closeAssuranceFinding.create({
+          data: {
+            organizationId,
+            periodId: closeRun.periodId,
+            closeRunId: closeRun.id,
+            checklistItemId: checklistItem?.id ?? null,
+            domain: finding.domain,
+            severity: finding.severity,
+            status: finding.status,
+            title: finding.title,
+            detail: finding.detail,
+            sourceService: finding.sourceService,
+            sourceType: finding.sourceType,
+            sourceId: finding.sourceId,
+            ownerId: finding.ownerId,
+            assignedById: finding.assignedById,
+            dueAt: finding.dueAt ? new Date(finding.dueAt) : null,
+            correlationId: finding.correlationId ?? correlationId,
+          },
+        }),
+      )
     }
 
     const findingsByChecklist = new Map<string, CloseAssuranceFinding>()
     for (const finding of findings) {
-      const checklist = draft.raw.findings.find((item) => item.sourceType === finding.sourceType && item.title === finding.title)
+      const checklist = draft.raw.findings.find(
+        (item) =>
+          item.sourceType === finding.sourceType &&
+          item.title === finding.title,
+      )
       if (checklist) findingsByChecklist.set(checklist.checklistKey, finding)
     }
 
     for (const evidence of draft.raw.evidenceItems) {
-      const checklistItem = evidence.checklistKey ? checklistByKey.get(evidence.checklistKey) : null
-      const linkedFinding = evidence.checklistKey ? findingsByChecklist.get(evidence.checklistKey) : null
+      const checklistItem = evidence.checklistKey
+        ? checklistByKey.get(evidence.checklistKey)
+        : null
+      const linkedFinding = evidence.checklistKey
+        ? findingsByChecklist.get(evidence.checklistKey)
+        : null
       await tx.closeEvidenceItem.create({
         data: {
           organizationId,
@@ -1613,15 +2517,18 @@ export async function runCloseAssurance(
           sourceType: evidence.sourceType,
           sourceId: evidence.sourceId,
           sourceLabel: evidence.sourceLabel,
-          sourceDate: evidence.sourceDate ? new Date(evidence.sourceDate) : null,
+          sourceDate: evidence.sourceDate
+            ? new Date(evidence.sourceDate)
+            : null,
           sourceHash: evidence.sourceHash,
           provenance: evidence.provenance,
           available: evidence.available,
           unavailableReason: evidence.unavailableReason,
           correlationId: evidence.correlationId ?? correlationId,
-          metadata: evidence.metadata === undefined || evidence.metadata === null
-            ? undefined
-            : (evidence.metadata as Prisma.InputJsonValue),
+          metadata:
+            evidence.metadata === undefined || evidence.metadata === null
+              ? undefined
+              : (evidence.metadata as Prisma.InputJsonValue),
         },
       })
     }
@@ -1644,13 +2551,93 @@ export async function runCloseAssurance(
       },
     })
 
+    const runSeverity = closeRun.criticalBlockerCount > 0
+      ? "CRITICAL"
+      : closeRun.highBlockerCount > 0
+        ? "HIGH"
+        : "INFO"
+    await recordCloseWorkflowEventInTx(tx, {
+      organizationId,
+      actorId: control.actorId,
+      eventType: "close.assurance.run.completed",
+      idempotencyKey: `close-assurance-run:${closeRun.id}:completed`,
+      sourceType: "CloseRun",
+      sourceId: closeRun.id,
+      closeRunId: closeRun.id,
+      periodId: closeRun.periodId,
+      message: `Close assurance run completed with ${closeRun.status}`,
+      severity: runSeverity,
+      correlationId,
+      payload: {
+        status: closeRun.status,
+        readinessScore: closeRun.readinessScore,
+        criticalBlockerCount: closeRun.criticalBlockerCount,
+        highBlockerCount: closeRun.highBlockerCount,
+      },
+    })
+
+    if (closeRun.status === CloseRunStatus.BLOCKED) {
+      await recordCloseWorkflowEventInTx(tx, {
+        organizationId,
+        actorId: control.actorId,
+        eventType: "close.assurance.blocked",
+        idempotencyKey: `close-assurance-run:${closeRun.id}:blocked`,
+        sourceType: "CloseRun",
+        sourceId: closeRun.id,
+        closeRunId: closeRun.id,
+        periodId: closeRun.periodId,
+        message: "Close assurance is blocked by open high or critical findings.",
+        severity: runSeverity,
+        correlationId,
+        payload: {
+          status: closeRun.status,
+          criticalBlockerCount: closeRun.criticalBlockerCount,
+          highBlockerCount: closeRun.highBlockerCount,
+        },
+      })
+    }
+
+    for (const finding of findings) {
+      if (finding.severity !== CloseFindingSeverity.CRITICAL) continue
+      await recordCloseWorkflowEventInTx(tx, {
+        organizationId,
+        actorId: control.actorId,
+        eventType: "close.assurance.critical_finding.created",
+        idempotencyKey: `close-assurance-finding:${finding.id}:critical-created`,
+        sourceType: "CloseAssuranceFinding",
+        sourceId: finding.id,
+        closeRunId: closeRun.id,
+        periodId: closeRun.periodId,
+        findingId: finding.id,
+        ownerId: finding.ownerId,
+        dueAt: finding.dueAt,
+        message: finding.title,
+        severity: "CRITICAL",
+        correlationId: finding.correlationId ?? correlationId,
+        payload: {
+          domain: finding.domain,
+          sourceService: finding.sourceService,
+          sourceType: finding.sourceType,
+          sourceId: finding.sourceId,
+        },
+      })
+    }
+
     return closeRun
   })
 
-  return getCloseAssuranceDashboard(organizationId, persisted.periodId, persisted.id)
+  return getCloseAssuranceDashboard(
+    organizationId,
+    persisted.periodId,
+    persisted.id,
+  )
 }
 
-async function latestCloseRun(organizationId: string, periodId: string, closeRunId?: string | null) {
+async function latestCloseRun(
+  organizationId: string,
+  periodId: string,
+  closeRunId?: string | null,
+) {
   return db.closeRun.findFirst({
     where: {
       organizationId,
@@ -1660,7 +2647,9 @@ async function latestCloseRun(organizationId: string, periodId: string, closeRun
     include: {
       checklistItems: { orderBy: [{ domain: "asc" }, { key: "asc" }] },
       findings: { orderBy: [{ severity: "desc" }, { createdAt: "asc" }] },
-      evidenceItems: { orderBy: [{ evidenceType: "asc" }, { createdAt: "desc" }] },
+      evidenceItems: {
+        orderBy: [{ evidenceType: "asc" }, { createdAt: "desc" }],
+      },
       comments: { orderBy: { createdAt: "desc" }, take: 50 },
       reviews: { orderBy: { createdAt: "desc" }, take: 10 },
     },
@@ -1717,7 +2706,12 @@ export async function getCloseAssuranceDashboard(
       completedAt: iso(run.completedAt),
       createdAt: run.createdAt.toISOString(),
     },
-    summary: summaryFrom(checklist, findings, evidenceItems, run.comments.length),
+    summary: summaryFrom(
+      checklist,
+      findings,
+      evidenceItems,
+      run.comments.length,
+    ),
     provenance: provenanceFromRun(run, period),
     checklist,
     findings,
@@ -1758,27 +2752,36 @@ function metadataString(value: Prisma.JsonValue | null, key: string) {
   return typeof raw === "string" ? raw : null
 }
 
-function provenanceFromRun(run: CloseRun, period: NonNullable<Awaited<ReturnType<typeof resolveTargetPeriod>>>) {
+function provenanceFromRun(
+  run: CloseRun,
+  period: NonNullable<Awaited<ReturnType<typeof resolveTargetPeriod>>>,
+) {
   const raw = run.provenance
   if (raw && typeof raw === "object" && !Array.isArray(raw)) {
     const items = (raw as Record<string, unknown>).items
     if (Array.isArray(items)) {
-      return items.filter((item): item is CloseAssuranceDashboardData["provenance"][number] => {
-        return Boolean(item && typeof item === "object" && "label" in item)
-      })
+      return items.filter(
+        (item): item is CloseAssuranceDashboardData["provenance"][number] => {
+          return Boolean(item && typeof item === "object" && "label" in item)
+        },
+      )
     }
   }
 
-  return [{
-    label: "Close run snapshot",
-    provenance: "POSTED" as const,
-    asOf: run.asOf.toISOString(),
-    periodStatus: period.status,
-    sourceTables: [...CLOSE_SOURCE_TABLES],
-  }]
+  return [
+    {
+      label: "Close run snapshot",
+      provenance: "POSTED" as const,
+      asOf: run.asOf.toISOString(),
+      periodStatus: period.status,
+      sourceTables: [...CLOSE_SOURCE_TABLES],
+    },
+  ]
 }
 
-function mapChecklistItem(item: CloseChecklistItem): CloseAssuranceChecklistDto {
+function mapChecklistItem(
+  item: CloseChecklistItem,
+): CloseAssuranceChecklistDto {
   return {
     id: item.id,
     key: item.key,
@@ -1842,9 +2845,15 @@ export async function getCloseEvidenceGraph(
   organizationId: string,
   input: CloseEvidenceGraphInput,
 ): Promise<CloseEvidenceGraphDto> {
-  const dashboard = await getCloseAssuranceDashboard(organizationId, input.periodId, input.closeRunId)
+  const dashboard = await getCloseAssuranceDashboard(
+    organizationId,
+    input.periodId,
+    input.closeRunId,
+  )
   const evidence = input.findingId
-    ? dashboard.evidenceItems.filter((item) => item.findingId === input.findingId)
+    ? dashboard.evidenceItems.filter(
+        (item) => item.findingId === input.findingId,
+      )
     : dashboard.evidenceItems
   const rootId = dashboard.run.id ?? `period:${dashboard.period?.id ?? "none"}`
 
@@ -1852,7 +2861,9 @@ export async function getCloseEvidenceGraph(
     {
       id: rootId,
       type: "close-run",
-      label: dashboard.run.id ? `Close run ${dashboard.run.id}` : "Live close readiness preview",
+      label: dashboard.run.id
+        ? `Close run ${dashboard.run.id}`
+        : "Live close readiness preview",
       status: dashboard.run.status,
       provenance: dashboard.source.provenance,
       available: Boolean(dashboard.period),
@@ -1862,7 +2873,10 @@ export async function getCloseEvidenceGraph(
       type: "checklist",
       label: item.label,
       status: item.status,
-      provenance: item.status === CloseChecklistStatus.UNAVAILABLE ? "UNAVAILABLE" : "POSTED",
+      provenance:
+        item.status === CloseChecklistStatus.UNAVAILABLE
+          ? "UNAVAILABLE"
+          : "POSTED",
       available: item.status !== CloseChecklistStatus.UNAVAILABLE,
     })),
     ...evidence.map((item, index) => ({
@@ -1882,14 +2896,97 @@ export async function getCloseEvidenceGraph(
       label: "assesses",
     })),
     ...evidence.flatMap((item, index) => {
-      const checklist = dashboard.checklist.find((entry) => entry.id && entry.id === item.checklistItemId)
-      return [{
-        from: checklist ? `checklist:${checklist.key}` : rootId,
-        to: item.id ?? `evidence:${index}:${item.evidenceType}`,
-        label: item.available ? "supported by" : "missing evidence",
-      }]
+      const checklist = dashboard.checklist.find(
+        (entry) => entry.id && entry.id === item.checklistItemId,
+      )
+      return [
+        {
+          from: checklist ? `checklist:${checklist.key}` : rootId,
+          to: item.id ?? `evidence:${index}:${item.evidenceType}`,
+          label: item.available ? "supported by" : "missing evidence",
+        },
+      ]
     }),
   ]
+
+  const graphNodeIds = new Set(nodes.map((node) => node.id))
+  function addGraphNode(node: CloseEvidenceGraphDto["nodes"][number]) {
+    if (graphNodeIds.has(node.id)) return
+    graphNodeIds.add(node.id)
+    nodes.push(node)
+  }
+
+  evidence.forEach((item, index) => {
+    if (item.sourceTable !== "accounting_source_links") return
+    const evidenceNodeId = item.id ?? `evidence:${index}:${item.evidenceType}`
+    const sourceNodeId = item.sourceType && item.sourceId
+      ? `source:${item.sourceType}:${item.sourceId}`
+      : null
+    const sourceNumber = metadataString(item.metadata ?? null, "sourceNumber")
+    const postingBatchId = metadataString(item.metadata ?? null, "postingBatchId")
+    const journalEntryNumber = metadataString(item.metadata ?? null, "journalEntryNumber")
+
+    if (sourceNodeId) {
+      addGraphNode({
+        id: sourceNodeId,
+        type: item.sourceType ?? "source",
+        label: sourceNumber ?? item.sourceLabel,
+        provenance: item.provenance,
+        available: item.available,
+      })
+      edges.push({
+        from: sourceNodeId,
+        to: evidenceNodeId,
+        label: "captured by source link",
+      })
+    }
+
+    if (postingBatchId) {
+      const postingBatchNodeId = `posting-batch:${postingBatchId}`
+      addGraphNode({
+        id: postingBatchNodeId,
+        type: "ledger-posting-batch",
+        label: `Posting batch ${postingBatchId}`,
+        provenance: "POSTED",
+        available: true,
+      })
+      edges.push({
+        from: evidenceNodeId,
+        to: postingBatchNodeId,
+        label: "posts through",
+      })
+
+      if (journalEntryNumber) {
+        const journalNodeId = `journal-entry:${journalEntryNumber}`
+        addGraphNode({
+          id: journalNodeId,
+          type: "journal-entry",
+          label: `Journal entry ${journalEntryNumber}`,
+          provenance: "POSTED",
+          available: true,
+        })
+        edges.push({
+          from: postingBatchNodeId,
+          to: journalNodeId,
+          label: "produces",
+        })
+      }
+    } else if (journalEntryNumber) {
+      const journalNodeId = `journal-entry:${journalEntryNumber}`
+      addGraphNode({
+        id: journalNodeId,
+        type: "journal-entry",
+        label: `Journal entry ${journalEntryNumber}`,
+        provenance: "POSTED",
+        available: true,
+      })
+      edges.push({
+        from: evidenceNodeId,
+        to: journalNodeId,
+        label: "links to",
+      })
+    }
+  })
 
   return {
     source: {
@@ -1904,7 +3001,11 @@ export async function getCloseEvidenceGraph(
   }
 }
 
-async function loadFindingForMutation(organizationId: string, findingId: string, tx: Prisma.TransactionClient | typeof db = db) {
+async function loadFindingForMutation(
+  organizationId: string,
+  findingId: string,
+  tx: Prisma.TransactionClient | typeof db = db,
+) {
   const finding = await tx.closeAssuranceFinding.findFirst({
     where: { id: findingId, organizationId },
     include: { closeRun: true },
@@ -1944,13 +3045,23 @@ export async function assignCloseFinding(
   control: CloseControlContext = {},
 ) {
   const assignedToId = input.assignedToId ?? control.actorId
-  if (!assignedToId) throw new BusinessRuleError("A finding assignee is required.")
+  if (!assignedToId)
+    throw new BusinessRuleError("A finding assignee is required.")
   const correlationId = input.correlationId ?? randomUUID()
 
   return db.$transaction(async (tx) => {
-    const finding = await loadFindingForMutation(organizationId, input.findingId, tx)
-    if (finding.status === CloseFindingStatus.RESOLVED || finding.status === CloseFindingStatus.WAIVED_WITH_APPROVAL) {
-      throw new BusinessRuleError("Resolved or waived findings cannot be reassigned.")
+    const finding = await loadFindingForMutation(
+      organizationId,
+      input.findingId,
+      tx,
+    )
+    if (
+      finding.status === CloseFindingStatus.RESOLVED ||
+      finding.status === CloseFindingStatus.WAIVED_WITH_APPROVAL
+    ) {
+      throw new BusinessRuleError(
+        "Resolved or waived findings cannot be reassigned.",
+      )
     }
 
     const updated = await tx.closeAssuranceFinding.update({
@@ -1974,6 +3085,52 @@ export async function assignCloseFinding(
       metadata: jsonObject({ assignedToId, correlationId }),
     })
 
+    await recordCloseWorkflowEventInTx(tx, {
+      organizationId,
+      actorId: control.actorId,
+      eventType: "close.assurance.finding.assigned",
+      idempotencyKey: `close-assurance-finding:${finding.id}:assigned:${assignedToId}:${correlationId}`,
+      sourceType: "CloseAssuranceFinding",
+      sourceId: finding.id,
+      closeRunId: finding.closeRunId,
+      periodId: finding.periodId,
+      findingId: finding.id,
+      ownerId: assignedToId,
+      dueAt: updated.dueAt,
+      message: `Close finding ${finding.id} assigned`,
+      severity: notificationSeverity(updated.severity),
+      correlationId,
+      payload: {
+        assignedToId,
+        status: updated.status,
+        domain: updated.domain,
+      },
+    })
+
+    if (isDueSoon(updated.dueAt)) {
+      await recordCloseWorkflowEventInTx(tx, {
+        organizationId,
+        actorId: control.actorId,
+        eventType: "close.assurance.finding.due_soon",
+        idempotencyKey: `close-assurance-finding:${finding.id}:due-soon:${correlationId}`,
+        sourceType: "CloseAssuranceFinding",
+        sourceId: finding.id,
+        closeRunId: finding.closeRunId,
+        periodId: finding.periodId,
+        findingId: finding.id,
+        ownerId: assignedToId,
+        dueAt: updated.dueAt,
+        message: `Close finding ${finding.id} is due soon`,
+        severity: notificationSeverity(updated.severity),
+        correlationId,
+        payload: {
+          assignedToId,
+          status: updated.status,
+          domain: updated.domain,
+        },
+      })
+    }
+
     return mapFinding(updated)
   })
 }
@@ -1993,28 +3150,40 @@ export async function commentOnCloseFinding(
     let reviewId = input.reviewId ?? null
 
     if (findingId) {
-      const finding = await loadFindingForMutation(organizationId, findingId, tx)
+      const finding = await loadFindingForMutation(
+        organizationId,
+        findingId,
+        tx,
+      )
       assertFindingCanReceiveComment(finding.status)
       closeRunId = finding.closeRunId
       periodId = finding.periodId
     } else if (evidenceItemId) {
-      const evidence = await tx.closeEvidenceItem.findFirst({ where: { id: evidenceItemId, organizationId } })
+      const evidence = await tx.closeEvidenceItem.findFirst({
+        where: { id: evidenceItemId, organizationId },
+      })
       if (!evidence) throw new NotFoundError("Close evidence item not found")
       closeRunId = evidence.closeRunId
       periodId = evidence.periodId
     } else if (reviewId) {
-      const review = await tx.accountantReview.findFirst({ where: { id: reviewId, organizationId } })
+      const review = await tx.accountantReview.findFirst({
+        where: { id: reviewId, organizationId },
+      })
       if (!review) throw new NotFoundError("Accountant review not found")
       closeRunId = review.closeRunId
       periodId = review.periodId
     } else if (closeRunId) {
-      const run = await tx.closeRun.findFirst({ where: { id: closeRunId, organizationId } })
+      const run = await tx.closeRun.findFirst({
+        where: { id: closeRunId, organizationId },
+      })
       if (!run) throw new NotFoundError("Close run not found")
       periodId = run.periodId
     }
 
     if (!closeRunId || !periodId) {
-      throw new BusinessRuleError("A close run, finding, evidence item, or review is required for comments.")
+      throw new BusinessRuleError(
+        "A close run, finding, evidence item, or review is required for comments.",
+      )
     }
 
     const comment = await tx.accountantComment.create({
@@ -2041,6 +3210,26 @@ export async function commentOnCloseFinding(
       metadata: jsonObject({ commentId: comment.id, correlationId }),
     })
 
+    await recordCloseWorkflowEventInTx(tx, {
+      organizationId,
+      actorId: control.actorId,
+      eventType: "close.assurance.accountant_comment.added",
+      idempotencyKey: `close-assurance-comment:${comment.id}:added`,
+      sourceType: findingId ? "CloseAssuranceFinding" : "CloseRun",
+      sourceId: findingId ?? closeRunId,
+      closeRunId,
+      periodId,
+      findingId,
+      message: "Close assurance comment added",
+      severity: "INFO",
+      correlationId,
+      payload: {
+        commentId: comment.id,
+        evidenceItemId,
+        reviewId,
+      },
+    })
+
     return {
       id: comment.id,
       findingId: comment.findingId,
@@ -2054,6 +3243,931 @@ export async function commentOnCloseFinding(
   })
 }
 
+type MissingCloseEvidenceCommentRecord = {
+  id: string
+  organizationId: string
+  periodId: string
+  closeRunId: string
+  findingId: string | null
+  authorId: string | null
+  body: string
+  visibility: string
+  correlationId: string | null
+  metadata: Prisma.JsonValue | null
+  createdAt: Date
+}
+
+function mapMissingCloseEvidenceRequest(
+  comment: MissingCloseEvidenceCommentRecord,
+): MissingCloseEvidenceRequestDto {
+  const requestType = metadataString(comment.metadata, "requestType")
+  const requestedById = metadataString(comment.metadata, "requestedById")
+  const requestedFromId = metadataString(comment.metadata, "requestedFromId")
+  const dueAt = metadataString(comment.metadata, "dueAt")
+  const metadataCorrelationId = metadataString(
+    comment.metadata,
+    "correlationId",
+  )
+  const dueAtTime = dueAt ? new Date(dueAt).getTime() : Number.NaN
+
+  if (
+    comment.visibility !== MISSING_CLOSE_EVIDENCE_VISIBILITY ||
+    requestType !== MISSING_CLOSE_EVIDENCE_REQUEST_TYPE ||
+    !comment.findingId ||
+    !comment.authorId ||
+    !comment.correlationId ||
+    requestedById !== comment.authorId ||
+    !requestedFromId ||
+    metadataCorrelationId !== comment.correlationId ||
+    !Number.isFinite(dueAtTime)
+  ) {
+    throw new BusinessRuleError(
+      "Stored missing-proof request evidence is incomplete.",
+    )
+  }
+
+  return {
+    id: comment.id,
+    organizationId: comment.organizationId,
+    periodId: comment.periodId,
+    closeRunId: comment.closeRunId,
+    findingId: comment.findingId,
+    requestedById,
+    requestedFromId,
+    requestText: comment.body,
+    dueAt: new Date(dueAtTime).toISOString(),
+    status: "OPEN",
+    correlationId: comment.correlationId,
+    createdAt: comment.createdAt.toISOString(),
+  }
+}
+
+function assertMatchingMissingCloseEvidenceReplay(
+  existing: MissingCloseEvidenceCommentRecord,
+  input: RequestMissingCloseEvidenceInput,
+  actorId: string,
+  dueAt: Date,
+): MissingCloseEvidenceRequestDto {
+  const request = mapMissingCloseEvidenceRequest(existing)
+  if (
+    request.requestedById !== actorId ||
+    request.requestedFromId !== input.requestedFromId ||
+    request.requestText !== input.requestText ||
+    request.dueAt !== dueAt.toISOString()
+  ) {
+    throw new ConflictError(
+      "Correlation ID already belongs to a different missing-proof request.",
+    )
+  }
+  return request
+}
+
+function mapMissingCloseEvidenceResponse(
+  comment: MissingCloseEvidenceCommentRecord,
+): MissingCloseEvidenceResponseDto {
+  const responseType = metadataString(comment.metadata, "responseType")
+  const requestId = metadataString(comment.metadata, "requestId")
+  const requestCorrelationId = metadataString(
+    comment.metadata,
+    "requestCorrelationId",
+  )
+  const requestedById = metadataString(comment.metadata, "requestedById")
+  const requestedFromId = metadataString(comment.metadata, "requestedFromId")
+  const respondedById = metadataString(comment.metadata, "respondedById")
+  const metadataCorrelationId = metadataString(
+    comment.metadata,
+    "correlationId",
+  )
+
+  if (
+    comment.visibility !== MISSING_CLOSE_EVIDENCE_RESPONSE_VISIBILITY ||
+    responseType !== MISSING_CLOSE_EVIDENCE_RESPONSE_TYPE ||
+    !comment.findingId ||
+    !comment.authorId ||
+    !comment.correlationId ||
+    !requestId ||
+    !requestCorrelationId ||
+    !requestedById ||
+    !requestedFromId ||
+    respondedById !== comment.authorId ||
+    respondedById !== requestedFromId ||
+    metadataCorrelationId !== comment.correlationId
+  ) {
+    throw new BusinessRuleError(
+      "Stored missing-proof response evidence is incomplete.",
+    )
+  }
+
+  return {
+    id: comment.id,
+    requestId,
+    organizationId: comment.organizationId,
+    periodId: comment.periodId,
+    closeRunId: comment.closeRunId,
+    findingId: comment.findingId,
+    requestedById,
+    requestedFromId,
+    respondedById,
+    responseText: comment.body,
+    requestCorrelationId,
+    status: "SUBMITTED",
+    correlationId: comment.correlationId,
+    createdAt: comment.createdAt.toISOString(),
+  }
+}
+
+function assertMatchingMissingCloseEvidenceResponseReplay(
+  existing: MissingCloseEvidenceCommentRecord,
+  input: RespondToMissingCloseEvidenceInput,
+  request: MissingCloseEvidenceRequestDto,
+  actorId: string,
+): MissingCloseEvidenceResponseDto {
+  const response = mapMissingCloseEvidenceResponse(existing)
+  if (
+    response.requestId !== request.id ||
+    response.organizationId !== request.organizationId ||
+    response.periodId !== request.periodId ||
+    response.closeRunId !== request.closeRunId ||
+    response.findingId !== request.findingId ||
+    response.requestedById !== request.requestedById ||
+    response.requestedFromId !== request.requestedFromId ||
+    response.respondedById !== actorId ||
+    response.responseText !== input.responseText ||
+    response.requestCorrelationId !== request.correlationId
+  ) {
+    throw new ConflictError(
+      "Correlation ID already belongs to a different missing-proof response.",
+    )
+  }
+  return response
+}
+
+function mapMissingCloseEvidenceResponseAcceptance(
+  comment: MissingCloseEvidenceCommentRecord,
+): MissingCloseEvidenceResponseAcceptanceDto {
+  const acceptanceType = metadataString(comment.metadata, "acceptanceType")
+  const requestId = metadataString(comment.metadata, "requestId")
+  const responseId = metadataString(comment.metadata, "responseId")
+  const requestCorrelationId = metadataString(
+    comment.metadata,
+    "requestCorrelationId",
+  )
+  const responseCorrelationId = metadataString(
+    comment.metadata,
+    "responseCorrelationId",
+  )
+  const findingId = metadataString(comment.metadata, "findingId")
+  const periodId = metadataString(comment.metadata, "periodId")
+  const closeRunId = metadataString(comment.metadata, "closeRunId")
+  const respondedById = metadataString(comment.metadata, "respondedById")
+  const acceptedById = metadataString(comment.metadata, "acceptedById")
+  const decision = metadataString(comment.metadata, "decision")
+  const findingStatus = metadataString(comment.metadata, "findingStatus")
+  const resolvedAt = metadataString(comment.metadata, "resolvedAt")
+  const metadataCorrelationId = metadataString(
+    comment.metadata,
+    "correlationId",
+  )
+  const resolvedAtTime = resolvedAt ? new Date(resolvedAt).getTime() : Number.NaN
+
+  if (
+    comment.visibility !==
+      MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE_VISIBILITY ||
+    acceptanceType !== MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE_TYPE ||
+    !comment.findingId ||
+    !comment.authorId ||
+    !comment.correlationId ||
+    !requestId ||
+    !responseId ||
+    !requestCorrelationId ||
+    !responseCorrelationId ||
+    findingId !== comment.findingId ||
+    periodId !== comment.periodId ||
+    closeRunId !== comment.closeRunId ||
+    !respondedById ||
+    acceptedById !== comment.authorId ||
+    acceptedById === respondedById ||
+    decision !==
+      ACCOUNTANT_MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE.decision ||
+    findingStatus !==
+      ACCOUNTANT_MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE.findingStatus ||
+    !Number.isFinite(resolvedAtTime) ||
+    metadataCorrelationId !== comment.correlationId ||
+    comment.body.trim().length < 10
+  ) {
+    throw new BusinessRuleError(
+      "Stored missing-proof response acceptance evidence is incomplete.",
+    )
+  }
+
+  return {
+    kind: ACCOUNTANT_MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE.kind,
+    version: ACCOUNTANT_MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE.version,
+    id: comment.id,
+    organizationId: comment.organizationId,
+    periodId: comment.periodId,
+    closeRunId: comment.closeRunId,
+    findingId: comment.findingId,
+    requestId,
+    responseId,
+    respondedById,
+    acceptedById,
+    decision: ACCOUNTANT_MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE.decision,
+    findingStatus:
+      ACCOUNTANT_MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE.findingStatus,
+    resolutionNotes: comment.body,
+    resolvedAt: new Date(resolvedAtTime).toISOString(),
+    correlationId: comment.correlationId,
+    createdAt: comment.createdAt.toISOString(),
+    controls: {
+      serviceClockOwned: true,
+      freshAuthRequired: true,
+      delegatedReviewRequired: true,
+      segregationOfDutiesRequired: true,
+      compareAndSetResolution: true,
+      rawMetadataExposed: false,
+      closeCertificationAuthorized: false,
+    },
+  }
+}
+
+function assertMatchingMissingCloseEvidenceAcceptanceReplay(
+  existing: MissingCloseEvidenceCommentRecord,
+  input: AcceptMissingCloseEvidenceResponseInput,
+  organizationId: string,
+  actorId: string,
+): MissingCloseEvidenceResponseAcceptanceDto {
+  const acceptance = mapMissingCloseEvidenceResponseAcceptance(existing)
+  if (
+    acceptance.organizationId !== organizationId ||
+    acceptance.requestId !== input.requestId.trim() ||
+    acceptance.responseId !== input.responseId.trim() ||
+    acceptance.acceptedById !== actorId ||
+    acceptance.resolutionNotes !== input.resolutionNotes.trim()
+  ) {
+    throw new ConflictError(
+      "Correlation ID already belongs to a different missing-proof response acceptance.",
+    )
+  }
+  return acceptance
+}
+
+async function runMissingCloseEvidenceTransaction<T>(
+  operation: (tx: Prisma.TransactionClient) => Promise<T>,
+): Promise<T> {
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      return await db.$transaction(operation, {
+        isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+      })
+    } catch (error) {
+      if (error instanceof ApplicationError) throw error
+      const code = getPrismaKnownRequest(error)?.code
+      if (attempt === 2 || (code !== "P2034" && code !== "P2002")) {
+        throw new ApplicationError(
+          "INTERNAL_ERROR",
+          "Missing-proof workflow transaction failed.",
+          500,
+          false,
+        )
+      }
+    }
+  }
+
+  throw new BusinessRuleError("Missing-proof workflow transaction failed.")
+}
+
+export async function requestMissingCloseEvidence(
+  homeOrganizationId: string,
+  input: RequestMissingCloseEvidenceInput,
+  control: CloseControlContext = {},
+): Promise<MissingCloseEvidenceRequestDto> {
+  const actorId = control.actorId?.trim()
+  if (!actorId) {
+    throw new BusinessRuleError(
+      "An authenticated accountant is required to request missing evidence.",
+    )
+  }
+
+  const now = new Date()
+  const dueAt = new Date(input.dueAt.getTime())
+  if (!Number.isFinite(dueAt.getTime()) || dueAt.getTime() <= now.getTime()) {
+    throw new BusinessRuleError(
+      "Missing-proof request due date must be in the future.",
+    )
+  }
+  const correlationId = input.correlationId ?? randomUUID()
+
+  return runMissingCloseEvidenceTransaction(async (tx) => {
+    const access = await resolveAccountantClientAccess({
+      homeOrganizationId,
+      clientOrganizationId: input.clientOrganizationId,
+      accountantUserId: actorId,
+      capability: "REVIEW",
+      now,
+      client: tx,
+    })
+    const organizationId = access.organizationId
+
+    const existing = await tx.accountantComment.findFirst({
+      where: {
+        organizationId,
+        findingId: input.findingId,
+        correlationId,
+        visibility: MISSING_CLOSE_EVIDENCE_VISIBILITY,
+      },
+    })
+    if (existing) {
+      return assertMatchingMissingCloseEvidenceReplay(
+        existing,
+        input,
+        actorId,
+        dueAt,
+      )
+    }
+
+    const finding = await tx.closeAssuranceFinding.findFirst({
+      where: { id: input.findingId, organizationId },
+      include: {
+        checklistItem: {
+          select: { status: true, evidenceCount: true },
+        },
+        evidenceItems: {
+          where: { available: false },
+          select: { id: true },
+          take: 1,
+        },
+      },
+    })
+    if (!finding) throw new NotFoundError("Close finding not found")
+    if (
+      finding.status === CloseFindingStatus.RESOLVED ||
+      finding.status === CloseFindingStatus.WAIVED_WITH_APPROVAL
+    ) {
+      throw new BusinessRuleError(
+        "Resolved or waived findings cannot receive missing-proof requests.",
+      )
+    }
+
+    const hasMissingEvidence =
+      finding.evidenceItems.length > 0 ||
+      finding.checklistItem?.status === CloseChecklistStatus.UNAVAILABLE ||
+      finding.checklistItem?.evidenceCount === 0
+    if (!hasMissingEvidence) {
+      throw new BusinessRuleError(
+        "This finding has no verified missing-evidence condition.",
+      )
+    }
+
+    const recipient = await tx.user.findFirst({
+      where: {
+        id: input.requestedFromId,
+        organizationId,
+        isActive: true,
+      },
+      select: { id: true },
+    })
+    if (!recipient) {
+      throw new BusinessRuleError(
+        "Missing-proof recipient must be an active user of the client organization.",
+      )
+    }
+
+    await tx.closeAssuranceFinding.update({
+      where: { id: finding.id },
+      data: {
+        ownerId: recipient.id,
+        assignedById: actorId,
+        assignedAt: now,
+        dueAt,
+        status: CloseFindingStatus.ASSIGNED,
+        correlationId,
+      },
+    })
+
+    const comment = await tx.accountantComment.create({
+      data: {
+        organizationId,
+        periodId: finding.periodId,
+        closeRunId: finding.closeRunId,
+        findingId: finding.id,
+        authorId: actorId,
+        body: input.requestText,
+        visibility: MISSING_CLOSE_EVIDENCE_VISIBILITY,
+        correlationId,
+        metadata: jsonObject({
+          requestType: MISSING_CLOSE_EVIDENCE_REQUEST_TYPE,
+          requestedById: actorId,
+          requestedFromId: recipient.id,
+          dueAt: dueAt.toISOString(),
+          correlationId,
+        }),
+      },
+    })
+
+    await auditCloseWorkflow(tx, {
+      organizationId,
+      actorId,
+      action: "CLOSE_MISSING_EVIDENCE_REQUESTED",
+      resourceType: "AccountantComment",
+      resourceId: comment.id,
+      message: "Close missing-evidence request created",
+      metadata: jsonObject({
+        findingId: finding.id,
+        requestedFromId: recipient.id,
+        dueAt: dueAt.toISOString(),
+        correlationId,
+      }),
+    })
+
+    await recordCloseWorkflowEventInTx(tx, {
+      organizationId,
+      actorId,
+      eventType: "close.assurance.missing_evidence.requested",
+      idempotencyKey:
+        `close-assurance-finding:${finding.id}:missing-evidence-requested:${correlationId}`,
+      sourceType: "CloseAssuranceFinding",
+      sourceId: finding.id,
+      closeRunId: finding.closeRunId,
+      periodId: finding.periodId,
+      findingId: finding.id,
+      ownerId: recipient.id,
+      dueAt,
+      message: "Close missing-evidence request created",
+      severity: notificationSeverity(finding.severity),
+      correlationId,
+      payload: {
+        requestId: comment.id,
+        requestType: MISSING_CLOSE_EVIDENCE_REQUEST_TYPE,
+        requestedById: actorId,
+        requestedFromId: recipient.id,
+        status: "OPEN",
+      },
+    })
+
+    return mapMissingCloseEvidenceRequest(comment)
+  })
+}
+
+export async function respondToMissingCloseEvidence(
+  organizationId: string,
+  input: RespondToMissingCloseEvidenceInput,
+  control: CloseControlContext = {},
+): Promise<MissingCloseEvidenceResponseDto> {
+  const actorId = control.actorId?.trim()
+  if (!actorId) {
+    throw new BusinessRuleError(
+      "An authenticated client recipient is required to respond to missing evidence.",
+    )
+  }
+  const correlationId = input.correlationId ?? randomUUID()
+
+  return runMissingCloseEvidenceTransaction(async (tx) => {
+    const activeActor = await tx.user.findFirst({
+      where: {
+        id: actorId,
+        organizationId,
+        isActive: true,
+      },
+      select: { id: true },
+    })
+    if (!activeActor) {
+      throw new BusinessRuleError(
+        "Missing-proof response requires an active user of the client organization.",
+      )
+    }
+
+    const storedRequest = await tx.accountantComment.findFirst({
+      where: {
+        id: input.requestId,
+        organizationId,
+        visibility: MISSING_CLOSE_EVIDENCE_VISIBILITY,
+        metadata: {
+          path: ["requestType"],
+          equals: MISSING_CLOSE_EVIDENCE_REQUEST_TYPE,
+        },
+      },
+    })
+    if (!storedRequest) {
+      throw new NotFoundError("Missing-proof request not found")
+    }
+    const request = mapMissingCloseEvidenceRequest(storedRequest)
+    if (request.requestedFromId !== actorId) {
+      throw new ForbiddenError(
+        "Only the requested client recipient can submit this response.",
+      )
+    }
+
+    const existingResponse = await tx.accountantComment.findFirst({
+      where: {
+        organizationId,
+        correlationId,
+        visibility: MISSING_CLOSE_EVIDENCE_RESPONSE_VISIBILITY,
+      },
+    })
+    if (existingResponse) {
+      return assertMatchingMissingCloseEvidenceResponseReplay(
+        existingResponse,
+        input,
+        request,
+        actorId,
+      )
+    }
+
+    const finding = await tx.closeAssuranceFinding.findFirst({
+      where: { id: request.findingId, organizationId },
+      select: {
+        id: true,
+        periodId: true,
+        closeRunId: true,
+        ownerId: true,
+        status: true,
+        severity: true,
+      },
+    })
+    if (!finding) throw new NotFoundError("Close finding not found")
+    if (
+      finding.periodId !== request.periodId ||
+      finding.closeRunId !== request.closeRunId
+    ) {
+      throw new BusinessRuleError(
+        "Stored missing-proof request evidence does not match its finding.",
+      )
+    }
+    if (!missingCloseEvidenceResponseStatuses.has(finding.status)) {
+      throw new BusinessRuleError(
+        "This finding is not awaiting a missing-proof response.",
+      )
+    }
+    if (finding.ownerId !== actorId) {
+      throw new ForbiddenError(
+        "Only the assigned finding owner can submit this response.",
+      )
+    }
+
+    await tx.closeAssuranceFinding.update({
+      where: { id: finding.id },
+      data: {
+        status: CloseFindingStatus.IN_REVIEW,
+        correlationId,
+      },
+    })
+
+    const response = await tx.accountantComment.create({
+      data: {
+        organizationId,
+        periodId: request.periodId,
+        closeRunId: request.closeRunId,
+        findingId: request.findingId,
+        authorId: actorId,
+        body: input.responseText,
+        visibility: MISSING_CLOSE_EVIDENCE_RESPONSE_VISIBILITY,
+        correlationId,
+        metadata: jsonObject({
+          responseType: MISSING_CLOSE_EVIDENCE_RESPONSE_TYPE,
+          requestId: request.id,
+          requestCorrelationId: request.correlationId,
+          requestedById: request.requestedById,
+          requestedFromId: request.requestedFromId,
+          respondedById: actorId,
+          correlationId,
+        }),
+      },
+    })
+
+    await auditCloseWorkflow(tx, {
+      organizationId,
+      actorId,
+      action: "CLOSE_MISSING_EVIDENCE_RESPONSE_SUBMITTED",
+      resourceType: "AccountantComment",
+      resourceId: response.id,
+      message: "Close missing-evidence response submitted",
+      metadata: jsonObject({
+        requestId: request.id,
+        findingId: request.findingId,
+        requestedById: request.requestedById,
+        requestedFromId: request.requestedFromId,
+        respondedById: actorId,
+        status: "SUBMITTED",
+        correlationId,
+      }),
+    })
+
+    await recordCloseWorkflowEventInTx(tx, {
+      organizationId,
+      actorId,
+      eventType: "close.assurance.missing_evidence.response_submitted",
+      idempotencyKey:
+        `close-assurance-missing-evidence-request:${request.id}:response-submitted:${correlationId}`,
+      sourceType: "CloseAssuranceFinding",
+      sourceId: request.findingId,
+      closeRunId: request.closeRunId,
+      periodId: request.periodId,
+      findingId: request.findingId,
+      ownerId: request.requestedById,
+      message: "Close missing-evidence response submitted",
+      severity: notificationSeverity(finding.severity),
+      correlationId,
+      payload: {
+        requestId: request.id,
+        responseId: response.id,
+        responseType: MISSING_CLOSE_EVIDENCE_RESPONSE_TYPE,
+        requestedById: request.requestedById,
+        requestedFromId: request.requestedFromId,
+        respondedById: actorId,
+        status: "SUBMITTED",
+      },
+    })
+
+    return mapMissingCloseEvidenceResponse(response)
+  })
+}
+
+export async function acceptMissingCloseEvidenceResponse(
+  homeOrganizationIdInput: string,
+  input: AcceptMissingCloseEvidenceResponseInput,
+  control: MissingCloseEvidenceAcceptanceControlContext = {},
+): Promise<MissingCloseEvidenceResponseAcceptanceDto> {
+  const homeOrganizationId = homeOrganizationIdInput.trim()
+  if (!homeOrganizationId) {
+    throw new BusinessRuleError(
+      "A home organization is required to accept missing-proof evidence.",
+    )
+  }
+  if (
+    !hasRbacPermission(
+      control.actorPermissions ?? [],
+      ACCOUNTANT_MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE.permission,
+    )
+  ) {
+    throw new ForbiddenError(
+      "Missing-proof response acceptance requires accountant review permission.",
+    )
+  }
+
+  const now = new Date()
+  const actorId = requireFreshMissingEvidenceAcceptanceControl(
+    homeOrganizationId,
+    control,
+    now,
+  )
+  const clientOrganizationId = input.clientOrganizationId?.trim() || null
+  if (input.clientOrganizationId != null && !clientOrganizationId) {
+    throw new BusinessRuleError("Client organization cannot be blank.")
+  }
+  const requestId = input.requestId.trim()
+  const responseId = input.responseId.trim()
+  const resolutionNotes = input.resolutionNotes.trim()
+  if (!requestId || !responseId) {
+    throw new BusinessRuleError(
+      "Missing-proof request and response identifiers are required.",
+    )
+  }
+  if (resolutionNotes.length < 10 || resolutionNotes.length > 4000) {
+    throw new BusinessRuleError(
+      "Missing-proof acceptance notes must contain between 10 and 4000 characters.",
+    )
+  }
+  const suppliedCorrelationId = input.correlationId?.trim() || null
+  if (input.correlationId != null && !suppliedCorrelationId) {
+    throw new BusinessRuleError("Correlation ID cannot be blank.")
+  }
+  const correlationId = suppliedCorrelationId ?? randomUUID()
+
+  return runMissingCloseEvidenceTransaction(async (tx) => {
+    const activeActor = await tx.user.findFirst({
+      where: {
+        id: actorId,
+        organizationId: homeOrganizationId,
+        isActive: true,
+      },
+      select: { id: true },
+    })
+    if (!activeActor) {
+      throw new ForbiddenError(
+        "Missing-proof response acceptance requires an active home-tenant accountant.",
+      )
+    }
+
+    const access = await resolveAccountantClientAccess({
+      homeOrganizationId,
+      clientOrganizationId,
+      accountantUserId: actorId,
+      capability: "REVIEW",
+      now,
+      client: tx,
+    })
+    const organizationId = access.organizationId
+
+    const existingAcceptance = await tx.accountantComment.findFirst({
+      where: {
+        organizationId,
+        correlationId,
+        visibility: MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE_VISIBILITY,
+        metadata: {
+          path: ["acceptanceType"],
+          equals: MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE_TYPE,
+        },
+      },
+    })
+    if (existingAcceptance) {
+      return assertMatchingMissingCloseEvidenceAcceptanceReplay(
+        existingAcceptance,
+        input,
+        organizationId,
+        actorId,
+      )
+    }
+
+    const storedRequest = await tx.accountantComment.findFirst({
+      where: {
+        id: requestId,
+        organizationId,
+        visibility: MISSING_CLOSE_EVIDENCE_VISIBILITY,
+        metadata: {
+          path: ["requestType"],
+          equals: MISSING_CLOSE_EVIDENCE_REQUEST_TYPE,
+        },
+      },
+    })
+    if (!storedRequest) {
+      throw new NotFoundError("Missing-proof request not found")
+    }
+    const request = mapMissingCloseEvidenceRequest(storedRequest)
+
+    const storedResponse = await tx.accountantComment.findFirst({
+      where: {
+        id: responseId,
+        organizationId,
+        visibility: MISSING_CLOSE_EVIDENCE_RESPONSE_VISIBILITY,
+        metadata: {
+          path: ["responseType"],
+          equals: MISSING_CLOSE_EVIDENCE_RESPONSE_TYPE,
+        },
+      },
+    })
+    if (!storedResponse) {
+      throw new NotFoundError("Missing-proof response not found")
+    }
+    const response = mapMissingCloseEvidenceResponse(storedResponse)
+
+    if (
+      response.requestId !== request.id ||
+      response.organizationId !== request.organizationId ||
+      response.periodId !== request.periodId ||
+      response.closeRunId !== request.closeRunId ||
+      response.findingId !== request.findingId ||
+      response.requestedById !== request.requestedById ||
+      response.requestedFromId !== request.requestedFromId ||
+      response.respondedById !== request.requestedFromId ||
+      response.requestCorrelationId !== request.correlationId
+    ) {
+      throw new BusinessRuleError(
+        "Stored missing-proof request and response evidence do not match.",
+      )
+    }
+    if (actorId === response.respondedById) {
+      throw new ForbiddenError(
+        "The client respondent cannot accept their own missing-proof response.",
+      )
+    }
+
+    const finding = await tx.closeAssuranceFinding.findFirst({
+      where: { id: request.findingId, organizationId },
+      select: {
+        id: true,
+        periodId: true,
+        closeRunId: true,
+        ownerId: true,
+        status: true,
+        severity: true,
+      },
+    })
+    if (!finding) throw new NotFoundError("Close finding not found")
+    if (
+      finding.periodId !== request.periodId ||
+      finding.closeRunId !== request.closeRunId
+    ) {
+      throw new BusinessRuleError(
+        "Stored missing-proof evidence does not match its finding.",
+      )
+    }
+    if (finding.status !== CloseFindingStatus.IN_REVIEW) {
+      throw new BusinessRuleError(
+        "Only an in-review missing-proof finding can be accepted.",
+      )
+    }
+    if (finding.ownerId !== response.respondedById) {
+      throw new BusinessRuleError(
+        "The in-review finding owner does not match the client respondent.",
+      )
+    }
+
+    const transition = await tx.closeAssuranceFinding.updateMany({
+      where: {
+        id: finding.id,
+        organizationId,
+        status: CloseFindingStatus.IN_REVIEW,
+        ownerId: response.respondedById,
+      },
+      data: {
+        status: CloseFindingStatus.RESOLVED,
+        resolutionNotes,
+        resolvedAt: now,
+        resolvedById: actorId,
+        correlationId,
+      },
+    })
+    if (transition.count !== 1) {
+      throw new ConflictError(
+        "The missing-proof finding changed before acceptance completed.",
+      )
+    }
+
+    const acceptance = await tx.accountantComment.create({
+      data: {
+        organizationId,
+        periodId: request.periodId,
+        closeRunId: request.closeRunId,
+        findingId: request.findingId,
+        authorId: actorId,
+        body: resolutionNotes,
+        visibility: MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE_VISIBILITY,
+        correlationId,
+        metadata: jsonObject({
+          acceptanceType: MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE_TYPE,
+          requestId: request.id,
+          responseId: response.id,
+          requestCorrelationId: request.correlationId,
+          responseCorrelationId: response.correlationId,
+          findingId: request.findingId,
+          periodId: request.periodId,
+          closeRunId: request.closeRunId,
+          respondedById: response.respondedById,
+          acceptedById: actorId,
+          decision:
+            ACCOUNTANT_MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE.decision,
+          findingStatus:
+            ACCOUNTANT_MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE.findingStatus,
+          resolvedAt: now.toISOString(),
+          correlationId,
+        }),
+      },
+    })
+
+    await auditCloseWorkflow(tx, {
+      organizationId,
+      actorId,
+      action:
+        ACCOUNTANT_MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE.auditAction,
+      resourceType: "AccountantComment",
+      resourceId: acceptance.id,
+      message: "Close missing-evidence response accepted",
+      metadata: jsonObject({
+        requestId: request.id,
+        responseId: response.id,
+        findingId: request.findingId,
+        respondedById: response.respondedById,
+        acceptedById: actorId,
+        status: CloseFindingStatus.RESOLVED,
+        correlationId,
+      }),
+    })
+
+    await recordCloseWorkflowEventInTx(tx, {
+      organizationId,
+      actorId,
+      eventType:
+        ACCOUNTANT_MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE.eventType,
+      idempotencyKey:
+        `close-assurance-missing-evidence-response:${response.id}:accepted:${correlationId}`,
+      sourceType: "CloseAssuranceFinding",
+      sourceId: request.findingId,
+      closeRunId: request.closeRunId,
+      periodId: request.periodId,
+      findingId: request.findingId,
+      ownerId: response.respondedById,
+      message: "Close missing-evidence response accepted",
+      severity: notificationSeverity(finding.severity),
+      correlationId,
+      payload: {
+        acceptanceId: acceptance.id,
+        requestId: request.id,
+        responseId: response.id,
+        findingId: request.findingId,
+        respondedById: response.respondedById,
+        acceptedById: actorId,
+        decision:
+          ACCOUNTANT_MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE.decision,
+        findingStatus:
+          ACCOUNTANT_MISSING_CLOSE_EVIDENCE_RESPONSE_ACCEPTANCE.findingStatus,
+      },
+    })
+
+    return mapMissingCloseEvidenceResponseAcceptance(acceptance)
+  })
+}
+
 export async function requestCloseWaiver(
   organizationId: string,
   input: RequestCloseWaiverInput,
@@ -2062,9 +4176,18 @@ export async function requestCloseWaiver(
   const correlationId = input.correlationId ?? randomUUID()
 
   return db.$transaction(async (tx) => {
-    const finding = await loadFindingForMutation(organizationId, input.findingId, tx)
-    if (finding.status === CloseFindingStatus.RESOLVED || finding.status === CloseFindingStatus.WAIVED_WITH_APPROVAL) {
-      throw new BusinessRuleError("Resolved or waived findings cannot receive a new waiver request.")
+    const finding = await loadFindingForMutation(
+      organizationId,
+      input.findingId,
+      tx,
+    )
+    if (
+      finding.status === CloseFindingStatus.RESOLVED ||
+      finding.status === CloseFindingStatus.WAIVED_WITH_APPROVAL
+    ) {
+      throw new BusinessRuleError(
+        "Resolved or waived findings cannot receive a new waiver request.",
+      )
     }
 
     const updated = await tx.closeAssuranceFinding.update({
@@ -2088,6 +4211,27 @@ export async function requestCloseWaiver(
       metadata: jsonObject({ reason: input.reason, correlationId }),
     })
 
+    await recordCloseWorkflowEventInTx(tx, {
+      organizationId,
+      actorId: control.actorId,
+      eventType: "close.assurance.waiver.requested",
+      idempotencyKey: `close-assurance-finding:${finding.id}:waiver-requested:${correlationId}`,
+      sourceType: "CloseAssuranceFinding",
+      sourceId: finding.id,
+      closeRunId: finding.closeRunId,
+      periodId: finding.periodId,
+      findingId: finding.id,
+      ownerId: finding.ownerId,
+      dueAt: finding.dueAt,
+      message: "Close finding waiver requested",
+      severity: notificationSeverity(finding.severity),
+      correlationId,
+      payload: {
+        reason: input.reason,
+        requestedById: control.actorId ?? null,
+      },
+    })
+
     return mapFinding(updated)
   })
 }
@@ -2095,37 +4239,72 @@ export async function requestCloseWaiver(
 export async function approveCloseWaiver(
   organizationId: string,
   input: ApproveCloseWaiverInput,
-  control: CloseControlContext = {},
+  control: CloseWaiverControlContext = {},
 ) {
+  const now = new Date()
+  const actorId = requireFreshWaiverControl(organizationId, control, now)
   const correlationId = input.correlationId ?? randomUUID()
 
   return db.$transaction(async (tx) => {
-    const finding = await loadFindingForMutation(organizationId, input.findingId, tx)
+    const finding = await loadFindingForMutation(
+      organizationId,
+      input.findingId,
+      tx,
+    )
     if (!finding.waiverRequestedById || !finding.waiverRequestedAt) {
-      throw new BusinessRuleError("A waiver request is required before approval.")
+      throw new BusinessRuleError(
+        "A waiver request is required before approval.",
+      )
     }
-    if (control.actorId && finding.waiverRequestedById === control.actorId) {
-      throw new CloseAssuranceError("SoDViolation", "The waiver requester cannot approve the same close waiver.")
+    if (finding.waiverRequestedById === actorId) {
+      throw new CloseAssuranceError(
+        "SoDViolation",
+        "The waiver requester cannot approve the same close waiver.",
+      )
     }
 
     const updated = await tx.closeAssuranceFinding.update({
       where: { id: finding.id },
       data: {
         status: CloseFindingStatus.WAIVED_WITH_APPROVAL,
-        waiverApprovedById: control.actorId ?? null,
-        waiverApprovedAt: new Date(),
+        waiverApprovedById: actorId,
+        waiverApprovedAt: now,
         correlationId,
       },
     })
 
     await auditCloseWorkflow(tx, {
       organizationId,
-      actorId: control.actorId,
+      actorId,
       action: "CLOSE_WAIVER_APPROVED",
       resourceType: "CloseAssuranceFinding",
       resourceId: finding.id,
       message: "Close finding waiver approved",
-      metadata: jsonObject({ requestedById: finding.waiverRequestedById, correlationId }),
+      metadata: jsonObject({
+        requestedById: finding.waiverRequestedById,
+        correlationId,
+      }),
+    })
+
+    await recordCloseWorkflowEventInTx(tx, {
+      organizationId,
+      actorId,
+      eventType: "close.assurance.waiver.approved",
+      idempotencyKey: `close-assurance-finding:${finding.id}:waiver-approved:${correlationId}`,
+      sourceType: "CloseAssuranceFinding",
+      sourceId: finding.id,
+      closeRunId: finding.closeRunId,
+      periodId: finding.periodId,
+      findingId: finding.id,
+      ownerId: finding.ownerId,
+      dueAt: finding.dueAt,
+      message: "Close finding waiver approved",
+      severity: notificationSeverity(finding.severity),
+      correlationId,
+      payload: {
+        requestedById: finding.waiverRequestedById,
+        approvedById: actorId,
+      },
     })
 
     return mapFinding(updated)
@@ -2140,7 +4319,9 @@ export async function updateAccountantReview(
   const correlationId = input.correlationId ?? randomUUID()
 
   return db.$transaction(async (tx) => {
-    const run = await tx.closeRun.findFirst({ where: { id: input.closeRunId, organizationId } })
+    const run = await tx.closeRun.findFirst({
+      where: { id: input.closeRunId, organizationId },
+    })
     if (!run) throw new NotFoundError("Close run not found")
 
     const review = await tx.accountantReview.create({
@@ -2151,7 +4332,8 @@ export async function updateAccountantReview(
         status: input.status,
         reviewerId: control.actorId ?? null,
         openedById: run.runById,
-        reviewedAt: input.status === AccountantReviewStatus.OPEN ? null : new Date(),
+        reviewedAt:
+          input.status === AccountantReviewStatus.OPEN ? null : new Date(),
         decisionNotes: input.decisionNotes,
         correlationId,
       },
@@ -2165,6 +4347,26 @@ export async function updateAccountantReview(
       resourceId: review.id,
       message: `Accountant review marked ${review.status}`,
       metadata: jsonObject({ closeRunId: run.id, correlationId }),
+    })
+
+    await recordCloseWorkflowEventInTx(tx, {
+      organizationId,
+      actorId: control.actorId,
+      eventType: "close.assurance.accountant_review.updated",
+      idempotencyKey: `close-assurance-review:${review.id}:${review.status}`,
+      sourceType: "AccountantReview",
+      sourceId: review.id,
+      closeRunId: run.id,
+      periodId: run.periodId,
+      ownerId: review.reviewerId,
+      message: `Accountant review marked ${review.status}`,
+      severity: review.status === AccountantReviewStatus.REJECTED ? "HIGH" : "INFO",
+      correlationId,
+      payload: {
+        reviewId: review.id,
+        status: review.status,
+        decisionNotes: review.decisionNotes,
+      },
     })
 
     return {

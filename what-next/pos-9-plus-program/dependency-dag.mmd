@@ -1,0 +1,96 @@
+flowchart TD
+  GOV_01["GOV-01 Program status, dependency DAG, evidence and claims register"]
+  HON_01["HON-01 Capability honesty and containment"]
+  SEC_01["SEC-01 Uniform POS access and trust controls"]
+  SH_01["SH-01 Physical register boundary and duplicate-data audit"]
+  SH_02["SH-02 DB active-session invariant and atomic claim"]
+  PAY_01["PAY-01 Tender and accounting state machine"]
+  PAY_02["PAY-02 Provider authorization, capture and status contract"]
+  PAY_03["PAY-03 Webhook trust, timeout and late-success recovery"]
+  PAY_04["PAY-04 Provider reversal and refund lifecycle"]
+  OFF_01["OFF-01 IndexedDB queue and dual-read migration"]
+  OFF_02["OFF-02 Leases, stale recovery, multi-tab and corruption recovery"]
+  OFF_03["OFF-03 Per-event acknowledgement and terminal retention"]
+  OFF_04["OFF-04 Offline device signing and key lifecycle"]
+  OFF_05["OFF-05 Canonical exactly-once replay and terminal evidence"]
+  OFF_06["OFF-06 Offline conflict resolution and close linkage"]
+  RET_01["RET-01 Return eligibility and quantity reservation"]
+  RET_02["RET-02 Tender-aware correction financial lifecycle"]
+  RET_03["RET-03 Supervisor corrections workbench"]
+  UX_01["UX-01 Incremental POS component decomposition"]
+  UX_02["UX-02 Truthful robust workflow states"]
+  UX_03["UX-03 Scanner, search, cart, customer and tender ergonomics"]
+  DEV_01["DEV-01 Hardware adapters, diagnostics and supported matrix"]
+  RCP_01["RCP-01 Receipt delivery and provisional/final proof"]
+  LOC_01["LOC-01 Country-pack money, fiscal and EN/FR localization"]
+  A11Y_01["A11Y-01 WCAG, responsive, touch and handheld certification"]
+  REC_01["REC-01 Provider matching, suspense and settlement certification"]
+  OPS_01["OPS-01 POS telemetry, SLIs, SLOs, dashboards and alerts"]
+  OPS_02["OPS-02 Runbooks, support bundles and recovery drills"]
+  CERT_01["CERT-01 DB, provider, offline and security chaos certification"]
+  CERT_02["CERT-02 Browser, accessibility, hardware and performance field certification"]
+  REL_01["REL-01 G1-G8 promotion and claims decision"]
+  DIF_01["DIF-01 Certified handheld, analytics and advisory differentiation"]
+  GOV_01 --> HON_01
+  GOV_01 --> SEC_01
+  GOV_01 --> SH_01
+  SH_01 --> SH_02
+  SEC_01 --> SH_02
+  HON_01 --> PAY_01
+  PAY_01 --> PAY_02
+  SEC_01 --> PAY_02
+  PAY_02 --> PAY_03
+  PAY_02 --> PAY_04
+  PAY_01 --> OFF_01
+  OFF_01 --> OFF_02
+  OFF_01 --> OFF_03
+  SEC_01 --> OFF_04
+  OFF_03 --> OFF_05
+  OFF_04 --> OFF_05
+  PAY_01 --> OFF_05
+  OFF_05 --> OFF_06
+  SEC_01 --> OFF_06
+  PAY_01 --> RET_01
+  RET_01 --> RET_02
+  PAY_04 --> RET_02
+  RET_02 --> RET_03
+  SEC_01 --> RET_03
+  PAY_01 --> UX_01
+  SEC_01 --> UX_01
+  UX_01 --> UX_02
+  PAY_02 --> UX_02
+  OFF_06 --> UX_02
+  UX_01 --> UX_03
+  PAY_02 --> DEV_01
+  SH_02 --> DEV_01
+  PAY_02 --> RCP_01
+  PAY_01 --> LOC_01
+  UX_02 --> A11Y_01
+  UX_03 --> A11Y_01
+  DEV_01 --> A11Y_01
+  PAY_03 --> REC_01
+  PAY_04 --> REC_01
+  UX_02 --> OPS_01
+  OFF_06 --> OPS_01
+  REC_01 --> OPS_01
+  OPS_01 --> OPS_02
+  SH_02 --> CERT_01
+  PAY_04 --> CERT_01
+  OFF_06 --> CERT_01
+  RET_02 --> CERT_01
+  REC_01 --> CERT_01
+  OPS_02 --> CERT_01
+  A11Y_01 --> CERT_02
+  DEV_01 --> CERT_02
+  RCP_01 --> CERT_02
+  LOC_01 --> CERT_02
+  OPS_02 --> CERT_02
+  CERT_01 --> REL_01
+  CERT_02 --> REL_01
+  REL_01 --> DIF_01
+  HP1{{"HP-1 G1/G2/G5 design approval"}}
+  HP1 -. policy blocks .-> PAY_02
+  HP1 -. policy blocks .-> OFF_01
+  HP3{{"HP-3 independent G3/G4 PASS"}}
+  HP3 -. policy blocks .-> OFF_01
+  HP3 -. policy blocks .-> REL_01

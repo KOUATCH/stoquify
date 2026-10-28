@@ -4,6 +4,7 @@ import {
   createItemSupplierForOrganization,
   getItemSuppliersForItemInOrganization,
   removeItemSupplierForOrganization,
+  removeSupplierForManagement,
 } from "../supplier.service"
 
 jest.mock("@/prisma/db", () => ({
@@ -14,6 +15,7 @@ jest.mock("@/prisma/db", () => ({
     supplier: {
       findFirst: jest.fn(),
       findMany: jest.fn(),
+      update: jest.fn(),
     },
     itemSupplier: {
       findFirst: jest.fn(),
@@ -32,6 +34,7 @@ const mockDb = db as unknown as {
   supplier: {
     findFirst: jest.Mock
     findMany: jest.Mock
+    update: jest.Mock
   }
   itemSupplier: {
     findFirst: jest.Mock
@@ -164,5 +167,54 @@ describe("supplier.service item-supplier service boundary", () => {
     ).rejects.toThrow("Item not found")
 
     expect(mockDb.itemSupplier.findMany).not.toHaveBeenCalled()
+  })
+
+  it("returns deactivated when supplier has historical links", async () => {
+    mockDb.supplier.findFirst.mockResolvedValue({
+      id: "supplier-deactivate",
+      _count: {
+        purchaseOrders: 1,
+        supplierItems: 0,
+        ledgerEntries: 0,
+      },
+    })
+    mockDb.supplier.update.mockResolvedValue({ id: "supplier-deactivate", isActive: false })
+
+    const result = await removeSupplierForManagement("org-1", "supplier-deactivate")
+
+    expect(result).toEqual({ id: "supplier-deactivate", mode: "deactivated" })
+    expect(mockDb.supplier.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "supplier-deactivate" },
+        data: { isActive: false },
+      }),
+    )
+    expect(mockDb.supplier.update).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ deletedAt: expect.any(Date) }),
+      }),
+    )
+  })
+
+  it("returns archived when supplier has no historical links", async () => {
+    mockDb.supplier.findFirst.mockResolvedValue({
+      id: "supplier-archive",
+      _count: {
+        purchaseOrders: 0,
+        supplierItems: 0,
+        ledgerEntries: 0,
+      },
+    })
+    mockDb.supplier.update.mockResolvedValue({ id: "supplier-archive", isActive: false })
+
+    const result = await removeSupplierForManagement("org-1", "supplier-archive")
+
+    expect(result).toEqual({ id: "supplier-archive", mode: "archived" })
+    expect(mockDb.supplier.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "supplier-archive" },
+        data: { isActive: false, deletedAt: expect.any(Date) },
+      }),
+    )
   })
 })

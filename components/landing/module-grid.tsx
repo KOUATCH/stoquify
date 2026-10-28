@@ -29,7 +29,7 @@ export function ModuleGrid() {
           <h2 className="display max-w-3xl text-4xl text-[var(--text-hi)] sm:text-5xl">{t("titleStart")} <span className="display-italic text-[var(--editorial)]">{t("titleEmphasis")}</span></h2>
           <div className="flex gap-3">
             <Link href="/#workflow" className="rounded-lg border border-[var(--rule-2)] px-4 py-2 body-text text-sm text-[var(--text-hi)] transition hover:bg-white/5">{t("workflowCta")}</Link>
-            <Link href="/register" className="rounded-lg bg-[var(--accent)] px-4 py-2 body-text text-sm font-semibold text-white transition hover:bg-[var(--accent-hi)]">{t("tryCta")}</Link>
+            <Link href="/register" className="rounded-lg bg-[var(--color-brand-action)] px-4 py-2 body-text text-sm font-semibold text-white transition hover:bg-[var(--color-brand-hover)]">{t("tryCta")}</Link>
           </div>
         </div>
         <div className="mt-10 grid gap-4 lg:grid-cols-12">

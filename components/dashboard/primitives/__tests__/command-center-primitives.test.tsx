@@ -53,6 +53,26 @@ describe("command center dashboard primitives", () => {
     expect(screen.getByRole("link", { name: /Open finance/ })).toHaveAttribute("href", "/en/dashboard/finance")
   })
 
+  it("can place command actions below the header content", () => {
+    render(
+      <CommandBriefHeader
+        title="Sales finance"
+        summary="Sales finance controls"
+        metadata={[{ label: "Period", value: "Today" }]}
+        actions={[{ label: "Reconciliation", href: "/en/dashboard/finance/reconciliation", variant: "primary" }]}
+        actionsPlacement="below-content"
+      >
+        <div>Finance filters</div>
+      </CommandBriefHeader>,
+    )
+
+    const action = screen.getByRole("link", { name: "Reconciliation" })
+
+    expect(action.closest("aside")).toBeNull()
+    expect(screen.getByText("Period").closest("aside")).not.toBeNull()
+    expect(screen.getByText("Finance filters")).toBeInTheDocument()
+  })
+
   it("renders action queue items and keeps empty queues actionable but quiet", () => {
     const onReview = jest.fn()
     const { rerender } = render(

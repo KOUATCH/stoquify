@@ -1,0 +1,28 @@
+{
+  "generatedAt": "2026-08-09T12:29:36.044Z",
+  "status": "READY_WITH_INTENTIONAL_RESIDUAL_DRIFT",
+  "ready": true,
+  "databaseName": "stoquify_referral_baseline_rebuild_20260809",
+  "history": {
+    "expectedCount": 62,
+    "appliedCount": 62,
+    "missing": [],
+    "unknown": [],
+    "unfinished": [],
+    "checksumMismatches": [],
+    "ready": true
+  },
+  "drift": {
+    "statementCount": 164,
+    "sha256": "89bf8e8ab54f587007ebce4d3260a8cf9e22164b29feb6b92eaa14566a0560e2",
+    "allowedCategories": {
+      "retained_database_foreign_key": 12,
+      "retained_database_timestamp_default": 7,
+      "retained_legacy_evidence_table": 3,
+      "retained_legacy_evidence_enum": 1,
+      "metadata_foreign_key_rename": 30,
+      "metadata_index_rename": 111
+    },
+    "unexpected": []
+  }
+}

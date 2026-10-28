@@ -1,0 +1,323 @@
+STOQUIFY CODEX ENTERPRISE OPERATING WORKFLOW
+=============================================
+
+Date: 2026-07-24
+
+PURPOSE
+-------
+
+Combine Codex planning, permissions, reasoning, repository guidance,
+architecture analysis, verification, review, and context management to evolve
+Stoquify through proof-driven enterprise delivery.
+
+CENTRAL DIRECTION
+-----------------
+
+Stoquify should be evolved through a repeating, evidence-gated delivery loop,
+not one enormous "make it enterprise-grade" implementation request.
+
+Authorized command
+-> validated business transaction
+-> authoritative domain write
+-> immutable/versioned business event
+-> accounting/inventory/payroll projection
+-> provenance + correlation + content hash
+-> assurance evaluation
+-> exception/blocker workflow
+-> trusted read model
+-> reviewable proof pack
+
+"Single source of truth" means one authoritative owner for every business fact:
+
+- Tenant, identity, and access: Organization/Auth/RBAC control plane
+- Products, quantities, and valuation inputs: Inventory
+- Sales, tenders, and terminal activity: POS/Sales
+- Purchase commitments, receipts, invoices, and payments: Purchasing/AP
+- Employee, contract, organization, and attendance facts: HRIS
+- Certified payroll calculations and obligations: Payroll
+- Journals, balances, periods, and close: Accounting/Ledger
+- Statutory interpretations: versioned, expert-approved country packs
+- Evidence quality and blockers: Assurance, never the source business domain
+
+CURRENT REPOSITORY EVIDENCE
+---------------------------
+
+- The consolidated July 14 architecture graph covers 6,380 nodes and 9,474
+  links across the main source layers.
+- Stoquify has durable foundations for POS offline replay, purchasing/AP,
+  HRIS/payroll, reconciliation, suspense, close assurance, journals, ledger
+  audit events, business events, and workflow-assurance incidents.
+- Current static gates report ready for ledger-close truth, payment cash truth,
+  purchasing/AP, offline POS replay, trusted exports, CI configuration, and the
+  Daily Digest cockpit slice.
+- Close Assurance provides durable evidence, provenance, hashes, findings,
+  reconciliation certificates, segregation of duties, and close blockers.
+
+Important remaining gaps include:
+
+- no durable database-backed module entitlement source of truth;
+- incomplete platform-wide module enforcement;
+- HRIS compatibility storage still uses many payroll-named records;
+- country-pack evidence is not production-ready until source artifacts are
+  hash-verified and expert-approved;
+- production secret readiness is conditional;
+- external provider, authority, hardware, deployment, backup/restore, and legal
+  claims require evidence outside repository tests;
+- architecture graphs are older than current July 22-24 work;
+- extensive active working-tree changes must be preserved.
+
+BEST COMMAND COMBINATION
+------------------------
+
+Repository governance:
+
+Do not run /init in the current Stoquify root because AGENTS.md already exists.
+Use /init only where applicable guidance is missing.
+
+Enterprise discovery:
+
+1. /permissions -> Read Only
+2. /model -> strong coding model with High or XHigh reasoning
+3. /goal -> establish Stoquify as a proof-driven enterprise operating system
+4. /plan -> run the enterprise master prompt
+
+Refresh architecture graphs before major dependency decisions when current
+source changes are newer than graph artifacts.
+
+Controlled implementation:
+
+After one bounded plan is approved:
+
+1. /permissions -> Workspace or Auto
+2. Medium reasoning for straightforward implementation
+3. High reasoning for security, accounting, migrations, concurrency, or
+   cross-domain work
+
+Grant additional permissions only for a specifically named action that needs
+them.
+
+Proof and review:
+
+1. /diff
+2. /review
+3. focused tests for the changed invariant
+4. npm run typecheck
+5. relevant lint scope
+6. relevant domain gate
+7. cross-domain assurance gate
+8. npm run verify:repo when the scope and environment justify the full suite
+
+A generated ready file is not sufficient by itself. Record the command, exit
+status, worktree/commit identity, environment, scope, skipped checks, and
+evidence freshness.
+
+Context management:
+
+Run /compact only after discovery, planning, implementation, verification, or
+blocker evidence forms a coherent reviewable phase.
+
+Resume after compaction with:
+
+Continue the active Stoquify enterprise goal.
+
+Before acting, reconstruct the current state from:
+- the approved plan;
+- Git status and diff;
+- changed-file ownership;
+- completed success criteria;
+- executed commands and results;
+- generated evidence artifacts;
+- remaining blockers and residual risks.
+
+Do not repeat completed work or trust a stale readiness artifact.
+
+ENTERPRISE MASTER PROMPT
+------------------------
+
+Run this in Plan mode with Read Only permissions and High/XHigh reasoning:
+
+You are the principal enterprise architect, financial-systems engineer,
+security reviewer, and proof-governance lead for Stoquify.
+
+MISSION
+
+Inspect the active Stoquify repository thoroughly and design the safest,
+highest-leverage sequence for evolving it into a modern, secure, resilient,
+multi-tenant enterprise operating system covering:
+
+- POS and offline POS;
+- inventory, valuation, counts, adjustments, and transfers;
+- purchasing, goods receipt, supplier invoices, and accounts payable;
+- sales, customers, payments, cash, and reconciliation;
+- accounting, SYSCOHADA/OHADA-aligned ledger operations, and close;
+- HRIS People Core, organization, contracts, documents, time, and leave;
+- payroll calculation, payment, declarations, and accounting integration;
+- statutory country packs and compliance integrations;
+- reporting, trusted exports, notifications, and role-based operating cockpits;
+- controlled AI agents and workflow automation.
+
+The system must provide one authoritative owner for every business fact and
+lead material workflows through reviewable, proof-driven control chains.
+
+THIS IS A DISCOVERY AND PLANNING TURN
+
+Remain read-only. Do not edit files, generate migrations, install packages,
+run destructive commands, change external systems, or implement the plan.
+Stop after delivering the requested evidence-backed plan.
+
+REPOSITORY DISCOVERY
+
+1. Read applicable AGENTS.md files.
+2. Inspect Git status and protect modified/untracked files.
+3. Read package.json and identify real validation and release gates.
+4. Inspect architecture graphs, Prisma schema and migrations, all primary
+   source layers, and current architecture/readiness reports.
+5. Compare artifact dates with source changes.
+6. Inspect representative code and tests for every material claim.
+
+EVIDENCE CLASSIFICATION
+
+A. PROVEN
+   Implemented, test-covered, gate-covered, and supported by current evidence.
+
+B. IMPLEMENTED_NOT_PROVEN
+   Code exists, but runtime, integration, environment, or release evidence is
+   incomplete.
+
+C. PARTIAL
+   A bounded slice works, but the full domain or workflow does not.
+
+D. DOCUMENTED_ONLY
+   Present in plans, reports, or UI language without sufficient code evidence.
+
+E. EXTERNAL_DEPENDENCY
+   Requires provider, authority, hardware, infrastructure, legal, statutory, or
+   expert evidence outside the repository.
+
+F. CONTRADICTED_OR_STALE
+   Current source conflicts with an older report, register, or claim.
+
+Never convert an inference into a verified fact.
+
+STOQUIFY PRODUCT LAWS
+
+1. UI never creates business truth.
+2. Each business fact has exactly one authoritative domain owner.
+3. Cross-domain consumers use explicit contracts, business events, or certified
+   snapshots; they do not silently become alternate writers.
+4. HRIS owns mutable people and employment truth.
+5. Payroll consumes certified HRIS snapshots and owns payroll calculation,
+   payment, and declaration truth.
+6. Inventory owns stock-event truth and reproducible projections.
+7. Purchasing owns commitments, receipts, invoice matching, and AP workflow.
+8. POS owns terminal sale capture; server replay remains the final legal,
+   stock, cash, ledger, and fiscal commit boundary.
+9. Accounting owns monetary posting, periods, balances, and close truth.
+10. Assurance proves evidence, freshness, provenance, and blockers; it never
+    manufactures business truth.
+11. Country packs are versioned, effective-dated, and expert-approved.
+    Unsupported statutory automation fails closed.
+12. Posted or certified facts use reversal, supersession, or compensating
+    events, never destructive mutation.
+13. High-risk workflows require tenant scope, RBAC, fresh authentication,
+    maker-checker separation, idempotency, correlation, and audit evidence.
+14. Reports disclose POSTED, OPERATIONAL, ESTIMATED, STALE, UNAVAILABLE, or
+    EXTERNALLY_UNVERIFIED provenance.
+15. Static checks alone cannot prove enterprise readiness.
+
+TARGET PROOF CHAIN
+
+authorized command
+-> validated business rules
+-> tenant/module/RBAC/fresh-auth boundary
+-> idempotent transaction
+-> authoritative domain write
+-> business event and outbox
+-> downstream projection or posting
+-> immutable audit and correlation evidence
+-> source/content hash
+-> assurance evaluation
+-> blocker/exception ownership
+-> trusted read model
+-> exportable proof packet
+-> invalidation when source evidence changes
+
+Identify every broken or ambiguous link.
+
+For each domain, report ownership, allowed writers, consumers, implementation
+surfaces, tenant/security controls, transactions, idempotency, correction,
+events, accounting effects, evidence, assurance, observability, tests, release
+gates, external dependencies, maturity, and residual risk.
+
+Trace:
+
+- POS -> inventory -> payment -> ledger -> fiscal evidence -> close
+- purchase order -> receipt -> stock -> invoice -> three-way match -> AP
+  posting -> payment -> reconciliation -> close
+- HRIS -> certified payroll snapshot -> payroll run -> payment/declaration
+  -> accounting -> close
+- source change after certification -> invalidation -> blocker -> correction
+  -> refreshed proof pack
+
+Do not propose a rewrite or simultaneous implementation of every module.
+Prioritize financial/legal impact, tenant exposure, truth ambiguity, downstream
+dependency impact, corruption risk, recovery difficulty, proof deficiency,
+operational value, and implementation risk.
+
+DELIVERABLE
+
+Produce:
+
+1. Executive verdict.
+2. Evidence inventory and freshness.
+3. Capability/maturity matrix.
+4. Domain source-of-truth registry.
+5. Cross-domain broken-link analysis.
+6. Risk register.
+7. Source/test/report contradictions.
+8. Target architecture.
+9. Prioritized roadmap.
+10. One bounded next slice.
+11. Affected files and graph paths.
+12. Migration/backfill and rollback.
+13. Test and release-gate matrix.
+14. Required proof artifacts.
+15. GO, GO_WITH_GATES, or NO_GO.
+16. Decisions requiring human or external authority.
+
+Stop after the plan and wait for approval.
+
+RECOMMENDED ENTERPRISE SEQUENCE
+-------------------------------
+
+1. Reconcile current worktree, status registers, and stale graph evidence.
+2. Complete module entitlement persistence and centralized enforcement.
+3. Formalize domain truth and write-ownership boundaries.
+4. Complete event/outbox/correlation/invalidation coverage.
+5. Close remaining POS-inventory-payment-ledger-fiscal proof gaps.
+6. Strengthen inventory valuation, corrections, and close invalidation.
+7. Complete purchasing/AP operational and provider evidence.
+8. Stabilize HRIS People Core and evolve compatibility storage.
+9. Complete HRIS-payroll-accounting certified snapshot chains.
+10. Obtain expert-reviewed, hashed country-pack evidence.
+11. Complete production secrets, provider, authority, backup/restore, and
+    deployment evidence.
+12. Run controlled pilots before broad enforcement or statutory claims.
+
+OPERATING LOOP
+--------------
+
+Goal
+-> Read-only permissions
+-> High/XHigh reasoning
+-> Refresh architecture evidence
+-> Plan and impact analysis
+-> Human/accountant/security decision gate
+-> Workspace permissions
+-> One bounded implementation slice
+-> Focused tests and domain gates
+-> Cross-domain assurance
+-> Diff and review
+-> Durable evidence packet
+-> Compact
+-> Repeat

@@ -1,0 +1,383 @@
+{
+  "checkedAt": "2026-07-16T08:13:19.814Z",
+  "auth": {
+    "role": "PAYROLL_E2E",
+    "organizationId": "org_payroll_e2e_local",
+    "fixtureSource": "scripts/seed-payroll-e2e-user.js"
+  },
+  "viewports": [
+    {
+      "name": "mobile",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "name": "tablet",
+      "width": 820,
+      "height": 1180
+    },
+    {
+      "name": "desktop",
+      "width": 1440,
+      "height": 1100
+    }
+  ],
+  "routes": [
+    {
+      "id": "people-directory",
+      "name": "employee directory",
+      "path": "/en/dashboard/people"
+    },
+    {
+      "id": "people-profile",
+      "name": "employee profile",
+      "path": "/en/dashboard/people/payroll_e2e_browser_2026_06_employee"
+    },
+    {
+      "id": "people-self-service",
+      "name": "employee self-service",
+      "path": "/en/dashboard/people/me"
+    },
+    {
+      "id": "people-team",
+      "name": "managed workforce",
+      "path": "/en/dashboard/people/team"
+    },
+    {
+      "id": "people-approvals",
+      "name": "approval inbox",
+      "path": "/en/dashboard/people/approvals"
+    },
+    {
+      "id": "people-history",
+      "name": "movement history",
+      "path": "/en/dashboard/people/history"
+    }
+  ],
+  "results": [
+    {
+      "routeId": "people-directory",
+      "routeName": "employee directory",
+      "path": "/en/dashboard/people",
+      "viewport": "mobile",
+      "screenshot": "what-next/payroll/screenshots/hris-browser-accessibility-rbac-release-2026-07-16/people-directory-mobile.png",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/people",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 390,
+        "documentWidth": 390,
+        "bodyWidth": 390,
+        "hasDocumentOverflow": false,
+        "overlappingElements": [],
+        "clippedElements": []
+      }
+    },
+    {
+      "routeId": "people-directory",
+      "routeName": "employee directory",
+      "path": "/en/dashboard/people",
+      "viewport": "tablet",
+      "screenshot": "what-next/payroll/screenshots/hris-browser-accessibility-rbac-release-2026-07-16/people-directory-tablet.png",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/people",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 820,
+        "documentWidth": 820,
+        "bodyWidth": 820,
+        "hasDocumentOverflow": false,
+        "overlappingElements": [],
+        "clippedElements": []
+      }
+    },
+    {
+      "routeId": "people-directory",
+      "routeName": "employee directory",
+      "path": "/en/dashboard/people",
+      "viewport": "desktop",
+      "screenshot": "what-next/payroll/screenshots/hris-browser-accessibility-rbac-release-2026-07-16/people-directory-desktop.png",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/people",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 1440,
+        "documentWidth": 1440,
+        "bodyWidth": 1440,
+        "hasDocumentOverflow": false,
+        "overlappingElements": [],
+        "clippedElements": []
+      }
+    },
+    {
+      "routeId": "people-profile",
+      "routeName": "employee profile",
+      "path": "/en/dashboard/people/payroll_e2e_browser_2026_06_employee",
+      "viewport": "mobile",
+      "screenshot": "what-next/payroll/screenshots/hris-browser-accessibility-rbac-release-2026-07-16/people-profile-mobile.png",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/people/payroll_e2e_browser_2026_06_employee",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 390,
+        "documentWidth": 390,
+        "bodyWidth": 390,
+        "hasDocumentOverflow": false,
+        "overlappingElements": [],
+        "clippedElements": []
+      }
+    },
+    {
+      "routeId": "people-profile",
+      "routeName": "employee profile",
+      "path": "/en/dashboard/people/payroll_e2e_browser_2026_06_employee",
+      "viewport": "tablet",
+      "screenshot": "what-next/payroll/screenshots/hris-browser-accessibility-rbac-release-2026-07-16/people-profile-tablet.png",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/people/payroll_e2e_browser_2026_06_employee",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 820,
+        "documentWidth": 820,
+        "bodyWidth": 820,
+        "hasDocumentOverflow": false,
+        "overlappingElements": [],
+        "clippedElements": []
+      }
+    },
+    {
+      "routeId": "people-profile",
+      "routeName": "employee profile",
+      "path": "/en/dashboard/people/payroll_e2e_browser_2026_06_employee",
+      "viewport": "desktop",
+      "screenshot": "what-next/payroll/screenshots/hris-browser-accessibility-rbac-release-2026-07-16/people-profile-desktop.png",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/people/payroll_e2e_browser_2026_06_employee",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 1440,
+        "documentWidth": 1440,
+        "bodyWidth": 1440,
+        "hasDocumentOverflow": false,
+        "overlappingElements": [],
+        "clippedElements": []
+      }
+    },
+    {
+      "routeId": "people-self-service",
+      "routeName": "employee self-service",
+      "path": "/en/dashboard/people/me",
+      "viewport": "mobile",
+      "screenshot": "what-next/payroll/screenshots/hris-browser-accessibility-rbac-release-2026-07-16/people-self-service-mobile.png",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/people/me",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 390,
+        "documentWidth": 390,
+        "bodyWidth": 390,
+        "hasDocumentOverflow": false,
+        "overlappingElements": [],
+        "clippedElements": []
+      }
+    },
+    {
+      "routeId": "people-self-service",
+      "routeName": "employee self-service",
+      "path": "/en/dashboard/people/me",
+      "viewport": "tablet",
+      "screenshot": "what-next/payroll/screenshots/hris-browser-accessibility-rbac-release-2026-07-16/people-self-service-tablet.png",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/people/me",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 820,
+        "documentWidth": 820,
+        "bodyWidth": 820,
+        "hasDocumentOverflow": false,
+        "overlappingElements": [],
+        "clippedElements": []
+      }
+    },
+    {
+      "routeId": "people-self-service",
+      "routeName": "employee self-service",
+      "path": "/en/dashboard/people/me",
+      "viewport": "desktop",
+      "screenshot": "what-next/payroll/screenshots/hris-browser-accessibility-rbac-release-2026-07-16/people-self-service-desktop.png",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/people/me",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 1440,
+        "documentWidth": 1440,
+        "bodyWidth": 1440,
+        "hasDocumentOverflow": false,
+        "overlappingElements": [],
+        "clippedElements": []
+      }
+    },
+    {
+      "routeId": "people-team",
+      "routeName": "managed workforce",
+      "path": "/en/dashboard/people/team",
+      "viewport": "mobile",
+      "screenshot": "what-next/payroll/screenshots/hris-browser-accessibility-rbac-release-2026-07-16/people-team-mobile.png",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/people/team",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 390,
+        "documentWidth": 390,
+        "bodyWidth": 390,
+        "hasDocumentOverflow": false,
+        "overlappingElements": [],
+        "clippedElements": []
+      }
+    },
+    {
+      "routeId": "people-team",
+      "routeName": "managed workforce",
+      "path": "/en/dashboard/people/team",
+      "viewport": "tablet",
+      "screenshot": "what-next/payroll/screenshots/hris-browser-accessibility-rbac-release-2026-07-16/people-team-tablet.png",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/people/team",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 820,
+        "documentWidth": 820,
+        "bodyWidth": 820,
+        "hasDocumentOverflow": false,
+        "overlappingElements": [],
+        "clippedElements": []
+      }
+    },
+    {
+      "routeId": "people-team",
+      "routeName": "managed workforce",
+      "path": "/en/dashboard/people/team",
+      "viewport": "desktop",
+      "screenshot": "what-next/payroll/screenshots/hris-browser-accessibility-rbac-release-2026-07-16/people-team-desktop.png",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/people/team",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 1440,
+        "documentWidth": 1440,
+        "bodyWidth": 1440,
+        "hasDocumentOverflow": false,
+        "overlappingElements": [],
+        "clippedElements": []
+      }
+    },
+    {
+      "routeId": "people-approvals",
+      "routeName": "approval inbox",
+      "path": "/en/dashboard/people/approvals",
+      "viewport": "mobile",
+      "screenshot": "what-next/payroll/screenshots/hris-browser-accessibility-rbac-release-2026-07-16/people-approvals-mobile.png",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/people/approvals",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 390,
+        "documentWidth": 390,
+        "bodyWidth": 390,
+        "hasDocumentOverflow": false,
+        "overlappingElements": [],
+        "clippedElements": []
+      }
+    },
+    {
+      "routeId": "people-approvals",
+      "routeName": "approval inbox",
+      "path": "/en/dashboard/people/approvals",
+      "viewport": "tablet",
+      "screenshot": "what-next/payroll/screenshots/hris-browser-accessibility-rbac-release-2026-07-16/people-approvals-tablet.png",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/people/approvals",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 820,
+        "documentWidth": 820,
+        "bodyWidth": 820,
+        "hasDocumentOverflow": false,
+        "overlappingElements": [],
+        "clippedElements": []
+      }
+    },
+    {
+      "routeId": "people-approvals",
+      "routeName": "approval inbox",
+      "path": "/en/dashboard/people/approvals",
+      "viewport": "desktop",
+      "screenshot": "what-next/payroll/screenshots/hris-browser-accessibility-rbac-release-2026-07-16/people-approvals-desktop.png",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/people/approvals",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 1440,
+        "documentWidth": 1440,
+        "bodyWidth": 1440,
+        "hasDocumentOverflow": false,
+        "overlappingElements": [],
+        "clippedElements": []
+      }
+    },
+    {
+      "routeId": "people-history",
+      "routeName": "movement history",
+      "path": "/en/dashboard/people/history",
+      "viewport": "mobile",
+      "screenshot": "what-next/payroll/screenshots/hris-browser-accessibility-rbac-release-2026-07-16/people-history-mobile.png",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/people/history",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 390,
+        "documentWidth": 390,
+        "bodyWidth": 390,
+        "hasDocumentOverflow": false,
+        "overlappingElements": [],
+        "clippedElements": []
+      }
+    },
+    {
+      "routeId": "people-history",
+      "routeName": "movement history",
+      "path": "/en/dashboard/people/history",
+      "viewport": "tablet",
+      "screenshot": "what-next/payroll/screenshots/hris-browser-accessibility-rbac-release-2026-07-16/people-history-tablet.png",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/people/history",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 820,
+        "documentWidth": 820,
+        "bodyWidth": 820,
+        "hasDocumentOverflow": false,
+        "overlappingElements": [],
+        "clippedElements": []
+      }
+    },
+    {
+      "routeId": "people-history",
+      "routeName": "movement history",
+      "path": "/en/dashboard/people/history",
+      "viewport": "desktop",
+      "screenshot": "what-next/payroll/screenshots/hris-browser-accessibility-rbac-release-2026-07-16/people-history-desktop.png",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/people/history",
+      "seriousViolationCount": 0,
+      "seriousViolations": [],
+      "layout": {
+        "viewportWidth": 1440,
+        "documentWidth": 1440,
+        "bodyWidth": 1440,
+        "hasDocumentOverflow": false,
+        "overlappingElements": [],
+        "clippedElements": []
+      }
+    }
+  ]
+}

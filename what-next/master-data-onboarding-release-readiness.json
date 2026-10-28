@@ -1,0 +1,110 @@
+{
+  "generatedAt": "2026-08-16T16:47:25.488Z",
+  "workflowKey": "governed_master_data_onboarding",
+  "canonicalModule": "settings",
+  "canonicalRoute": "/dashboard/settings/data-onboarding",
+  "scope": {
+    "included": [
+      "customers",
+      "suppliers",
+      "items",
+      "staging",
+      "approval",
+      "evidence",
+      "readiness"
+    ],
+    "excluded": [
+      "balances",
+      "opening accounting balances",
+      "opening stock",
+      "ledger postings"
+    ]
+  },
+  "summary": {
+    "status": "PASS",
+    "checkCount": 13,
+    "passedCheckCount": 13,
+    "blockerCount": 0,
+    "browserEvidence": "passed"
+  },
+  "checks": [
+    {
+      "id": "canonical_module",
+      "label": "One settings-module workflow contract owns the route",
+      "passed": true,
+      "evidence": "config/master-data-onboarding.ts"
+    },
+    {
+      "id": "single_sidebar_entry",
+      "label": "Sidebar exposes exactly one canonical workflow destination",
+      "passed": true,
+      "evidence": "config/sidebar.ts"
+    },
+    {
+      "id": "page_entitlement",
+      "label": "Settings route catalog binds page access to enforced settings entitlement",
+      "passed": true,
+      "evidence": "settings-route-data-access.ts"
+    },
+    {
+      "id": "action_entitlement",
+      "label": "Every onboarding action flows through the enforced canonical module helper",
+      "passed": true,
+      "evidence": "actions/onboarding/master-data-onboarding.actions.ts"
+    },
+    {
+      "id": "high_risk_maker_checker",
+      "label": "High-risk batches reject uploader approval and recheck separation at commit",
+      "passed": true,
+      "evidence": "services/onboarding/master-data-import.service.ts"
+    },
+    {
+      "id": "risk_digest_and_schema",
+      "label": "Risk classification is persisted and bound into the approval digest",
+      "passed": true,
+      "evidence": "service + schema + additive migration"
+    },
+    {
+      "id": "domain_boundaries",
+      "label": "Imports preserve canonical customer/supplier/item writers and exclude financial/stock truth",
+      "passed": true,
+      "evidence": "services/onboarding/*"
+    },
+    {
+      "id": "localized_robust_states",
+      "label": "English and French expose the same complete onboarding message contract",
+      "passed": true,
+      "evidence": "messages/en.json + messages/fr.json (107 leaf keys)"
+    },
+    {
+      "id": "route_recovery_states",
+      "label": "Localized loading and error recovery boundaries exist",
+      "passed": true,
+      "evidence": "data-onboarding/loading.tsx + error.tsx"
+    },
+    {
+      "id": "focused_tests",
+      "label": "Focused service, boundary, route, presentation, and sidebar tests exist",
+      "passed": true,
+      "evidence": "focused Jest suites"
+    },
+    {
+      "id": "browser_harness",
+      "label": "Authenticated EN/FR desktop/mobile Axe and overflow browser harness exists",
+      "passed": true,
+      "evidence": "tests/e2e/master-data-onboarding-authenticated-release.spec.ts"
+    },
+    {
+      "id": "adoption_evidence",
+      "label": "Tenant-scoped recent-batch adoption evidence is visible and exportable",
+      "passed": true,
+      "evidence": "MasterDataOnboardingDashboard.adoption"
+    },
+    {
+      "id": "executed_browser_evidence",
+      "label": "Executed browser matrix is present and passing",
+      "passed": true,
+      "evidence": "what-next/evidence/master-data-onboarding-2026-08-16/browser-matrix.json"
+    }
+  ]
+}

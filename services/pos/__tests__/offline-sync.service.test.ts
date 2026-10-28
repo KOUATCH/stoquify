@@ -18,6 +18,8 @@ jest.mock("../receipt.service", () => ({
   getSalesReceipt: jest.fn(),
 }))
 
+import { generateKeyPairSync, sign } from "crypto"
+
 import { db } from "@/prisma/db"
 import { hashBusinessPayload } from "@/services/events/business-event.service"
 import { commitPOSSale } from "../pos.service"
@@ -40,9 +42,12 @@ const mockDb = db as unknown as {
 }
 const mockCommitPOSSale = commitPOSSale as jest.Mock
 const mockGetSalesReceipt = getSalesReceipt as jest.Mock
+const previousOfflineReplayTestAuthorization =
+  process.env.AQSTOQFLOW_ENABLE_OFFLINE_POS_REPLAY_TESTS
 
 const mockTx = {
   pOSStation: { findFirst: jest.fn() },
+  pOSSession: { findFirst: jest.fn() },
   pOSOfflineDevice: { findFirst: jest.fn(), update: jest.fn() },
   pOSOfflineSyncBatch: { create: jest.fn(), update: jest.fn() },
   pOSOfflineEvent: { findUnique: jest.fn(), create: jest.fn(), update: jest.fn(), count: jest.fn() },
@@ -153,6 +158,7 @@ function offlineReplayEvent(overrides: Record<string, unknown> = {}) {
     device: {
       id: "device-1",
       lastSequence: 1,
+      status: "ACTIVE",
     },
     ...overrides,
   }
@@ -257,6 +263,19 @@ function commitResult(overrides: Record<string, unknown> = {}) {
 }
 
 describe("offline POS sync service", () => {
+  beforeAll(() => {
+    process.env.AQSTOQFLOW_ENABLE_OFFLINE_POS_REPLAY_TESTS = "1"
+  })
+
+  afterAll(() => {
+    if (previousOfflineReplayTestAuthorization === undefined) {
+      delete process.env.AQSTOQFLOW_ENABLE_OFFLINE_POS_REPLAY_TESTS
+    } else {
+      process.env.AQSTOQFLOW_ENABLE_OFFLINE_POS_REPLAY_TESTS =
+        previousOfflineReplayTestAuthorization
+    }
+  })
+
   beforeEach(() => {
     jest.clearAllMocks()
     resetMockTx()
@@ -275,6 +294,7 @@ describe("offline POS sync service", () => {
     mockGetSalesReceipt.mockReset()
     mockGetSalesReceipt.mockResolvedValue(receiptFixture())
     mockTx.pOSStation.findFirst.mockResolvedValue({ id: "terminal-1" })
+    mockTx.pOSSession.findFirst.mockResolvedValue({ id: "session-1" })
     mockTx.pOSOfflineDevice.findFirst.mockResolvedValue(activeDevice)
     mockTx.pOSOfflineSyncBatch.create.mockResolvedValue({
       id: "batch-1",
@@ -337,6 +357,7 @@ describe("offline POS sync service", () => {
       deviceId: "device-1",
       terminalId: "terminal-1",
       locationId: "loc-1",
+      sessionId: "session-1",
       events: [event],
     })
 
@@ -386,6 +407,7 @@ describe("offline POS sync service", () => {
       deviceId: "device-1",
       terminalId: "terminal-1",
       locationId: "loc-1",
+      sessionId: "session-1",
       events: [event],
     })
 
@@ -417,6 +439,7 @@ describe("offline POS sync service", () => {
       deviceId: "device-1",
       terminalId: "terminal-1",
       locationId: "loc-1",
+      sessionId: "session-1",
       events: [event],
     })
 
@@ -438,6 +461,7 @@ describe("offline POS sync service", () => {
       deviceId: "device-1",
       terminalId: "terminal-1",
       locationId: "loc-1",
+      sessionId: "session-1",
       events: [event],
     })
 
@@ -473,6 +497,7 @@ describe("offline POS sync service", () => {
       deviceId: "device-1",
       terminalId: "terminal-1",
       locationId: "loc-1",
+      sessionId: "session-1",
       events: [event],
     })
 
@@ -509,6 +534,7 @@ describe("offline POS sync service", () => {
       deviceId: "device-1",
       terminalId: "terminal-1",
       locationId: "loc-1",
+      sessionId: "session-1",
       events: [event],
     })
 
@@ -547,6 +573,7 @@ describe("offline POS sync service", () => {
       legalDeliveryBlocked: false,
     })
     expect(mockCommitPOSSale).toHaveBeenCalledWith({
+      clientCommitId: `offline:${event.id}`,
       salesOrderId: "sale-1",
       locationId: "loc-1",
       terminalId: "terminal-1",
@@ -577,6 +604,90 @@ describe("offline POS sync service", () => {
       }),
     )
     expect(mockTx.pOSOfflineSyncConflict.create).not.toHaveBeenCalled()
+  })
+
+  it("hydrates receipt evidence after a committed sale before acknowledging offline replay", async () => {
+    const event = offlineReplayEvent()
+    const receipt = receiptFixture()
+    mockDb.pOSOfflineEvent.findFirst.mockResolvedValue(event)
+    mockDb.salesOrder.findFirst
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce({
+        id: "sale-1",
+        orderNumber: "POS-20260615-0001",
+      })
+    mockDb.journalEntry.findFirst.mockResolvedValue({ postingBatchId: "posting-batch-1" })
+    mockCommitPOSSale.mockResolvedValueOnce(commitResult({
+      receipt: null,
+      receiptStatus: "RETRY_REQUIRED",
+    }))
+    mockGetSalesReceipt.mockResolvedValueOnce(receipt)
+    mockTx.pOSOfflineEvent.count.mockResolvedValue(0)
+
+    const result = await replayPendingOfflineSaleEnvelope({
+      organizationId: "org-1",
+      userId: "user-1",
+      offlineEventId: event.id,
+    })
+
+    expect(result).toMatchObject({
+      status: "REPLAYED",
+      saleId: "sale-1",
+      postingBatchId: "posting-batch-1",
+    })
+    expect(mockCommitPOSSale).toHaveBeenCalledTimes(1)
+    expect(mockGetSalesReceipt).toHaveBeenCalledWith({
+      salesOrderId: "sale-1",
+      organizationId: "org-1",
+    })
+    expect(mockTx.pOSOfflineEvent.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          status: "REPLAYED",
+          postingBatchId: "posting-batch-1",
+        }),
+      }),
+    )
+  })
+
+  it("blocks pending replay after the enrolled device is revoked", async () => {
+    const event = offlineReplayEvent({
+      device: {
+        id: "device-1",
+        lastSequence: 1,
+        status: "REVOKED",
+      },
+    })
+    mockDb.pOSOfflineEvent.findFirst.mockResolvedValue(event)
+
+    const result = await replayPendingOfflineSaleEnvelope({
+      organizationId: "org-1",
+      userId: "user-1",
+      offlineEventId: event.id,
+    })
+
+    expect(result).toMatchObject({
+      status: "BLOCKED",
+      blockerCode: "OFFLINE_REPLAY_DEVICE_INACTIVE",
+    })
+    expect(mockCommitPOSSale).not.toHaveBeenCalled()
+    expect(mockTx.pOSOfflineSyncConflict.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          conflictType: "DEVICE_REVOKED",
+          severity: "CRITICAL",
+          eventId: event.id,
+        }),
+      }),
+    )
+    expect(mockTx.pOSOfflineEvent.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          status: "BLOCKED",
+          blockerCode: "OFFLINE_REPLAY_DEVICE_INACTIVE",
+        }),
+      }),
+    )
   })
 
   it("does not finalize a duplicate replay that already has replay evidence", async () => {
@@ -953,5 +1064,137 @@ describe("offline POS sync service", () => {
         severity: "critical",
       }),
     ])
+  })
+  it("rejects economic offline events without an active cashier session", async () => {
+    const event = buildEvent({ seq: 1 })
+
+    await expect(ingestOfflineSyncBatch({
+      organizationId: "org-1",
+      userId: "user-1",
+      deviceId: "device-1",
+      terminalId: "terminal-1",
+      locationId: "loc-1",
+      events: [event],
+    })).rejects.toThrow(/active cashier session/i)
+
+    expect(mockTx.pOSOfflineSyncBatch.create).not.toHaveBeenCalled()
+  })
+
+  it("quarantines an event with an invalid enrolled-device signature", async () => {
+    const { publicKey } = generateKeyPairSync("rsa", { modulusLength: 2048 })
+    mockTx.pOSOfflineDevice.findFirst.mockResolvedValue({
+      ...activeDevice,
+      signingPublicKeyPem: publicKey.export({ format: "pem", type: "spki" }).toString(),
+    })
+    const event = buildEvent({ seq: 1 })
+
+    const result = await ingestOfflineSyncBatch({
+      organizationId: "org-1",
+      userId: "user-1",
+      deviceId: "device-1",
+      terminalId: "terminal-1",
+      locationId: "loc-1",
+      sessionId: "session-1",
+      events: [event],
+    })
+
+    expect(result.conflictCount).toBe(1)
+    expect(mockTx.pOSOfflineEvent.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          status: "QUARANTINED",
+          blockerCode: "SIGNATURE_INVALID",
+        }),
+      }),
+    )
+  })
+
+  it("accepts a correctly signed event from the enrolled device key", async () => {
+    const { publicKey, privateKey } = generateKeyPairSync("rsa", { modulusLength: 2048 })
+    mockTx.pOSOfflineDevice.findFirst.mockResolvedValue({
+      ...activeDevice,
+      signingPublicKeyPem: publicKey.export({ format: "pem", type: "spki" }).toString(),
+    })
+    const event = buildEvent({ seq: 1 })
+    event.signature = sign("sha256", Buffer.from(event.entryHash, "utf8"), privateKey).toString("base64")
+
+    const result = await ingestOfflineSyncBatch({
+      organizationId: "org-1",
+      userId: "user-1",
+      deviceId: "device-1",
+      terminalId: "terminal-1",
+      locationId: "loc-1",
+      sessionId: "session-1",
+      events: [event],
+    })
+
+    expect(result.acceptedCount).toBe(1)
+    expect(result.conflictCount).toBe(0)
+  })
+
+  it("quarantines expired policies and stale reference snapshots", async () => {
+    const event = buildEvent({ seq: 1 })
+    mockTx.pOSOfflineDevice.findFirst.mockResolvedValueOnce({
+      ...activeDevice,
+      policyExpiresAt: new Date("2026-01-01T00:00:00.000Z"),
+    })
+
+    const expired = await ingestOfflineSyncBatch({
+      organizationId: "org-1",
+      userId: "user-1",
+      deviceId: "device-1",
+      terminalId: "terminal-1",
+      locationId: "loc-1",
+      sessionId: "session-1",
+      events: [event],
+    })
+    expect(expired.conflicts[0]).toMatchObject({ conflictType: "OFFLINE_POLICY_EXPIRED" })
+
+    resetMockTx()
+    mockTx.pOSStation.findFirst.mockResolvedValue({ id: "terminal-1" })
+    mockTx.pOSSession.findFirst.mockResolvedValue({ id: "session-1" })
+    mockTx.pOSOfflineDevice.findFirst.mockResolvedValue({
+      ...activeDevice,
+      sourceSnapshotHash: "source-snapshot-current",
+    })
+    mockTx.pOSOfflineSyncBatch.create.mockResolvedValue({ id: "batch-2" })
+    mockTx.pOSOfflineEvent.findUnique.mockResolvedValue(null)
+    mockTx.pOSOfflineEvent.create.mockImplementation(async ({ data }) => ({
+      id: "offline-event-stale",
+      ...data,
+      createdAt: new Date(),
+    }))
+    mockTx.pOSOfflineEvent.count.mockResolvedValue(0)
+    mockTx.pOSOfflineSyncConflict.count.mockResolvedValue(0)
+    mockTx.pOSOfflineSyncConflict.create.mockImplementation(async ({ data }) => ({
+      id: "conflict-stale",
+      ...data,
+      eventId: data.eventId ?? null,
+      expectedSequence: data.expectedSequence ?? null,
+      actualSequence: data.actualSequence ?? null,
+      status: "OPEN",
+      createdAt: new Date(),
+    }))
+    mockTx.pOSOfflineDevice.update.mockImplementation(async ({ data }) => ({ ...activeDevice, ...data }))
+    mockTx.pOSOfflineSyncCertificate.upsert.mockImplementation(async ({ create }) => ({
+      id: "certificate-stale",
+      ...create,
+      updatedAt: new Date(),
+    }))
+    mockTx.pOSOfflineSyncBatch.update.mockResolvedValue({ id: "batch-2" })
+    mockTx.businessEvent.findUnique.mockResolvedValue(null)
+    mockTx.businessEvent.create.mockResolvedValue({ id: "event-conflict", outboxMessages: [] })
+    mockTx.auditLog.create.mockResolvedValue({ id: "audit-stale" })
+
+    const stale = await ingestOfflineSyncBatch({
+      organizationId: "org-1",
+      userId: "user-1",
+      deviceId: "device-1",
+      terminalId: "terminal-1",
+      locationId: "loc-1",
+      sessionId: "session-1",
+      events: [event],
+    })
+    expect(stale.conflicts[0]).toMatchObject({ conflictType: "STALE_REFERENCE_SNAPSHOT" })
   })
 })

@@ -14,6 +14,14 @@ const getWorkbench = protect<unknown, PaymentReconciliationWorkbenchData>(
     permission: "payments.reconciliation.read",
     auditResource: "PaymentReconciliation",
     auditAllowed: false,
+    module: {
+      moduleSlug: "payment_reconciliation",
+      surface: "actions/payments/reconciliation-workbench.actions.ts:getPaymentReconciliationWorkbenchAction",
+      surfaceType: "action",
+      accessIntent: "read",
+      mode: "enforce",
+      audit: true,
+    },
   },
   async (input, ctx) => {
     const parsed = paymentReconciliationWorkbenchInputSchema.parse(input)

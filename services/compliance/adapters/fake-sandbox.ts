@@ -65,6 +65,24 @@ export const fakeSandboxComplianceAdapter: ComplianceAdapter = {
   },
 
   async submit(input: AuthorityPayload, context: AdapterExecutionContext) {
+    if (context.environment !== "FAKE_SANDBOX") {
+      const responsePayload = {
+        adapter: FAKE_SANDBOX_ADAPTER_CODE,
+        environment: context.environment,
+        status: "CONFIGURATION_ERROR",
+        statutoryEffect: "NONE_FAKE_SANDBOX_ONLY",
+        productionCertification: false,
+      }
+
+      return {
+        ok: false as const,
+        status: "CREDENTIAL_CONFIGURATION_ERROR" as const,
+        message: "Fake sandbox compliance adapter cannot execute outside FAKE_SANDBOX.",
+        responsePayload,
+        responseHash: hashPayload(responsePayload),
+      }
+    }
+
     const authorityReference = `FAKE-${input.payloadHash.slice(-16).toUpperCase()}`
     const responsePayload = {
       adapter: FAKE_SANDBOX_ADAPTER_CODE,
@@ -93,7 +111,25 @@ export const fakeSandboxComplianceAdapter: ComplianceAdapter = {
     }
   },
 
-  async pollStatus(input) {
+  async pollStatus(input, context) {
+    if (context.environment !== "FAKE_SANDBOX") {
+      const responsePayload = {
+        adapter: FAKE_SANDBOX_ADAPTER_CODE,
+        environment: context.environment,
+        status: "CONFIGURATION_ERROR",
+        statutoryEffect: "NONE_FAKE_SANDBOX_ONLY",
+        productionCertification: false,
+      }
+
+      return {
+        ok: false as const,
+        status: "CREDENTIAL_CONFIGURATION_ERROR" as const,
+        message: "Fake sandbox compliance adapter cannot poll outside FAKE_SANDBOX.",
+        responsePayload,
+        responseHash: hashPayload(responsePayload),
+      }
+    }
+
     return {
       ok: true,
       status: "ACCEPTED",

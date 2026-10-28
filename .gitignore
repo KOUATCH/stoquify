@@ -15,6 +15,7 @@
 
 # next.js
 /.next/
+/.next-dev/
 /out/
 
 # production
@@ -36,6 +37,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -55,7 +57,16 @@ outputs/
 # local runtime uploads
 /public/uploads/
 /public/seed-images/
+
+# Synthetic development seed credentials (plaintext, local-only)
+.seed-artifacts/
+# Generated plaintext development credential handoff (explicitly requested;
+# local-only even though it is stored beside the compliance document).
+/docs/blockers-and-gates/Development database roles and passwords.docx
 # playwright
 /test-results/
 /playwright-report/
 /playwright/.auth/
+
+# Prevent isolated evidence snapshots from recursively copying transaction history.
+what-next/transaction-history/runs/*/isolated-workspace/**/what-next/transaction-history/

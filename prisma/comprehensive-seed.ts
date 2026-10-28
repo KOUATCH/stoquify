@@ -1,7 +1,7 @@
 import argon2 from "argon2";
 import { faker } from "@faker-js/faker";
 import { existsSync } from "fs";
-import { mkdir, writeFile } from "fs/promises";
+import { mkdir, readFile, writeFile } from "fs/promises";
 import path from "path";
 import sharp from "sharp";
 import {
@@ -17,6 +17,7 @@ import {
   FiscalYearStatus,
   GoodsReceiptStatus,
   InviteStatus,
+  InventoryTransactionTimeProvenance,
   JournalEntryStatus,
   JournalType,
   LedgerEntryType,
@@ -28,7 +29,6 @@ import {
   PaymentStatus,
   POSSessionStatus,
   PrismaClient,
-  ProductionBatchStatus,
   PurchaseOrderStatus,
   RefundStatus,
   SalesOrderStatus,
@@ -51,20 +51,28 @@ import {
 
 const prisma = new PrismaClient();
 
-const COUNT = 50;
-const ORG_COUNT = 5;
-const ID_PREFIX = "cmp_";
+const COUNT = 12;
+const ORG_COUNT = 2;
+const ID_PREFIX = "rds_";
 const ORGANIZATION_ID_PREFIX = `${ID_PREFIX}org_`;
 const seedIndexes = Array.from({ length: COUNT }, (_, index) => index + 1);
 const orgIndexes = Array.from({ length: ORG_COUNT }, (_, index) => index + 1);
 const FAKER_SEED = 20260527;
-const DEFAULT_DEMO_PASSWORD = "StockFlowSeed@2026";
-const REGISTER_WORKFLOW_OWNER_PASSWORD = "RegisterOwner@2026";
-const REGISTER_WORKFLOW_PENDING_PASSWORD = "PendingVerify@2026";
+const resolveDemoPassword = () => {
+  const password = process.env.STOQUIFY_SEED_DEMO_PASSWORD?.trim();
+  if (!password || password.length < 16) {
+    throw new Error(
+      "STOQUIFY_SEED_DEMO_PASSWORD must contain at least 16 characters. Run the canonical realistic development seed entry point.",
+    );
+  }
+  return password;
+};
 const REGISTER_WORKFLOW_MODULES = [
   "POS",
+  "Sales",
   "Inventory",
   "Accounting",
+  "Finance",
   "Payment reconciliation",
   "Payroll",
   "Compliance",
@@ -106,19 +114,17 @@ type OrgSeedContext = {
 
 const pad = (value: number) => value.toString().padStart(3, "0");
 const orgIdFor = (value: number) => `${ORGANIZATION_ID_PREFIX}${pad(value)}`;
-const orgCodeFor = (value: number) => `org${pad(value)}`;
+const orgCodeFor = (value: number) => `rds-org${pad(value)}`;
 const createOrgContext = (orgIndex: number): OrgSeedContext => {
-  const isCentralAfrica = orgIndex % 2 !== 0;
-
   return {
     orgIndex,
     organizationId: orgIdFor(orgIndex),
     idPrefix: `${orgIdFor(orgIndex)}_`,
-    documentPrefix: `CMP${pad(orgIndex)}`,
+    documentPrefix: `RDS${pad(orgIndex)}`,
     emailSuffix: orgCodeFor(orgIndex),
-    country: isCentralAfrica ? "Cameroon" : "Senegal",
-    currency: isCentralAfrica ? "XAF" : "XOF",
-    timezone: isCentralAfrica ? "Africa/Douala" : "Africa/Dakar",
+    country: "Cameroon",
+    currency: "XAF",
+    timezone: "Africa/Douala",
     locale: orgIndex % 2 === 0 ? Locale.FR : Locale.EN,
   };
 };
@@ -144,12 +150,99 @@ const scopedEmail = (localPart: string) =>
 const roleEmail = (email: string) =>
   scopedEmail(email.replace("@stockflow.test", ""));
 const scopedPhone = (family: number, value: number) =>
-  `+237${family}${currentOrg().orgIndex}${value.toString().padStart(4, "0")}`;
+  `+237${family}8${currentOrg().orgIndex}${value.toString().padStart(5, "0")}`;
 const slugify = (value: string) =>
   value
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
+
+const CATEGORY_DEFINITIONS = [
+  { titleEn: "Beverages", titleFr: "Boissons", descriptionEn: "Water, juice, and non-alcoholic drinks.", descriptionFr: "Eau, jus et boissons sans alcool." },
+  { titleEn: "Staple foods", titleFr: "Produits alimentaires de base", descriptionEn: "Rice, flour, and everyday cooking staples.", descriptionFr: "Riz, farine et produits essentiels de cuisine." },
+  { titleEn: "Canned and packaged foods", titleFr: "Conserves et aliments emballes", descriptionEn: "Shelf-stable canned and packaged food.", descriptionFr: "Aliments en conserve et emballes de longue conservation." },
+  { titleEn: "Household cleaning", titleFr: "Entretien de la maison", descriptionEn: "Laundry and household cleaning products.", descriptionFr: "Produits de lessive et d'entretien menager." },
+  { titleEn: "Personal care", titleFr: "Soins personnels", descriptionEn: "Everyday hygiene and personal-care products.", descriptionFr: "Produits d'hygiene et de soins quotidiens." },
+  { titleEn: "Office supplies", titleFr: "Fournitures de bureau", descriptionEn: "Paper and practical office consumables.", descriptionFr: "Papier et consommables pratiques de bureau." },
+  { titleEn: "Small electronics", titleFr: "Petite electronique", descriptionEn: "Cables and compact electronic accessories.", descriptionFr: "Cables et petits accessoires electroniques." },
+] as const;
+
+const UNIT_DEFINITIONS = [
+  { symbol: "pc", type: UnitType.QUANTITY, nameEn: "Piece", nameFr: "Piece", baseUnit: "piece", conversionRate: 1 },
+  { symbol: "pack", type: UnitType.QUANTITY, nameEn: "Pack", nameFr: "Paquet", baseUnit: "piece", conversionRate: 1 },
+  { symbol: "btl", type: UnitType.QUANTITY, nameEn: "Bottle", nameFr: "Bouteille", baseUnit: "piece", conversionRate: 1 },
+  { symbol: "can", type: UnitType.QUANTITY, nameEn: "Can", nameFr: "Boite", baseUnit: "piece", conversionRate: 1 },
+  { symbol: "tube", type: UnitType.QUANTITY, nameEn: "Tube", nameFr: "Tube", baseUnit: "piece", conversionRate: 1 },
+  { symbol: "kg", type: UnitType.WEIGHT, nameEn: "Kilogram", nameFr: "Kilogramme", baseUnit: "kg", conversionRate: 1 },
+  { symbol: "L", type: UnitType.VOLUME, nameEn: "Liter", nameFr: "Litre", baseUnit: "L", conversionRate: 1 },
+] as const;
+
+const BRAND_DEFINITIONS = [
+  { name: "Mungo Springs", description: "Synthetic Cameroonian beverage brand for development testing." },
+  { name: "Savanna Harvest", description: "Synthetic staple-food brand for development testing." },
+  { name: "Bon Appetit Pantry", description: "Synthetic packaged-food brand for development testing." },
+  { name: "Maison Propre", description: "Synthetic household-care brand for development testing." },
+  { name: "Sante Douce", description: "Synthetic personal-care brand for development testing." },
+  { name: "Bureau Pratique", description: "Synthetic office-supply brand for development testing." },
+  { name: "Kamer Tech", description: "Synthetic electronics-accessory brand for development testing." },
+] as const;
+
+const PRODUCT_DEFINITIONS = [
+  { nameEn: "Spring water 1.5 L", nameFr: "Eau de source 1,5 L", category: 1, unit: 3, brand: 1, cost: 350, price: 500, weight: 1.5 },
+  { nameEn: "Orange juice 1 L", nameFr: "Jus d'orange 1 L", category: 1, unit: 7, brand: 1, cost: 900, price: 1_250, weight: 1 },
+  { nameEn: "Long-grain rice", nameFr: "Riz long grain", category: 2, unit: 6, brand: 2, cost: 650, price: 850, weight: 1 },
+  { nameEn: "Wheat flour", nameFr: "Farine de ble", category: 2, unit: 6, brand: 2, cost: 550, price: 750, weight: 1 },
+  { nameEn: "Sardines in tomato sauce 155 g", nameFr: "Sardines a la tomate 155 g", category: 3, unit: 4, brand: 3, cost: 650, price: 900, weight: 0.155 },
+  { nameEn: "Tomato paste 400 g", nameFr: "Concentre de tomate 400 g", category: 3, unit: 4, brand: 3, cost: 700, price: 1_000, weight: 0.4 },
+  { nameEn: "Laundry detergent 1 kg", nameFr: "Lessive en poudre 1 kg", category: 4, unit: 2, brand: 4, cost: 1_600, price: 2_200, weight: 1 },
+  { nameEn: "Dishwashing liquid 750 ml", nameFr: "Liquide vaisselle 750 ml", category: 4, unit: 3, brand: 4, cost: 900, price: 1_300, weight: 0.75 },
+  { nameEn: "Bath soap 100 g", nameFr: "Savon de toilette 100 g", category: 5, unit: 1, brand: 5, cost: 350, price: 500, weight: 0.1 },
+  { nameEn: "Toothpaste 125 ml", nameFr: "Dentifrice 125 ml", category: 5, unit: 5, brand: 5, cost: 750, price: 1_100, weight: 0.125 },
+  { nameEn: "A4 printer paper, 500 sheets", nameFr: "Papier A4, 500 feuilles", category: 6, unit: 2, brand: 6, cost: 3_200, price: 4_500, weight: 2.5 },
+  { nameEn: "Portable Bluetooth speaker", nameFr: "Enceinte Bluetooth portable", category: 7, unit: 1, brand: 7, cost: 8_500, price: 12_000, weight: 0.45 },
+] as const;
+
+const EXPENSE_CATEGORY_DEFINITIONS = [
+  ["Rent and occupancy", "Loyer et occupation"],
+  ["Electricity and utilities", "Electricite et services publics"],
+  ["Transport and delivery", "Transport et livraison"],
+  ["Repairs and maintenance", "Reparations et entretien"],
+  ["Office supplies", "Fournitures de bureau"],
+  ["Marketing", "Marketing"],
+  ["Professional services", "Services professionnels"],
+] as const;
+
+const SUPPLIER_NAMES = [
+  "Mungo Beverage Distribution",
+  "Savanna Staples Wholesale",
+  "Bon Appetit Food Supply",
+  "Maison Propre Distribution",
+  "Sante Douce Consumer Goods",
+  "Bureau Pratique Wholesale",
+  "Kamer Tech Accessories",
+  "Douala General Distribution",
+  "Littoral Retail Supply",
+  "Central Market Logistics",
+  "Wouri Consumer Products",
+  "Bonaberi Trade Partners",
+] as const;
+
+const LOCATION_DEFINITIONS = [
+  ["Akwa Flagship Store", LocationType.STORE],
+  ["Bonamoussadi Store", LocationType.STORE],
+  ["Central Warehouse", LocationType.WAREHOUSE],
+  ["Bassa Distribution Center", LocationType.DISTRIBUTION_CENTER],
+  ["Bonaberi Store", LocationType.STORE],
+  ["Deido Store", LocationType.STORE],
+  ["Makepe Store", LocationType.STORE],
+  ["Logbessou Store", LocationType.STORE],
+  ["Ndokoti Store", LocationType.STORE],
+  ["New Bell Store", LocationType.STORE],
+  ["Wouri Warehouse", LocationType.WAREHOUSE],
+  ["Bepanda Store", LocationType.STORE],
+] as const;
+
+const definitionIndex = (value: number, length: number) => ((value - 1) % length) + 1;
 type SeedImageKind = (typeof SEED_IMAGE_KINDS)[number];
 
 const seedImageUrl = (kind: SeedImageKind, value: number) =>
@@ -348,10 +441,15 @@ async function ensureSeedImages() {
     ),
   };
 
-  await writeFile(
-    path.join(SEED_IMAGE_DIR, "manifest.json"),
-    `${JSON.stringify(manifest, null, 2)}\n`,
-  );
+  const manifestPath = path.join(SEED_IMAGE_DIR, "manifest.json");
+  const serializedManifest = `${JSON.stringify(manifest, null, 2)}\n`;
+  const existingManifest = existsSync(manifestPath)
+    ? await readFile(manifestPath, "utf8")
+    : null;
+
+  if (existingManifest !== serializedManifest) {
+    await writeFile(manifestPath, serializedManifest);
+  }
 }
 
 function verifySeedImageFiles() {
@@ -395,7 +493,6 @@ const ROLE_DEFINITIONS = [
     description: "Full system access with all permissions.",
     permissions: ["*", ...ALL_PERMISSIONS],
     email: "super.admin@stockflow.test",
-    password: "SuperAdmin@2026",
     firstName: "Amina",
     lastName: "Ngono",
   },
@@ -406,7 +503,6 @@ const ROLE_DEFINITIONS = [
     description: "Organization administrator with complete business access.",
     permissions: ALL_PERMISSIONS,
     email: "admin@stockflow.test",
-    password: "Admin@2026",
     firstName: "Marc",
     lastName: "Dubois",
   },
@@ -436,7 +532,6 @@ const ROLE_DEFINITIONS = [
       PERMISSIONS.PURCHASES_ORDERS_RECEIVE,
     ]),
     email: "branch.manager@stockflow.test",
-    password: "BranchManager@2026",
     firstName: "Claire",
     lastName: "Mballa",
   },
@@ -445,7 +540,7 @@ const ROLE_DEFINITIONS = [
     nameEn: "Inventory Manager",
     nameFr: "Responsable inventaire",
     description:
-      "Inventory catalog, stock levels, transfers, adjustments, and production stock.",
+      "Inventory catalog, stock levels, transfers, adjustments, and stock controls.",
     permissions: permissionsContaining(
       "INVENTORY",
       "ITEM",
@@ -456,13 +551,9 @@ const ROLE_DEFINITIONS = [
       "TRANSFER",
       "ADJUST",
       "SERIAL",
-      "RECIPE",
-      "PRODUCTION",
-      "RAW_MATERIAL",
       "GOODS",
     ),
     email: "inventory.manager@stockflow.test",
-    password: "InventoryManager@2026",
     firstName: "Jean",
     lastName: "Talla",
   },
@@ -483,7 +574,6 @@ const ROLE_DEFINITIONS = [
       "ANALYTICS",
     ),
     email: "sales.manager@stockflow.test",
-    password: "SalesManager@2026",
     firstName: "Sophie",
     lastName: "Kamdem",
   },
@@ -505,7 +595,6 @@ const ROLE_DEFINITIONS = [
       ...permissionsContaining("POS", "CASH", "PAYMENT", "RECEIPT"),
     ]),
     email: "cashier@stockflow.test",
-    password: "Cashier@2026",
     firstName: "Grace",
     lastName: "Etame",
   },
@@ -523,7 +612,6 @@ const ROLE_DEFINITIONS = [
       "INVENTORY_COST",
     ),
     email: "purchaser@stockflow.test",
-    password: "Purchaser@2026",
     firstName: "Patrick",
     lastName: "Fouda",
   },
@@ -547,7 +635,6 @@ const ROLE_DEFINITIONS = [
       "PROFIT",
     ),
     email: "accountant@stockflow.test",
-    password: "Accountant@2026",
     firstName: "Nadia",
     lastName: "Essomba",
   },
@@ -566,7 +653,6 @@ const ROLE_DEFINITIONS = [
       "EMPLOYEE",
     ),
     email: "hr.manager@stockflow.test",
-    password: "HrManager@2026",
     firstName: "Luc",
     lastName: "Biya",
   },
@@ -583,7 +669,6 @@ const ROLE_DEFINITIONS = [
       PERMISSIONS.VIEW_COMPLIANCE_STATUS,
     ]),
     email: "auditor@stockflow.test",
-    password: "Auditor@2026",
     firstName: "Helene",
     lastName: "Mbarga",
   },
@@ -595,7 +680,6 @@ const ROLE_DEFINITIONS = [
       "Read-only dashboard and operational visibility for demo exploration.",
     permissions: READ_ONLY_PERMISSIONS,
     email: "readonly@stockflow.test",
-    password: "ReadOnly@2026",
     firstName: "Yann",
     lastName: "Njock",
   },
@@ -615,30 +699,18 @@ const ROLE_DEFINITIONS = [
       PERMISSIONS.VIEW_OWN_ATTENDANCE_REPORTS,
     ]),
     email: "user@stockflow.test",
-    password: "User@2026",
     firstName: "Emma",
     lastName: "Fotso",
   },
 ];
 
-const roleDefinitionFor = (index: number) =>
-  ROLE_DEFINITIONS[index - 1] ?? {
-    code: `demo_role_${pad(index)}`,
-    nameEn: `${faker.person.jobTitle()} Demo Role ${pad(index)}`,
-    nameFr: `Role demo ${pad(index)}`,
-    description: faker.company.catchPhrase(),
-    permissions: uniquePermissions([
-      ...READ_ONLY_PERMISSIONS.slice(0, 20),
-      ...ALL_PERMISSIONS.slice(
-        (index * 7) % ALL_PERMISSIONS.length,
-        ((index * 7) % ALL_PERMISSIONS.length) + 18,
-      ),
-    ]),
-    email: `demo.user.${pad(index)}@stockflow.test`,
-    password: DEFAULT_DEMO_PASSWORD,
-    firstName: faker.person.firstName(),
-    lastName: faker.person.lastName(),
-  };
+const roleDefinitionFor = (index: number) => {
+  const role = ROLE_DEFINITIONS[index - 1];
+  if (!role) {
+    throw new Error(`Missing curated role definition for seed index ${index}`);
+  }
+  return role;
+};
 
 const ROLE_SEEDS = seedIndexes.map((index) => roleDefinitionFor(index));
 const demoCredentials: Array<{
@@ -651,7 +723,7 @@ const demoCredentials: Array<{
   note?: string;
 }> = [];
 
-const hashPassword = async (password = DEFAULT_DEMO_PASSWORD) => {
+const hashPassword = async (password = resolveDemoPassword()) => {
   const cached = passwordHashCache.get(password);
   if (cached) {
     return cached;
@@ -752,9 +824,6 @@ const deleteOrder: Array<[string, SeedDelegate]> = [
   ["StockTransferLine", prisma.stockTransferLine],
   ["StockTransfer", prisma.stockTransfer],
   ["InventoryTransaction", prisma.inventoryTransaction],
-  ["ProductionBatch", prisma.productionBatch],
-  ["RecipeIngredient", prisma.recipeIngredient],
-  ["Recipe", prisma.recipe],
   ["SerialNumber", prisma.serialNumber],
   ["ItemSupplier", prisma.itemSupplier],
   ["InventoryLevel", prisma.inventoryLevel],
@@ -831,7 +900,7 @@ const accountingCleanupOrder: Array<[string, () => Promise<{ count: number }>]> 
 
 const verificationOrder = [...deleteOrder].reverse();
 
-async function clearSeededData() {
+export async function clearSeededData() {
   console.log("Clearing previous comprehensive seed records...");
 
   await clearComprehensiveCoverageData(prisma);
@@ -921,7 +990,7 @@ async function seedRoles() {
 async function seedUsers() {
   for (const index of seedIndexes) {
     const role = ROLE_SEEDS[index - 1];
-    const password = role.password ?? DEFAULT_DEMO_PASSWORD;
+    const password = resolveDemoPassword();
     const email = roleEmail(
       index <= ROLE_DEFINITIONS.length
         ? role.email
@@ -1118,6 +1187,30 @@ async function seedAccountingControlPlane() {
       isControlAccount: true,
     },
     {
+      id: id("chart_account", 15),
+      code: "4081",
+      nameEn: "Goods received not invoiced",
+      nameFr: "Fournisseurs, factures non parvenues",
+      type: ChartAccountType.LIABILITY,
+      normalBalance: ChartAccountNormalBalance.CREDIT,
+      mappingKey: "GRNI",
+      syscohadaClass: "4",
+      syscohadaReference: "4081",
+      isControlAccount: true,
+    },
+    {
+      id: id("chart_account", 16),
+      code: "4098",
+      nameEn: "Supplier return claims",
+      nameFr: "Fournisseurs, avoirs a recevoir",
+      type: ChartAccountType.ASSET,
+      normalBalance: ChartAccountNormalBalance.DEBIT,
+      mappingKey: "SUPPLIER_RETURN_CLAIM",
+      syscohadaClass: "4",
+      syscohadaReference: "4098",
+      isControlAccount: true,
+    },
+    {
       id: id("chart_account", 9),
       code: "31",
       nameEn: "Inventory",
@@ -1275,7 +1368,7 @@ async function seedAuthTables() {
 
   await prisma.account.createMany({
     data: seedIndexes.map((index) => {
-      const password = ROLE_SEEDS[index - 1].password ?? DEFAULT_DEMO_PASSWORD;
+      const password = resolveDemoPassword();
       const passwordHash = passwordHashCache.get(password) ?? defaultHash;
       const userId = id("user", index);
 
@@ -1306,19 +1399,16 @@ async function seedAuthTables() {
     data: seedIndexes.map((index) => ({
       id: id("password_history", index),
       userId: id("user", index),
-      passwordHash:
-        index <= ROLE_DEFINITIONS.length
-          ? (passwordHashCache.get(ROLE_SEEDS[index - 1].password) ??
-            defaultHash)
-          : defaultHash,
+      passwordHash: defaultHash,
       createdAt: day(index),
     })),
   });
 }
 
 async function seedRegisterWorkflowDemoAccounts() {
-  const ownerPasswordHash = await hashPassword(REGISTER_WORKFLOW_OWNER_PASSWORD);
-  const pendingPasswordHash = await hashPassword(REGISTER_WORKFLOW_PENDING_PASSWORD);
+  const registerWorkflowPassword = resolveDemoPassword();
+  const ownerPasswordHash = await hashPassword(registerWorkflowPassword);
+  const pendingPasswordHash = await hashPassword(registerWorkflowPassword);
   const adminRoleId = id("role", 2);
   const ownerUserId = id("register_owner_user", 1);
   const pendingUserId = id("register_pending_user", 1);
@@ -1417,7 +1507,7 @@ async function seedRegisterWorkflowDemoAccounts() {
       phone: scopedPhone(67, 43),
       email: scopedEmail("register.branch"),
       isActive: true,
-      isDefault: true,
+      isDefault: false,
       organizationId: orgId(),
       managerId: ownerUserId,
       updatedAt: day(2),
@@ -1429,7 +1519,7 @@ async function seedRegisterWorkflowDemoAccounts() {
       organizationId: orgId(),
       name: "Rita Founder",
       email: ownerEmail,
-      password: REGISTER_WORKFLOW_OWNER_PASSWORD,
+      password: registerWorkflowPassword,
       role: "Register Workflow Owner",
       userId: ownerUserId,
       note: "Verified account created to mirror the completed v2 registration workflow.",
@@ -1438,7 +1528,7 @@ async function seedRegisterWorkflowDemoAccounts() {
       organizationId: orgId(),
       name: "Pending Verify",
       email: pendingEmail,
-      password: REGISTER_WORKFLOW_PENDING_PASSWORD,
+      password: registerWorkflowPassword,
       role: "Pending Register Verification",
       userId: pendingUserId,
       note: `Unverified account for /verify testing. OTP: ${pendingOtp}`,
@@ -1448,27 +1538,25 @@ async function seedRegisterWorkflowDemoAccounts() {
 
 async function seedReferenceData() {
   await prisma.location.createMany({
-    data: seedIndexes.map((index) => ({
-      id: id("location", index),
-      name: `${faker.location.city()} ${faker.helpers.arrayElement(["Store", "Warehouse", "Hub", "Kitchen"])} ${pad(index)}`,
-      code: orgScopedNumber("LOC", index),
-      type: [
-        LocationType.STORE,
-        LocationType.WAREHOUSE,
-        LocationType.DISTRIBUTION_CENTER,
-        LocationType.MANUFACTURING,
-      ][index % 4],
-      address: faker.location.streetAddress(),
-      phone: scopedPhone(68, index),
-      email: scopedEmail(`location.${pad(index)}`),
-      isActive: true,
-      isDefault: index === 1,
-      organizationId: orgId(),
-      managerId: id("user", index),
-      allowNegativeStock: index % 5 === 0,
-      requiresApproval: index % 4 === 0,
-      updatedAt: day(index),
-    })),
+    data: LOCATION_DEFINITIONS.map(([name, type], offset) => {
+      const index = offset + 1;
+      return {
+        id: id("location", index),
+        name,
+        code: orgScopedNumber("LOC", index),
+        type,
+        address: faker.location.streetAddress(),
+        phone: scopedPhone(68, index),
+        email: scopedEmail(`location.${pad(index)}`),
+        isActive: true,
+        isDefault: index === 1,
+        organizationId: orgId(),
+        managerId: id("user", definitionIndex(index, ROLE_SEEDS.length)),
+        allowNegativeStock: false,
+        requiresApproval: type !== LocationType.STORE,
+        updatedAt: day(index),
+      };
+    }),
   });
 
   await prisma.customer.createMany({
@@ -1492,9 +1580,11 @@ async function seedReferenceData() {
   });
 
   await prisma.supplier.createMany({
-    data: seedIndexes.map((index) => ({
+    data: SUPPLIER_NAMES.map((name, offset) => {
+      const index = offset + 1;
+      return {
       id: id("supplier", index),
-      name: `${faker.company.name()} ${pad(index)}`,
+      name,
       code: orgScopedNumber("SUP", index),
       contactPerson: faker.person.fullName(),
       email: scopedEmail(`supplier.${pad(index)}`),
@@ -1512,85 +1602,101 @@ async function seedReferenceData() {
       taxId: orgScopedNumber("SUP-TAX", index),
       paymentTerms: 20 + index,
       creditLimit: money(500_000 + index * 10_000),
-      notes: faker.company.catchPhrase(),
+      notes: "Synthetic development supplier matched to the seeded retail catalog.",
       isActive: true,
       preferredLocale: index % 2 === 0 ? Locale.FR : Locale.EN,
       currentBalance: money(index * 2_000),
       organizationId: orgId(),
       updatedAt: day(index),
-    })),
+      };
+    }),
   });
 
   await prisma.category.createMany({
-    data: seedIndexes.map((index) => ({
+    data: CATEGORY_DEFINITIONS.map((category, offset) => {
+      const index = offset + 1;
+      return {
       id: id("category", index),
-      slug: `${currentOrg().emailSuffix}-${slugify(faker.commerce.department())}-${pad(index)}`,
-      titleEn: `${faker.commerce.department()} ${pad(index)}`,
-      titleFr: `Categorie ${pad(index)}`,
-      descriptionEn: faker.commerce.productDescription(),
-      descriptionFr: `Description de categorie ${pad(index)}`,
+      slug: `${currentOrg().emailSuffix}-${slugify(category.titleEn)}`,
+      titleEn: category.titleEn,
+      titleFr: category.titleFr,
+      descriptionEn: category.descriptionEn,
+      descriptionFr: category.descriptionFr,
       imageUrl: seedImageUrl("categories", index),
-      parentId: index > 10 ? id("category", index - 10) : null,
+      parentId: null,
       isActive: true,
       organizationId: orgId(),
       updatedAt: day(index),
-    })),
+      };
+    }),
   });
 
   await seedBrands();
 
   await prisma.unit.createMany({
-    data: seedIndexes.map((index) => ({
+    data: UNIT_DEFINITIONS.map((unit, offset) => {
+      const index = offset + 1;
+      return {
       id: id("unit", index),
-      symbol: `${currentOrg().documentPrefix}-U${pad(index)}`,
-      type: [
-        UnitType.QUANTITY,
-        UnitType.WEIGHT,
-        UnitType.VOLUME,
-        UnitType.LENGTH,
-      ][index % 4],
-      nameEn: `${faker.science.unit().name} ${pad(index)}`,
-      nameFr: `Unite ${pad(index)}`,
-      baseUnit: index % 2 === 0 ? "piece" : "kg",
-      conversionRate: index % 2 === 0 ? 1 : money(0.5 + index / 10),
+      symbol: unit.symbol,
+      type: unit.type,
+      nameEn: unit.nameEn,
+      nameFr: unit.nameFr,
+      baseUnit: unit.baseUnit,
+      conversionRate: unit.conversionRate,
       isActive: true,
       organizationId: orgId(),
       updatedAt: day(index),
-    })),
+      };
+    }),
   });
 
   await prisma.taxRate.createMany({
-    data: seedIndexes.map((index) => ({
-      id: id("tax_rate", index),
-      rate: money((index % 10) + 5),
-      type: [TaxType.SALES, TaxType.VAT, TaxType.GST, TaxType.EXCISE][
-        index % 4
-      ],
-      nameEn: `${faker.commerce.productAdjective()} Tax ${pad(index)}`,
-      nameFr: `Taxe ${pad(index)}`,
-      isActive: true,
-      organizationId: orgId(),
-      updatedAt: day(index),
-    })),
+    data: [
+      {
+        id: id("tax_rate", 1),
+        rate: CAMEROON_STANDARD_VAT_RATE_PERCENT,
+        type: TaxType.VAT,
+        nameEn: `Cameroon standard VAT ${CAMEROON_STANDARD_VAT_RATE_PERCENT}%`,
+        nameFr: `TVA normale Cameroun ${CAMEROON_STANDARD_VAT_RATE_PERCENT}%`,
+        isActive: true,
+        organizationId: orgId(),
+        updatedAt: day(1),
+      },
+      {
+        id: id("tax_rate", 2),
+        rate: 0,
+        type: TaxType.VAT,
+        nameEn: "Zero-rated VAT",
+        nameFr: "TVA a taux zero",
+        isActive: true,
+        organizationId: orgId(),
+        updatedAt: day(2),
+      },
+    ],
   });
 
   await prisma.expenseCategory.createMany({
-    data: seedIndexes.map((index) => ({
+    data: EXPENSE_CATEGORY_DEFINITIONS.map(([nameEn, nameFr], offset) => {
+      const index = offset + 1;
+      return {
       id: id("expense_category", index),
-      nameEn: `${faker.commerce.department()} Expense ${pad(index)}`,
-      nameFr: `Categorie depense ${pad(index)}`,
-      descriptionEn: faker.finance.transactionDescription(),
-      descriptionFr: `Description categorie depense ${pad(index)}`,
+      nameEn,
+      nameFr,
+      descriptionEn: `Synthetic ${nameEn.toLowerCase()} expenses for development workflows.`,
+      descriptionFr: `Depenses synthetiques de ${nameFr.toLowerCase()} pour les tests de developpement.`,
       isActive: true,
       organizationId: orgId(),
       updatedAt: day(index),
-    })),
+      };
+    }),
   });
 }
 
 async function seedBrands() {
-  for (const index of seedIndexes) {
-    const brandName = `${faker.company.name()} ${pad(index)}`;
+  for (const [offset, brand] of BRAND_DEFINITIONS.entries()) {
+    const index = offset + 1;
+    const brandName = brand.name;
     await prisma.$executeRaw`
       insert into "brands" (
         "id",
@@ -1608,10 +1714,10 @@ async function seedBrands() {
       values (
         ${id("brand", index)},
         ${brandName},
-        ${`Marque ${pad(index)}`},
-        ${`${currentOrg().emailSuffix}-${slugify(brandName)}-${pad(index)}`},
-        ${faker.company.catchPhrase()},
-        ${`Description francaise de marque ${pad(index)}`},
+        ${brandName},
+        ${`${currentOrg().emailSuffix}-${slugify(brandName)}`},
+        ${brand.description},
+        ${brand.description},
         ${seedImageUrl("brands", index)},
         ${true},
         ${orgId()},
@@ -1623,88 +1729,96 @@ async function seedBrands() {
 }
 
 async function seedItemsAndInventory() {
+  const activeLocations = await prisma.location.findMany({
+    where: {
+      organizationId: orgId(),
+      isActive: true,
+      deletedAt: null,
+    },
+    orderBy: [{ isDefault: "desc" }, { id: "asc" }],
+    select: { id: true },
+  });
+
+  if (activeLocations.length === 0) {
+    throw new Error(`Cannot seed inventory without an active location for ${orgId()}.`);
+  }
+
   await prisma.item.createMany({
-    data: seedIndexes.map((index) => {
-      const productName = `${faker.commerce.productName()} ${pad(index)}`;
-      const costPrice = money(
-        faker.number.float({ min: 800, max: 15_000, fractionDigits: 2 }),
-      );
-      const sellingPrice = money(
-        costPrice *
-          faker.number.float({ min: 1.18, max: 1.65, fractionDigits: 2 }),
-      );
+    data: PRODUCT_DEFINITIONS.map((product, offset) => {
+      const index = offset + 1;
+      const costPrice = money(product.cost);
+      const sellingPrice = money(product.price);
 
       return {
         id: id("item", index),
-        slug: `${currentOrg().emailSuffix}-${slugify(productName)}-${pad(index)}`,
+        slug: `${currentOrg().emailSuffix}-${slugify(product.nameEn)}`,
         sku: orgScopedNumber("SKU", index),
         barcode: orgScopedNumber("BAR", index),
-        nameEn: productName,
-        nameFr: `Article ${pad(index)}`,
-        descriptionEn: faker.commerce.productDescription(),
-        descriptionFr: `Article d'inventaire ${pad(index)}`,
+        nameEn: product.nameEn,
+        nameFr: product.nameFr,
+        descriptionEn: `${product.nameEn} from the curated development retail catalog.`,
+        descriptionFr: `${product.nameFr}, article du catalogue de developpement.` ,
         imageUrls: [seedImageUrl("products", index)],
         thumbnail: seedImageUrl("products", index),
         upc: `${currentOrg().documentPrefix}-UPC-${pad(index)}`,
         ean: `${currentOrg().documentPrefix}-EAN-${pad(index)}`,
         mpn: orgScopedNumber("MPN", index),
-        isbn: orgScopedNumber("ISBN", index),
-        dimensions: `${10 + index}x${8 + index}x${5 + index} cm`,
-        weight: qty(
-          faker.number.float({ min: 0.2, max: 35, fractionDigits: 3 }),
-        ),
-        color: faker.color.human(),
-        size: faker.helpers.arrayElement([
-          "Small",
-          "Standard",
-          "Large",
-          "Bulk",
-        ]),
+        isbn: null,
+        dimensions: null,
+        weight: qty(product.weight),
+        color: null,
+        size: null,
         costPrice,
         sellingPrice,
         msrp: money(sellingPrice * 1.12),
         trackInventory: true,
-        trackSerialNumbers: index % 2 === 0,
-        trackBatches: index % 3 === 0,
-        trackExpiry: index % 4 === 0,
-        minStockLevel: qty(5 + index),
-        maxStockLevel: qty(100 + index * 4),
-        reorderLevel: qty(10 + index),
-        reorderQuantity: qty(25 + index),
+        trackSerialNumbers: index === PRODUCT_DEFINITIONS.length,
+        trackBatches: product.category <= 5,
+        trackExpiry: product.category <= 5,
+        minStockLevel: qty(10),
+        maxStockLevel: qty(250),
+        reorderLevel: qty(20),
+        reorderQuantity: qty(60),
         isActive: true,
         isDiscontinued: false,
         organizationId: orgId(),
-        categoryId: id("category", index),
-        brandId: id("brand", index),
-        unitId: id("unit", index),
-        taxRateId: id("tax_rate", index),
+        categoryId: id("category", product.category),
+        brandId: id("brand", product.brand),
+        unitId: id("unit", product.unit),
+        taxRateId: id("tax_rate", 1),
         updatedAt: day(index),
       };
     }),
   });
 
   await prisma.inventoryLevel.createMany({
-    data: seedIndexes.map((index) => {
-      const quantityOnHand = qty(75 + index);
-      const reserved = qty(index % 5);
-      const averageCost = money(1_000 + index * 175);
-      return {
-        id: id("inventory_level", index),
-        itemId: id("item", index),
-        locationId: id("location", index),
-        quantityOnHand,
-        quantityReserved: reserved,
-        quantityAvailable: qty(quantityOnHand - reserved),
-        quantityInTransit: qty(index % 4),
-        quantityOnOrder: qty(10 + index),
-        reorderPoint: qty(8 + index),
-        averageCost,
-        totalValue: money(quantityOnHand * averageCost),
-        version: index,
-        lastCountDate: day(index),
-        lastTransactionAt: day(index),
-        updatedAt: day(index),
-      };
+    data: PRODUCT_DEFINITIONS.flatMap((product, productOffset) => {
+      const itemIndex = productOffset + 1;
+      const averageCost = money(product.cost);
+
+      return activeLocations.map((location, locationOffset) => {
+        const locationIndex = locationOffset + 1;
+        const quantityOnHand = qty(80 + itemIndex * 5 + locationIndex * 2);
+        const reserved = qty((itemIndex + locationIndex) % 3);
+
+        return {
+          id: `${id("inventory_level", itemIndex)}_${pad(locationIndex)}`,
+          itemId: id("item", itemIndex),
+          locationId: location.id,
+          quantityOnHand,
+          quantityReserved: reserved,
+          quantityAvailable: qty(quantityOnHand - reserved),
+          quantityInTransit: qty((itemIndex + locationIndex) % 4),
+          quantityOnOrder: qty(20 + itemIndex + locationIndex),
+          reorderPoint: qty(20),
+          averageCost,
+          totalValue: money(quantityOnHand * averageCost),
+          version: 1,
+          lastCountDate: day(itemIndex),
+          lastTransactionAt: day(itemIndex),
+          updatedAt: day(itemIndex),
+        };
+      });
     }),
   });
 
@@ -1714,7 +1828,7 @@ async function seedItemsAndInventory() {
       itemId: id("item", index),
       supplierId: id("supplier", index),
       supplierSku: orgScopedNumber("SUP-SKU", index),
-      supplierName: `Supplier Item ${pad(index)}`,
+      supplierName: SUPPLIER_NAMES[index - 1],
       isPreferred: index % 3 === 0,
       leadTimeDays: 3 + index,
       minOrderQuantity: qty(5 + index),
@@ -1735,8 +1849,8 @@ async function seedItemsAndInventory() {
         SerialStatus.SOLD,
         SerialStatus.RETURNED,
       ][index % 4],
-      itemId: id("item", index),
-      locationId: id("location", index),
+      itemId: id("item", PRODUCT_DEFINITIONS.length),
+      locationId: id("location", 1),
       organizationId: orgId(),
       batchNumber: orgScopedNumber("BATCH", index),
       expiryDate: day(index + 120),
@@ -1761,50 +1875,59 @@ async function seedPointOfSale() {
   });
 
   await prisma.cashDrawer.createMany({
-    data: seedIndexes.map((index) => ({
-      id: id("cash_drawer", index),
-      name: `Seed Cash Drawer ${pad(index)}`,
-      drawerNumber: orgScopedNumber("DRAWER", index),
-      currentBalance: money(50_000 + index * 1_000),
-      expectedBalance: money(50_000 + index * 1_050),
-      isOpen: index % 4 !== 0,
-      locationId: id("location", index),
-      terminalId: id("pos_station", index),
-      updatedAt: day(index),
-    })),
+    data: seedIndexes.map((index) => {
+      const expectedBalance = money(22_100 + index * 550);
+      const closingBalance = money(22_000 + index * 550);
+
+      return {
+        id: id("cash_drawer", index),
+        name: `Seed Cash Drawer ${pad(index)}`,
+        drawerNumber: orgScopedNumber("DRAWER", index),
+        currentBalance: closingBalance,
+        expectedBalance,
+        isOpen: false,
+        locationId: id("location", index),
+        terminalId: id("pos_station", index),
+        updatedAt: day(index),
+      };
+    }),
   });
 
   await prisma.pOSSession.createMany({
-    data: seedIndexes.map((index) => ({
-      id: id("pos_session", index),
-      sessionNumber: orgScopedNumber("POS-SESSION", index),
-      status: [
-        POSSessionStatus.ACTIVE,
-        POSSessionStatus.CLOSED,
-        POSSessionStatus.RECONCILED,
-      ][index % 3],
-      startTime: day(index),
-      endTime: index % 3 === 0 ? day(index + 1) : null,
-      terminalId: id("pos_station", index),
-      locationId: id("location", index),
-      userId: id("user", index),
-      openingBalance: money(20_000 + index * 500),
-      closingBalance: money(22_000 + index * 550),
-      expectedBalance: money(22_100 + index * 550),
-      variance: money(index % 2 === 0 ? 100 : -75),
-      totalSales: money(100_000 + index * 2_500),
-      totalTax: money(19_250 + index * 450),
-      totalDiscount: money(index * 125),
-      transactionCount: 4 + index,
-      cashTotal: money(40_000 + index * 1_000),
-      cardTotal: money(30_000 + index * 800),
-      mobileMoneyTotal: money(20_000 + index * 500),
-      bankTransferTotal: money(5_000 + index * 250),
-      creditTotal: money(2_000 + index * 100),
-      organizationId: orgId(),
-      notes: `POS session ${pad(index)}`,
-      updatedAt: day(index),
-    })),
+    data: seedIndexes.map((index) => {
+      const openingBalance = money(20_000 + index * 500);
+      const expectedBalance = money(22_100 + index * 550);
+      const closingBalance = money(22_000 + index * 550);
+
+      return {
+        id: id("pos_session", index),
+        sessionNumber: orgScopedNumber("POS-SESSION", index),
+        status: index % 2 === 0
+          ? POSSessionStatus.CLOSED
+          : POSSessionStatus.RECONCILED,
+        startTime: day(index),
+        endTime: day(index + 1),
+        terminalId: id("pos_station", index),
+        locationId: id("location", index),
+        userId: id("user", index),
+        openingBalance,
+        closingBalance,
+        expectedBalance,
+        variance: money(closingBalance - expectedBalance),
+        totalSales: money(100_000 + index * 2_500),
+        totalTax: money(19_250 + index * 450),
+        totalDiscount: money(index * 125),
+        transactionCount: 4 + index,
+        cashTotal: money(40_000 + index * 1_000),
+        cardTotal: money(30_000 + index * 800),
+        mobileMoneyTotal: money(20_000 + index * 500),
+        bankTransferTotal: money(5_000 + index * 250),
+        creditTotal: money(2_000 + index * 100),
+        organizationId: orgId(),
+        notes: `POS session ${pad(index)}`,
+        updatedAt: day(index),
+      };
+    }),
   });
 }
 
@@ -2074,6 +2197,9 @@ async function seedInventoryTransactions() {
           serialNumbers: [orgScopedNumber("SERIAL", index)],
           expiryDate: day(index + 180),
           balanceAfter: qty(75 + index + purchasedQuantity),
+          effectiveAt: day(index),
+          recordedAt: day(index),
+          timeProvenance: InventoryTransactionTimeProvenance.EXPLICIT_SOURCE_TIME,
           createdAt: day(index),
         },
         {
@@ -2094,6 +2220,9 @@ async function seedInventoryTransactions() {
           serialNumbers: [orgScopedNumber("SERIAL", index)],
           expiryDate: day(index + 120),
           balanceAfter: qty(75 + index + purchasedQuantity - soldQuantity),
+          effectiveAt: day(index + 1),
+          recordedAt: day(index + 1),
+          timeProvenance: InventoryTransactionTimeProvenance.EXPLICIT_SOURCE_TIME,
           createdAt: day(index + 1),
         },
       ];
@@ -2266,7 +2395,10 @@ async function seedFinanceAndLedgers() {
       description: `Seed expense ${pad(index)}`,
       amount: money(5_000 + index * 300),
       expenseDate: day(index),
-      categoryId: id("expense_category", index),
+      categoryId: id(
+        "expense_category",
+        definitionIndex(index, EXPENSE_CATEGORY_DEFINITIONS.length),
+      ),
       locationId: id("location", index),
       paymentMethod: [
         PaymentMethod.CASH,
@@ -2328,6 +2460,23 @@ async function seedFinanceAndLedgers() {
 async function seedReportingAndCash() {
   await prisma.cashDrawerTransaction.createMany({
     data: seedIndexes.map((index) => {
+      if (index === 1) {
+        const openingBalance = money(20_000 + index * 500);
+        return {
+          id: id("cash_drawer_transaction", index),
+          type: CashDrawerTransactionType.OPENING_BALANCE,
+          amount: openingBalance,
+          reason: "Seed shift opening float",
+          notes: `Cash drawer transaction ${pad(index)}`,
+          cashDrawerId: id("cash_drawer", index),
+          sessionId: id("pos_session", index),
+          userId: id("user", 1),
+          balanceBefore: money(0),
+          balanceAfter: openingBalance,
+          createdAt: day(index),
+        };
+      }
+
       const amount = money(1_000 + index * 100);
       const before = money(50_000 + index * 1_000);
       return {
@@ -2439,60 +2588,7 @@ async function seedReportingAndCash() {
   });
 }
 
-async function seedProductionAndStockMovement() {
-  await prisma.recipe.createMany({
-    data: seedIndexes.map((index) => ({
-      id: id("recipe", index),
-      nameEn: `Seed Recipe ${pad(index)}`,
-      nameFr: `Recette de test ${pad(index)}`,
-      outputItemId: id("item", index),
-      outputQuantity: qty(10 + index),
-      laborCost: money(2_000 + index * 150),
-      overheadCost: money(1_000 + index * 75),
-      version: 1,
-      isActive: true,
-      notes: `Recipe seed ${pad(index)}`,
-      organizationId: orgId(),
-      updatedAt: day(index),
-    })),
-  });
-
-  await prisma.recipeIngredient.createMany({
-    data: seedIndexes.map((index) => ({
-      id: id("recipe_ingredient", index),
-      recipeId: id("recipe", index),
-      itemId: id("item", (index % COUNT) + 1),
-      quantity: qty(1 + index / 10),
-      wastePercent: money(index % 5),
-      notes: `Recipe ingredient ${pad(index)}`,
-      updatedAt: day(index),
-    })),
-  });
-
-  await prisma.productionBatch.createMany({
-    data: seedIndexes.map((index) => ({
-      id: id("production_batch", index),
-      batchNumber: orgScopedNumber("PROD", index),
-      recipeId: id("recipe", index),
-      plannedQuantity: qty(30 + index),
-      actualQuantity: qty(index % 4 === 0 ? 0 : 28 + index),
-      status: [
-        ProductionBatchStatus.PLANNED,
-        ProductionBatchStatus.IN_PROGRESS,
-        ProductionBatchStatus.COMPLETED,
-      ][index % 3],
-      startedAt: day(index),
-      completedAt: index % 3 === 2 ? day(index + 1) : null,
-      totalInputCost: money(20_000 + index * 750),
-      unitCost: money(800 + index * 30),
-      notes: `Production batch ${pad(index)}`,
-      locationId: id("location", index),
-      organizationId: orgId(),
-      createdById: id("user", index),
-      updatedAt: day(index),
-    })),
-  });
-
+async function seedStockMovement() {
   await prisma.stockAdjustment.createMany({
     data: seedIndexes.map((index) => ({
       id: id("stock_adjustment", index),
@@ -2585,7 +2681,7 @@ async function seedAuditAndInvites() {
   await prisma.invite.createMany({
     data: seedIndexes.map((index) => ({
       id: id("invite", index),
-      token: `${currentOrg().orgIndex}${index}`.padStart(64, "0"),
+      token: `rds-${currentOrg().emailSuffix}-${pad(index)}`.padEnd(64, "0"),
       email: scopedEmail(`invite.${pad(index)}`),
       organizationId: orgId(),
       roleId: id("role", index),
@@ -2674,14 +2770,161 @@ async function seedOrgDataset(context: OrgSeedContext) {
     await seedAccountingEntries();
     await seedFinanceAndLedgers();
     await seedReportingAndCash();
-    await seedProductionAndStockMovement();
+    await seedStockMovement();
     await seedAuditAndInvites();
   });
+}
+
+export type SeedQualitySummary = {
+  organizations: Array<{
+    organizationId: string;
+    defaultLocationId: string;
+    locationCount: number;
+    categoryCount: number;
+    unitCount: number;
+    activeItemCount: number;
+    posReadyItemCount: number;
+    minimumPosReadyItemCount: number;
+  }>;
+};
+
+async function verifySemanticSeedQuality(): Promise<SeedQualitySummary> {
+  const placeholderPattern = /\b(?:lorem|placeholder|buzzword|categorie\s+\d+|unite\s+\d+|article\s+\d+)\b/i;
+  const organizations: SeedQualitySummary["organizations"] = [];
+
+  for (const context of orgContexts) {
+    const activeLocations = await prisma.location.findMany({
+      where: {
+        organizationId: context.organizationId,
+        isActive: true,
+        deletedAt: null,
+      },
+      orderBy: [{ isDefault: "desc" }, { id: "asc" }],
+      select: { id: true, isDefault: true },
+    });
+    const defaultLocations = activeLocations.filter((location) => location.isDefault);
+    if (defaultLocations.length !== 1) {
+      throw new Error(
+        `Seed semantic audit failed: ${context.organizationId} must have exactly one active default location; found ${defaultLocations.length}.`,
+      );
+    }
+    const defaultLocation = defaultLocations[0];
+    const activeLocationIds = activeLocations.map((location) => location.id);
+
+    const [categories, units, items, terminal] = await Promise.all([
+      prisma.category.findMany({
+        where: { organizationId: context.organizationId, deletedAt: null },
+        select: {
+          titleEn: true,
+          titleFr: true,
+          _count: { select: { items: true } },
+        },
+      }),
+      prisma.unit.findMany({
+        where: { organizationId: context.organizationId },
+        select: {
+          nameEn: true,
+          nameFr: true,
+          _count: { select: { items: true } },
+        },
+      }),
+      prisma.item.findMany({
+        where: {
+          organizationId: context.organizationId,
+          isActive: true,
+          isDiscontinued: false,
+          deletedAt: null,
+        },
+        select: {
+          id: true,
+          nameEn: true,
+          nameFr: true,
+          sku: true,
+          barcode: true,
+          sellingPrice: true,
+          categoryId: true,
+          unitId: true,
+          taxRateId: true,
+          inventoryLevels: {
+            where: { locationId: { in: activeLocationIds } },
+            select: { locationId: true, quantityAvailable: true },
+          },
+        },
+      }),
+      prisma.pOSStation.findFirst({
+        where: {
+          organizationId: context.organizationId,
+          locationId: defaultLocation.id,
+          isActive: true,
+        },
+        select: { id: true },
+      }),
+    ]);
+
+    const unusedCategories = categories.filter((category) => category._count.items === 0);
+    const unusedUnits = units.filter((unit) => unit._count.items === 0);
+    const invalidLabels = [
+      ...categories.flatMap((category) => [category.titleEn, category.titleFr ?? ""]),
+      ...units.flatMap((unit) => [unit.nameEn, unit.nameFr ?? ""]),
+      ...items.flatMap((item) => [item.nameEn, item.nameFr ?? ""]),
+    ].filter((label) => placeholderPattern.test(label));
+    const incompleteItems = items.filter(
+      (item) =>
+        !item.categoryId ||
+        !item.unitId ||
+        !item.taxRateId ||
+        !item.sku ||
+        !item.barcode ||
+        Number(item.sellingPrice) <= 0,
+    );
+    const posReadyByLocation = new Map(activeLocationIds.map((locationId) => [locationId, 0]));
+    for (const item of items) {
+      for (const level of item.inventoryLevels) {
+        if (Number(level.quantityAvailable) >= 20) {
+          posReadyByLocation.set(level.locationId, (posReadyByLocation.get(level.locationId) ?? 0) + 1);
+        }
+      }
+    }
+    const posReadyItemCount = posReadyByLocation.get(defaultLocation.id) ?? 0;
+    const minimumPosReadyItemCount = Math.min(...posReadyByLocation.values());
+
+    if (unusedCategories.length || unusedUnits.length || invalidLabels.length || incompleteItems.length) {
+      throw new Error(
+        `Seed semantic audit failed for ${context.organizationId}: unusedCategories=${unusedCategories.length}, unusedUnits=${unusedUnits.length}, invalidLabels=${invalidLabels.length}, incompleteItems=${incompleteItems.length}.`,
+      );
+    }
+    if (!terminal || minimumPosReadyItemCount < 10) {
+      throw new Error(
+        `POS seed readiness failed for ${context.organizationId}: terminal=${Boolean(terminal)}, locations=${activeLocations.length}, minimumPosReadyItems=${minimumPosReadyItemCount}/10.`,
+      );
+    }
+
+    organizations.push({
+      organizationId: context.organizationId,
+      defaultLocationId: defaultLocation.id,
+      locationCount: activeLocations.length,
+      categoryCount: categories.length,
+      unitCount: units.length,
+      activeItemCount: items.length,
+      posReadyItemCount,
+      minimumPosReadyItemCount,
+    });
+  }
+
+  console.table(organizations);
+  return { organizations };
 }
 
 async function verifyCounts() {
   const generatedIdWhere = { id: { startsWith: ID_PREFIX } };
   const tenantMinimum = ORG_COUNT * COUNT;
+  const curatedMinimums: Record<string, number> = {
+    Category: ORG_COUNT * CATEGORY_DEFINITIONS.length,
+    Brand: ORG_COUNT * BRAND_DEFINITIONS.length,
+    Unit: ORG_COUNT * UNIT_DEFINITIONS.length,
+    TaxRate: ORG_COUNT * 2,
+    ExpenseCategory: ORG_COUNT * EXPENSE_CATEGORY_DEFINITIONS.length,
+  };
   const aggregateTargets: Array<{
     model: string;
     delegate: SeedDelegate;
@@ -2690,7 +2933,10 @@ async function verifyCounts() {
     ...verificationOrder.map(([model, delegate]) => ({
       model,
       delegate,
-      minimum: model === "Organization" ? ORG_COUNT : tenantMinimum,
+      minimum:
+        model === "Organization"
+          ? ORG_COUNT
+          : curatedMinimums[model] ?? tenantMinimum,
     })),
     {
       model: "OrganizationAccountingSettings",
@@ -2873,7 +3119,7 @@ async function verifyCounts() {
   await verifyComprehensiveCoverageCounts(prisma);
 }
 
-async function main() {
+export async function runComprehensiveSeed() {
   console.log(
     `Starting comprehensive seed for ${ORG_COUNT} organizations with at least ${COUNT} records per tenant-scoped business model...`,
   );
@@ -2881,27 +3127,36 @@ async function main() {
   demoCredentials.length = 0;
   await ensureSeedImages();
   verifySeedImageFiles();
-  await clearSeededData();
   await seedOrganizations();
   for (const context of orgContexts) {
     await seedOrgDataset(context);
   }
   await seedComprehensiveCoverageData(prisma);
   await verifyCounts();
+  const quality = await verifySemanticSeedQuality();
   verifySeedImageFiles();
 
   console.log("Comprehensive seed completed successfully.");
   console.log(
     "Development/demo credentials only. Do not use these passwords in production.",
   );
-  console.table(demoCredentials);
+  console.log("Plaintext credentials were withheld from console output.");
+  return {
+    credentials: demoCredentials.map((credential) => ({ ...credential })),
+    fakerSeed: FAKER_SEED,
+    quality,
+  };
 }
 
-main()
-  .catch((error) => {
-    console.error("Comprehensive seed failed:", error);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+export async function disconnectComprehensiveSeed() {
+  await prisma.$disconnect();
+}
+
+if (require.main === module) {
+  runComprehensiveSeed()
+    .catch((error) => {
+      console.error("Comprehensive seed failed:", error);
+      process.exitCode = 1;
+    })
+    .finally(disconnectComprehensiveSeed);
+}

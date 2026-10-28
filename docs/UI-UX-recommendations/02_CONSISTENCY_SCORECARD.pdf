@@ -1,0 +1,108 @@
+%PDF-1.4
+1 0 obj
+<< /Length 3652 >>
+stream
+BT
+/F1 11 Tf
+1 0 0 1 50 0 Tm
+50 770 Td
+0 -14 Td
+14 TL
+(UI/UX consistency scorecard \(non-table components\)) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Scale: 1 = major inconsistency, 5 = enterprise-grade consistency.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(| Module family | Target score | Current score | Key gaps | Enterprise move |) Tj
+0 -14 Td
+(| --- | ---: | ---: | --- | --- |) Tj
+0 -14 Td
+(| Dashboard shell \(sidebar + navbar + route shell\) | 5 | 3 | token-level visual variance across domains; command availability not fully uniform | Introduce shell contract spec with explicit shared interaction states |) Tj
+0 -14 Td
+(| Module visibility & permissions in nav | 5 | 4 | permission logic exists but labeling/affordance consistency varies | Standardize label schema + tooltip semantics + disabled-action explainers |) Tj
+0 -14 Td
+(| Command center / quick action surfaces | 5 | 2 | inconsistent trigger behavior, result ranking, and empty handling | Single command registry + deterministic keyboard map + action confidence badges |) Tj
+0 -14 Td
+(| Form/workflow ergonomics | 5 | 3 | dense workflows vary in step grouping and recovery handling | Define enterprise form patterns, staged validation, and explicit recovery states |) Tj
+0 -14 Td
+(| Overlay system \(modal/dialog/drawer\) | 5 | 3 | inconsistent sizing and close/escape semantics; focus handling uneven | Implement shared overlay primitives with accessibility-compliant focus and ARIA |) Tj
+0 -14 Td
+(| Feedback state system \(toast/alert/empty/error/loading\) | 5 | 3 | duplicate components and inconsistent severity language | Unify state vocabulary and escalation policy \(info/warn/error/blocker\) |) Tj
+0 -14 Td
+(| Visual design tokens & typography | 5 | 4 | token overrides in domain modules; gradient/shadow overuse | Governance on token boundaries; reduce decorative effects in enterprise workbenches |) Tj
+0 -14 Td
+(| Localization + copy consistency | 5 | 2 | terminology drift and mixed microcopy patterns | Copy taxonomy + bilingual review gates per module release |) Tj
+0 -14 Td
+(| Mobile/compact responsiveness | 5 | 3 | navigation and overlays have variable behavior across feature paths | Define compact-mode spec + responsive shell tests |) Tj
+0 -14 Td
+(| Accessibility + keyboard ergonomics | 5 | 2 | partial role/aria/keyboard coverage; focus states uneven | Mandatory audit plan with component-by-component acceptance criteria |) Tj
+0 -14 Td
+(| Error prevention and destructive safety | 5 | 4 | most paths have confirmation but not always clear consequence message | Standard consequence callout + explicit rollback note |) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Scorecard summary) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(- Weighted current average: **3.0 / 5**) Tj
+0 -14 Td
+(- Target enterprise threshold: **4.5 / 5**) Tj
+0 -14 Td
+(- Delta to reach target: **+1.5** across module-family behaviors) Tj
+0 -14 Td
+(- Highest priority acceleration levers:) Tj
+0 -14 Td
+(Unify command/overlay/accessibility state systems) Tj
+0 -14 Td
+(Normalize terminology and microcopy) Tj
+0 -14 Td
+(Enforce responsive compact shell behavior) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(By reviewer lens \(cross-team view\)) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(- Architecture lens: modular boundaries present but lack explicit UI contracts at family level.) Tj
+0 -14 Td
+(- Security/IAM lens: permission-aware nav is good foundation; consistency of entitlement messaging needs work.) Tj
+0 -14 Td
+(- Product lens: workflow friction remains in long operational flows due inconsistent state and confirmation patterns.) Tj
+0 -14 Td
+(- QA lens: current regression surfaces should add state-specific contract tests before rollout.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+ET
+endstream
+endobj
+2 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 4 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 2 0 R >> >> /Contents 2 0 R >>
+endobj
+4 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+5 0 obj
+<< /Type /Catalog /Pages 4 0 R >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000003712 00000 n 
+0000003782 00000 n 
+0000003908 00000 n 
+0000003965 00000 n 
+trailer
+<< /Size 6 /Root 5 0 R >>
+startxref
+4014
+%%EOF

@@ -1,0 +1,56 @@
+{
+  "generatedAt": "2026-08-17T03:53:24.058Z",
+  "status": "ready",
+  "summary": {
+    "requiredTableCount": 7,
+    "presentTableCount": 7,
+    "requiredMigrationCount": 3,
+    "presentMigrationCount": 3,
+    "blockerCount": 0
+  },
+  "tables": [
+    {
+      "tableName": "workflow_assurance_check_definitions",
+      "present": true
+    },
+    {
+      "tableName": "workflow_assurance_check_runs",
+      "present": true
+    },
+    {
+      "tableName": "workflow_assurance_check_findings",
+      "present": true
+    },
+    {
+      "tableName": "workflow_assurance_incidents",
+      "present": true
+    },
+    {
+      "tableName": "workflow_assurance_incident_events",
+      "present": true
+    },
+    {
+      "tableName": "workflow_assurance_alert_deliveries",
+      "present": true
+    },
+    {
+      "tableName": "workflow_assurance_waivers",
+      "present": true
+    }
+  ],
+  "migrations": [
+    {
+      "migrationName": "20260621103000_workflow_assurance_registry_foundation",
+      "present": true
+    },
+    {
+      "migrationName": "20260621113000_workflow_assurance_incident_spine",
+      "present": true
+    },
+    {
+      "migrationName": "20260720210000_workflow_assurance_multi_finding_persistence",
+      "present": true
+    }
+  ],
+  "blockers": []
+}

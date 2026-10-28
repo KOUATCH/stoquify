@@ -19,6 +19,8 @@ import { publishPaymentReconciliationNotification } from "../payment-reconciliat
 jest.mock("@/prisma/db", () => ({
   db: {
     providerAccount: { findMany: jest.fn() },
+    statementFile: { findMany: jest.fn() },
+    matchRecord: { findMany: jest.fn() },
     reconciliationRun: { findMany: jest.fn(), count: jest.fn() },
     suspenseItem: { findMany: jest.fn(), count: jest.fn() },
     paymentException: { findMany: jest.fn(), count: jest.fn() },
@@ -34,6 +36,8 @@ jest.mock("../payment-reconciliation-notifications", () => ({
 
 const mockedDb = db as unknown as {
   providerAccount: { findMany: jest.Mock }
+  statementFile: { findMany: jest.Mock }
+  matchRecord: { findMany: jest.Mock }
   reconciliationRun: { findMany: jest.Mock; count: jest.Mock }
   suspenseItem: { findMany: jest.Mock; count: jest.Mock }
   paymentException: { findMany: jest.Mock; count: jest.Mock }
@@ -52,6 +56,8 @@ describe("payment reconciliation dashboard read model", () => {
   beforeEach(() => {
     jest.clearAllMocks()
     jest.useFakeTimers().setSystemTime(new Date("2026-06-14T12:00:00.000Z"))
+    mockedDb.statementFile.findMany.mockResolvedValue([])
+    mockedDb.matchRecord.findMany.mockResolvedValue([])
 
     mockedDb.providerAccount.findMany.mockResolvedValue([
       {
@@ -150,7 +156,7 @@ describe("payment reconciliation dashboard read model", () => {
         },
       ]
     })
-    mockedDb.paymentException.findMany.mockResolvedValue([
+    mockedDb.paymentException.findMany.mockImplementation(async ({ select }: { select: Record<string, unknown> }) => "paymentTransaction" in select ? [] : [
       { type: PaymentExceptionType.AMOUNT_MISMATCH, severity: ExceptionSeverity.CRITICAL },
       { type: PaymentExceptionType.DUPLICATE_PROVIDER_REFERENCE, severity: ExceptionSeverity.HIGH },
     ])

@@ -1,18 +1,21 @@
+import { checkPermission } from "@/config/useAuth"
 import { pickLocale } from "@/i18n/routing"
 import AppearanceSettingsClient from "./AppearanceSettingsClient"
+import { routeByKey, withSettingsSurfaceAccess } from "../settings-route-access"
 
 export const metadata = {
   title: "Appearance Settings | Stoquify",
   description: "Review and update the active dashboard theme mode.",
 }
 
-export default async function AppearanceSettingsPage({
+async function AppearanceSettingsPageImpl({
   params,
 }: {
   params: Promise<{ locale: string }>
 }) {
   const { locale: rawLocale } = await params
   const locale = pickLocale(rawLocale)
+  await checkPermission("DASHBOARD_READ")
 
   return (
     <div className="dashboard-landing-theme min-h-screen overflow-x-hidden">
@@ -21,4 +24,20 @@ export default async function AppearanceSettingsPage({
       </div>
     </div>
   )
+}
+
+
+
+export default async function SettingsRoutePage(props: any = {}) {
+  const surface = routeByKey("settings-appearance")
+
+  if (!surface) {
+    throw new Error("Missing settings route surface definition: settings-appearance")
+  }
+
+  return withSettingsSurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => AppearanceSettingsPageImpl(props),
+  })
 }

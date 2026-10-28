@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "policy": "payroll-three-person-baseline",
+  "minimumHumanActors": 3,
+  "roles": {
+    "preparer": {
+      "may": ["calculate"]
+    },
+    "reviewer": {
+      "may": ["review", "post"],
+      "mustNotEqual": ["preparer"]
+    },
+    "approver": {
+      "may": ["approve", "emit_unchanged_batch"],
+      "mustNotEqual": ["preparer", "reviewer"]
+    },
+    "poster": {
+      "may": ["post"],
+      "mustNotEqual": ["preparer", "approver"]
+    }
+  },
+  "serviceWorker": {
+    "may": ["emit_approved_unchanged_batch"],
+    "requiresAttestation": true,
+    "mustNot": ["review", "approve", "post"]
+  },
+  "exceptions": {
+    "selfApproval": false,
+    "smallTenantOverride": false,
+    "externalAuthorizedAccountantAllowed": true
+  },
+  "enforcement": {
+    "serverDerivedActor": true,
+    "freshAuthenticationRequired": true,
+    "tenantScopedTransactionRequired": true,
+    "failureMode": "fail_closed"
+  }
+}

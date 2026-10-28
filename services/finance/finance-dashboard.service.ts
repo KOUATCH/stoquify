@@ -1,9 +1,15 @@
 import { Prisma } from "@prisma/client"
 
 import { db } from "@/prisma/db"
-import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
+import {
+  BusinessRuleError,
+  NotFoundError,
+} from "@/services/_shared/action-errors"
 import { getTenantOperatingSnapshot } from "@/services/snapshots/tenant-operating-snapshot.service"
-import type { SnapshotBlocker, SnapshotRedaction } from "@/services/snapshots/snapshot-contracts"
+import type {
+  SnapshotBlocker,
+  SnapshotRedaction,
+} from "@/services/snapshots/snapshot-contracts"
 import { moneyToNumber, type MoneyValue } from "@/services/pos/money"
 import {
   financeDashboardServiceSchema,
@@ -14,11 +20,23 @@ import {
 type Severity = "success" | "info" | "warning" | "critical"
 
 const dayMs = 24 * 60 * 60 * 1000
-const payableStatuses = ["SUBMITTED", "APPROVED", "PARTIALLY_RECEIVED", "RECEIVED"] as const
-const revenueStatuses = ["CONFIRMED", "PROCESSING", "SHIPPED", "DELIVERED", "COMPLETED"] as const
+const payableStatuses = [
+  "SUBMITTED",
+  "APPROVED",
+  "PARTIALLY_RECEIVED",
+  "RECEIVED",
+] as const
+const revenueStatuses = [
+  "CONFIRMED",
+  "PROCESSING",
+  "SHIPPED",
+  "DELIVERED",
+  "COMPLETED",
+] as const
 const payrollForecastSourceTables = [
   "payroll_periods",
   "payroll_runs",
+  "payroll_run_lines",
   "payroll_payment_batches",
   "payroll_declarations",
   "payroll_declaration_evidence",
@@ -28,6 +46,8 @@ const payrollForecastSourceTables = [
 ]
 const payrollForecastSourceServices = [
   "services/snapshots/tenant-operating-snapshot.service.ts",
+  "services/hris/payroll-readiness-contract.ts",
+  "services/payroll/payroll-control.service.ts",
   "services/payroll/payroll-register.service.ts",
   "services/payroll/payment-reconciliation.service.ts",
   "services/payroll/declaration-lifecycle.service.ts",
@@ -66,7 +86,11 @@ function startOfYear(date: Date) {
   return new Date(date.getFullYear(), 0, 1)
 }
 
-function resolveDateRange(period: FinanceDashboardPeriod, startDate?: Date, endDate?: Date) {
+function resolveDateRange(
+  period: FinanceDashboardPeriod,
+  startDate?: Date,
+  endDate?: Date,
+) {
   const now = new Date()
 
   if (period === "custom") {
@@ -82,15 +106,24 @@ function resolveDateRange(period: FinanceDashboardPeriod, startDate?: Date, endD
   }
 
   if (period === "7d") {
-    return { startDate: startOfDay(new Date(now.getTime() - 6 * dayMs)), endDate: endOfDay(now) }
+    return {
+      startDate: startOfDay(new Date(now.getTime() - 6 * dayMs)),
+      endDate: endOfDay(now),
+    }
   }
 
   if (period === "30d") {
-    return { startDate: startOfDay(new Date(now.getTime() - 29 * dayMs)), endDate: endOfDay(now) }
+    return {
+      startDate: startOfDay(new Date(now.getTime() - 29 * dayMs)),
+      endDate: endOfDay(now),
+    }
   }
 
   if (period === "qtd") {
-    return { startDate: startOfDay(startOfQuarter(now)), endDate: endOfDay(now) }
+    return {
+      startDate: startOfDay(startOfQuarter(now)),
+      endDate: endOfDay(now),
+    }
   }
 
   if (period === "ytd") {
@@ -108,12 +141,27 @@ function dateKey(date: Date) {
   return date.toISOString().slice(0, 10)
 }
 
-function personName(person?: { name?: string | null; email?: string | null; code?: string | null } | null) {
+function personName(
+  person?: {
+    name?: string | null
+    email?: string | null
+    code?: string | null
+  } | null,
+) {
   return person?.name || person?.email || person?.code || "Unknown"
 }
 
-function userName(user?: { firstName: string | null; lastName: string | null; email: string } | null) {
-  const name = [user?.firstName, user?.lastName].filter(Boolean).join(" ").trim()
+function userName(
+  user?: {
+    firstName: string | null
+    lastName: string | null
+    email: string
+  } | null,
+) {
+  const name = [user?.firstName, user?.lastName]
+    .filter(Boolean)
+    .join(" ")
+    .trim()
   return name || user?.email || "System"
 }
 
@@ -125,7 +173,11 @@ function ageBucket(date: Date, now: Date) {
   return "d90"
 }
 
-function addAging(buckets: FinanceAgingSummary, bucket: keyof FinanceAgingSummary, amount: number) {
+function addAging(
+  buckets: FinanceAgingSummary,
+  bucket: keyof FinanceAgingSummary,
+  amount: number,
+) {
   buckets[bucket] += amount
 }
 
@@ -139,18 +191,29 @@ function uniqueById<T extends { id: string }>(items: T[]): T[] {
 }
 
 function payrollForecastActionHref(blockerCodes: readonly string[]) {
-  if (blockerCodes.some((code) => code.includes("DECLARATION"))) return "/dashboard/payroll/declarations"
-  if (blockerCodes.some((code) => code.includes("PAYMENT") || code.includes("PROVIDER"))) return "/dashboard/payroll/payments"
-  return blockerCodes.length > 0 ? "/dashboard/payroll/runs" : "/dashboard/payroll/payments"
+  if (blockerCodes.some((code) => code.includes("DECLARATION")))
+    return "/dashboard/payroll/declarations"
+  if (
+    blockerCodes.some(
+      (code) => code.includes("PAYMENT") || code.includes("PROVIDER"),
+    )
+  )
+    return "/dashboard/payroll/payments"
+  return blockerCodes.length > 0
+    ? "/dashboard/payroll/runs"
+    : "/dashboard/payroll/payments"
 }
 
-function payrollForecastRedactions(extra: SnapshotRedaction[] = []): SnapshotRedaction[] {
+function payrollForecastRedactions(
+  extra: SnapshotRedaction[] = [],
+): SnapshotRedaction[] {
   return uniqueById([
     ...extra,
     {
       id: "finance-dashboard-payroll-forecast-person-level-redacted",
       field: "payroll.personLevelAmounts",
-      reason: "Finance dashboard exposes aggregate payroll forecast obligations only; person-level payroll values stay inside payroll.",
+      reason:
+        "Finance dashboard exposes aggregate payroll forecast obligations only; person-level payroll values stay inside payroll.",
       policy: "KONTAVA_SENSITIVE_PAYROLL_EVIDENCE",
     },
   ])
@@ -183,6 +246,9 @@ function emptyPayrollForecastProof(input: {
     declarationCount: 0,
     sourceLinkCount: 0,
     evidenceHashCount: 0,
+    certifiedInputRunCount: 0,
+    certifiedInputProofHashCount: 0,
+    registerToLedgerRunCount: 0,
     nextPayDate: null,
     nextDeclarationDueDate: null,
     blockerCodes: input.blockerCodes ?? [],
@@ -208,7 +274,8 @@ async function getFinancePayrollForecastProof(input: {
     return emptyPayrollForecastProof({
       status: "REDACTED",
       reasonCode: "PAYROLL_MODULE_NOT_ENTITLED",
-      message: "Payroll forecast proof is withheld because the payroll module is not entitled for this tenant.",
+      message:
+        "Payroll forecast proof is withheld because the payroll module is not entitled for this tenant.",
       blockerCodes: ["PAYROLL_FORECAST_MODULE_NOT_ENTITLED"],
       redacted: true,
     })
@@ -221,8 +288,13 @@ async function getFinancePayrollForecastProof(input: {
       periodEnd: input.endDate,
     })
     const forecast = snapshot.metrics.payrollFinanceForecast
-    const blockers = snapshot.blockers.filter((blocker) => blocker.gate === "payroll_finance_forecast")
-    const blocked = !forecast.authoritative || forecast.blockerCodes.length > 0 || blockers.length > 0
+    const blockers = snapshot.blockers.filter(
+      (blocker) => blocker.gate === "payroll_finance_forecast",
+    )
+    const blocked =
+      !forecast.authoritative ||
+      forecast.blockerCodes.length > 0 ||
+      blockers.length > 0
 
     return {
       status: forecast.status,
@@ -235,7 +307,8 @@ async function getFinancePayrollForecastProof(input: {
       horizonStart: forecast.horizonStart,
       horizonEnd: forecast.horizonEnd,
       upcomingNetPayAmount: forecast.upcomingNetPayAmount,
-      upcomingStatutoryLiabilityAmount: forecast.upcomingStatutoryLiabilityAmount,
+      upcomingStatutoryLiabilityAmount:
+        forecast.upcomingStatutoryLiabilityAmount,
       totalUpcomingAmount: forecast.totalUpcomingAmount,
       payrollPeriodCount: forecast.payrollPeriodCount,
       payrollRunCount: forecast.payrollRunCount,
@@ -243,6 +316,9 @@ async function getFinancePayrollForecastProof(input: {
       declarationCount: forecast.declarationCount,
       sourceLinkCount: forecast.sourceLinkCount,
       evidenceHashCount: forecast.evidenceHashCount,
+      certifiedInputRunCount: forecast.certifiedInputRunCount,
+      certifiedInputProofHashCount: forecast.certifiedInputProofHashCount,
+      registerToLedgerRunCount: forecast.registerToLedgerRunCount,
       nextPayDate: forecast.nextPayDate,
       nextDeclarationDueDate: forecast.nextDeclarationDueDate,
       blockerCodes: forecast.blockerCodes,
@@ -260,7 +336,8 @@ async function getFinancePayrollForecastProof(input: {
     return emptyPayrollForecastProof({
       status: "UNAVAILABLE",
       reasonCode: "PAYROLL_FORECAST_SNAPSHOT_UNAVAILABLE",
-      message: "Payroll forecast proof could not be loaded, so upcoming payroll obligations are withheld from the finance dashboard.",
+      message:
+        "Payroll forecast proof could not be loaded, so upcoming payroll obligations are withheld from the finance dashboard.",
       blockerCodes: ["PAYROLL_FORECAST_SNAPSHOT_UNAVAILABLE"],
     })
   }
@@ -343,7 +420,14 @@ export type FinanceRecentPayment = {
 export type FinanceAlert = {
   id: string
   severity: Severity
-  code: "OVERDUE_AR" | "OVERDUE_AP" | "NEGATIVE_MARGIN" | "PENDING_PAYMENTS" | "CASH_GAP" | "PAYROLL_FORECAST_PROOF" | "READY"
+  code:
+    | "OVERDUE_AR"
+    | "OVERDUE_AP"
+    | "NEGATIVE_MARGIN"
+    | "PENDING_PAYMENTS"
+    | "CASH_GAP"
+    | "PAYROLL_FORECAST_PROOF"
+    | "READY"
   count: number
   amount?: number
   message?: string
@@ -371,6 +455,9 @@ export type FinancePayrollForecastProof = {
   declarationCount: number
   sourceLinkCount: number
   evidenceHashCount: number
+  certifiedInputRunCount: number
+  certifiedInputProofHashCount: number
+  registerToLedgerRunCount: number
   nextPayDate: string | null
   nextDeclarationDueDate: string | null
   blockerCodes: string[]
@@ -414,7 +501,9 @@ export type FinanceDashboardData = {
   payrollForecast: FinancePayrollForecastProof
 }
 
-export async function getFinanceDashboard(rawInput: FinanceDashboardServiceInput): Promise<FinanceDashboardData> {
+export async function getFinanceDashboard(
+  rawInput: FinanceDashboardServiceInput,
+): Promise<FinanceDashboardData> {
   const input = financeDashboardServiceSchema.parse(rawInput)
   const range = resolveDateRange(input.period, input.startDate, input.endDate)
 
@@ -422,7 +511,9 @@ export async function getFinanceDashboard(rawInput: FinanceDashboardServiceInput
     throw new BusinessRuleError("End date must be after start date")
   }
 
-  const locationCondition = input.locationId ? { locationId: input.locationId } : {}
+  const locationCondition = input.locationId
+    ? { locationId: input.locationId }
+    : {}
   const paymentLocationCondition: Prisma.PaymentWhereInput = input.locationId
     ? {
         OR: [
@@ -453,7 +544,11 @@ export async function getFinanceDashboard(rawInput: FinanceDashboardServiceInput
       select: { id: true, name: true, currency: true },
     }),
     db.location.findMany({
-      where: { organizationId: input.organizationId, isActive: true, deletedAt: null },
+      where: {
+        organizationId: input.organizationId,
+        isActive: true,
+        deletedAt: null,
+      },
       orderBy: [{ isDefault: "desc" }, { name: "asc" }],
       select: { id: true, name: true, code: true },
     }),
@@ -481,7 +576,14 @@ export async function getFinanceDashboard(rawInput: FinanceDashboardServiceInput
         ...locationCondition,
       },
       include: {
-        customer: { select: { id: true, name: true, paymentTerms: true, currentBalance: true } },
+        customer: {
+          select: {
+            id: true,
+            name: true,
+            paymentTerms: true,
+            currentBalance: true,
+          },
+        },
         payments: { select: { amount: true, status: true } },
       },
       orderBy: { orderDate: "asc" },
@@ -495,7 +597,10 @@ export async function getFinanceDashboard(rawInput: FinanceDashboardServiceInput
         status: { notIn: ["DRAFT", "CANCELLED"] },
         ...locationCondition,
       },
-      include: { supplier: { select: { id: true, name: true, paymentTerms: true } }, payments: { select: { amount: true, status: true } } },
+      include: {
+        supplier: { select: { id: true, name: true, paymentTerms: true } },
+        payments: { select: { amount: true, status: true } },
+      },
       orderBy: { orderDate: "desc" },
       take: 250,
     }),
@@ -507,7 +612,14 @@ export async function getFinanceDashboard(rawInput: FinanceDashboardServiceInput
         ...locationCondition,
       },
       include: {
-        supplier: { select: { id: true, name: true, paymentTerms: true, currentBalance: true } },
+        supplier: {
+          select: {
+            id: true,
+            name: true,
+            paymentTerms: true,
+            currentBalance: true,
+          },
+        },
         payments: { select: { amount: true, status: true } },
       },
       orderBy: { orderDate: "asc" },
@@ -518,9 +630,14 @@ export async function getFinanceDashboard(rawInput: FinanceDashboardServiceInput
         organizationId: input.organizationId,
         deletedAt: null,
         expenseDate: { gte: range.startDate, lte: range.endDate },
-        ...(input.locationId ? { OR: [{ locationId: input.locationId }, { locationId: null }] } : {}),
+        ...(input.locationId
+          ? { OR: [{ locationId: input.locationId }, { locationId: null }] }
+          : {}),
       },
-      include: { category: { select: { nameEn: true, nameFr: true } }, supplier: { select: { id: true, name: true } } },
+      include: {
+        category: { select: { nameEn: true, nameFr: true } },
+        supplier: { select: { id: true, name: true } },
+      },
       orderBy: { expenseDate: "desc" },
       take: 250,
     }),
@@ -532,8 +649,12 @@ export async function getFinanceDashboard(rawInput: FinanceDashboardServiceInput
         ...paymentLocationCondition,
       },
       include: {
-        salesOrder: { include: { customer: { select: { id: true, name: true } } } },
-        purchaseOrder: { include: { supplier: { select: { id: true, name: true } } } },
+        salesOrder: {
+          include: { customer: { select: { id: true, name: true } } },
+        },
+        purchaseOrder: {
+          include: { supplier: { select: { id: true, name: true } } },
+        },
       },
       orderBy: { createdAt: "desc" },
       take: 300,
@@ -545,9 +666,15 @@ export async function getFinanceDashboard(rawInput: FinanceDashboardServiceInput
         ...paymentLocationCondition,
       },
       include: {
-        processedBy: { select: { firstName: true, lastName: true, email: true } },
-        salesOrder: { include: { customer: { select: { id: true, name: true } } } },
-        purchaseOrder: { include: { supplier: { select: { id: true, name: true } } } },
+        processedBy: {
+          select: { firstName: true, lastName: true, email: true },
+        },
+        salesOrder: {
+          include: { customer: { select: { id: true, name: true } } },
+        },
+        purchaseOrder: {
+          include: { supplier: { select: { id: true, name: true } } },
+        },
       },
       orderBy: { createdAt: "desc" },
       take: 80,
@@ -561,16 +688,34 @@ export async function getFinanceDashboard(rawInput: FinanceDashboardServiceInput
       select: { amount: true, status: true },
     }),
     db.customer.findMany({
-      where: { organizationId: input.organizationId, isActive: true, deletedAt: null },
+      where: {
+        organizationId: input.organizationId,
+        isActive: true,
+        deletedAt: null,
+      },
       orderBy: { currentBalance: "desc" },
       take: 100,
-      select: { id: true, name: true, currentBalance: true, paymentTerms: true },
+      select: {
+        id: true,
+        name: true,
+        currentBalance: true,
+        paymentTerms: true,
+      },
     }),
     db.supplier.findMany({
-      where: { organizationId: input.organizationId, isActive: true, deletedAt: null },
+      where: {
+        organizationId: input.organizationId,
+        isActive: true,
+        deletedAt: null,
+      },
       orderBy: { currentBalance: "desc" },
       take: 100,
-      select: { id: true, name: true, currentBalance: true, paymentTerms: true },
+      select: {
+        id: true,
+        name: true,
+        currentBalance: true,
+        paymentTerms: true,
+      },
     }),
     db.cashDrawer.findMany({
       where: {
@@ -597,54 +742,93 @@ export async function getFinanceDashboard(rawInput: FinanceDashboardServiceInput
   const revenue = sumBy(salesOrders, (order) => toNumber(order.total))
   const taxCollected = sumBy(salesOrders, (order) => toNumber(order.taxAmount))
   const purchases = sumBy(purchaseOrders, (order) => toNumber(order.total))
-  const taxOnPurchases = sumBy(purchaseOrders, (order) => toNumber(order.taxAmount))
+  const taxOnPurchases = sumBy(purchaseOrders, (order) =>
+    toNumber(order.taxAmount),
+  )
   const expensesTotal = sumBy(expenses, (expense) => toNumber(expense.amount))
   const refundsTotal = sumBy(refunds, (refund) => toNumber(refund.amount))
   const paymentsCollected = sumBy(
-    payments.filter((payment) => payment.salesOrderId && payment.status !== "CANCELLED"),
+    payments.filter(
+      (payment) => payment.salesOrderId && payment.status !== "CANCELLED",
+    ),
     (payment) => toNumber(payment.amount),
   )
   const paymentsOutbound = sumBy(
-    payments.filter((payment) => payment.purchaseOrderId && payment.status !== "CANCELLED"),
+    payments.filter(
+      (payment) => payment.purchaseOrderId && payment.status !== "CANCELLED",
+    ),
     (payment) => toNumber(payment.amount),
   )
   const paymentsPending = sumBy(
     payments.filter((payment) => payment.status === "PENDING"),
     (payment) => toNumber(payment.amount),
   )
-  const receivables = sumBy(customers, (customer) => Math.max(0, toNumber(customer.currentBalance)))
-  const payables = sumBy(suppliers, (supplier) => Math.max(0, toNumber(supplier.currentBalance)))
-  const cashPosition = sumBy(cashDrawers, (drawer) => toNumber(drawer.currentBalance))
-  const drawerVariance = sumBy(cashDrawers, (drawer) => toNumber(drawer.currentBalance) - toNumber(drawer.expectedBalance))
+  const receivables = sumBy(customers, (customer) =>
+    Math.max(0, toNumber(customer.currentBalance)),
+  )
+  const payables = sumBy(suppliers, (supplier) =>
+    Math.max(0, toNumber(supplier.currentBalance)),
+  )
+  const cashPosition = sumBy(cashDrawers, (drawer) =>
+    toNumber(drawer.currentBalance),
+  )
+  const drawerVariance = sumBy(
+    cashDrawers,
+    (drawer) =>
+      toNumber(drawer.currentBalance) - toNumber(drawer.expectedBalance),
+  )
   const grossProfit = revenue - purchases - expensesTotal - refundsTotal
   const grossMargin = revenue > 0 ? (grossProfit / revenue) * 100 : 0
-  const netCashFlow = paymentsCollected - paymentsOutbound - expensesTotal - refundsTotal
+  const netCashFlow =
+    paymentsCollected - paymentsOutbound - expensesTotal - refundsTotal
   const now = new Date()
 
-  const receivableAging: FinanceAgingSummary = { current: 0, d31: 0, d61: 0, d90: 0 }
-  const payableAging: FinanceAgingSummary = { current: 0, d31: 0, d61: 0, d90: 0 }
+  const receivableAging: FinanceAgingSummary = {
+    current: 0,
+    d31: 0,
+    d61: 0,
+    d90: 0,
+  }
+  const payableAging: FinanceAgingSummary = {
+    current: 0,
+    d31: 0,
+    d61: 0,
+    d90: 0,
+  }
   let overdueReceivableAmount = 0
   let overduePayableAmount = 0
 
   for (const order of openSalesOrders) {
-    const paid = sumBy(order.payments ?? [], (payment) => payment.status === "CANCELLED" ? 0 : toNumber(payment.amount))
+    const paid = sumBy(order.payments ?? [], (payment) =>
+      payment.status === "CANCELLED" ? 0 : toNumber(payment.amount),
+    )
     const openAmount = Math.max(0, toNumber(order.total) - paid)
-    const dueDate = new Date(order.orderDate.getTime() + (order.customer.paymentTerms ?? 30) * dayMs)
+    const dueDate = new Date(
+      order.orderDate.getTime() + (order.customer.paymentTerms ?? 30) * dayMs,
+    )
     addAging(receivableAging, ageBucket(dueDate, now), openAmount)
     if (dueDate < now) overdueReceivableAmount += openAmount
   }
 
   for (const order of openPurchaseOrders) {
-    const paid = sumBy(order.payments ?? [], (payment) => payment.status === "CANCELLED" ? 0 : toNumber(payment.amount))
+    const paid = sumBy(order.payments ?? [], (payment) =>
+      payment.status === "CANCELLED" ? 0 : toNumber(payment.amount),
+    )
     const openAmount = Math.max(0, toNumber(order.total) - paid)
-    const dueDate = new Date(order.orderDate.getTime() + (order.supplier.paymentTerms ?? 30) * dayMs)
+    const dueDate = new Date(
+      order.orderDate.getTime() + (order.supplier.paymentTerms ?? 30) * dayMs,
+    )
     addAging(payableAging, ageBucket(dueDate, now), openAmount)
     if (dueDate < now) overduePayableAmount += openAmount
   }
 
   const methodMap = new Map<string, FinancePaymentMethod>()
   for (const payment of payments) {
-    const current = methodMap.get(payment.method) ?? { method: payment.method, amount: 0, count: 0 }
+    const current = methodMap.get(payment.method) ?? {
+      method: payment.method,
+      amount: 0,
+      count: 0,
+    }
     current.amount += toNumber(payment.amount)
     current.count += 1
     methodMap.set(payment.method, current)
@@ -654,7 +838,16 @@ export async function getFinanceDashboard(rawInput: FinanceDashboardServiceInput
   const cursor = startOfDay(range.startDate)
   while (cursor <= range.endDate) {
     const key = dateKey(cursor)
-    trendMap.set(key, { key, label: key, inflow: 0, outflow: 0, revenue: 0, expenses: 0, purchases: 0, net: 0 })
+    trendMap.set(key, {
+      key,
+      label: key,
+      inflow: 0,
+      outflow: 0,
+      revenue: 0,
+      expenses: 0,
+      purchases: 0,
+      net: 0,
+    })
     cursor.setDate(cursor.getDate() + 1)
   }
 
@@ -662,7 +855,9 @@ export async function getFinanceDashboard(rawInput: FinanceDashboardServiceInput
     const point = trendMap.get(dateKey(order.orderDate))
     if (point) {
       point.revenue += toNumber(order.total)
-      point.inflow += sumBy(order.payments ?? [], (payment) => payment.status === "CANCELLED" ? 0 : toNumber(payment.amount))
+      point.inflow += sumBy(order.payments ?? [], (payment) =>
+        payment.status === "CANCELLED" ? 0 : toNumber(payment.amount),
+      )
     }
   }
 
@@ -670,7 +865,9 @@ export async function getFinanceDashboard(rawInput: FinanceDashboardServiceInput
     const point = trendMap.get(dateKey(order.orderDate))
     if (point) {
       point.purchases += toNumber(order.total)
-      point.outflow += sumBy(order.payments ?? [], (payment) => payment.status === "CANCELLED" ? 0 : toNumber(payment.amount))
+      point.outflow += sumBy(order.payments ?? [], (payment) =>
+        payment.status === "CANCELLED" ? 0 : toNumber(payment.amount),
+      )
     }
   }
 
@@ -682,7 +879,10 @@ export async function getFinanceDashboard(rawInput: FinanceDashboardServiceInput
     }
   }
 
-  const trend = Array.from(trendMap.values()).map((point) => ({ ...point, net: point.inflow - point.outflow }))
+  const trend = Array.from(trendMap.values()).map((point) => ({
+    ...point,
+    net: point.inflow - point.outflow,
+  }))
 
   const topReceivables = customers
     .filter((customer) => toNumber(customer.currentBalance) > 0)
@@ -692,7 +892,11 @@ export async function getFinanceDashboard(rawInput: FinanceDashboardServiceInput
       name: customer.name,
       balance: toNumber(customer.currentBalance),
       terms: customer.paymentTerms ?? null,
-      severity: toNumber(customer.currentBalance) > 0 && (customer.paymentTerms ?? 30) > 45 ? "warning" as Severity : "info" as Severity,
+      severity:
+        toNumber(customer.currentBalance) > 0 &&
+        (customer.paymentTerms ?? 30) > 45
+          ? ("warning" as Severity)
+          : ("info" as Severity),
     }))
 
   const topPayables = suppliers
@@ -703,11 +907,19 @@ export async function getFinanceDashboard(rawInput: FinanceDashboardServiceInput
       name: supplier.name,
       balance: toNumber(supplier.currentBalance),
       terms: supplier.paymentTerms ?? null,
-      severity: toNumber(supplier.currentBalance) > 0 && (supplier.paymentTerms ?? 30) <= 15 ? "warning" as Severity : "info" as Severity,
+      severity:
+        toNumber(supplier.currentBalance) > 0 &&
+        (supplier.paymentTerms ?? 30) <= 15
+          ? ("warning" as Severity)
+          : ("info" as Severity),
     }))
 
   const recentPaymentRows = recentPayments.map((payment) => {
-    const direction: FinanceRecentPayment["direction"] = payment.salesOrderId ? "in" : payment.purchaseOrderId ? "out" : "unknown"
+    const direction: FinanceRecentPayment["direction"] = payment.salesOrderId
+      ? "in"
+      : payment.purchaseOrderId
+        ? "out"
+        : "unknown"
     const counterparty = payment.salesOrder?.customer
       ? personName(payment.salesOrder.customer)
       : payment.purchaseOrder?.supplier
@@ -729,27 +941,60 @@ export async function getFinanceDashboard(rawInput: FinanceDashboardServiceInput
 
   const alerts: FinanceAlert[] = []
   if (overdueReceivableAmount > 0) {
-    alerts.push({ id: "overdue-ar", code: "OVERDUE_AR", severity: "warning", count: openSalesOrders.length, amount: overdueReceivableAmount })
+    alerts.push({
+      id: "overdue-ar",
+      code: "OVERDUE_AR",
+      severity: "warning",
+      count: openSalesOrders.length,
+      amount: overdueReceivableAmount,
+    })
   }
   if (overduePayableAmount > 0) {
-    alerts.push({ id: "overdue-ap", code: "OVERDUE_AP", severity: "critical", count: openPurchaseOrders.length, amount: overduePayableAmount })
+    alerts.push({
+      id: "overdue-ap",
+      code: "OVERDUE_AP",
+      severity: "critical",
+      count: openPurchaseOrders.length,
+      amount: overduePayableAmount,
+    })
   }
   if (grossProfit < 0) {
-    alerts.push({ id: "negative-margin", code: "NEGATIVE_MARGIN", severity: "critical", count: 1, amount: grossProfit })
+    alerts.push({
+      id: "negative-margin",
+      code: "NEGATIVE_MARGIN",
+      severity: "critical",
+      count: 1,
+      amount: grossProfit,
+    })
   }
   if (paymentsPending > 0) {
-    alerts.push({ id: "pending-payments", code: "PENDING_PAYMENTS", severity: "info", count: payments.filter((payment) => payment.status === "PENDING").length, amount: paymentsPending })
+    alerts.push({
+      id: "pending-payments",
+      code: "PENDING_PAYMENTS",
+      severity: "info",
+      count: payments.filter((payment) => payment.status === "PENDING").length,
+      amount: paymentsPending,
+    })
   }
   if (netCashFlow < 0) {
-    alerts.push({ id: "cash-gap", code: "CASH_GAP", severity: "warning", count: 1, amount: netCashFlow })
+    alerts.push({
+      id: "cash-gap",
+      code: "CASH_GAP",
+      severity: "warning",
+      count: 1,
+      amount: netCashFlow,
+    })
   }
-  const payrollForecastBlocked = !payrollForecast.authoritative || payrollForecast.blockerCodes.length > 0
+  const payrollForecastBlocked =
+    !payrollForecast.authoritative || payrollForecast.blockerCodes.length > 0
   if (payrollForecastBlocked || payrollForecast.totalUpcomingAmount > 0) {
     alerts.push({
       id: "payroll-forecast-proof",
       code: "PAYROLL_FORECAST_PROOF",
       severity: payrollForecastBlocked ? "warning" : "info",
-      count: payrollForecast.blockerCodes.length || payrollForecast.paymentBatchCount + payrollForecast.declarationCount,
+      count:
+        payrollForecast.blockerCodes.length ||
+        payrollForecast.paymentBatchCount + payrollForecast.declarationCount,
       amount: payrollForecast.totalUpcomingAmount,
       message: payrollForecast.message,
       actionHref: payrollForecast.actionHref,
@@ -802,13 +1047,18 @@ export async function getFinanceDashboard(rawInput: FinanceDashboardServiceInput
       taxCollected,
       taxOnPurchases,
       drawerVariance,
-      financeConfidence: Math.max(0, Math.min(100, Math.round(100 - riskPenalty))),
+      financeConfidence: Math.max(
+        0,
+        Math.min(100, Math.round(100 - riskPenalty)),
+      ),
     },
     aging: {
       receivables: receivableAging,
       payables: payableAging,
     },
-    paymentMethods: Array.from(methodMap.values()).sort((a, b) => b.amount - a.amount),
+    paymentMethods: Array.from(methodMap.values()).sort(
+      (a, b) => b.amount - a.amount,
+    ),
     trend,
     topReceivables,
     topPayables,

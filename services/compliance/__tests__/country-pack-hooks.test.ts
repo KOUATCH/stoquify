@@ -3,6 +3,7 @@ import {
   resolveEInvoicingMetadata,
 } from "../country-pack-hooks"
 import { getComplianceAdapter } from "../adapters/registry"
+import { fakeSandboxComplianceAdapter } from "../adapters/fake-sandbox"
 import { CAMEROON_DGI_SANDBOX_ADAPTER_CODE } from "@/services/regulatory/country-packs/cameroon.constants"
 
 describe("compliance country-pack hooks", () => {
@@ -39,5 +40,36 @@ describe("compliance country-pack hooks", () => {
     expect(() => getComplianceAdapter("CM_DGI_PRODUCTION")).toThrow(
       /not wired/i,
     )
+  })
+  it("blocks fake sandbox submission and polling in production contexts", async () => {
+    const payload = {
+      adapterCode: "FAKE_SANDBOX",
+      payload: { fixture: true },
+      payloadHash: "sha256:fake-sandbox-payload",
+    }
+    const context = {
+      organizationId: "org-1",
+      authorityChannel: "CM_DGI_PRODUCTION",
+      environment: "PRODUCTION" as const,
+    }
+
+    const submitted = await fakeSandboxComplianceAdapter.submit(payload, context)
+    const polled = await fakeSandboxComplianceAdapter.pollStatus(
+      { authorityReference: "FAKE-REF", fiscalDocumentId: "fiscal-doc-1" },
+      context,
+    )
+
+    expect(submitted).toMatchObject({
+      ok: false,
+      status: "CREDENTIAL_CONFIGURATION_ERROR",
+      responsePayload: {
+        statutoryEffect: "NONE_FAKE_SANDBOX_ONLY",
+        productionCertification: false,
+      },
+    })
+    expect(polled).toMatchObject({
+      ok: false,
+      status: "CREDENTIAL_CONFIGURATION_ERROR",
+    })
   })
 })

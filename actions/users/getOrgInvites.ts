@@ -1,29 +1,31 @@
 "use server";
+
 import { logSafeActionWarning } from "@/actions/_shared/safe-action-responses";
-import { getAuthenticatedUser } from "@/config/useAuth";
-import { hasAppPermission } from "@/lib/security/server-authz";
+import { assertCanUseOrganization, requireAnyPermission } from "@/lib/security/rbac";
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service";
 import { listOrganizationInvites } from "@/services/users/user-identity.service";
 
-
-
-export async function getOrgInvites(organizationId:string) {
-
+export async function getOrgInvites(organizationId?: string | null) {
   try {
-    const authUser = await getAuthenticatedUser();
-    if (organizationId && organizationId !== authUser.organizationId) {
-      return [];
-    }
+    const ctx = await requireAnyPermission(["users.invite", "users.read"], { resource: "UserInvite" });
+    const requestedOrganizationId = organizationId?.trim() || ctx.orgId;
 
-    if (!hasAppPermission(authUser, "users.invite") && !hasAppPermission(authUser, "users.read")) {
-      return [];
-    }
+    await assertCanUseOrganization(ctx, requestedOrganizationId);
+    await observeModuleAccess({
+      moduleSlug: "settings",
+      organizationId: ctx.orgId,
+      userId: ctx.userId,
+      actorPermissions: ctx.permissions,
+      surfaceType: "action",
+      surface: "actions/users/getOrgInvites.ts",
+      accessIntent: "read",
+      mode: "observe",
+    });
 
-    const organizationInvites = await listOrganizationInvites(authUser.organizationId);
-   
-    return organizationInvites
+    return await listOrganizationInvites(ctx.orgId);
   } catch (error) {
     logSafeActionWarning("Error fetching organization invites", error, {
-      action: "users.invites.read",
+      action: "users.invite",
       component: "User",
     });
     return [];

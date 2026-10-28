@@ -3,9 +3,7 @@
 import { revalidatePath } from "next/cache"
 
 import { safeActionErrorMessage } from "@/actions/_shared/safe-action-responses"
-import { getAuthenticatedUser } from "@/config/useAuth"
-import { PERMISSIONS } from "@/lib/permissions"
-import { AuthRequiredError, ForbiddenError } from "@/services/_shared/action-errors"
+import { assertCanUseOrganization, requirePermission } from "@/lib/security/rbac"
 import {
   CategoryCreateSchema,
   CategoryUpdateSchema,
@@ -19,6 +17,7 @@ import {
   listCategories,
   updateCategory as updateCategoryService,
 } from "@/services/category/category.service"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import type { CategoryCreateDTO, CategoryDTO, CategoryResponse, UpdateCategoryPayload } from "@/types/category"
 
 const CATEGORY_LIST_PATH = "/dashboard/inventory/categories"
@@ -31,23 +30,36 @@ function actionError<T>(error: unknown, fallback: string, data: T) {
   }
 }
 
-async function resolveOrgId(explicitOrgId?: string | null, permission?: string) {
-  const user = await getAuthenticatedUser()
-  const isSuperUser = user.permissions?.includes("*")
-
-  if (!user?.organizationId) {
-    throw new AuthRequiredError("No organization found for the current user")
+async function requireCategoryAction(
+  explicitOrgId: string | null | undefined,
+  permission: string,
+  options: {
+    surface: string
+    accessIntent: "read" | "write"
+    resourceId?: string
+    auditAllowed?: boolean
+  },
+) {
+  const ctx = await requirePermission(permission, {
+    resource: "Category",
+    ...(options.resourceId ? { resourceId: options.resourceId } : {}),
+    ...(options.auditAllowed !== undefined ? { auditAllowed: options.auditAllowed } : {}),
+  })
+  const requestedOrganizationId = explicitOrgId?.trim()
+  if (requestedOrganizationId) {
+    await assertCanUseOrganization(ctx, requestedOrganizationId)
   }
-
-  if (permission && !isSuperUser && !user.permissions?.includes(permission)) {
-    throw new ForbiddenError("You do not have permission to manage categories")
-  }
-
-  if (explicitOrgId && explicitOrgId !== user.organizationId && !isSuperUser) {
-    throw new ForbiddenError("You cannot access categories for another organization")
-  }
-
-  return explicitOrgId && isSuperUser ? explicitOrgId : user.organizationId
+  await observeModuleAccess({
+    moduleSlug: "inventory",
+    organizationId: ctx.orgId,
+    userId: ctx.userId,
+    actorPermissions: ctx.permissions,
+    surfaceType: "action",
+    surface: options.surface,
+    accessIntent: options.accessIntent,
+    mode: "observe",
+  })
+  return ctx
 }
 
 function normalizeImageUrl(value: unknown): string | null {
@@ -111,8 +123,11 @@ function normalizeUpdateInput(data: UpdateCategoryPayload | Record<string, unkno
 
 export async function getOrgCategories(organizationId?: string | null): Promise<CategoryResponse> {
   try {
-    const orgId = await resolveOrgId(organizationId, PERMISSIONS.READ_CATEGORIES)
-    const result = await listCategories(orgId)
+    const ctx = await requireCategoryAction(organizationId, "inventory.categories.read", {
+      surface: "actions/categories/getCategoriesAction.ts#getOrgCategories",
+      accessIntent: "read",
+    })
+    const result = await listCategories(ctx.orgId)
 
     return {
       success: true,
@@ -131,8 +146,12 @@ export async function getCategoryById(
   organizationId?: string | null,
 ): Promise<{ success: boolean; data: CategoryDTO | null; error: string | null }> {
   try {
-    const orgId = await resolveOrgId(organizationId, PERMISSIONS.READ_CATEGORIES)
-    const category = await getCategoryByIdService(orgId, id)
+    const ctx = await requireCategoryAction(organizationId, "inventory.categories.read", {
+      surface: "actions/categories/getCategoriesAction.ts#getCategoryById",
+      accessIntent: "read",
+      resourceId: id,
+    })
+    const category = await getCategoryByIdService(ctx.orgId, id)
 
     return {
       success: true,
@@ -148,7 +167,11 @@ export async function createCategory(
   data: CategoryCreateDTO,
 ): Promise<{ success: boolean; data: CategoryDTO | null; error: string | null }> {
   try {
-    const orgId = await resolveOrgId(data.organizationId, PERMISSIONS.CREATE_CATEGORIES)
+    const ctx = await requireCategoryAction(data.organizationId, "inventory.categories.create", {
+      surface: "actions/categories/getCategoriesAction.ts#createCategory",
+      accessIntent: "write",
+      auditAllowed: true,
+    })
     const parsed = CategoryCreateSchema.safeParse(normalizeCreateInput(data))
 
     if (!parsed.success) {
@@ -159,7 +182,7 @@ export async function createCategory(
       }
     }
 
-    const category = await createCategoryService(orgId, parsed.data)
+    const category = await createCategoryService(ctx.orgId, parsed.data)
     revalidatePath(CATEGORY_LIST_PATH)
 
     return {
@@ -177,7 +200,12 @@ export async function updateCategory(
   data: UpdateCategoryPayload,
 ): Promise<{ success: boolean; data: CategoryDTO | null; error: string | null }> {
   try {
-    const orgId = await resolveOrgId(data.organizationId, PERMISSIONS.UPDATE_CATEGORIES)
+    const ctx = await requireCategoryAction(data.organizationId, "inventory.categories.update", {
+      surface: "actions/categories/getCategoriesAction.ts#updateCategory",
+      accessIntent: "write",
+      resourceId: id,
+      auditAllowed: true,
+    })
     const parsed = CategoryUpdateSchema.safeParse(normalizeUpdateInput(data))
 
     if (!parsed.success) {
@@ -188,7 +216,7 @@ export async function updateCategory(
       }
     }
 
-    const category = await updateCategoryService(orgId, id, parsed.data)
+    const category = await updateCategoryService(ctx.orgId, id, parsed.data)
     revalidatePath(CATEGORY_LIST_PATH)
     revalidatePath(`${CATEGORY_LIST_PATH}/${id}`)
 
@@ -206,8 +234,13 @@ export async function deleteCategory(
   id: string,
 ): Promise<{ success: boolean; data: CategoryDTO | null; error: string | null }> {
   try {
-    const orgId = await resolveOrgId(null, PERMISSIONS.DELETE_CATEGORIES)
-    const category = await deleteCategoryService(orgId, id)
+    const ctx = await requireCategoryAction(undefined, "inventory.categories.delete", {
+      surface: "actions/categories/getCategoriesAction.ts#deleteCategory",
+      accessIntent: "write",
+      resourceId: id,
+      auditAllowed: true,
+    })
+    const category = await deleteCategoryService(ctx.orgId, id)
     revalidatePath(CATEGORY_LIST_PATH)
     revalidatePath(`${CATEGORY_LIST_PATH}/${id}`)
 

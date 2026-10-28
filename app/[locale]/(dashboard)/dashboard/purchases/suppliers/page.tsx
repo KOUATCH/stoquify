@@ -1,7 +1,5 @@
 import SupplierManagementDashboard from "@/components/suppliers/SupplierManagementDashboard"
-import { getAuthenticatedUser } from "@/config/useAuth"
-import { localizePath, pickLocale } from "@/i18n/routing"
-import { redirect } from "next/navigation"
+import { routeByKey, withPurchasesSurfaceAccess } from "../purchases-route-access"
 
 export const metadata = {
   title: "Suppliers | Stoquify",
@@ -14,24 +12,32 @@ export default async function PurchaseSuppliersPage({
   params: Promise<{ locale: string }>
 }) {
   const { locale: rawLocale } = await params
-  const locale = pickLocale(rawLocale)
-  const user = await getAuthenticatedUser()
+  const surface = routeByKey("purchases-suppliers")
 
-  if (!user.organizationId) {
-    redirect(localizePath("/unauthorized", locale))
+  if (!surface) {
+    throw new Error("Missing purchases route surface definition: purchases-suppliers")
   }
 
-  const basePath = `/${locale}/dashboard/purchases/suppliers`
+  return withPurchasesSurfaceAccess({
+    params: Promise.resolve({ locale: rawLocale }),
+    surface,
+    onAllowed: (context, locale) => {
+      const basePath = `/${locale}/dashboard/purchases/suppliers`
 
-  return (
-    <div className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
-      <div className="dashboard-landing-content mx-auto flex w-full max-w-[92rem] min-w-0 flex-col gap-6 px-4 py-6 sm:px-6 sm:py-8">
-        <SupplierManagementDashboard
-          organizationId={user.organizationId}
-          locale={locale}
-          basePath={basePath}
-        />
-      </div>
-    </div>
-  )
+      return (
+        <div className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
+          <div className="dashboard-landing-content mx-auto flex w-full max-w-[92rem] min-w-0 flex-col gap-6 px-4 py-6 sm:px-6 sm:py-8">
+            <SupplierManagementDashboard
+              organizationId={context.orgId}
+              locale={locale}
+              basePath={basePath}
+              canExport={context.isSuperUser || context.permissions.includes("reports.export")}
+              canExportSensitive={context.isSuperUser}
+              canEdit={context.isSuperUser || context.permissions.includes("purchases.suppliers.update")}
+            />
+          </div>
+        </div>
+      )
+    },
+  })
 }

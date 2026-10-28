@@ -95,24 +95,29 @@ jest.mock("@/prisma/db", () => ({
   },
 }))
 
-jest.mock("../assurance-incident.service", () => ({
-  upsertWorkflowAssuranceIncidentFromResult: jest.fn(async ({ result }) =>
-    result.status === "passed" || result.status === "skipped" ? null : { id: `incident-${result.checkKey}` },
-  ),
+jest.mock("../assurance-registry-persistence.service", () => ({
+  normalizeWorkflowAssuranceExecutionKey: jest.fn((value: string) => value.trim()),
+  persistWorkflowAssuranceDefinitionExecution: jest.fn(),
 }))
 
+jest.mock("@/services/reconciliation/payment-reconciliation-evidence.service", () => ({
+  ...jest.requireActual("@/services/reconciliation/payment-reconciliation-evidence.service"),
+  buildReconciliationEvidenceManifestInTx: jest.fn(),
+}))
 import { createHash } from "node:crypto"
 
 import { db } from "@/prisma/db"
+import { buildReconciliationEvidenceManifestInTx } from "@/services/reconciliation/payment-reconciliation-evidence.service"
 
 import { INITIAL_WORKFLOW_ASSURANCE_CHECK_DEFINITIONS } from "../assurance-registry-contracts"
-import { upsertWorkflowAssuranceIncidentFromResult } from "../assurance-incident.service"
+import { persistWorkflowAssuranceDefinitionExecution } from "../assurance-registry-persistence.service"
 import {
   ensureWorkflowAssuranceCheckDefinitions,
   runWorkflowAssuranceRegistry,
 } from "../assurance-registry.service"
 
-const mockUpsertIncident = upsertWorkflowAssuranceIncidentFromResult as jest.Mock
+const mockPersistExecution = persistWorkflowAssuranceDefinitionExecution as jest.Mock
+const mockBuildReconciliationEvidence = buildReconciliationEvidenceManifestInTx as jest.Mock
 const mockDb = db as unknown as {
   workflowAssuranceCheckDefinition: {
     upsert: jest.Mock
@@ -209,9 +214,12 @@ const mockDb = db as unknown as {
 describe("workflow assurance registry service", () => {
   beforeEach(() => {
     jest.resetAllMocks()
-    mockUpsertIncident.mockImplementation(async ({ result }) =>
-      result.status === "passed" || result.status === "skipped" ? null : { id: `incident-${result.checkKey}` },
-    )
+    mockBuildReconciliationEvidence.mockResolvedValue({
+      version: 1,
+      sourceHash: "source-clean",
+      counts: {},
+    })
+    mockPersistExecution.mockImplementation(mockPersistence)
   })
 
   it("upserts code-owned check definitions with complete registry metadata", async () => {
@@ -247,6 +255,42 @@ describe("workflow assurance registry service", () => {
     )
   })
 
+  it("does not execute the disabled POS cash-shortage runner registration when requested by check key", async () => {
+    mockDefinitions()
+    mockDb.workflowAssuranceCheckDefinition.findMany.mockResolvedValue([])
+
+    const result = await runWorkflowAssuranceRegistry({
+      organizationId: "org-1",
+      actorId: "user-1",
+      actorPermissions: ["pos.transactions.read"],
+      checkKey: "pos.closed_shift_cash_shortage.review",
+      runType: "manual",
+      recordedFromInclusive: "2026-07-27T00:00:00.000Z",
+      recordedThroughExclusive: "2026-07-28T00:00:00.000Z",
+    })
+
+    expect(mockDb.workflowAssuranceCheckDefinition.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          enabled: true,
+          checkKey: "pos.closed_shift_cash_shortage.review",
+        },
+      }),
+    )
+    expect(mockDb.businessEvent.count).not.toHaveBeenCalled()
+    expect(mockDb.workflowAssuranceCheckRun.create).not.toHaveBeenCalled()
+    expect(mockPersistExecution).not.toHaveBeenCalled()
+    expect(result.summary).toEqual({
+      total: 0,
+      passed: 0,
+      warning: 0,
+      failed: 0,
+      blocked: 0,
+      skipped: 0,
+      error: 0,
+      observeMode: true,
+    })
+  })
   it("persists one check run per enabled definition with normalized outcomes", async () => {
     mockDefinitions()
     mockDb.workflowAssuranceCheckDefinition.findMany.mockResolvedValue([
@@ -304,6 +348,11 @@ describe("workflow assurance registry service", () => {
       runType: "manual",
     })
 
+    expect(mockDb.workflowAssuranceCheckDefinition.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { enabled: true },
+      }),
+    )
     expect(result.summary).toEqual({
       total: 3,
       passed: 1,
@@ -314,7 +363,20 @@ describe("workflow assurance registry service", () => {
       error: 0,
       observeMode: true,
     })
-    expect(mockUpsertIncident).toHaveBeenCalledTimes(3)
+    expect(mockPersistExecution).toHaveBeenCalledTimes(3)
+    expect(mockPersistExecution).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        definition: expect.objectContaining({ version: 1 }),
+        execution: expect.objectContaining({
+          aggregate: expect.objectContaining({
+            organizationId: "org-1",
+            checkKey: "ledger.posted_source_link.required",
+            definitionVersion: 1,
+          }),
+        }),
+      }),
+    )
     expect(result.runs.map((run) => run.incidentId).filter(Boolean)).toEqual([
       "incident-ledger.posted_source_link.required",
       "incident-business_event.outbox.stuck_sla",
@@ -941,20 +1003,46 @@ describe("workflow assurance registry service", () => {
 
   it("flags signed reconciliation certificates whose persisted payload hash is stale", async () => {
     mockSingleDefinition("payment_reconciliation.certificate_source_hash.current")
-    const cleanPayload = { runId: "run-clean", signedAt: "2026-06-21T10:00:00.000Z" }
+    const cleanPayload = {
+      runId: "run-clean",
+      signedAt: "2026-06-21T10:00:00.000Z",
+      evidence: { sourceHash: "source-clean" },
+    }
+    const sourceDriftPayload = {
+      runId: "run-source-drift",
+      signedAt: "2026-06-21T10:10:00.000Z",
+      evidence: { sourceHash: "signed-source-hash" },
+    }
     mockDb.reconciliationRun.findMany.mockResolvedValue([
       {
         id: "run-clean",
+        providerAccountId: "provider-account-1",
+        periodStart: new Date("2026-06-21T00:00:00.000Z"),
+        periodEnd: new Date("2026-06-22T00:00:00.000Z"),
         certificateHash: stableTestCertificateHash(cleanPayload),
         certificatePayload: cleanPayload,
       },
       {
         id: "run-drifted",
+        providerAccountId: "provider-account-1",
+        periodStart: new Date("2026-06-21T00:00:00.000Z"),
+        periodEnd: new Date("2026-06-22T00:00:00.000Z"),
         certificateHash: "not-the-current-hash",
         certificatePayload: { runId: "run-drifted", signedAt: "2026-06-21T10:15:00.000Z" },
       },
       {
+        id: "run-source-drift",
+        providerAccountId: "provider-account-1",
+        periodStart: new Date("2026-06-21T00:00:00.000Z"),
+        periodEnd: new Date("2026-06-22T00:00:00.000Z"),
+        certificateHash: stableTestCertificateHash(sourceDriftPayload),
+        certificatePayload: sourceDriftPayload,
+      },
+      {
         id: "run-missing",
+        providerAccountId: "provider-account-1",
+        periodStart: new Date("2026-06-21T00:00:00.000Z"),
+        periodEnd: new Date("2026-06-22T00:00:00.000Z"),
         certificateHash: null,
         certificatePayload: null,
       },
@@ -967,9 +1055,9 @@ describe("workflow assurance registry service", () => {
       resultStatus: "failed",
       severity: "high",
       counts: expect.objectContaining({
-        scanned: 3,
+        scanned: 4,
         passed: 1,
-        failed: 2,
+        failed: 3,
       }),
     })
     expect(mockDb.workflowAssuranceCheckRun.create).toHaveBeenCalledWith(
@@ -1175,6 +1263,22 @@ describe("workflow assurance registry service", () => {
         failed: 1,
       }),
     })
+    expect(mockDb.payrollPaymentBatch.count).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        where: expect.objectContaining({
+          OR: expect.arrayContaining([
+            {
+              payrollRun: {
+                is: {
+                  status: { notIn: ["POSTED", "PAID", "ARCHIVED"] },
+                },
+              },
+            },
+          ]),
+        }),
+      }),
+    )
   })
 
   it("flags payroll payment reconciliation exceptions for operations triage", async () => {
@@ -1194,10 +1298,12 @@ describe("workflow assurance registry service", () => {
         warning: 2,
       }),
     })
-    expect(mockUpsertIncident).toHaveBeenCalledWith(
+    expect(mockPersistExecution).toHaveBeenCalledWith(
       expect.objectContaining({
-        result: expect.objectContaining({
-          metadata: expect.objectContaining({ redactionPolicy: "kontava-payroll-person-redaction-policy" }),
+        execution: expect.objectContaining({
+          aggregate: expect.objectContaining({
+            metadata: expect.objectContaining({ redactionPolicy: "kontava-payroll-person-redaction-policy" }),
+          }),
         }),
       }),
     )
@@ -1347,6 +1453,85 @@ function mockDefinitions() {
     createdAt: new Date("2026-06-21T08:00:00.000Z"),
     updatedAt: new Date("2026-06-21T08:00:00.000Z"),
   }))
+}
+
+async function mockPersistence(input: any) {
+  const result = input.execution.aggregate
+  const created = await mockDb.workflowAssuranceCheckRun.create({
+    data: {
+      organizationId: input.organizationId,
+      definitionId: input.definitionId,
+      checkKey: input.definition.checkKey,
+      definitionVersion: input.definition.version,
+      runType: input.runType.toUpperCase(),
+      runStatus: input.runStatus.toUpperCase(),
+      resultStatus: result.status.toUpperCase(),
+      severity: result.severity.toUpperCase(),
+      actorId: input.actorId,
+      sourceType: result.sourceType ?? input.sourceType,
+      sourceId: result.sourceId ?? input.sourceId,
+      sourceHash: result.sourceHash,
+      fingerprint: result.fingerprint,
+      periodId: input.periodId,
+      locationId: input.locationId,
+      scannedCount: result.counts.scanned,
+      passedCount: result.counts.passed,
+      warningCount: result.counts.warning,
+      failedCount: result.counts.failed,
+      blockedCount: result.counts.blocked,
+      skippedCount: result.counts.skipped,
+      errorCount: result.counts.error,
+      startedAt: input.startedAt,
+      completedAt: input.completedAt,
+      durationMs: input.durationMs,
+      resultSummary: {
+        message: result.message,
+        recommendedAction: result.recommendedAction,
+        evidenceLinks: result.evidenceLinks,
+        metadata: result.metadata,
+      },
+      errorCode: result.errorCode,
+      errorMessage: result.errorMessage,
+      metadata: {
+        observeMode: !input.definition.enforceMode,
+        workflow: input.definition.workflow,
+        executionMode: input.definition.executionMode,
+        moduleSlug: input.definition.moduleSlug,
+        requiredPermission: input.definition.requiredPermission,
+        actorPermissionCount: input.actorPermissionCount,
+      },
+    },
+  })
+
+  const findings = input.execution.findings.map((finding: any) => {
+    const incidentId =
+      finding.status === "passed" || finding.status === "skipped"
+        ? undefined
+        : `incident-${finding.checkKey}`
+    return {
+      id: `finding-${finding.checkKey}-${finding.ordinal}`,
+      ordinal: finding.ordinal,
+      status: finding.status,
+      severity: finding.severity,
+      sourceType: finding.sourceType,
+      sourceId: finding.sourceId,
+      sourceHash: finding.sourceHash,
+      fingerprint: finding.fingerprint,
+      incidentId,
+    }
+  })
+
+  return {
+    checkRunId: created.id,
+    executionKey: input.executionKey,
+    executionDigest: "sha256:test",
+    replayed: false,
+    startedAt: input.startedAt,
+    completedAt: input.completedAt,
+    durationMs: input.durationMs,
+    incidentId: findings.find((finding: any) => finding.incidentId)?.incidentId,
+    findings,
+  }
 }
 
 function mockSingleDefinition(checkKey: string, overrides: Record<string, unknown> = {}) {

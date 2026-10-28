@@ -22,6 +22,7 @@ jest.mock("@/prisma/db", () => {
     },
     ledgerAuditEvent: {
       create: jest.fn(),
+      findMany: jest.fn(),
     },
     payrollRun: {
       findMany: jest.fn(),
@@ -64,6 +65,7 @@ const mockDb = db as unknown as {
   }
   ledgerAuditEvent: {
     create: jest.Mock
+    findMany: jest.Mock
   }
   payrollRun: {
     findMany: jest.Mock
@@ -113,7 +115,8 @@ function payrollForecastProof() {
     status: "AUTHORITATIVE",
     authoritative: true,
     reasonCode: "PAYROLL_FORECAST_SOURCE_LINKED",
-    message: "Upcoming payroll forecast is backed by payroll, payment, declaration, and ledger proof.",
+    message:
+      "Upcoming payroll forecast is backed by payroll, payment, declaration, and ledger proof.",
     horizonStart: "2026-06-15T00:00:00.000Z",
     horizonEnd: "2026-06-30T23:59:59.999Z",
     upcomingNetPayAmount: 125000,
@@ -125,6 +128,9 @@ function payrollForecastProof() {
     declarationCount: 1,
     sourceLinkCount: 2,
     evidenceHashCount: 4,
+    certifiedInputRunCount: 1,
+    certifiedInputProofHashCount: 4,
+    registerToLedgerRunCount: 1,
     nextPayDate: "2026-06-25T00:00:00.000Z",
     nextDeclarationDueDate: "2026-06-28T00:00:00.000Z",
     blockerCodes: [],
@@ -139,7 +145,12 @@ function payrollForecastProof() {
     ],
     sourceHash: "sha256:tenant-operating-payroll-forecast",
     generatedAt: "2026-06-15T12:00:00.000Z",
-    sourceModules: ["payroll", "payments", "accounting", "close"],
+    sourceModules: ["hris", "payroll", "payments", "accounting", "close"],
+    hrisPayrollReadinessHash: "sha256:private-hris-readiness",
+    payrollEngineInputHashes: ["sha256:private-engine-input"],
+    employeeId: "private-employee-id",
+    salaryAmount: "private-salary-amount",
+    paymentDestination: "private-payment-destination",
     personLevelAmounts: "redacted",
     personLevelAmountsRedacted: true,
   }
@@ -155,7 +166,8 @@ function pilotCertificationAudit(overrides: Record<string, unknown> = {}) {
       generatedAt: "2026-06-15T12:04:00.000Z",
       certificateHash: "sha256:pilot-cycle-certificate",
       proofContinuity: {
-        expectedAdapterChaosReleaseGateHash: "sha256:adapter-chaos-release-gate",
+        expectedAdapterChaosReleaseGateHash:
+          "sha256:adapter-chaos-release-gate",
         proofBackfillAdapterChaosMatchesExpected: true,
       },
       signoff: { missingRoles: [] },
@@ -246,7 +258,8 @@ function closeRun(overrides: Record<string, unknown> = {}) {
         severity: "INFO",
         label: "Payment reconciliation sign-off",
         detail: "Payment reconciliation is signed.",
-        sourceService: "services/reconciliation/payment-reconciliation-dashboard.service.ts",
+        sourceService:
+          "services/reconciliation/payment-reconciliation-dashboard.service.ts",
         evidenceCount: 1,
         blockerReason: null,
         nextActionHref: "/dashboard/finance/reconciliation",
@@ -276,7 +289,8 @@ function closeRun(overrides: Record<string, unknown> = {}) {
         severity: "INFO",
         label: "Payroll finance forecast proof",
         detail: "Aggregate payroll forecast is authoritative.",
-        sourceService: "services/snapshots/tenant-operating-snapshot.service.ts",
+        sourceService:
+          "services/snapshots/tenant-operating-snapshot.service.ts",
         evidenceCount: 1,
         blockerReason: null,
         nextActionHref: "/dashboard/payroll/runs",
@@ -343,7 +357,8 @@ function closeRun(overrides: Record<string, unknown> = {}) {
         sourceTable: "payroll_runs",
         sourceType: "PayrollFinanceForecastProof",
         sourceId: "sha256:tenant-operating-payroll-forecast",
-        sourceLabel: "Authoritative payroll forecast proof: total upcoming 170000",
+        sourceLabel:
+          "Authoritative payroll forecast proof: total upcoming 170000",
         sourceDate: new Date("2026-06-15T12:00:00.000Z"),
         sourceHash: "sha256:tenant-operating-payroll-forecast",
         provenance: "POSTED",
@@ -400,8 +415,22 @@ describe("close assurance pack service", () => {
       id: "close-pack-export-1",
       metadata: { mode: "CERTIFIED" },
     })
-    mockDb.closePackExport.update.mockResolvedValue({ id: "close-pack-export-1" })
+    mockDb.closePackExport.update.mockResolvedValue({
+      id: "close-pack-export-1",
+    })
     mockDb.ledgerAuditEvent.create.mockResolvedValue({ id: "audit-1" })
+    mockDb.ledgerAuditEvent.findMany.mockResolvedValue([
+      {
+        id: "ledger-audit-1",
+        action: "CLOSE_ASSURANCE_RUN_COMPLETED",
+        actorId: "controller-1",
+        resourceType: "CloseRun",
+        resourceId: "close-run-1",
+        message: "Close run completed.",
+        metadata: { correlationId: "run-corr-1" },
+        createdAt: new Date("2026-06-15T12:35:00.000Z"),
+      },
+    ])
     mockDb.businessEvent.findUnique.mockResolvedValue(null)
     mockDb.businessEvent.create.mockImplementation(({ data }) =>
       Promise.resolve({
@@ -454,7 +483,11 @@ describe("close assurance pack service", () => {
 
     const result = await exportClosePack(
       "org-1",
-      { closeRunId: "close-run-1", mode: "DRAFT_NOT_CERTIFIED", correlationId: "export-corr-1" },
+      {
+        closeRunId: "close-run-1",
+        mode: "DRAFT_NOT_CERTIFIED",
+        correlationId: "export-corr-1",
+      },
       {
         actorId: "operator-1",
         actorPermissions: ["accounting.close.export"],
@@ -473,10 +506,21 @@ describe("close assurance pack service", () => {
           sourceHash: "sha256:tenant-operating-payroll-forecast",
           personLevelAmounts: "redacted",
           totalUpcomingAmount: 170000,
+          certifiedInputRunCount: 1,
+          certifiedInputProofHashCount: 4,
+          registerToLedgerRunCount: 1,
+          proofDisclosure: "AGGREGATE_HASH_COUNTS_ONLY",
         }),
-        redaction: expect.stringContaining("person-level payroll amounts are redacted"),
+        redaction: expect.stringContaining(
+          "person-level payroll amounts are redacted",
+        ),
       }),
     )
+    expect(result.content).not.toContain("sha256:private-hris-readiness")
+    expect(result.content).not.toContain("sha256:private-engine-input")
+    expect(result.content).not.toContain("private-employee-id")
+    expect(result.content).not.toContain("private-salary-amount")
+    expect(result.content).not.toContain("private-payment-destination")
     expect(payload.annexes.pilotCycleCertification).toEqual(
       expect.objectContaining({
         saved: expect.objectContaining({
@@ -492,6 +536,17 @@ describe("close assurance pack service", () => {
         expect.objectContaining({ sourceType: "PayrollFinanceForecastProof" }),
       ]),
     )
+    const payrollEvidence = payload.evidenceItems.find(
+      (item: { sourceType: string }) =>
+        item.sourceType === "PayrollFinanceForecastProof",
+    )
+    expect(payrollEvidence.metadata).toMatchObject({
+      certifiedInputRunCount: 1,
+      certifiedInputProofHashCount: 4,
+      registerToLedgerRunCount: 1,
+      personLevelAmounts: "redacted",
+      proofDisclosure: "AGGREGATE_HASH_COUNTS_ONLY",
+    })
     expect(mockDb.closePackExport.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
@@ -510,6 +565,169 @@ describe("close assurance pack service", () => {
       }),
     )
     expect(mockDb.closeRun.update).not.toHaveBeenCalled()
+  })
+
+  it("requires fresh authentication before certified export", async () => {
+    await expect(
+      exportClosePack(
+        "org-1",
+        { closeRunId: "close-run-1", mode: "CERTIFIED" },
+        {
+          actorId: "certifier-1",
+          actorPermissions: ["accounting.close.certify"],
+          now: "2026-06-15T13:01:00.000Z",
+        },
+      ),
+    ).rejects.toThrow(/Fresh authentication is required/i)
+
+    expect(mockDb.closePackExport.create).not.toHaveBeenCalled()
+  })
+
+  it("blocks certified exports below T4 data trust", async () => {
+    const run = closeRun()
+    mockDb.closeRun.findFirst.mockResolvedValue({
+      ...run,
+      metadata: {
+        ...(run.metadata as Record<string, unknown>),
+        trustLevel: "T3",
+      },
+    })
+
+    await expect(
+      exportClosePack(
+        "org-1",
+        { closeRunId: "close-run-1", mode: "CERTIFIED" },
+        {
+          actorId: "certifier-1",
+          actorPermissions: ["accounting.close.certify"],
+          lastAuthAt: "2026-06-15T13:00:00.000Z",
+          now: "2026-06-15T13:01:00.000Z",
+        },
+      ),
+    ).rejects.toThrow(/requires at least T4 data trust/i)
+
+    expect(mockDb.closePackExport.create).not.toHaveBeenCalled()
+  })
+
+  it("blocks certified exports when reconciliation certificates are unsigned", async () => {
+    const run = closeRun()
+    mockDb.closeRun.findFirst.mockResolvedValue({
+      ...run,
+      evidenceItems: run.evidenceItems.map((item) =>
+        item.id === "evidence-recon"
+          ? { ...item, sourceHash: null, provenance: "CAPTURED" }
+          : item,
+      ),
+    })
+
+    await expect(
+      exportClosePack(
+        "org-1",
+        { closeRunId: "close-run-1", mode: "CERTIFIED" },
+        {
+          actorId: "certifier-1",
+          actorPermissions: ["accounting.close.certify"],
+          lastAuthAt: "2026-06-15T13:00:00.000Z",
+          now: "2026-06-15T13:01:00.000Z",
+        },
+      ),
+    ).rejects.toThrow(/reconciliation certificate reference/i)
+
+    expect(mockDb.closePackExport.create).not.toHaveBeenCalled()
+  })
+
+  it("redacts raw provider payloads, secrets, and audit metadata from public pack content", async () => {
+    const run = closeRun()
+    mockDb.closeRun.findFirst.mockResolvedValue({
+      ...run,
+      metadata: {
+        ...(run.metadata as Record<string, unknown>),
+        rawProviderPayload: {
+          merchantEmail: "merchant@example.test",
+          token: "provider-token",
+        },
+        apiSecret: "super-secret-api-key",
+      },
+      evidenceItems: [
+        ...run.evidenceItems,
+        {
+          id: "evidence-provider-event",
+          checklistItemId: "check-payment",
+          findingId: null,
+          evidenceType: "PROVIDER_EVENT",
+          sourceTable: "provider_events",
+          sourceType: "ProviderSettlement",
+          sourceId: "provider-event-1",
+          sourceLabel: "Provider settlement",
+          sourceDate: new Date("2026-06-15T10:05:00.000Z"),
+          sourceHash: "sha256:provider-event",
+          provenance: "POSTED",
+          available: true,
+          unavailableReason: null,
+          metadata: {
+            providerPayload: {
+              customerPhone: "+237612345678",
+              authorization: "Bearer raw-token",
+            },
+          },
+          correlationId: "provider-corr-1",
+        },
+      ],
+    })
+    mockDb.ledgerAuditEvent.findMany.mockResolvedValue([
+      {
+        id: "ledger-audit-sensitive",
+        action: "CLOSE_ASSURANCE_RUN_COMPLETED",
+        actorId: "controller-1",
+        resourceType: "CloseRun",
+        resourceId: "close-run-1",
+        message: "Close run completed.",
+        metadata: {
+          rawPayload: {
+            customerEmail: "buyer@example.test",
+            token: "audit-token",
+          },
+          requestSecret: "audit-secret",
+        },
+        createdAt: new Date("2026-06-15T12:35:00.000Z"),
+      },
+    ])
+
+    const result = await exportClosePack(
+      "org-1",
+      {
+        closeRunId: "close-run-1",
+        mode: "DRAFT_NOT_CERTIFIED",
+        correlationId: "redaction-corr-1",
+      },
+      {
+        actorId: "operator-1",
+        actorPermissions: ["accounting.close.export"],
+        now: "2026-06-15T13:00:00.000Z",
+      },
+    )
+
+    expect(result.content).not.toContain("merchant@example.test")
+    expect(result.content).not.toContain("provider-token")
+    expect(result.content).not.toContain("super-secret-api-key")
+    expect(result.content).not.toContain("+237612345678")
+    expect(result.content).not.toContain("Bearer raw-token")
+    expect(result.content).not.toContain("buyer@example.test")
+    expect(result.content).not.toContain("audit-secret")
+
+    const payload = JSON.parse(result.content)
+    expect(payload.closeRun.metadata.rawProviderPayload).toBe("redacted")
+    expect(payload.closeRun.metadata.apiSecret).toMatch(/^redacted:/)
+    const providerEvidence = payload.evidenceItems.find(
+      (item: { id: string }) => item.id === "evidence-provider-event",
+    )
+    expect(providerEvidence.metadata.providerPayload).toBe("redacted")
+    expect(
+      payload.evidenceSummaries.auditLogExcerpt[0].metadata.rawPayload,
+    ).toBe("redacted")
+    expect(
+      payload.evidenceSummaries.auditLogExcerpt[0].metadata.requestSecret,
+    ).toMatch(/^redacted:/)
   })
 
   it("blocks certified exports when high-risk findings remain open", async () => {
@@ -595,7 +813,11 @@ describe("close assurance pack service", () => {
   it("certifies a clean close pack and updates the close run", async () => {
     const result = await exportClosePack(
       "org-1",
-      { closeRunId: "close-run-1", mode: "CERTIFIED", correlationId: "cert-corr-1" },
+      {
+        closeRunId: "close-run-1",
+        mode: "CERTIFIED",
+        correlationId: "cert-corr-1",
+      },
       {
         actorId: "certifier-1",
         actorPermissions: ["accounting.close.certify"],
@@ -615,7 +837,9 @@ describe("close assurance pack service", () => {
           contentHash: result.contentHash,
           watermarkId: result.watermarkId,
           metadata: expect.objectContaining({
-            inventoryAnnexFreshness: expect.objectContaining({ status: "FRESH" }),
+            inventoryAnnexFreshness: expect.objectContaining({
+              status: "FRESH",
+            }),
             pilotCycleCertification: expect.objectContaining({
               status: "CERTIFIED_FOR_PRODUCTION_RELEASE_REVIEW",
               certificateHash: "sha256:pilot-cycle-certificate",
@@ -643,13 +867,53 @@ describe("close assurance pack service", () => {
     )
   })
 
+  it("uses a safe inventory-refresh limitation when draft pack evidence is unavailable", async () => {
+    mockReconcileInventoryClass3.mockRejectedValue(
+      new Error("provider secret token leaked from downstream adapter"),
+    )
+
+    const result = await exportClosePack(
+      "org-1",
+      {
+        closeRunId: "close-run-1",
+        mode: "DRAFT_NOT_CERTIFIED",
+        correlationId: "inventory-unavailable-corr-1",
+      },
+      {
+        actorId: "operator-1",
+        actorPermissions: ["accounting.close.export"],
+        now: "2026-06-15T13:00:00.000Z",
+      },
+    )
+
+    expect(result.content).toContain(
+      "Inventory valuation annex could not be refreshed.",
+    )
+    expect(result.content).not.toContain("provider secret token")
+    expect(result.content).not.toContain("downstream adapter")
+    const payload = JSON.parse(result.content)
+    expect(payload.annexes.inventoryValuation.freshness.status).toBe(
+      "UNAVAILABLE",
+    )
+    expect(payload.export.certificationBlockers).toEqual(
+      expect.arrayContaining([
+        "Inventory valuation annex freshness could not be verified.",
+      ]),
+    )
+  })
   it("blocks certified exports and records invalidation when inventory annex evidence is stale", async () => {
-    mockReconcileInventoryClass3.mockResolvedValue(cleanInventoryValuation("sha256:inventory-valuation-new"))
+    mockReconcileInventoryClass3.mockResolvedValue(
+      cleanInventoryValuation("sha256:inventory-valuation-new"),
+    )
 
     await expect(
       exportClosePack(
         "org-1",
-        { closeRunId: "close-run-1", mode: "CERTIFIED", correlationId: "stale-corr-1" },
+        {
+          closeRunId: "close-run-1",
+          mode: "CERTIFIED",
+          correlationId: "stale-corr-1",
+        },
         {
           actorId: "certifier-1",
           actorPermissions: ["accounting.close.certify"],
@@ -681,7 +945,9 @@ describe("close assurance pack service", () => {
   })
 
   it("records stale evidence against an already certified run and export", async () => {
-    mockDb.closeRun.findFirst.mockResolvedValue(closeRun({ status: "CERTIFIED" }))
+    mockDb.closeRun.findFirst.mockResolvedValue(
+      closeRun({ status: "CERTIFIED" }),
+    )
 
     const result = await recordCloseCertificationInvalidation(
       "org-1",
@@ -691,7 +957,8 @@ describe("close assurance pack service", () => {
         sourceModel: "InventoryValuationAnnex",
         sourceId: "period-1",
         sourceEventName: "inventory.valuation.annex.checked",
-        staleReason: "Inventory valuation annex hash changed after certification.",
+        staleReason:
+          "Inventory valuation annex hash changed after certification.",
         previousEvidenceHash: "sha256:inventory-valuation",
         newEvidenceHash: "sha256:inventory-valuation-new",
         correlationId: "stale-run-corr-1",
@@ -734,7 +1001,11 @@ describe("close assurance pack service", () => {
   it("produces deterministic hashes for the same canonical close snapshot", async () => {
     const first = await exportClosePack(
       "org-1",
-      { closeRunId: "close-run-1", mode: "DRAFT_NOT_CERTIFIED", correlationId: "same-corr" },
+      {
+        closeRunId: "close-run-1",
+        mode: "DRAFT_NOT_CERTIFIED",
+        correlationId: "same-corr",
+      },
       {
         actorId: "operator-1",
         actorPermissions: ["accounting.close.export"],
@@ -743,7 +1014,11 @@ describe("close assurance pack service", () => {
     )
     const second = await exportClosePack(
       "org-1",
-      { closeRunId: "close-run-1", mode: "DRAFT_NOT_CERTIFIED", correlationId: "same-corr" },
+      {
+        closeRunId: "close-run-1",
+        mode: "DRAFT_NOT_CERTIFIED",
+        correlationId: "same-corr",
+      },
       {
         actorId: "operator-1",
         actorPermissions: ["accounting.close.export"],

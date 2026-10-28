@@ -1,0 +1,79 @@
+{
+  "summary": {
+    "generatedAt": "2026-08-22T09:09:29.203Z",
+    "mode": "fail",
+    "status": "READY_FOR_DEVELOPMENT_TESTING",
+    "checkCount": 11,
+    "readyCount": 11,
+    "blockerCount": 0
+  },
+  "scope": {
+    "environmentClass": "DEVELOPMENT_AND_SANDBOX_ONLY",
+    "productionUseAllowed": false,
+    "legalApprovalClaimed": false,
+    "livePaymentsAllowed": false,
+    "liveDeclarationsAllowed": false,
+    "liveAuthoritySubmissionsAllowed": false
+  },
+  "evidence": {
+    "manifestPresent": true,
+    "artifactsVerified": true,
+    "productionUseDisabled": true,
+    "legalNonClaimsPreserved": true,
+    "artifactCount": 2,
+    "manifestRef": "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/manifest.json"
+  },
+  "productionGate": {
+    "status": "blocked",
+    "blockers": [
+      "source_artifact_expert_approval"
+    ]
+  },
+  "checks": [
+    {
+      "id": "development_evidence_manifest_present",
+      "ready": true
+    },
+    {
+      "id": "development_source_artifact_integrity",
+      "ready": true
+    },
+    {
+      "id": "production_use_explicitly_disabled",
+      "ready": true
+    },
+    {
+      "id": "legal_and_approval_non_claims_preserved",
+      "ready": true
+    },
+    {
+      "id": "cameroon_production_automation_claim_blocked",
+      "ready": true
+    },
+    {
+      "id": "sandbox_adapters_enforce_environment",
+      "ready": true
+    },
+    {
+      "id": "production_authority_submission_blocked",
+      "ready": true
+    },
+    {
+      "id": "payroll_live_adapter_certification_guards_present",
+      "ready": true
+    },
+    {
+      "id": "golden_fixture_and_unsupported_country_harness_present",
+      "ready": true
+    },
+    {
+      "id": "production_gate_remains_blocked_for_expert_approval",
+      "ready": true
+    },
+    {
+      "id": "development_and_production_ci_commands_are_separate",
+      "ready": true
+    }
+  ],
+  "blockers": []
+}

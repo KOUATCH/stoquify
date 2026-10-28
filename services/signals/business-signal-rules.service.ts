@@ -8,6 +8,7 @@ import type {
   BranchOperatingMetrics,
   CloseReadinessMetrics,
   InventoryCashMetrics,
+  InventoryLossMetrics,
   PaymentTruthMetrics,
   SnapshotFreshness,
   SnapshotResult,
@@ -29,6 +30,7 @@ type AnySnapshot =
   | SnapshotResult<BranchOperatingMetrics>
   | SnapshotResult<PaymentTruthMetrics>
   | SnapshotResult<InventoryCashMetrics>
+  | SnapshotResult<InventoryLossMetrics>
   | SnapshotResult<CloseReadinessMetrics>;
 
 const SEVERITY_SCORE: Record<BusinessSignalSeverity, number> = {
@@ -114,6 +116,17 @@ const TYPE_DEFAULTS: Record<
     businessImpact:
       "Dead stock traps working capital that could fund faster-moving inventory.",
     expiryHours: 168,
+  },
+  inventory_loss_review: {
+    moduleSlug: "inventory",
+    requiredPermission: "inventory.levels.read",
+    assignedRole: "manager",
+    actionPath: "/dashboard/inventory/losses",
+    suggestedAction:
+      "Review adjustment evidence, valuation, and approval attribution before relying on recorded loss totals.",
+    businessImpact:
+      "Unreviewed recorded stock loss can weaken inventory value, cash control, and close confidence.",
+    expiryHours: 48,
   },
   purchase_order_receiving_delay: {
     moduleSlug: "purchasing",
@@ -218,6 +231,8 @@ export function createBusinessSignalFromFact(
     organizationId: fact.organizationId,
     moduleSlug: fact.moduleSlug,
     sourceModule: fact.sourceModule,
+    sourceSnapshotKind: fact.sourceSnapshotKind,
+    sourceHash: fact.sourceHash ?? null,
     signalType: fact.signalType,
     title: fact.title ?? titleFor(fact.signalType),
     detail: fact.detail ?? detailFor(fact.signalType),
@@ -256,6 +271,8 @@ function buildSnapshotSignals(
 ): BusinessSignal[] {
   const base = {
     organizationId,
+    sourceSnapshotKind: snapshot.kind,
+    sourceHash: snapshot.sourceHash,
     evidenceGrade: snapshot.evidenceGrade,
     generatedAt: snapshot.generatedAt,
     freshness: snapshot.freshness,
@@ -338,6 +355,58 @@ function buildSnapshotSignals(
           )
         : null,
     ].filter(Boolean) as BusinessSignal[];
+  }
+
+  if (snapshot.kind === "inventory.loss") {
+    const metrics = snapshot.metrics as InventoryLossMetrics;
+    if (metrics.lossLineCount === 0 && !metrics.sourceTruncated) return [];
+
+    const missingProofLineCount =
+      metrics.missingEvidenceLineCount +
+      metrics.missingValuationLineCount +
+      metrics.missingApprovalAttributionLineCount;
+    const highPriority =
+      metrics.sourceTruncated ||
+      missingProofLineCount > 0 ||
+      metrics.recordedTheftCategoryLineCount > 0 ||
+      metrics.lossLineCount >= 10;
+
+    return [
+      createBusinessSignalFromFact(
+        {
+          ...base,
+          signalType: "inventory_loss_review",
+          moduleSlug: "inventory",
+          sourceModule: "inventory",
+          subjectType: "inventory.loss",
+          subjectId: `${snapshot.locationId ?? "tenant"}:recorded-loss`,
+          title: "Recorded inventory loss needs review",
+          detail: `${metrics.lossLineCount} recorded inventory loss line(s) totaling ${metrics.totalLossValue} ${metrics.currency} require evidence review. Approval attribution records authorization and does not identify who caused the loss.`,
+          severity: highPriority ? "high" : "medium",
+          payload: {
+            lossLineCount: metrics.lossLineCount,
+            adjustmentCount: metrics.adjustmentCount,
+            totalLossValue: metrics.totalLossValue,
+            currency: metrics.currency,
+            countVarianceLineCount: metrics.countVarianceLineCount,
+            damagedLineCount: metrics.damagedLineCount,
+            expiredLineCount: metrics.expiredLineCount,
+            recordedTheftCategoryLineCount:
+              metrics.recordedTheftCategoryLineCount,
+            writeOffLineCount: metrics.writeOffLineCount,
+            evidenceCoveragePercent: metrics.evidenceCoveragePercent,
+            valuationCoveragePercent: metrics.valuationCoveragePercent,
+            approvalCoveragePercent: metrics.approvalCoveragePercent,
+            missingEvidenceLineCount: metrics.missingEvidenceLineCount,
+            missingValuationLineCount: metrics.missingValuationLineCount,
+            missingApprovalAttributionLineCount:
+              metrics.missingApprovalAttributionLineCount,
+            sourceTruncated: metrics.sourceTruncated,
+          },
+        },
+        nowInput,
+      ),
+    ];
   }
 
   if (snapshot.kind === "close.readiness") {

@@ -12,7 +12,7 @@ import { createHash, randomUUID } from "node:crypto"
 
 import { db } from "@/prisma/db"
 import { recordCloseCertificationInvalidationsForSourceInTx } from "@/services/accounting/close-assurance-pack.service"
-import { createLedgerPostingBatch } from "@/services/accounting/posting.service"
+import { postPaymentSuspenseToLedger } from "./payment-suspense-ledger.service"
 import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
 import {
   assertSensitiveActionAllowed,
@@ -490,25 +490,19 @@ export async function approveSuspensePosting(
       correlationId,
     })
 
-    const batch = await createLedgerPostingBatch(
+    const ledgerPosting = await postPaymentSuspenseToLedger(
       {
         organizationId: input.organizationId,
+        suspenseItemId: suspense.id,
+        suspenseLedgerAccountId,
         periodId: period.id,
-        sourceType: postingRequest.sourceType,
-        sourceId: suspense.id,
-        postingPurpose: postingRequest.postingPurpose,
-        metadata: asJsonObject({
-          approvedById: input.approvedById,
-          proposedById,
-          suspenseLedgerAccountId,
-          amount: postingRequest.amount.toFixed(2),
-          currencyCode: suspense.currencyCode,
-          correlationId,
-          approvalStatus: "APPROVED_AWAITING_LEDGER_POSTING",
-        }),
+        postingDate: periodDate,
+        actorId: input.approvedById,
+        correlationId,
       },
       tx,
     )
+    const batch = ledgerPosting.ledgerBatch
 
     const inboxPayload = asJsonObject({
       suspenseItemId: suspense.id,
@@ -634,7 +628,7 @@ export async function approveSuspensePosting(
         },
       },
     }
-  })
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable })
 
   if ("denied" in result && result.denied) {
     assertSensitiveActionAllowed(result.denied)

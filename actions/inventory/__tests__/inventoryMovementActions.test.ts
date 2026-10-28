@@ -1,9 +1,18 @@
-import { createLocationTransfer, approveTransfer } from "../inventoryMovementActions"
+import {
+  approveTransfer,
+  createLocationTransfer,
+  getInventoryTransactionsMovement,
+  getStockMovementSummary,
+  getTransfers,
+} from "../inventoryMovementActions"
 import { requirePermission } from "@/lib/security/rbac"
 import {
-  createStockTransfer,
-  postStockTransfer,
-} from "@/services/inventory/inventory-transfer.service"
+  getStockMovementSummary as readStockMovementSummary,
+  listInventoryTransactionMovements,
+  listStockTransfers,
+} from "@/services/inventory/inventory-read.service"
+import { createStockTransfer, postStockTransfer } from "@/services/inventory/inventory-transfer.service"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 
 jest.mock("@/lib/error-handling", () => ({
   inventoryAction: (handler: unknown) => handler,
@@ -16,6 +25,17 @@ jest.mock("@/lib/security/rbac", () => ({
 jest.mock("@/services/inventory/inventory-transfer.service", () => ({
   createStockTransfer: jest.fn(),
   postStockTransfer: jest.fn(),
+}))
+
+jest.mock("@/services/inventory/inventory-read.service", () => ({
+  getStockMovementSummary: jest.fn(),
+  listInventoryTransactionMovements: jest.fn(),
+  listStockTransfers: jest.fn(),
+  toLocationTransferDTO: jest.fn((value: unknown) => value),
+}))
+
+jest.mock("@/services/modules/module-entitlement.service", () => ({
+  observeModuleAccess: jest.fn(),
 }))
 
 jest.mock("@/services/inventory/inventory-stock-event.service", () => ({
@@ -48,6 +68,10 @@ jest.mock("next/cache", () => ({
 const mockRequirePermission = requirePermission as jest.Mock
 const mockCreateStockTransfer = createStockTransfer as jest.Mock
 const mockPostStockTransfer = postStockTransfer as jest.Mock
+const mockObserveModuleAccess = observeModuleAccess as jest.Mock
+const mockListStockTransfers = listStockTransfers as jest.Mock
+const mockListInventoryTransactionMovements = listInventoryTransactionMovements as jest.Mock
+const mockReadStockMovementSummary = readStockMovementSummary as jest.Mock
 
 const transfer = {
   id: "transfer-1",
@@ -99,9 +123,17 @@ beforeEach(() => {
   })
   mockCreateStockTransfer.mockResolvedValue({ transfer })
   mockPostStockTransfer.mockResolvedValue({
-    transfer: { ...transfer, status: "COMPLETED", approvedById: "user-session" },
+    transfer: {
+      ...transfer,
+      status: "COMPLETED",
+      approvedById: "user-session",
+    },
     replayed: false,
   })
+  mockObserveModuleAccess.mockResolvedValue({ allowed: true })
+  mockListStockTransfers.mockResolvedValue([])
+  mockListInventoryTransactionMovements.mockResolvedValue([])
+  mockReadStockMovementSummary.mockResolvedValue({ transactionCount: 0 })
 })
 
 describe("inventory movement transfer actions", () => {
@@ -153,5 +185,82 @@ describe("inventory movement transfer actions", () => {
     })
     expect(result.success).toBe(true)
     expect(result.data.message).toContain("approved and completed")
+  })
+})
+
+describe("inventory history read authorization", () => {
+  it("uses RBAC tenant scope and enforced inventory entitlement for every history read", async () => {
+    await getTransfers({ organizationId: "org-session" })
+    await getInventoryTransactionsMovement({ organizationId: "org-session" })
+    await getStockMovementSummary({ organizationId: "org-session" })
+
+    expect(mockRequirePermission).toHaveBeenNthCalledWith(1, "inventory.levels.read", {
+      resource: "StockTransferHistory",
+      auditAllowed: true,
+    })
+    expect(mockRequirePermission).toHaveBeenNthCalledWith(2, "inventory.levels.read", {
+      resource: "InventoryTransactionHistory",
+      auditAllowed: true,
+    })
+    expect(mockRequirePermission).toHaveBeenNthCalledWith(3, "inventory.levels.read", {
+      resource: "InventoryTransactionHistorySummary",
+      auditAllowed: true,
+    })
+    expect(mockObserveModuleAccess).toHaveBeenCalledTimes(3)
+    expect(mockObserveModuleAccess).toHaveBeenCalledWith(
+      expect.objectContaining({
+        organizationId: "org-session",
+        moduleSlug: "inventory",
+        mode: "enforce",
+        accessIntent: "read",
+      }),
+    )
+    expect(mockListStockTransfers).toHaveBeenCalledWith({
+      organizationId: "org-session",
+      filters: undefined,
+    })
+    expect(mockListInventoryTransactionMovements).toHaveBeenCalledWith({
+      organizationId: "org-session",
+      filters: undefined,
+    })
+    expect(mockReadStockMovementSummary).toHaveBeenCalledWith({
+      organizationId: "org-session",
+      filters: {
+        itemId: undefined,
+        locationId: undefined,
+        dateFrom: undefined,
+        dateTo: undefined,
+      },
+    })
+  })
+
+  it("does not call history services when permission is denied", async () => {
+    mockRequirePermission.mockRejectedValueOnce(new Error("permission denied"))
+
+    await expect(getInventoryTransactionsMovement({ organizationId: "org-session" })).rejects.toThrow(
+      "permission denied",
+    )
+
+    expect(mockObserveModuleAccess).not.toHaveBeenCalled()
+    expect(mockListInventoryTransactionMovements).not.toHaveBeenCalled()
+  })
+
+  it("rejects caller organization mismatch before reading history", async () => {
+    await expect(getInventoryTransactionsMovement({ organizationId: "other-org" })).rejects.toThrow(
+      "Organization mismatch",
+    )
+
+    expect(mockObserveModuleAccess).not.toHaveBeenCalled()
+    expect(mockListInventoryTransactionMovements).not.toHaveBeenCalled()
+  })
+
+  it("does not call history services when the inventory module is unavailable", async () => {
+    mockObserveModuleAccess.mockResolvedValueOnce({ allowed: false })
+
+    await expect(getInventoryTransactionsMovement({ organizationId: "org-session" })).rejects.toThrow(
+      "Inventory module is not available",
+    )
+
+    expect(mockListInventoryTransactionMovements).not.toHaveBeenCalled()
   })
 })

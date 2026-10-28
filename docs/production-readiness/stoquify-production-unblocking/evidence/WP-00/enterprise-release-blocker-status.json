@@ -1,0 +1,619 @@
+{
+  "schemaVersion": "1.1",
+  "generatedAt": "2026-08-22T14:25:32.279Z",
+  "status": "BLOCKED",
+  "releasePosture": "DEVELOPMENT_CONTINUES_PILOT_AND_PRODUCTION_FAIL_CLOSED",
+  "summary": {
+    "blockerCount": 12,
+    "readyCount": 3,
+    "openCount": 9,
+    "evidenceErrorCount": 0,
+    "externalInputChecksPassed": 1,
+    "externalInputChecks": 13,
+    "externalInputBlockers": 102,
+    "humanInterventionsRequired": 9,
+    "secretValuesPrinted": false
+  },
+  "decisions": {
+    "readyToFreeze": false,
+    "readyToRequestGate017": false,
+    "readyForPhase2bReview": false,
+    "readyForPhase3Review": false,
+    "activationAuthorizedByThisGate": false
+  },
+  "claims": {
+    "payrollImmutability": {
+      "status": "ISOLATED_POSTGRESQL_RUNTIME_CONTROL_VERIFIED",
+      "scope": "ISOLATED_NON_PRODUCTION_POSTGRESQL_RUNTIME_CONTROL",
+      "productionDatabaseVerified": false,
+      "productionReleaseAuthorized": false
+    },
+    "countryPackProduction": {
+      "status": "FAIL_CLOSED",
+      "gateIds": [
+        "B05",
+        "B06"
+      ],
+      "productionUseAuthorized": false
+    },
+    "operatorReadiness": {
+      "status": "FAIL_CLOSED",
+      "gateIds": [
+        "B07",
+        "B08",
+        "B09",
+        "B10"
+      ],
+      "productionOperationAuthorized": false
+    },
+    "overallRelease": {
+      "status": "NOT_READY",
+      "activationAuthorized": false
+    }
+  },
+  "blockers": [
+    {
+      "id": "B01",
+      "title": "Application production build",
+      "ready": true,
+      "status": "READY",
+      "facts": [
+        "buildStatus=passed",
+        "buildExitCode=0"
+      ],
+      "blockers": [],
+      "nextAction": "Preserve and bind this evidence to the final candidate."
+    },
+    {
+      "id": "B02",
+      "title": "Payroll immutability runtime proof",
+      "ready": true,
+      "status": "READY",
+      "facts": [
+        "proofScope=ISOLATED_NON_PRODUCTION_POSTGRESQL_RUNTIME_CONTROL",
+        "proofSource=what-next/payroll/payroll-immutability-runtime-check.json",
+        "proofGeneratedAt=2026-08-22T14:24:26.391Z",
+        "triggers=9/9",
+        "blockedMutations=14/14",
+        "allowedLifecycle=3/3",
+        "staleAggregateInvalidated=false"
+      ],
+      "blockers": [],
+      "nextAction": "Preserve and bind this evidence to the final candidate."
+    },
+    {
+      "id": "B03",
+      "title": "Production database target and migration history",
+      "ready": false,
+      "status": "BLOCKED_EXTERNAL_CONFIG",
+      "facts": [
+        "preflight=8/9",
+        "history=7/8",
+        "historyTarget=local"
+      ],
+      "blockers": [
+        "deployment_target_is_safe",
+        "database_url_missing",
+        "remote_post_deploy_history_health_required"
+      ],
+      "nextAction": "Provision the approved production target, deploy, and pass direct history health."
+    },
+    {
+      "id": "B04",
+      "title": "Managed production release secrets",
+      "ready": false,
+      "status": "BLOCKED_EXTERNAL_CONFIG",
+      "facts": [
+        "secretChecks=5/21"
+      ],
+      "blockers": [],
+      "nextAction": "Provision the three independent managed release secrets and rerun release preflight."
+    },
+    {
+      "id": "B05",
+      "title": "Cameroon source-artifact hash binding",
+      "ready": true,
+      "status": "READY",
+      "facts": [
+        "sourceHashes=7/7"
+      ],
+      "blockers": [],
+      "nextAction": "Preserve and bind this evidence to the final candidate."
+    },
+    {
+      "id": "B06",
+      "title": "Cameroon qualified expert approval",
+      "ready": false,
+      "status": "REQUIRES_EXPERT_REVIEW",
+      "facts": [
+        "reviewChecks=4/12",
+        "approvalArtifactVerified=false"
+      ],
+      "blockers": [
+        "reviewer_identity_complete",
+        "review_window_complete",
+        "reviewer_recomputed_source_digests",
+        "fixture_family_decisions_complete",
+        "all_required_fixture_families_approved",
+        "final_decision_consistent",
+        "signed_approval_metadata_complete",
+        "signed_approval_artifact_verified",
+        "source_artifact_expert_approval"
+      ],
+      "nextAction": "Return the authentic signed expert decision and separate checker verification."
+    },
+    {
+      "id": "B07",
+      "title": "Credential rotation and revocation",
+      "ready": false,
+      "status": "BLOCKED_DEPENDENCY",
+      "facts": [
+        "credentialStatus=BLOCKED",
+        "credentialBlockers=31"
+      ],
+      "blockers": [
+        "authority:ENVIRONMENT_MISSING",
+        "authority:SOURCE_SYSTEM_REFERENCE_MISSING",
+        "authority:ATTESTATION_REFERENCE_MISSING",
+        "authority:ATTESTATION_DIGEST_MISSING",
+        "authority:ATTESTED_AT_MISSING",
+        "authority:EVIDENCE_SHA256_MISSING",
+        "authority:INVALID_AUTH_EVIDENCE_REFERENCE_MISSING",
+        "authority:ATTESTED_AT_INVALID_OR_STALE",
+        "releaseBinding:ENVIRONMENT_MISSING",
+        "releaseBinding:PACKAGE_ID_MISSING",
+        "releaseBinding:RELEASE_VERSION_MISSING",
+        "releaseBinding:COMMIT_SHA_MISSING",
+        "releaseBinding:ARTIFACT_DIGEST_MISSING",
+        "releaseBinding:DEPLOYMENT_REFERENCE_MISSING",
+        "primary-database-credential:SECURITY_CLASSIFICATION_UNRESOLVED",
+        "payroll-immutability-database-credential:SECURITY_CLASSIFICATION_UNRESOLVED",
+        "application-auth-signing-secret:SECURITY_CLASSIFICATION_UNRESOLVED",
+        "legacy-nextauth-signing-secret:SECURITY_CLASSIFICATION_UNRESOLVED",
+        "google-oauth-client-secret:SECURITY_CLASSIFICATION_UNRESOLVED",
+        "email-server-credential:SECURITY_CLASSIFICATION_UNRESOLVED",
+        "redis-connection-credential:SECURITY_CLASSIFICATION_UNRESOLVED",
+        "public-identity-hmac-secret:SECURITY_CLASSIFICATION_UNRESOLVED",
+        "public-receipt-signing-secret:SECURITY_CLASSIFICATION_UNRESOLVED",
+        "history-cursor-signing-secret:SECURITY_CLASSIFICATION_UNRESOLVED",
+        "payroll-destination-hmac-secret:SECURITY_CLASSIFICATION_UNRESOLVED",
+        "upload-provider-secret:SECURITY_CLASSIFICATION_UNRESOLVED",
+        "error-monitoring-dsn:SECURITY_CLASSIFICATION_UNRESOLVED",
+        "agent-reconciler-credential:SECURITY_CLASSIFICATION_UNRESOLVED",
+        "workflow-assurance-webhook-secret:SECURITY_CLASSIFICATION_UNRESOLVED",
+        "register:SECURITY_OWNER_MISSING",
+        "register:SECURITY_APPROVAL_REFERENCE_MISSING"
+      ],
+      "nextAction": "After stable managed references exist, complete all credential dispositions and evidence."
+    },
+    {
+      "id": "B08",
+      "title": "Operational release evidence",
+      "ready": false,
+      "status": "BLOCKED_DEPENDENCY",
+      "facts": [
+        "operationalStatus=BLOCKED",
+        "operationalBlockers=152"
+      ],
+      "blockers": [
+        "release:PACKAGE_ID_MISSING",
+        "release:RELEASE_VERSION_MISSING",
+        "release:DEPLOYMENT_REFERENCE_MISSING",
+        "release:ARTIFACT_REFERENCE_MISSING",
+        "release:PACKAGE_CERTIFICATION_REFERENCE_MISSING",
+        "release:PILOT_ALLOWLIST_REFERENCE_MISSING",
+        "release:ROLE_ALLOWLIST_REFERENCE_MISSING",
+        "release:COMMIT_SHA_INVALID",
+        "release:ARTIFACT_DIGEST_INVALID",
+        "release:PACKAGE_CERTIFICATION_HASH_INVALID",
+        "release:CI_EVIDENCE_HASH_INVALID",
+        "release:MANIFEST_HASH_INVALID",
+        "release:EVIDENCE_BUNDLE_HASH_INVALID",
+        "release:BROWSER_REPORT_HASH_INVALID",
+        "ci:STATUS_NOT_PASSED",
+        "ci:SOURCE_TREE_NOT_CLEAN",
+        "ci:RUN_REFERENCE_MISSING",
+        "ci:BRANCH_REFERENCE_MISSING",
+        "ci:ARTIFACT_REFERENCE_MISSING",
+        "ci:SOURCE_SYSTEM_REFERENCE_MISSING",
+        "ci:ATTESTATION_REFERENCE_MISSING",
+        "ci:INVALID_AUTH_EVIDENCE_REFERENCE_MISSING",
+        "ci:COMMIT_SHA_INVALID",
+        "ci:ARTIFACT_DIGEST_INVALID",
+        "ci:BROWSER_REPORT_HASH_INVALID",
+        "ci:ATTESTATION_DIGEST_INVALID",
+        "ci:EVIDENCE_HASH_INVALID",
+        "ci:COMPLETED_AT_INVALID",
+        "ci:ATTESTED_AT_INVALID",
+        "governance:SOURCE_SYSTEM_REFERENCE_MISSING",
+        "governance:ATTESTATION_REFERENCE_MISSING",
+        "governance:INVALID_AUTH_EVIDENCE_REFERENCE_MISSING",
+        "governance:ATTESTATION_DIGEST_INVALID",
+        "governance:EVIDENCE_HASH_INVALID",
+        "governance:ATTESTED_AT_INVALID",
+        "governance:PACKAGE_ID_MISSING",
+        "governance:RELEASE_VERSION_MISSING",
+        "governance:COMMIT_SHA_INVALID",
+        "governance:ARTIFACT_DIGEST_INVALID",
+        "governance:MANIFEST_HASH_INVALID",
+        "governance:EVIDENCE_BUNDLE_HASH_INVALID",
+        "approvals:PRODUCT_NOT_APPROVED",
+        "approvals:PRODUCT_ACTOR_INVALID",
+        "approvals:PRODUCT_REFERENCE_MISSING",
+        "approvals:PRODUCT_WINDOW_INVALID",
+        "approvals:PRODUCT_MANIFEST_HASH_INVALID",
+        "approvals:PRODUCT_ARTIFACT_DIGEST_INVALID",
+        "approvals:PRODUCT_EVIDENCE_BUNDLE_HASH_INVALID",
+        "approvals:SECURITY_NOT_APPROVED",
+        "approvals:SECURITY_ACTOR_INVALID",
+        "approvals:SECURITY_REFERENCE_MISSING",
+        "approvals:SECURITY_WINDOW_INVALID",
+        "approvals:SECURITY_MANIFEST_HASH_INVALID",
+        "approvals:SECURITY_ARTIFACT_DIGEST_INVALID",
+        "approvals:SECURITY_EVIDENCE_BUNDLE_HASH_INVALID",
+        "owners:ROLLOUT_PRIMARY_INVALID",
+        "owners:ROLLOUT_BACKUP_INVALID",
+        "owners:ROLLOUT_RUNBOOK_MISSING",
+        "owners:ROLLOUT_ESCALATION_REFERENCE_MISSING",
+        "owners:ROLLOUT_ACCEPTED_AT_INVALID",
+        "owners:ROLLOUT_WINDOW_INVALID",
+        "owners:ROLLBACK_PRIMARY_INVALID",
+        "owners:ROLLBACK_BACKUP_INVALID",
+        "owners:ROLLBACK_RUNBOOK_MISSING",
+        "owners:ROLLBACK_ESCALATION_REFERENCE_MISSING",
+        "owners:ROLLBACK_ACCEPTED_AT_INVALID",
+        "owners:ROLLBACK_WINDOW_INVALID",
+        "owners:SUPPORT_PRIMARY_INVALID",
+        "owners:SUPPORT_BACKUP_INVALID",
+        "owners:SUPPORT_RUNBOOK_MISSING",
+        "owners:SUPPORT_ESCALATION_REFERENCE_MISSING",
+        "owners:SUPPORT_ACCEPTED_AT_INVALID",
+        "owners:SUPPORT_WINDOW_INVALID",
+        "owners:PILOT_PRIMARY_INVALID",
+        "owners:PILOT_BACKUP_INVALID",
+        "owners:PILOT_RUNBOOK_MISSING",
+        "owners:PILOT_ESCALATION_REFERENCE_MISSING",
+        "owners:PILOT_ACCEPTED_AT_INVALID",
+        "owners:PILOT_WINDOW_INVALID",
+        "owners:SECURITY_INCIDENT_PRIMARY_INVALID",
+        "owners:SECURITY_INCIDENT_BACKUP_INVALID",
+        "owners:SECURITY_INCIDENT_RUNBOOK_MISSING",
+        "owners:SECURITY_INCIDENT_ESCALATION_REFERENCE_MISSING",
+        "owners:SECURITY_INCIDENT_ACCEPTED_AT_INVALID",
+        "owners:SECURITY_INCIDENT_WINDOW_INVALID",
+        "owners:ON_CALL_BACKUP_PRIMARY_INVALID",
+        "owners:ON_CALL_BACKUP_BACKUP_INVALID",
+        "owners:ON_CALL_BACKUP_RUNBOOK_MISSING",
+        "owners:ON_CALL_BACKUP_ESCALATION_REFERENCE_MISSING",
+        "owners:ON_CALL_BACKUP_ACCEPTED_AT_INVALID",
+        "owners:ON_CALL_BACKUP_WINDOW_INVALID",
+        "scheduler:PROVIDER_MISSING",
+        "scheduler:SCHEDULE_REFERENCE_MISSING",
+        "scheduler:WORKLOAD_REFERENCE_MISSING",
+        "scheduler:MANAGED_CREDENTIAL_REFERENCE_MISSING",
+        "scheduler:CONCURRENCY_EVIDENCE_REFERENCE_MISSING",
+        "scheduler:READINESS_EVIDENCE_REFERENCE_MISSING",
+        "scheduler:INVALID_AUTH_EVIDENCE_REFERENCE_MISSING",
+        "scheduler:MISSING_CONFIG_EVIDENCE_REFERENCE_MISSING",
+        "scheduler:FAILURE_ALERT_REFERENCE_MISSING",
+        "scheduler:DEPLOYMENT_SOURCE_SYSTEM_REFERENCE_MISSING",
+        "scheduler:DEPLOYMENT_ATTESTATION_REFERENCE_MISSING",
+        "scheduler:DEPLOYMENT_AUTHORITY_INVALID_AUTH_EVIDENCE_REFERENCE_MISSING",
+        "scheduler:READINESS_EVIDENCE_HASH_INVALID",
+        "scheduler:DEPLOYMENT_ATTESTATION_DIGEST_INVALID",
+        "scheduler:DEPLOYMENT_EVIDENCE_HASH_INVALID",
+        "scheduler:AUTH_TYPE_INVALID",
+        "scheduler:DEPLOYED_COMMIT_SHA_INVALID",
+        "scheduler:DEPLOYED_ARTIFACT_DIGEST_INVALID",
+        "scheduler:DEPLOYED_AT_INVALID",
+        "scheduler:DEPLOYMENT_ATTESTED_AT_INVALID",
+        "scheduler:READINESS_NOT_HEALTHY",
+        "scheduler:READINESS_CHECKED_AT_INVALID",
+        "scheduler:HEARTBEAT_NOT_FRESH",
+        "scheduler:WINDOW_1_RUN_ID_MISSING",
+        "scheduler:WINDOW_1_EVIDENCE_REFERENCE_MISSING",
+        "scheduler:WINDOW_1_NOT_COMPLETED",
+        "scheduler:WINDOW_1_SCHEDULED_AT_INVALID",
+        "scheduler:WINDOW_1_COMPLETED_AT_INVALID",
+        "scheduler:WINDOW_2_RUN_ID_MISSING",
+        "scheduler:WINDOW_2_EVIDENCE_REFERENCE_MISSING",
+        "scheduler:WINDOW_2_NOT_COMPLETED",
+        "scheduler:WINDOW_2_SCHEDULED_AT_INVALID",
+        "scheduler:WINDOW_2_COMPLETED_AT_INVALID",
+        "scheduler:WINDOW_3_RUN_ID_MISSING",
+        "scheduler:WINDOW_3_EVIDENCE_REFERENCE_MISSING",
+        "scheduler:WINDOW_3_NOT_COMPLETED",
+        "scheduler:WINDOW_3_SCHEDULED_AT_INVALID",
+        "scheduler:WINDOW_3_COMPLETED_AT_INVALID",
+        "scheduler:THREE_SUCCESS_WINDOWS_MISSING",
+        "alerting:TRANSPORT_NOT_HEALTHY",
+        "alerting:EVIDENCE_HASH_INVALID",
+        "alerting:TRANSPORT_REFERENCE_MISSING",
+        "alerting:MANAGED_SECRET_REFERENCE_MISSING",
+        "alerting:HTTPS_DELIVERY_REFERENCE_MISSING",
+        "alerting:EXTERNAL_REQUEST_REFERENCE_MISSING",
+        "alerting:ACKNOWLEDGEMENT_REFERENCE_MISSING",
+        "alerting:RETRY_EVIDENCE_REFERENCE_MISSING",
+        "alerting:DEAD_LETTER_EVIDENCE_REFERENCE_MISSING",
+        "alerting:RECOVERY_EVIDENCE_REFERENCE_MISSING",
+        "alerting:ESCALATION_EVIDENCE_REFERENCE_MISSING",
+        "alerting:SECRET_ROTATION_EVIDENCE_REFERENCE_MISSING",
+        "alerting:DELIVERED_AT_INVALID",
+        "alerting:ACKNOWLEDGED_AT_INVALID",
+        "alerting:ESCALATION_TESTED_AT_INVALID",
+        "alerting:ACKNOWLEDGER_IDENTITY_INVALID",
+        "alerting:ESCALATION_IDENTITY_INVALID",
+        "credentialRotation:REGISTER_HASH_INVALID",
+        "credentialRotation:SECURITY_APPROVAL_REFERENCE_MISSING",
+        "credentialRotation:EVIDENCE_HASH_INVALID",
+        "credentialRotation:ATTESTATION_REFERENCE_MISSING",
+        "credentialRotation:CREDENTIAL_REGISTER_BLOCKED"
+      ],
+      "nextAction": "Complete owner, scheduler, alert, CI, governance, and credential evidence."
+    },
+    {
+      "id": "B09",
+      "title": "Clean immutable release freeze",
+      "ready": false,
+      "status": "WAIT_FOR_STABLE_TREE",
+      "facts": [
+        "freezeStatus=BLOCKED",
+        "verifiedFiles=206/207",
+        "runtimeDrift=8"
+      ],
+      "blockers": [
+        "FREEZE_COMMIT_CONTENT_MISMATCH:components/agents/__tests__/AgentCommandPanel.test.tsx",
+        "POST_FREEZE_RUNTIME_DRIFT:actions/agents/__tests__/command-agent.actions.test.ts",
+        "POST_FREEZE_RUNTIME_DRIFT:actions/agents/command-agent.actions.ts",
+        "POST_FREEZE_RUNTIME_DRIFT:components/agents/AgentCommandPanel.tsx",
+        "POST_FREEZE_RUNTIME_DRIFT:components/agents/__tests__/AgentCommandPanel.test.tsx",
+        "POST_FREEZE_RUNTIME_DRIFT:prisma/schema.prisma",
+        "POST_FREEZE_RUNTIME_DRIFT:services/agents/__tests__/agent-output-validator.service.test.ts",
+        "POST_FREEZE_RUNTIME_DRIFT:services/agents/command-agent-contracts.ts",
+        "POST_FREEZE_RUNTIME_DRIFT:services/agents/skills/role-daily-brief.skill.ts"
+      ],
+      "nextAction": "After B01-B08 pass, cut a clean candidate and create a new immutable freeze."
+    },
+    {
+      "id": "B10",
+      "title": "Governance approvals and ownership",
+      "ready": false,
+      "status": "BLOCKED_DEPENDENCY",
+      "facts": [
+        "governanceBlockers=50",
+        "freezeReady=false"
+      ],
+      "blockers": [
+        "approvals:PRODUCT_NOT_APPROVED",
+        "approvals:PRODUCT_ACTOR_INVALID",
+        "approvals:PRODUCT_REFERENCE_MISSING",
+        "approvals:PRODUCT_WINDOW_INVALID",
+        "approvals:PRODUCT_MANIFEST_HASH_INVALID",
+        "approvals:PRODUCT_ARTIFACT_DIGEST_INVALID",
+        "approvals:PRODUCT_EVIDENCE_BUNDLE_HASH_INVALID",
+        "approvals:SECURITY_NOT_APPROVED",
+        "approvals:SECURITY_ACTOR_INVALID",
+        "approvals:SECURITY_REFERENCE_MISSING",
+        "approvals:SECURITY_WINDOW_INVALID",
+        "approvals:SECURITY_MANIFEST_HASH_INVALID",
+        "approvals:SECURITY_ARTIFACT_DIGEST_INVALID",
+        "approvals:SECURITY_EVIDENCE_BUNDLE_HASH_INVALID",
+        "owners:ROLLOUT_PRIMARY_INVALID",
+        "owners:ROLLOUT_BACKUP_INVALID",
+        "owners:ROLLOUT_RUNBOOK_MISSING",
+        "owners:ROLLOUT_ESCALATION_REFERENCE_MISSING",
+        "owners:ROLLOUT_ACCEPTED_AT_INVALID",
+        "owners:ROLLOUT_WINDOW_INVALID",
+        "owners:ROLLBACK_PRIMARY_INVALID",
+        "owners:ROLLBACK_BACKUP_INVALID",
+        "owners:ROLLBACK_RUNBOOK_MISSING",
+        "owners:ROLLBACK_ESCALATION_REFERENCE_MISSING",
+        "owners:ROLLBACK_ACCEPTED_AT_INVALID",
+        "owners:ROLLBACK_WINDOW_INVALID",
+        "owners:SUPPORT_PRIMARY_INVALID",
+        "owners:SUPPORT_BACKUP_INVALID",
+        "owners:SUPPORT_RUNBOOK_MISSING",
+        "owners:SUPPORT_ESCALATION_REFERENCE_MISSING",
+        "owners:SUPPORT_ACCEPTED_AT_INVALID",
+        "owners:SUPPORT_WINDOW_INVALID",
+        "owners:PILOT_PRIMARY_INVALID",
+        "owners:PILOT_BACKUP_INVALID",
+        "owners:PILOT_RUNBOOK_MISSING",
+        "owners:PILOT_ESCALATION_REFERENCE_MISSING",
+        "owners:PILOT_ACCEPTED_AT_INVALID",
+        "owners:PILOT_WINDOW_INVALID",
+        "owners:SECURITY_INCIDENT_PRIMARY_INVALID",
+        "owners:SECURITY_INCIDENT_BACKUP_INVALID",
+        "owners:SECURITY_INCIDENT_RUNBOOK_MISSING",
+        "owners:SECURITY_INCIDENT_ESCALATION_REFERENCE_MISSING",
+        "owners:SECURITY_INCIDENT_ACCEPTED_AT_INVALID",
+        "owners:SECURITY_INCIDENT_WINDOW_INVALID",
+        "owners:ON_CALL_BACKUP_PRIMARY_INVALID",
+        "owners:ON_CALL_BACKUP_BACKUP_INVALID",
+        "owners:ON_CALL_BACKUP_RUNBOOK_MISSING",
+        "owners:ON_CALL_BACKUP_ESCALATION_REFERENCE_MISSING",
+        "owners:ON_CALL_BACKUP_ACCEPTED_AT_INVALID",
+        "owners:ON_CALL_BACKUP_WINDOW_INVALID",
+        "clean_freeze_required_before_approval"
+      ],
+      "nextAction": "Bind real product/security approvals and six accepted owner assignments to the freeze."
+    },
+    {
+      "id": "B11",
+      "title": "Phase 2B entry",
+      "ready": false,
+      "status": "BLOCKED_DEPENDENCY",
+      "facts": [
+        "phase2b=2/23",
+        "eligible=false"
+      ],
+      "blockers": [
+        "AUTHORIZED_SCOPE_COMPLETE",
+        "FROZEN_COMMIT_VERIFIED",
+        "CLEAN_RELEASE_READY",
+        "GLOBAL_RELEASE_READY",
+        "PRODUCTION_SECRETS_READY",
+        "MIGRATION_TARGET_READY",
+        "STATUTORY_AUTHORITY_READY",
+        "CREDENTIAL_ROTATION_READY",
+        "OPERATIONAL_RELEASE_READY",
+        "PROMOTION_POINT_1_REVIEW_ACCEPTED",
+        "PROMOTION_POINT_2_COMPLETED",
+        "PROMOTION_POINT_3_COMPLETED",
+        "PROMOTION_POINT_4_COMPLETED",
+        "PROMOTION_POINT_5_COMPLETED",
+        "PROMOTION_POINT_6_COMPLETED",
+        "PROMOTION_POINT_7_COMPLETED",
+        "PROMOTION_POINT_8_COMPLETED",
+        "PROMOTION_POINT_9_COMPLETED",
+        "PROMOTION_POINT_10_COMPLETED",
+        "PROMOTION_POINT_11_APPROVED_GO",
+        "ENTERPRISE_GATE_017_GO"
+      ],
+      "nextAction": "After B01-B10 and gate 017 GO, rerun the 23-check entry gate."
+    },
+    {
+      "id": "B12",
+      "title": "Phase 3 production decision",
+      "ready": false,
+      "status": "NOT_STARTED",
+      "facts": [
+        "phase3=0/34",
+        "eligible=false"
+      ],
+      "blockers": [
+        "AUTHORIZED_SCOPE_COMPLETE",
+        "FROZEN_COMMIT_VERIFIED",
+        "CLEAN_RELEASE_READY",
+        "GLOBAL_RELEASE_READY",
+        "PRODUCTION_SECRETS_READY",
+        "MIGRATION_TARGET_READY",
+        "STATUTORY_AUTHORITY_READY",
+        "CREDENTIAL_ROTATION_READY",
+        "OPERATIONAL_RELEASE_READY",
+        "PROMOTION_POINT_1_REVIEW_ACCEPTED",
+        "PROMOTION_POINT_2_COMPLETED",
+        "PROMOTION_POINT_3_COMPLETED",
+        "PROMOTION_POINT_4_COMPLETED",
+        "PROMOTION_POINT_5_COMPLETED",
+        "PROMOTION_POINT_6_COMPLETED",
+        "PROMOTION_POINT_7_COMPLETED",
+        "PROMOTION_POINT_8_COMPLETED",
+        "PROMOTION_POINT_9_COMPLETED",
+        "PROMOTION_POINT_10_COMPLETED",
+        "PROMOTION_POINT_11_APPROVED_GO",
+        "ENTERPRISE_GATE_017_GO",
+        "PILOT_EXIT_STATUS_READY",
+        "PILOT_RELEASE_BINDING",
+        "PILOT_SCOPE_AND_ACTIVATION_EVIDENCE",
+        "PILOT_OBSERVATION_COMPLETE",
+        "PILOT_SAFETY_CLEAN",
+        "PILOT_OPERATIONS_EVIDENCE",
+        "PILOT_INCIDENTS_CLEAN",
+        "PILOT_EXIT_APPROVALS",
+        "PILOT_APPROVER_SEGREGATION",
+        "PILOT_PHASE3_RECOMMENDATION",
+        "PHASE2B_PILOT_COMPLETED",
+        "PHASE3_GO_APPROVED",
+        "PHASE3_AUTHORITY_RECORDED"
+      ],
+      "nextAction": "After a successful pilot, obtain the artifact-bound 34-check Phase 3 decision."
+    }
+  ],
+  "evidenceErrors": [],
+  "nextActions": [
+    {
+      "id": "B03",
+      "action": "Provision the approved production target, deploy, and pass direct history health."
+    },
+    {
+      "id": "B04",
+      "action": "Provision the three independent managed release secrets and rerun release preflight."
+    },
+    {
+      "id": "B06",
+      "action": "Return the authentic signed expert decision and separate checker verification."
+    },
+    {
+      "id": "B07",
+      "action": "After stable managed references exist, complete all credential dispositions and evidence."
+    },
+    {
+      "id": "B08",
+      "action": "Complete owner, scheduler, alert, CI, governance, and credential evidence."
+    },
+    {
+      "id": "B09",
+      "action": "After B01-B08 pass, cut a clean candidate and create a new immutable freeze."
+    },
+    {
+      "id": "B10",
+      "action": "Bind real product/security approvals and six accepted owner assignments to the freeze."
+    },
+    {
+      "id": "B11",
+      "action": "After B01-B10 and gate 017 GO, rerun the 23-check entry gate."
+    },
+    {
+      "id": "B12",
+      "action": "After a successful pilot, obtain the artifact-bound 34-check Phase 3 decision."
+    }
+  ],
+  "evidencePaths": {
+    "build": "what-next/build-diagnostics/enterprise-unblocking-b01/summary.json",
+    "immutability": "what-next/payroll/payroll-immutability-runtime-check.json",
+    "migrationPreflight": "what-next/blocker-execution/prisma-migration-production-preflight-2026-07-27.json",
+    "migrationHistory": "what-next/prisma-migration-history-health.json",
+    "secrets": "what-next/release-secret-preflight.json",
+    "review": "what-next/statutory-country-pack-review-preflight.json",
+    "statutory": "what-next/statutory-country-pack-production-readiness.json",
+    "credential": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_CREDENTIAL_ROTATION_REGISTER_2026-07-25.json",
+    "operational": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_OPERATIONAL_RELEASE_EVIDENCE_2026-07-25.json",
+    "freeze": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.json",
+    "phase2b": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_ENTRY_DECISION_2026-07-25.json",
+    "phase3": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_ENTRY_DECISION_2026-07-25.json",
+    "external": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_EXTERNAL_INPUT_READINESS_2026-07-25.json",
+    "intervention": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_HUMAN_INTERVENTION_PLAN_2026-07-25.json"
+  },
+  "evidenceProvenance": {
+    "immutability": {
+      "selectedSource": "what-next/payroll/payroll-immutability-runtime-check.json",
+      "sourceKind": "canonical_runtime_proof",
+      "generatedAt": "2026-08-22T14:24:26.391Z",
+      "sha256": "sha256:5efd5bfe65c579174f715cb27f0401fd0f8e8844e2dea681107732c229cbbb8b",
+      "claimScope": "ISOLATED_NON_PRODUCTION_POSTGRESQL_RUNTIME_CONTROL",
+      "productionDatabaseVerifiedByThisProof": false,
+      "productionReleaseAuthorizedByThisProof": false,
+      "candidateCount": 3,
+      "conflictingCandidateCount": 0,
+      "supersededSources": [
+        {
+          "source": "what-next/payroll/payroll-immutability-runtime-check-run-2.json",
+          "generatedAt": "2026-08-12T19:21:43.961Z",
+          "ready": true
+        },
+        {
+          "source": "what-next/payroll/payroll-immutability-runtime-check-run-1.json",
+          "generatedAt": "2026-08-12T19:21:10.853Z",
+          "ready": true
+        }
+      ],
+      "priorAggregate": {
+        "generatedAt": "2026-08-16T10:14:35.460Z",
+        "generatedAtMs": 1786875275460,
+        "ready": true,
+        "status": "READY"
+      },
+      "aggregateConflictDetected": false,
+      "staleAggregateInvalidated": false,
+      "precedence": "Newest direct runtime evidence wins by evidence generatedAt; derived release aggregates never override their source proof."
+    }
+  },
+  "safety": {
+    "evidenceMutated": false,
+    "externalAuthorityInferred": false,
+    "approvalInferred": false,
+    "activationAttempted": false,
+    "secretValuesPrinted": false
+  }
+}

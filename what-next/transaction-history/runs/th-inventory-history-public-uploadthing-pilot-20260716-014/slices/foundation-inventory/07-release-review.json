@@ -1,0 +1,218 @@
+{
+  "schemaVersion": "1.0",
+  "traceId": "3f4866b2-8d5f-4c1d-a9f2-7c69a9a19014",
+  "runId": "th-inventory-history-public-uploadthing-pilot-20260716-014",
+  "sliceId": "foundation-inventory",
+  "stageId": "07",
+  "skillName": "stoquify-transaction-history-07-release-review",
+  "agentType": "API Tester/Code Reviewer",
+  "mode": "implement",
+  "status": "BLOCKED",
+  "activeLanes": [
+    "workbench",
+    "inventory"
+  ],
+  "blockedLanes": [],
+  "inputArtifacts": [
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/run-manifest.json",
+      "sha256": "sha256:340877d1cff706bdc6083dc29cef49d7c96df2b539aa9419790eca69249c3fce"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/run-state.json",
+      "sha256": "sha256:fef478ae99d4a1c123e0eb7728b99726cf73f690d4a149c21b043b30e11a9389"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/slices/foundation-inventory/04-read-model-optimizer.json",
+      "sha256": "sha256:59f41b239e7d021652e719e69234d79c75e8051a278d3d8814e6eebc214e3443"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/slices/foundation-inventory/04-read-model-optimizer.md",
+      "sha256": "sha256:f6038d788a8c13d3501a2a248f43684f3dd3d8f4e98f6d0b6ab1a6e0cc9bbe75"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/slices/foundation-inventory/05-workbench-ux-contract.json",
+      "sha256": "sha256:790ca9c28b2f2eb27b309195b4f8d8dec1e0028455c559978fc6366246947052"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/slices/foundation-inventory/05-workbench-ux-contract.md",
+      "sha256": "sha256:1aa2ea7f75ab806f15d4b3934602a9cddb726bd2ca4e3f520760f0f6d5ffdb70"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/slices/foundation-inventory/06-frontend-delivery.json",
+      "sha256": "sha256:c9964384754a4ceedbc95ff1a1dde57f8beeafacd446306dde024e9f1664e86d"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/slices/foundation-inventory/06-frontend-delivery.md",
+      "sha256": "sha256:c17030d7ec0061ec76ecf04b1382325781a60e1833729f2ba63ef2a75b790373"
+    },
+    {
+      "path": "docs/skills-life-cycle/stoquify-transaction-history-skill-suite-src/manifest.md",
+      "sha256": "sha256:2fcfa15c939ff2c524a7208d423abd1fbfac772454d4869381a41969557be404"
+    },
+    {
+      "path": "docs/skills-life-cycle/stoquify-transaction-history-skill-suite-src/stoquify-transaction-history-07-release-review/SKILL.md",
+      "sha256": "sha256:08c0abc3519de327908be728a2c124f9f7864cc84069664b4b4d3580b97701e7"
+    },
+    {
+      "path": "docs/skills-life-cycle/stoquify-transaction-history-skill-suite-src/stoquify-transaction-history-07-release-review/references/release-matrix.md",
+      "sha256": "sha256:0004519702163f5a631990385e9728bf60b84b8698b61037b011782d3b45fcb8"
+    },
+    {
+      "path": "docs/new ideas/STOQUIFY_TRANSACTION_HISTORY_ANALYTICS_AND_SECURITY_PROPOSAL_2026-07-14.md",
+      "sha256": "sha256:0628f08178fe0441fe22ccbd1a6b429c2bb07b2ea5d278e6dcb799ab117c6979"
+    },
+    {
+      "path": "package.json",
+      "sha256": "sha256:c53fd192f565b81e683467ff5be7049393aaefac7d6283f2b61d146b89266665"
+    }
+  ],
+  "inputFingerprint": "sha256:5290aa80564a60fef89faef1eb5b4d2b7d11c8efad0d2d81d7cf7a13b3fd86f9",
+  "allowedEdits": [
+    "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/slices/foundation-inventory/07-release-review.json"
+  ],
+  "observedEdits": [
+    "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/slices/foundation-inventory/07-release-review.json"
+  ],
+  "repository": {
+    "headBefore": "8a406e93b0e798ed6f476ca5d81df37a2aaa38be",
+    "headAfter": "8a406e93b0e798ed6f476ca5d81df37a2aaa38be",
+    "dirtyFilesBefore": [],
+    "dirtyFilesAfter": [
+      "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/slices/foundation-inventory/07-release-review.json"
+    ]
+  },
+  "claims": [
+    {
+      "id": "TH07_PREREQUISITES",
+      "result": "GAP",
+      "evidence": [
+        "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/slices/foundation-inventory/06-frontend-delivery.json",
+        "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/slices/foundation-inventory/06-frontend-delivery-authorization-request.md"
+      ]
+    },
+    {
+      "id": "TH07_CONTRACT_API",
+      "result": "NA",
+      "evidence": []
+    },
+    {
+      "id": "TH07_TENANT",
+      "result": "NA",
+      "evidence": []
+    },
+    {
+      "id": "TH07_RBAC",
+      "result": "NA",
+      "evidence": []
+    },
+    {
+      "id": "TH07_FRESH_AUTH",
+      "result": "NA",
+      "evidence": []
+    },
+    {
+      "id": "TH07_REDACTION",
+      "result": "NA",
+      "evidence": []
+    },
+    {
+      "id": "TH07_ACCOUNTING",
+      "result": "NA",
+      "evidence": []
+    },
+    {
+      "id": "TH07_PAGINATION",
+      "result": "NA",
+      "evidence": []
+    },
+    {
+      "id": "TH07_BACKDATED_INSERT",
+      "result": "NA",
+      "evidence": []
+    },
+    {
+      "id": "TH07_EXPORT",
+      "result": "NA",
+      "evidence": []
+    },
+    {
+      "id": "TH07_TIMEZONE",
+      "result": "NA",
+      "evidence": []
+    },
+    {
+      "id": "TH07_ACCESSIBILITY",
+      "result": "NA",
+      "evidence": []
+    },
+    {
+      "id": "TH07_REGRESSION",
+      "result": "NA",
+      "evidence": []
+    },
+    {
+      "id": "TH07_POLICY_GATES",
+      "result": "NA",
+      "evidence": []
+    },
+    {
+      "id": "TH07_SCOPED_VERDICT",
+      "result": "GAP",
+      "evidence": [
+        "what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/slices/foundation-inventory/07-release-review.json"
+      ]
+    }
+  ],
+  "verification": [
+    {
+      "command": "node docs/skills-life-cycle/stoquify-transaction-history-skill-suite-src/stoquify-transaction-history-00-orchestrator/scripts/select-next-stage.mjs --manifest what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/run-manifest.json --state what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014/run-state.json",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": null
+    },
+    {
+      "command": "node docs/skills-life-cycle/stoquify-transaction-history-skill-suite-src/stoquify-transaction-history-00-orchestrator/scripts/validate-run-artifacts.mjs --run-dir what-next/transaction-history/runs/th-inventory-history-public-uploadthing-pilot-20260716-014",
+      "status": "FAIL",
+      "exitCode": 1,
+      "logPath": null
+    },
+    {
+      "command": "Stage 07 release matrix execution",
+      "status": "SKIPPED",
+      "exitCode": null,
+      "logPath": null
+    }
+  ],
+  "outputs": [],
+  "blockers": [
+    {
+      "severity": "high",
+      "code": "STAGE07_VERIFY_MODE_CONFLICT_WITH_RUN_MANIFEST",
+      "reason": "The Stage 07 skill requires verify/audit release-review mode and rejects implement mode, while the current run manifest mode is implement and the shared validator requires evidence.mode to match the manifest."
+    },
+    {
+      "severity": "high",
+      "code": "STAGE06_EVIDENCE_OUTSIDE_CONTROL_PLANE_ALLOWLIST",
+      "reason": "The Stage 00 validator rejects Stage 06 because its observedEdits truthfully include product frontend files authorized by 06-frontend-delivery-authorization-request.md, while the original run manifest Stage 06 allowlist contains only 06-frontend-delivery.json."
+    },
+    {
+      "severity": "high",
+      "code": "STAGE06_PASS_WITH_HIGH_BLOCKER",
+      "reason": "The Stage 00 validator rejects Stage 06 PASS evidence because it still carries a high public UploadThing pilot go-live blocker."
+    },
+    {
+      "severity": "medium",
+      "code": "AUTHENTICATED_BROWSER_RELEASE_SMOKE_PENDING",
+      "reason": "Authenticated browser/mobile/accessibility smoke was skipped in Stage 06 and cannot be waived by Stage 07."
+    },
+    {
+      "severity": "medium",
+      "code": "STAGE07_MARKDOWN_REPORT_NOT_ALLOWLISTED_BY_MANIFEST",
+      "reason": "The Stage 07 skill requires 07-release-review.md, but the run manifest only allowlists 07-release-review.json; Stage 07 wrote only the predeclared JSON path to avoid unauthorized evidence edits."
+    }
+  ],
+  "nextEligibleStages": [],
+  "startedAt": "2026-07-16T08:06:49.062Z",
+  "completedAt": "2026-07-16T08:06:49.062Z"
+}

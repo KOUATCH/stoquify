@@ -1,0 +1,37 @@
+{
+  "summary": {
+    "generatedAt": "2026-08-22T09:09:29.288Z",
+    "mode": "fail",
+    "status": "ready",
+    "checkCount": 6,
+    "readyCount": 6,
+    "blockerCount": 0
+  },
+  "checks": [
+    {
+      "id": "persisted_five_stage_lifecycle",
+      "ready": true
+    },
+    {
+      "id": "collapsed_transition_shortcut_fails_closed",
+      "ready": true
+    },
+    {
+      "id": "canonical_transition_events_are_transactional",
+      "ready": true
+    },
+    {
+      "id": "fresh_auth_and_server_derived_trust_context",
+      "ready": true
+    },
+    {
+      "id": "cas_idempotency_and_partial_commit_regressions_covered",
+      "ready": true
+    },
+    {
+      "id": "postgres_concurrency_and_failure_injection_wired",
+      "ready": true
+    }
+  ],
+  "blockers": []
+}

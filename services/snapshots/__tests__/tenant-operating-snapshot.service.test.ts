@@ -3,15 +3,31 @@ jest.mock("server-only", () => ({}))
 jest.mock("@/prisma/db", () => ({
   db: {
     location: { count: jest.fn(), findFirst: jest.fn() },
-    salesOrder: { aggregate: jest.fn(), count: jest.fn(), findFirst: jest.fn() },
+    salesOrder: {
+      aggregate: jest.fn(),
+      count: jest.fn(),
+      findFirst: jest.fn(),
+    },
     payment: { aggregate: jest.fn(), findFirst: jest.fn() },
     purchaseOrder: { count: jest.fn(), findFirst: jest.fn() },
     payrollPeriod: { findMany: jest.fn() },
     payrollRun: { count: jest.fn(), findFirst: jest.fn(), findMany: jest.fn() },
-    payrollEmployeeBalanceCase: { count: jest.fn(), aggregate: jest.fn(), findFirst: jest.fn() },
-    payrollEmployeeBalanceEvent: { count: jest.fn(), aggregate: jest.fn(), findFirst: jest.fn() },
+    payrollEmployeeBalanceCase: {
+      count: jest.fn(),
+      aggregate: jest.fn(),
+      findFirst: jest.fn(),
+    },
+    payrollEmployeeBalanceEvent: {
+      count: jest.fn(),
+      aggregate: jest.fn(),
+      findFirst: jest.fn(),
+    },
     journalEntry: { count: jest.fn(), findFirst: jest.fn() },
-    accountingSourceLink: { count: jest.fn(), findFirst: jest.fn(), findMany: jest.fn() },
+    accountingSourceLink: {
+      count: jest.fn(),
+      findFirst: jest.fn(),
+      findMany: jest.fn(),
+    },
     workflowAssuranceIncident: { count: jest.fn(), findFirst: jest.fn() },
   },
 }))
@@ -33,7 +49,10 @@ import { db } from "@/prisma/db"
 import { getCloseReadinessSnapshot } from "../close-readiness-snapshot.service"
 import { getInventoryCashSnapshot } from "../inventory-cash-snapshot.service"
 import { getPaymentTruthSnapshot } from "../payment-truth-snapshot.service"
-import { getTenantOperatingSnapshot } from "../tenant-operating-snapshot.service"
+import {
+  getTenantOperatingSnapshot,
+  getTenantOperatingSnapshotFromRelated,
+} from "../tenant-operating-snapshot.service"
 
 const mockDb = db as unknown as {
   location: { count: jest.Mock; findFirst: jest.Mock }
@@ -42,10 +61,22 @@ const mockDb = db as unknown as {
   purchaseOrder: { count: jest.Mock; findFirst: jest.Mock }
   payrollPeriod: { findMany: jest.Mock }
   payrollRun: { count: jest.Mock; findFirst: jest.Mock; findMany: jest.Mock }
-  payrollEmployeeBalanceCase: { count: jest.Mock; aggregate: jest.Mock; findFirst: jest.Mock }
-  payrollEmployeeBalanceEvent: { count: jest.Mock; aggregate: jest.Mock; findFirst: jest.Mock }
+  payrollEmployeeBalanceCase: {
+    count: jest.Mock
+    aggregate: jest.Mock
+    findFirst: jest.Mock
+  }
+  payrollEmployeeBalanceEvent: {
+    count: jest.Mock
+    aggregate: jest.Mock
+    findFirst: jest.Mock
+  }
   journalEntry: { count: jest.Mock; findFirst: jest.Mock }
-  accountingSourceLink: { count: jest.Mock; findFirst: jest.Mock; findMany: jest.Mock }
+  accountingSourceLink: {
+    count: jest.Mock
+    findFirst: jest.Mock
+    findMany: jest.Mock
+  }
   workflowAssuranceIncident: { count: jest.Mock; findFirst: jest.Mock }
 }
 const mockPaymentTruth = getPaymentTruthSnapshot as jest.Mock
@@ -55,6 +86,38 @@ const mockCloseReadiness = getCloseReadinessSnapshot as jest.Mock
 describe("tenant operating snapshot service", () => {
   beforeEach(() => {
     jest.clearAllMocks()
+  })
+
+  it("blocks a location scope before child snapshots or tenant reads", async () => {
+    const result = await getTenantOperatingSnapshot({
+      organizationId: "org-1",
+      locationId: "location-1",
+      periodStart: "2026-06-01",
+      periodEnd: "2026-06-30",
+      now: "2026-06-21T10:00:00.000Z",
+    })
+
+    expect(mockPaymentTruth).not.toHaveBeenCalled()
+    expect(mockInventoryCash).not.toHaveBeenCalled()
+    expect(mockCloseReadiness).not.toHaveBeenCalled()
+    expectNoTenantOperatingDatabaseReads()
+    expectLocationScopeBlockedResult(result)
+  })
+
+  it("blocks a related location scope before tenant reads", async () => {
+    const result = await getTenantOperatingSnapshotFromRelated(
+      {
+        organizationId: "org-1",
+        locationId: "location-1",
+        periodStart: "2026-06-01",
+        periodEnd: "2026-06-30",
+        now: "2026-06-21T10:00:00.000Z",
+      },
+      {} as Parameters<typeof getTenantOperatingSnapshotFromRelated>[1],
+    )
+
+    expectNoTenantOperatingDatabaseReads()
+    expectLocationScopeBlockedResult(result)
   })
 
   it("blocks operating BI when unresolved ledger assurance incidents exist", async () => {
@@ -82,7 +145,9 @@ describe("tenant operating snapshot service", () => {
       expect.objectContaining({
         where: expect.objectContaining({
           organizationId: "org-1",
-          status: { in: ["OPEN", "ACKNOWLEDGED", "ASSIGNED", "IN_PROGRESS", "REOPENED"] },
+          status: {
+            in: ["OPEN", "ACKNOWLEDGED", "ASSIGNED", "IN_PROGRESS", "REOPENED"],
+          },
           severity: { in: ["HIGH", "BLOCKING", "COMPLIANCE_CRITICAL"] },
           workflow: { in: ["LEDGER", "BUSINESS_EVENT", "COMPLIANCE"] },
         }),
@@ -276,9 +341,13 @@ describe("tenant operating snapshot service", () => {
       .mockResolvedValueOnce(2)
       .mockResolvedValueOnce(1)
       .mockResolvedValueOnce(1)
-    mockDb.payrollEmployeeBalanceCase.aggregate.mockResolvedValue({ _sum: { outstandingAmount: 27500 } })
+    mockDb.payrollEmployeeBalanceCase.aggregate.mockResolvedValue({
+      _sum: { outstandingAmount: 27500 },
+    })
     mockDb.payrollEmployeeBalanceEvent.count.mockResolvedValue(3)
-    mockDb.payrollEmployeeBalanceEvent.aggregate.mockResolvedValue({ _sum: { amount: 12500 } })
+    mockDb.payrollEmployeeBalanceEvent.aggregate.mockResolvedValue({
+      _sum: { amount: 12500 },
+    })
     mockDb.payrollEmployeeBalanceCase.findFirst.mockResolvedValue({
       updatedAt: new Date("2026-06-21T08:30:00.000Z"),
     })
@@ -306,7 +375,15 @@ describe("tenant operating snapshot service", () => {
       expect.objectContaining({
         where: expect.objectContaining({
           organizationId: "org-1",
-          eventType: { in: ["SETTLE_CASH", "SETTLE_BANK", "SETTLE_MOBILE_MONEY", "SETTLE_DEDUCTION", "REFUND_PAYMENT"] },
+          eventType: {
+            in: [
+              "SETTLE_CASH",
+              "SETTLE_BANK",
+              "SETTLE_MOBILE_MONEY",
+              "SETTLE_DEDUCTION",
+              "REFUND_PAYMENT",
+            ],
+          },
         }),
         _sum: { amount: true },
       }),
@@ -335,7 +412,9 @@ describe("tenant operating snapshot service", () => {
     setupTenantData()
     mockDb.payrollPeriod.findMany.mockResolvedValue([forecastPeriod()])
     mockDb.payrollRun.findMany.mockResolvedValue([])
-    mockDb.accountingSourceLink.findMany.mockResolvedValue(forecastSourceLinks())
+    mockDb.accountingSourceLink.findMany.mockResolvedValue(
+      forecastSourceLinks(),
+    )
 
     const result = await getTenantOperatingSnapshot({
       organizationId: "org-1",
@@ -348,7 +427,10 @@ describe("tenant operating snapshot service", () => {
       expect.objectContaining({
         where: expect.objectContaining({
           organizationId: "org-1",
-          payDate: expect.objectContaining({ gte: expect.any(Date), lte: expect.any(Date) }),
+          payDate: expect.objectContaining({
+            gte: expect.any(Date),
+            lte: expect.any(Date),
+          }),
         }),
       }),
     )
@@ -361,8 +443,85 @@ describe("tenant operating snapshot service", () => {
       paymentBatchCount: 1,
       declarationCount: 1,
       sourceLinkCount: 2,
+      certifiedInputRunCount: 1,
+      certifiedInputProofHashCount: 4,
+      registerToLedgerRunCount: 1,
       personLevelAmountsRedacted: true,
       blockerCodes: [],
+    })
+    expect(mockDb.accountingSourceLink.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ organizationId: "org-1" }),
+      }),
+    )
+  })
+
+  it("fails closed when explicit certified HRIS readiness proof is missing", async () => {
+    setupChildSnapshots()
+    setupTenantData()
+    mockDb.payrollPeriod.findMany.mockResolvedValue([
+      forecastPeriod({
+        run: {
+          metadata: {
+            payrollInputReadinessHash: "sha256:payroll-input-readiness",
+            payrollEngineInputHashes: [
+              "sha256:payroll-engine-input-employee-1",
+            ],
+            payrollEngineInputSnapshotHash:
+              "sha256:payroll-engine-input-snapshot",
+            componentRegisterProofHash: "sha256:component-register",
+            componentRegisterProofStatus: "MATCHED",
+          },
+        },
+      }),
+    ])
+    mockDb.payrollRun.findMany.mockResolvedValue([])
+    mockDb.accountingSourceLink.findMany.mockResolvedValue(
+      forecastSourceLinks(),
+    )
+
+    const result = await getTenantOperatingSnapshot({
+      organizationId: "org-1",
+      periodStart: "2026-06-01",
+      periodEnd: "2026-07-31",
+      now: "2026-06-21T10:00:00.000Z",
+    })
+
+    expect(result.metrics.payrollFinanceForecast).toMatchObject({
+      status: "NON_AUTHORITATIVE",
+      certifiedInputRunCount: 0,
+      blockerCodes: ["PAYROLL_FORECAST_CERTIFIED_HRIS_INPUT_PROOF_MISSING"],
+    })
+  })
+
+  it("fails closed when the payroll register does not tie to posted ledger proof", async () => {
+    setupChildSnapshots()
+    setupTenantData()
+    mockDb.payrollPeriod.findMany.mockResolvedValue([
+      forecastPeriod({
+        run: {
+          metadata: certifiedRunMetadata({
+            componentRegisterProofStatus: "MISSING",
+          }),
+        },
+      }),
+    ])
+    mockDb.payrollRun.findMany.mockResolvedValue([])
+    mockDb.accountingSourceLink.findMany.mockResolvedValue(
+      forecastSourceLinks(),
+    )
+
+    const result = await getTenantOperatingSnapshot({
+      organizationId: "org-1",
+      periodStart: "2026-06-01",
+      periodEnd: "2026-07-31",
+      now: "2026-06-21T10:00:00.000Z",
+    })
+
+    expect(result.metrics.payrollFinanceForecast).toMatchObject({
+      status: "NON_AUTHORITATIVE",
+      registerToLedgerRunCount: 0,
+      blockerCodes: ["PAYROLL_FORECAST_REGISTER_LEDGER_TIEOUT_MISSING"],
     })
   })
 
@@ -371,11 +530,15 @@ describe("tenant operating snapshot service", () => {
     setupTenantData()
     mockDb.payrollPeriod.findMany.mockResolvedValue([
       forecastPeriod({
-        declarations: [forecastDeclaration({ evidenceItems: [], payloadHash: null })],
+        declarations: [
+          forecastDeclaration({ evidenceItems: [], payloadHash: null }),
+        ],
       }),
     ])
     mockDb.payrollRun.findMany.mockResolvedValue([])
-    mockDb.accountingSourceLink.findMany.mockResolvedValue(forecastSourceLinks())
+    mockDb.accountingSourceLink.findMany.mockResolvedValue(
+      forecastSourceLinks(),
+    )
 
     const result = await getTenantOperatingSnapshot({
       organizationId: "org-1",
@@ -405,8 +568,110 @@ describe("tenant operating snapshot service", () => {
   })
 })
 
+function expectNoTenantOperatingDatabaseReads() {
+  for (const model of Object.values(mockDb)) {
+    for (const operation of Object.values(model) as jest.Mock[]) {
+      expect(operation).not.toHaveBeenCalled()
+    }
+  }
+}
+
+function expectLocationScopeBlockedResult(
+  result: Awaited<ReturnType<typeof getTenantOperatingSnapshot>>,
+) {
+  expect(result).toEqual(
+    expect.objectContaining({
+      kind: "tenant.operating",
+      organizationId: "org-1",
+      locationId: "location-1",
+      status: "blocked",
+      evidenceGrade: "blocked",
+      metrics: {
+        activeLocationCount: 0,
+        completedSalesCount: 0,
+        completedSalesRevenue: 0,
+        cashCollected: 0,
+        pendingPurchaseOrderCount: 0,
+        approvedOrPaidPayrollRunCount: 0,
+        activeEmployeeBalanceCaseCount: 0,
+        openEmployeeBalanceCaseCount: 0,
+        partiallySettledEmployeeBalanceCaseCount: 0,
+        employeeBalanceOutstandingAmount: 0,
+        periodEmployeeBalanceSettlementCount: 0,
+        periodEmployeeBalanceSettlementAmount: 0,
+        postedJournalEntryCount: 0,
+        sourceLinkCount: 0,
+        payrollFinanceForecast: expect.objectContaining({
+          status: "NON_AUTHORITATIVE",
+          authoritative: false,
+          reasonCode: "TENANT_OPERATING_LOCATION_SCOPE_UNSUPPORTED",
+          upcomingNetPayAmount: 0,
+          upcomingStatutoryLiabilityAmount: 0,
+          totalUpcomingAmount: 0,
+          personLevelAmountsRedacted: true,
+          blockerCodes: ["TENANT_OPERATING_LOCATION_SCOPE_UNSUPPORTED"],
+        }),
+        paymentTruth: {
+          providerAccountCount: 0,
+          activeProviderAccountCount: 0,
+          recentRunCount: 0,
+          readyForSignoffCount: 0,
+          signedRunCount: 0,
+          openExceptionCount: 0,
+          criticalExceptionCount: 0,
+          openSuspenseCount: 0,
+          openSuspenseAmount: 0,
+          pendingTransactionCount: 0,
+        },
+        inventoryCash: {
+          trackedItemCount: 0,
+          inventoryLevelCount: 0,
+          quantityOnHand: 0,
+          quantityAvailable: 0,
+          quantityReserved: 0,
+          quantityInTransit: 0,
+          quantityOnOrder: 0,
+          inventoryValue: 0,
+          zeroStockLevelCount: 0,
+          negativeStockLevelCount: 0,
+          periodTransactionCount: 0,
+          periodAdjustmentCount: 0,
+          periodTransferCount: 0,
+        },
+        closeReadiness: {
+          accountingPeriodCount: 0,
+          openPeriodCount: 0,
+          recentCloseRunCount: 0,
+          certifiedCloseRunCount: 0,
+          blockedCloseRunCount: 0,
+          averageReadinessScore: null,
+          openFindingCount: 0,
+          criticalOpenFindingCount: 0,
+          unavailableEvidenceCount: 0,
+        },
+      },
+    }),
+  )
+  expect(result.blockers).toContainEqual(
+    expect.objectContaining({
+      id: "tenant-operating-location-scope-unsupported",
+      severity: "high",
+      gate: "tenant_operating_scope",
+      sourceTables: expect.arrayContaining([
+        "sales_orders",
+        "payments",
+        "payroll_runs",
+        "journal_entries",
+      ]),
+    }),
+  )
+}
+
 function forecastPeriod(overrides: Record<string, unknown> = {}) {
-  const declarations = (overrides.declarations as unknown[]) ?? [forecastDeclaration()]
+  const declarations = (overrides.declarations as unknown[]) ?? [
+    forecastDeclaration(),
+  ]
+  const runOverrides = (overrides.run as Record<string, unknown>) ?? {}
   return {
     id: "period-forecast-1",
     payDate: new Date("2026-06-30T00:00:00.000Z"),
@@ -418,6 +683,7 @@ function forecastPeriod(overrides: Record<string, unknown> = {}) {
         postedBusinessEventId: "event-run-1",
         netPayableAmount: 350000,
         employerChargeAmount: 90000,
+        metadata: certifiedRunMetadata(),
         updatedAt: new Date("2026-06-20T08:05:00.000Z"),
         payrollPeriod: {
           id: "period-forecast-1",
@@ -429,8 +695,21 @@ function forecastPeriod(overrides: Record<string, unknown> = {}) {
         },
         paymentBatches: [forecastPaymentBatch()],
         declarations,
+        ...runOverrides,
       },
     ],
+    ...overrides,
+  }
+}
+
+function certifiedRunMetadata(overrides: Record<string, unknown> = {}) {
+  return {
+    hrisPayrollReadinessHash: "sha256:hris-payroll-readiness",
+    payrollInputReadinessHash: "sha256:payroll-input-readiness",
+    payrollEngineInputHashes: ["sha256:payroll-engine-input-employee-1"],
+    payrollEngineInputSnapshotHash: "sha256:payroll-engine-input-snapshot",
+    componentRegisterProofHash: "sha256:component-register",
+    componentRegisterProofStatus: "MATCHED",
     ...overrides,
   }
 }
@@ -568,9 +847,13 @@ function setupTenantData() {
   mockDb.payrollRun.count.mockResolvedValue(1)
   mockDb.payrollRun.findMany.mockResolvedValue([])
   mockDb.payrollEmployeeBalanceCase.count.mockResolvedValue(0)
-  mockDb.payrollEmployeeBalanceCase.aggregate.mockResolvedValue({ _sum: { outstandingAmount: 0 } })
+  mockDb.payrollEmployeeBalanceCase.aggregate.mockResolvedValue({
+    _sum: { outstandingAmount: 0 },
+  })
   mockDb.payrollEmployeeBalanceEvent.count.mockResolvedValue(0)
-  mockDb.payrollEmployeeBalanceEvent.aggregate.mockResolvedValue({ _sum: { amount: 0 } })
+  mockDb.payrollEmployeeBalanceEvent.aggregate.mockResolvedValue({
+    _sum: { amount: 0 },
+  })
   mockDb.journalEntry.count.mockResolvedValue(2)
   mockDb.accountingSourceLink.count.mockResolvedValue(2)
   mockDb.location.findFirst.mockResolvedValue(null)

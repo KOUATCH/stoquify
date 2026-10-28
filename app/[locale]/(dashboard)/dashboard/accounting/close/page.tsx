@@ -3,8 +3,10 @@ import { ClipboardCheck, FileSearch, ShieldCheck } from "lucide-react"
 import { getCloseAssuranceDashboardAction } from "@/actions/accounting/close-assurance.actions"
 import { CloseAssuranceCenter } from "@/components/accounting/CloseAssuranceCenter"
 import { CloseReadinessJourneyPanel } from "@/components/accounting/CloseReadinessJourneyPanel"
+import { checkPermission } from "@/config/useAuth"
 import type { Locale } from "@/types/bilingual"
 import { AccountingLinkButton, AccountingPageShell } from "../_components/accounting-ui"
+import { routeByKey, withAccountingSurfaceAccess } from "../accounting-route-access"
 
 type CloseAssurancePageProps = {
   params: Promise<{ locale?: string }>
@@ -14,9 +16,12 @@ function normalizeLocale(locale?: string): Locale {
   return locale === "fr" ? "fr" : "en"
 }
 
-export default async function CloseAssurancePage({ params }: CloseAssurancePageProps) {
+async function CloseAssurancePageImpl({ params }: CloseAssurancePageProps) {
   const { locale } = await params
   const normalizedLocale = normalizeLocale(locale)
+
+  await checkPermission("accounting.close.read")
+
   const response = await getCloseAssuranceDashboardAction({})
   const initialData = response.success ? response.data : null
 
@@ -51,4 +56,20 @@ export default async function CloseAssurancePage({ params }: CloseAssurancePageP
       />
     </AccountingPageShell>
   )
+}
+
+
+
+export default async function AccountingRoutePage(props: any = {}) {
+  const surface = routeByKey("accounting-close")
+
+  if (!surface) {
+    throw new Error("Missing accounting route surface definition: accounting-close")
+  }
+
+  return withAccountingSurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => CloseAssurancePageImpl(props),
+  })
 }

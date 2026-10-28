@@ -16,8 +16,16 @@ export type AuthSessionClaims = {
   modulesEnabled: string[]
   permsFetchedAt: number
   mfaVerifiedAt?: number
+  assuranceMethod: string | null
+  assuranceOrganizationId: string | null
+  assuranceLevel: number
   lastAuthAt: number
 }
+
+export const SESSION_ASSURANCE_LEVEL = {
+  NONE: 0,
+  PASSWORD: 1,
+} as const
 
 export type VerifiedAuthSession = {
   raw: Awaited<ReturnType<typeof auth.api.getSession>>
@@ -34,19 +42,30 @@ export class FreshAuthRequiredError extends Error {
 
 function readSessionParts(session: Awaited<ReturnType<typeof auth.api.getSession>>) {
   const rawSession = session?.session as
-    | { id?: string | null; token?: string | null; createdAt?: Date | string | null }
+    | { id?: string | null; token?: string | null }
     | undefined
   const rawUser = session?.user as { id?: string | null } | undefined
 
   return {
     sessionId: rawSession?.id ?? null,
     sessionToken: rawSession?.token ?? null,
-    sessionCreatedAt: rawSession?.createdAt ? new Date(rawSession.createdAt) : null,
     userId: rawUser?.id ?? null,
   }
 }
 
-function buildClaims(ctx: RbacContext, parts: ReturnType<typeof readSessionParts>): AuthSessionClaims {
+type SessionAssuranceEvidence = {
+  id: string
+  assuranceVerifiedAt: Date | null
+  assuranceMethod: string | null
+  assuranceOrganizationId: string | null
+  assuranceLevel: number
+}
+
+function buildClaims(
+  ctx: RbacContext,
+  parts: ReturnType<typeof readSessionParts>,
+  evidence: SessionAssuranceEvidence,
+): AuthSessionClaims {
   if (!parts.sessionId || !parts.sessionToken || !parts.userId) {
     throw new RbacError("Authentication required", "UNAUTHENTICATED", 401)
   }
@@ -62,7 +81,10 @@ function buildClaims(ctx: RbacContext, parts: ReturnType<typeof readSessionParts
     branchIds: [],
     modulesEnabled: ["inventory", "pos", "purchasing", "finance", "reports", "admin"],
     permsFetchedAt: ctx.fetchedAt,
-    lastAuthAt: parts.sessionCreatedAt?.getTime() ?? Date.now(),
+    assuranceMethod: evidence.assuranceMethod,
+    assuranceOrganizationId: evidence.assuranceOrganizationId,
+    assuranceLevel: evidence.assuranceLevel,
+    lastAuthAt: evidence.assuranceVerifiedAt?.getTime() ?? 0,
   }
 }
 
@@ -74,13 +96,21 @@ export async function requireSession(): Promise<VerifiedAuthSession> {
     throw new RbacError("Authentication required", "UNAUTHENTICATED", 401)
   }
 
+  const checkedAt = new Date()
   const mirror = await db.session.findFirst({
     where: {
+      id: parts.sessionId,
+      token: parts.sessionToken,
       userId: parts.userId,
-      OR: [{ id: parts.sessionId }, { token: parts.sessionToken }],
-      expiresAt: { gt: new Date() },
+      expiresAt: { gt: checkedAt },
     },
-    select: { id: true },
+    select: {
+      id: true,
+      assuranceVerifiedAt: true,
+      assuranceMethod: true,
+      assuranceOrganizationId: true,
+      assuranceLevel: true,
+    },
   })
 
   if (!mirror) {
@@ -88,18 +118,40 @@ export async function requireSession(): Promise<VerifiedAuthSession> {
   }
 
   const ctx = await requireRbacContext()
+  if (ctx.userId !== parts.userId) {
+    throw new RbacError("Session identity mismatch", "UNAUTHENTICATED", 401)
+  }
+
   return {
     raw,
     ctx,
-    claims: buildClaims(ctx, parts),
+    claims: buildClaims(ctx, parts, mirror),
   }
 }
 
-export async function requireFreshAuth(maxAgeSeconds = 300) {
+export async function requireFreshAuth(
+  maxAgeSeconds = 300,
+  minimumLevel = SESSION_ASSURANCE_LEVEL.PASSWORD,
+) {
   const verified = await requireSession()
-  const ageMs = Date.now() - verified.claims.lastAuthAt
+  const now = Date.now()
+  const maxAgeMs = maxAgeSeconds * 1000
+  const { claims } = verified
 
-  if (ageMs > maxAgeSeconds * 1000) {
+  if (
+    !Number.isFinite(maxAgeMs) ||
+    maxAgeMs <= 0 ||
+    !Number.isFinite(minimumLevel) ||
+    minimumLevel < SESSION_ASSURANCE_LEVEL.PASSWORD ||
+    !claims.assuranceMethod ||
+    !claims.assuranceOrganizationId ||
+    claims.assuranceOrganizationId !== claims.tenantId ||
+    claims.assuranceLevel < minimumLevel ||
+    !Number.isFinite(claims.lastAuthAt) ||
+    claims.lastAuthAt <= 0 ||
+    claims.lastAuthAt > now ||
+    now - claims.lastAuthAt > maxAgeMs
+  ) {
     throw new FreshAuthRequiredError()
   }
 

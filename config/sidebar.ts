@@ -11,15 +11,23 @@ import {
   ShieldCheck,
   ShoppingCart,
   UserCheck,
+  UsersRound,
   Wallet,
 } from "lucide-react"
 
 import { PERMISSIONS } from "@/lib/permissions"
+import {
+  MASTER_DATA_ONBOARDING_MODULE_SLUG,
+  MASTER_DATA_ONBOARDING_READ_PERMISSIONS,
+  MASTER_DATA_ONBOARDING_ROUTE,
+} from "@/config/master-data-onboarding"
 
 export interface ISidebarDropdownItem {
   title: string
   href: string
   permission: string
+  permissions?: readonly string[]
+  permissionMode?: "any" | "all"
   description?: string
   moduleSlug?: string
   quickAccess?: boolean
@@ -31,6 +39,8 @@ export interface ISidebarLink {
   icon: LucideIcon
   dropdown: boolean
   permission: string
+  permissions?: readonly string[]
+  permissionMode?: "any" | "all"
   description?: string
   moduleSlug?: string
   section: SidebarSectionKey
@@ -91,7 +101,9 @@ export const sidebarLinks: ISidebarLink[] = [
     priority: "primary",
     dropdownMenu: [
       { title: "Overview", href: "/dashboard/accounting", permission: "accounting.reports.read" },
+      { title: "Accountant Access", href: "/dashboard/accounting/accountant-access", permission: "accounting.close.accountant.invite" },
       { title: "Accountant Portal", href: "/dashboard/accounting/accountant-portal", permission: "accounting.audit.read" },
+      { title: "Accountant Portfolio", href: "/dashboard/accounting/accountant-portfolio", permission: "accounting.audit.read" },
       { title: "Accounts", href: "/dashboard/accounting/accounts", permission: "accounting.accounts.read" },
       { title: "Close Center", href: "/dashboard/accounting/close", permission: "accounting.close.read" },
       { title: "Control Center", href: "/dashboard/accounting/control-center", permission: "accounting.setup.manage" },
@@ -112,6 +124,7 @@ export const sidebarLinks: ISidebarLink[] = [
     priority: "primary",
     dropdownMenu: [
       { title: "Overview", href: "/dashboard/analytics", permission: PERMISSIONS.VIEW_ANALYTICS },
+      { title: "Referral Funnel", href: "/dashboard/analytics/referrals", permission: PERMISSIONS.VIEW_ANALYTICS },
       { title: "Reports", href: "/dashboard/analytics/reports", permission: PERMISSIONS.VIEW_ANALYTICS },
     ],
   },
@@ -167,13 +180,16 @@ export const sidebarLinks: ISidebarLink[] = [
       { title: "Cash Command", href: "/dashboard/finance/cash-command", permission: PERMISSIONS.FINANCIAL_READ },
       { title: "Cash Drawer", href: "/dashboard/finance/cash-drawer", permission: "finance.cash-drawer.read" },
       { title: "Cash Flow", href: "/dashboard/finance/cash-flow", permission: "finance.cash-flow.read" },
+      { title: "Cash Payment History", href: "/dashboard/finance/cash-payment-history", permission: "finance.payments.read" },
       { title: "Cost Analysis", href: "/dashboard/finance/costs", permission: "finance.costs.read" },
+      { title: "Customer AR History", href: "/dashboard/finance/receivables/history", permission: "finance.receivables.read" },
       { title: "Payables", href: "/dashboard/finance/payables", permission: "finance.payables.read" },
       { title: "Payments", href: "/dashboard/finance/payments", permission: "finance.payments.read" },
       { title: "Profit & Loss", href: "/dashboard/finance/profit-loss", permission: "finance.profitability.read" },
       { title: "Profitability", href: "/dashboard/finance/profitability", permission: "finance.profitability.read" },
       { title: "Receivables", href: "/dashboard/finance/receivables", permission: "finance.receivables.read" },
-      { title: "Reconciliation", href: "/dashboard/finance/reconciliation", permission: "payments.reconciliation.read" },
+      { title: "Reconciliation", href: "/dashboard/finance/reconciliation", permission: "payments.reconciliation.read", moduleSlug: "payment_reconciliation" },
+
       { title: "Retail Dashboard", href: "/dashboard/finance/retail", permission: "finance.dashboard.read" },
       { title: "Sales Analytics", href: "/dashboard/finance/sales", permission: "sales.analytics.read" },
       { title: "Stock-to-Cash", href: "/dashboard/finance/stock-to-cash", permission: "finance.read" },
@@ -195,11 +211,13 @@ export const sidebarLinks: ISidebarLink[] = [
       { title: "Contracts", href: "/dashboard/payroll/contracts", permission: "payroll.contracts.read" },
       { title: "Declarations", href: "/dashboard/payroll/declarations", permission: "payroll.command.read" },
       { title: "Employees", href: "/dashboard/payroll/employees", permission: "payroll.employees.read" },
+      { title: "My HR", href: "/dashboard/people/me", permission: PERMISSIONS.HRIS_SELF_SERVICE_READ },
       { title: "My Payslips", href: "/dashboard/payroll/payslips", permission: "payroll.payslips.self.read" },
       { title: "Payments", href: "/dashboard/payroll/payments", permission: "payroll.command.read" },
       { title: "Register", href: "/dashboard/payroll/register", permission: "payroll.reports.read" },
       { title: "Runs", href: "/dashboard/payroll/runs", permission: "payroll.command.read" },
       { title: "Setup", href: "/dashboard/payroll/setup", permission: "payroll.runs.calculate" },
+      { title: "Workforce", href: "/dashboard/people/team", permission: PERMISSIONS.HRIS_PEOPLE_READ },
     ],
   },
   {
@@ -207,7 +225,7 @@ export const sidebarLinks: ISidebarLink[] = [
     icon: Package2,
     dropdown: true,
     permission: PERMISSIONS.READ_ITEMS,
-    description: "Items, stock movements, transfers, and units",
+    description: "Items, loss control, stock movements, transfers, and units",
     moduleSlug: "inventory",
     section: "operations",
     priority: "primary",
@@ -216,11 +234,23 @@ export const sidebarLinks: ISidebarLink[] = [
       { title: "Brands", href: "/dashboard/inventory/brands", permission: PERMISSIONS.BRANDS_READ },
       { title: "Categories", href: "/dashboard/inventory/categories", permission: PERMISSIONS.READ_CATEGORIES },
       { title: "Items", href: "/dashboard/inventory/items", permission: PERMISSIONS.READ_ITEMS },
+      { title: "Loss Control", href: "/dashboard/inventory/loss-control", permission: "inventory.levels.read" },
       { title: "Movements", href: "/dashboard/inventory/movements", permission: PERMISSIONS.STOCK_READ },
       { title: "New Item", href: "/dashboard/inventory/items/create", permission: PERMISSIONS.CREATE_ITEMS },
       { title: "Transfers", href: "/dashboard/inventory/transfers", permission: PERMISSIONS.TRANSFERS_READ },
       { title: "Units", href: "/dashboard/inventory/units", permission: PERMISSIONS.UNITS_READ },
     ],
+  },
+  {
+    title: "People",
+    href: "/dashboard/people",
+    icon: UsersRound,
+    dropdown: false,
+    permission: PERMISSIONS.HRIS_PEOPLE_READ,
+    description: "HRIS people core",
+    moduleSlug: "payroll",
+    section: "people",
+    priority: "primary",
   },
   {
     title: "Purchases",
@@ -233,10 +263,23 @@ export const sidebarLinks: ISidebarLink[] = [
     priority: "primary",
     dropdownMenu: [
       { title: "Overview", href: "/dashboard/purchases", permission: PERMISSIONS.READ_PURCHASE_ORDERS },
+      {
+        title: "AP History",
+        href: "/dashboard/purchases/payables/history",
+        permission: "finance.payables.read",
+        permissions: [
+          "purchasing.ap.invoice.view",
+          "finance.payables.read",
+          "purchases.suppliers.read",
+        ],
+        permissionMode: "any",
+        description: "Supplier invoices, payments, payable movements, and AP proof",
+      },
       { title: "AP Workbench", href: "/dashboard/purchases/payables", permission: "finance.payables.read" },
       { title: "New Purchase Order", href: "/dashboard/purchase-orders/new", permission: PERMISSIONS.CREATE_PURCHASE_ORDERS },
       { title: "New Supplier", href: "/dashboard/purchases/suppliers/create", permission: PERMISSIONS.CREATE_SUPPLIERS },
       { title: "Purchase Orders", href: "/dashboard/purchase-orders", permission: PERMISSIONS.READ_PURCHASE_ORDERS },
+      { title: "Purchase Analytics", href: "/dashboard/purchase-orders/analytics", permission: PERMISSIONS.READ_PURCHASE_ORDERS },
       { title: "Suppliers", href: "/dashboard/purchases/suppliers", permission: PERMISSIONS.READ_SUPPLIERS },
     ],
   },
@@ -269,6 +312,15 @@ export const sidebarLinks: ISidebarLink[] = [
       { title: "Appearance", href: "/dashboard/settings/appearance", permission: PERMISSIONS.DASHBOARD_READ },
       { title: "Change Password", href: "/dashboard/change-password", permission: PERMISSIONS.PASSWORD_READ },
       { title: "Company", href: "/dashboard/settings/company", permission: PERMISSIONS.COMPANY_READ },
+      {
+        title: "Data onboarding",
+        href: MASTER_DATA_ONBOARDING_ROUTE,
+        permission: MASTER_DATA_ONBOARDING_READ_PERMISSIONS[0],
+        permissions: MASTER_DATA_ONBOARDING_READ_PERMISSIONS,
+        permissionMode: "any",
+        moduleSlug: MASTER_DATA_ONBOARDING_MODULE_SLUG,
+        description: "Governed customer, supplier, and item imports",
+      },
       { title: "Locations", href: "/dashboard/settings/locations", permission: PERMISSIONS.READ_LOCATIONS },
       { title: "Modules", href: "/dashboard/settings/modules", permission: PERMISSIONS.MANAGE_SYSTEM_SETTINGS },
       { title: "Notifications", href: "/dashboard/settings/notifications", permission: "communication.notifications.read" },
@@ -288,13 +340,28 @@ export function filterSidebarLinksByPermission(
   return links
     .map((link) => ({
       ...link,
-      dropdownMenu: link.dropdownMenu?.filter((item) => hasPermission(item.permission)),
+      dropdownMenu: link.dropdownMenu?.filter((item) =>
+        hasSidebarPermission(item, hasPermission),
+      ),
     }))
     .filter(
       (link) =>
-        hasPermission(link.permission) ||
+        hasSidebarPermission(link, hasPermission) ||
         Boolean(link.dropdown && link.dropdownMenu?.length),
     )
+}
+
+function hasSidebarPermission(
+  item: Pick<ISidebarLink, "permission" | "permissions" | "permissionMode">,
+  hasPermission: (permission: string) => boolean,
+) {
+  const permissions = item.permissions?.length
+    ? item.permissions
+    : [item.permission]
+
+  return item.permissionMode === "all"
+    ? permissions.every(hasPermission)
+    : permissions.some(hasPermission)
 }
 
 export function searchSidebarLinks(links: ISidebarLink[], searchTerm: string): ISidebarLink[] {

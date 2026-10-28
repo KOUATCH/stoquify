@@ -479,6 +479,7 @@ async function postAdjustmentPlan(
   adjustment: StockAdjustmentWithLines,
   plan: AdjustmentPlan,
   approvedById: string,
+  effectiveAt: Date,
   now: Date,
 ) {
   if (plan.level) {
@@ -554,6 +555,9 @@ async function postAdjustmentPlan(
       referenceId: adjustment.id,
       referenceNumber: adjustment.adjustmentNumber,
       notes: adjustment.reason,
+      effectiveAt,
+      recordedAt: now,
+      timeProvenance: "EXPLICIT_SOURCE_TIME",
     },
   })
 
@@ -1184,7 +1188,7 @@ export async function postStockAdjustment(
     const movementTransactionIds: string[] = []
 
     for (const plan of plans) {
-      movementTransactionIds.push(await postAdjustmentPlan(tx, adjustment, plan, parsed.approvedById, now))
+      movementTransactionIds.push(await postAdjustmentPlan(tx, adjustment, plan, parsed.approvedById, occurredAt, now))
     }
 
     const ledger = await postAdjustmentLedgerOrBlock(tx, {

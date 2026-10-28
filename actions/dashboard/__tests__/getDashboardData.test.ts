@@ -3,12 +3,17 @@ jest.mock('@/lib/security/rbac', () => ({
   requirePermission: jest.fn(),
 }))
 
+jest.mock('@/services/modules/module-entitlement.service', () => ({
+  observeModuleAccess: jest.fn(),
+}))
+
 jest.mock('@/services/dashboard/dashboard-read-model.service', () => ({
   getAllDashboardData: jest.fn(),
   getDashboardMetrics: jest.fn(),
 }))
 
 import { assertCanUseOrganization, requirePermission } from '@/lib/security/rbac'
+import { observeModuleAccess } from '@/services/modules/module-entitlement.service'
 import {
   getAllDashboardData as getAllDashboardDataFromService,
   getDashboardMetrics as getDashboardMetricsFromService,
@@ -17,6 +22,7 @@ import { getAllDashboardData, getDashboardMetrics } from '../getDashboardData'
 
 const mockRequirePermission = requirePermission as jest.Mock
 const mockAssertCanUseOrganization = assertCanUseOrganization as jest.Mock
+const mockObserveModuleAccess = observeModuleAccess as jest.Mock
 const mockGetAllDashboardDataFromService = getAllDashboardDataFromService as jest.Mock
 const mockGetDashboardMetricsFromService = getDashboardMetricsFromService as jest.Mock
 
@@ -68,6 +74,7 @@ describe('dashboard data actions', () => {
     jest.clearAllMocks()
     mockRequirePermission.mockResolvedValue(rbacContext)
     mockAssertCanUseOrganization.mockResolvedValue(true)
+    mockObserveModuleAccess.mockResolvedValue({ allowed: true, wouldBlock: false })
     mockGetAllDashboardDataFromService.mockResolvedValue(dashboardData)
     mockGetDashboardMetricsFromService.mockResolvedValue({ revenue: { current: 0 } })
   })
@@ -81,6 +88,19 @@ describe('dashboard data actions', () => {
       resourceId: 'org-session',
     })
     expect(mockAssertCanUseOrganization).toHaveBeenCalledWith(rbacContext, 'org-session')
+    expect(mockObserveModuleAccess).toHaveBeenCalledWith({
+      organizationId: 'org-session',
+      userId: 'user-1',
+      actorPermissions: ['dashboard.read'],
+      moduleSlug: 'dashboard',
+      surfaceType: 'action',
+      surface: 'actions/dashboard/getDashboardData.ts',
+      accessIntent: 'read',
+      mode: 'observe',
+    })
+    expect(mockObserveModuleAccess.mock.invocationCallOrder[0]).toBeLessThan(
+      mockGetAllDashboardDataFromService.mock.invocationCallOrder[0],
+    )
     expect(mockGetAllDashboardDataFromService).toHaveBeenCalledWith({
       context: {
         organizationId: 'org-session',
@@ -100,6 +120,19 @@ describe('dashboard data actions', () => {
       resourceId: undefined,
     })
     expect(mockAssertCanUseOrganization).toHaveBeenCalledWith(rbacContext, 'org-session')
+    expect(mockObserveModuleAccess).toHaveBeenCalledWith({
+      organizationId: 'org-session',
+      userId: 'user-1',
+      actorPermissions: ['dashboard.read'],
+      moduleSlug: 'dashboard',
+      surfaceType: 'action',
+      surface: 'actions/dashboard/getDashboardData.ts',
+      accessIntent: 'read',
+      mode: 'observe',
+    })
+    expect(mockObserveModuleAccess.mock.invocationCallOrder[0]).toBeLessThan(
+      mockGetAllDashboardDataFromService.mock.invocationCallOrder[0],
+    )
     expect(mockGetAllDashboardDataFromService).toHaveBeenCalledWith({
       context: expect.objectContaining({ organizationId: 'org-session' }),
       filters: {},
@@ -110,6 +143,15 @@ describe('dashboard data actions', () => {
     mockAssertCanUseOrganization.mockRejectedValue(new Error('Forbidden'))
 
     await expect(getAllDashboardData('org-attacker')).rejects.toThrow('Forbidden')
+
+    expect(mockObserveModuleAccess).not.toHaveBeenCalled()
+    expect(mockGetAllDashboardDataFromService).not.toHaveBeenCalled()
+  })
+
+  it('does not call the dashboard service when module observation fails', async () => {
+    mockObserveModuleAccess.mockRejectedValueOnce(new Error('Module unavailable'))
+
+    await expect(getAllDashboardData('org-session')).rejects.toThrow('Module unavailable')
 
     expect(mockGetAllDashboardDataFromService).not.toHaveBeenCalled()
   })
@@ -122,6 +164,15 @@ describe('dashboard data actions', () => {
       resource: 'Dashboard',
       resourceId: 'org-session',
     })
+    expect(mockObserveModuleAccess).toHaveBeenCalledWith(expect.objectContaining({
+      moduleSlug: 'dashboard',
+      organizationId: 'org-session',
+      accessIntent: 'read',
+      mode: 'observe',
+    }))
+    expect(mockObserveModuleAccess.mock.invocationCallOrder[0]).toBeLessThan(
+      mockGetDashboardMetricsFromService.mock.invocationCallOrder[0],
+    )
     expect(mockGetDashboardMetricsFromService).toHaveBeenCalledWith({
       context: {
         organizationId: 'org-session',

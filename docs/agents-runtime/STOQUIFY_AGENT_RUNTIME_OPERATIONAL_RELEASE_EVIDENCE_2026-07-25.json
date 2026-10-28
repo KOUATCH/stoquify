@@ -1,0 +1,224 @@
+{
+  "schemaVersion": 1,
+  "registerId": "stoquify-agent-runtime-operational-release-2026-07-25",
+  "declaredStatus": "BLOCKED",
+  "release": {
+    "environment": "INTERNAL_PILOT",
+    "packageId": null,
+    "releaseVersion": null,
+    "packageState": "PILOT_CERTIFIED",
+    "commitSha": null,
+    "artifactDigest": null,
+    "artifactReference": null,
+    "deploymentReference": null,
+    "packageCertificationReference": null,
+    "packageCertificationHash": null,
+    "manifestHash": null,
+    "evidenceBundleHash": null,
+    "browserReportHash": null,
+    "pilotAllowlistReference": null,
+    "roleAllowlistReference": null,
+    "ciEvidenceSha256": null,
+    "activatedAt": null
+  },
+  "ci": {
+    "status": "PENDING",
+    "sourceTreeClean": false,
+    "commitSha": null,
+    "branchReference": null,
+    "runReference": null,
+    "artifactDigest": null,
+    "artifactReference": null,
+    "browserReportHash": null,
+    "completedAt": null,
+    "sourceSystemReference": null,
+    "attestationReference": null,
+    "attestationDigest": null,
+    "attestedAt": null,
+    "evidenceSha256": null,
+    "invalidAuthEvidenceReference": null
+  },
+  "governance": {
+    "environment": "INTERNAL_PILOT",
+    "sourceSystemReference": null,
+    "attestationReference": null,
+    "attestationDigest": null,
+    "attestedAt": null,
+    "evidenceSha256": null,
+    "invalidAuthEvidenceReference": null,
+    "packageId": null,
+    "releaseVersion": null,
+    "commitSha": null,
+    "artifactDigest": null,
+    "manifestHash": null,
+    "evidenceBundleHash": null
+  },
+  "approvals": {
+    "product": {
+      "decision": "PENDING",
+      "actorDirectoryId": null,
+      "approvalReference": null,
+      "decidedAt": null,
+      "expiresAt": null,
+      "manifestHash": null,
+      "artifactDigest": null,
+      "evidenceBundleHash": null
+    },
+    "security": {
+      "decision": "PENDING",
+      "actorDirectoryId": null,
+      "approvalReference": null,
+      "decidedAt": null,
+      "expiresAt": null,
+      "manifestHash": null,
+      "artifactDigest": null,
+      "evidenceBundleHash": null
+    }
+  },
+  "owners": [
+    {
+      "role": "ROLLOUT",
+      "primaryDirectoryId": null,
+      "backupDirectoryId": null,
+      "acceptedRunbookVersion": null,
+      "acceptedAt": null,
+      "coverageStartsAt": null,
+      "coverageEndsAt": null,
+      "escalationReference": null
+    },
+    {
+      "role": "ROLLBACK",
+      "primaryDirectoryId": null,
+      "backupDirectoryId": null,
+      "acceptedRunbookVersion": null,
+      "acceptedAt": null,
+      "coverageStartsAt": null,
+      "coverageEndsAt": null,
+      "escalationReference": null
+    },
+    {
+      "role": "SUPPORT",
+      "primaryDirectoryId": null,
+      "backupDirectoryId": null,
+      "acceptedRunbookVersion": null,
+      "acceptedAt": null,
+      "coverageStartsAt": null,
+      "coverageEndsAt": null,
+      "escalationReference": null
+    },
+    {
+      "role": "PILOT",
+      "primaryDirectoryId": null,
+      "backupDirectoryId": null,
+      "acceptedRunbookVersion": null,
+      "acceptedAt": null,
+      "coverageStartsAt": null,
+      "coverageEndsAt": null,
+      "escalationReference": null
+    },
+    {
+      "role": "SECURITY_INCIDENT",
+      "primaryDirectoryId": null,
+      "backupDirectoryId": null,
+      "acceptedRunbookVersion": null,
+      "acceptedAt": null,
+      "coverageStartsAt": null,
+      "coverageEndsAt": null,
+      "escalationReference": null
+    },
+    {
+      "role": "ON_CALL_BACKUP",
+      "primaryDirectoryId": null,
+      "backupDirectoryId": null,
+      "acceptedRunbookVersion": null,
+      "acceptedAt": null,
+      "coverageStartsAt": null,
+      "coverageEndsAt": null,
+      "escalationReference": null
+    }
+  ],
+  "scheduler": {
+    "provider": null,
+    "scheduleReference": null,
+    "workloadReference": null,
+    "authType": null,
+    "managedCredentialReference": null,
+    "intervalMinutes": 5,
+    "singleConcurrency": false,
+    "leaseSafe": true,
+    "concurrencyEvidenceReference": null,
+    "timeoutMs": 120000,
+    "deployedCommitSha": null,
+    "deployedArtifactDigest": null,
+    "deployedAt": null,
+    "deploymentSourceSystemReference": null,
+    "deploymentAttestationReference": null,
+    "deploymentAttestationDigest": null,
+    "deploymentAttestedAt": null,
+    "deploymentEvidenceSha256": null,
+    "deploymentAuthorityInvalidAuthEvidenceReference": null,
+    "readinessStatus": "PENDING",
+    "readinessCheckedAt": null,
+    "readinessEvidenceReference": null,
+    "readinessEvidenceSha256": null,
+    "heartbeatFreshUntil": null,
+    "invalidAuthEvidenceReference": null,
+    "missingConfigEvidenceReference": null,
+    "failureAlertReference": null,
+    "windows": [
+      {
+        "runId": null,
+        "scheduledAt": null,
+        "completedAt": null,
+        "status": "PENDING",
+        "evidenceReference": null
+      },
+      {
+        "runId": null,
+        "scheduledAt": null,
+        "completedAt": null,
+        "status": "PENDING",
+        "evidenceReference": null
+      },
+      {
+        "runId": null,
+        "scheduledAt": null,
+        "completedAt": null,
+        "status": "PENDING",
+        "evidenceReference": null
+      }
+    ]
+  },
+  "alerting": {
+    "transportStatus": "PENDING",
+    "evidenceSha256": null,
+    "transportReference": null,
+    "managedSecretReference": null,
+    "httpsDeliveryReference": null,
+    "externalRequestReference": null,
+    "deliveredAt": null,
+    "acknowledgementSloMinutes": 15,
+    "acknowledgedAt": null,
+    "acknowledgedByDirectoryId": null,
+    "acknowledgementReference": null,
+    "retryEvidenceReference": null,
+    "deadLetterEvidenceReference": null,
+    "recoveryEvidenceReference": null,
+    "escalationTestedAt": null,
+    "escalatedToDirectoryId": null,
+    "escalationEvidenceReference": null,
+    "secretRotationEvidenceReference": null
+  },
+  "credentialRotation": {
+    "registerReference": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_CREDENTIAL_ROTATION_REGISTER_2026-07-25.json",
+    "registerSha256": null,
+    "securityApprovalReference": null,
+    "evidenceSha256": null,
+    "attestationReference": null
+  },
+  "activation": {
+    "requested": false,
+    "authorized": false,
+    "activatedAt": null
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:stoquify:top12-evaluation-run/v1",
+  "title": "Stoquify Top 12 Evaluation Run v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "runId",
+    "generatedAt",
+    "status",
+    "behavioralExecution",
+    "productionActivationAuthorized",
+    "source",
+    "validation",
+    "prioritization",
+    "results"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "runId": { "type": "string", "pattern": "^top12-eval-[a-f0-9]{16}$" },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "status": {
+      "type": "string",
+      "enum": ["PRIORITIZATION_READY_NOT_EXECUTED", "CATALOG_INVALID"]
+    },
+    "behavioralExecution": { "const": false },
+    "productionActivationAuthorized": { "const": false },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["catalogPath", "catalogHash", "schemaVersion", "executionStatus", "totalCases"],
+      "properties": {
+        "catalogPath": { "type": "string" },
+        "catalogHash": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+        "schemaVersion": { "type": ["string", "null"] },
+        "executionStatus": { "type": ["string", "null"] },
+        "totalCases": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["valid", "errors", "warnings", "caseCount"],
+      "properties": {
+        "valid": { "type": "boolean" },
+        "errors": { "type": "array", "items": { "type": "string" } },
+        "warnings": { "type": "array", "items": { "type": "string" } },
+        "caseCount": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "prioritization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requestedLimit", "selectedCaseCount", "policy", "summary", "selectedCases"],
+      "properties": {
+        "requestedLimit": { "type": "integer", "minimum": 1 },
+        "selectedCaseCount": { "type": "integer", "minimum": 0 },
+        "policy": { "const": "deterministic-category-and-risk-tag-score-v1" },
+        "summary": { "type": "object" },
+        "selectedCases": { "type": "array", "items": { "type": "object" } }
+      }
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema_version",
+          "case_id",
+          "capability_id",
+          "capability_version",
+          "status",
+          "evaluated_at",
+          "evidence_refs",
+          "findings"
+        ],
+        "properties": {
+          "schema_version": { "const": "1.0.0" },
+          "case_id": { "type": "string" },
+          "capability_id": { "type": "string" },
+          "capability_version": { "type": "string" },
+          "status": { "const": "NOT_TESTED" },
+          "evaluated_at": { "type": "string", "format": "date-time" },
+          "evidence_refs": { "type": "array", "items": { "type": "string" } },
+          "findings": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    }
+  }
+}

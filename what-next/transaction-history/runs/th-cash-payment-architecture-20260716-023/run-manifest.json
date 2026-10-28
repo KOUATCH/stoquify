@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "1.0",
+  "runId": "th-cash-payment-architecture-20260716-023",
+  "traceId": "f7a917bb-7208-4532-8a08-b0c6f9d100e1",
+  "mode": "audit",
+  "sliceId": "cash-payment",
+  "contractVersion": "2026-07-14",
+  "proposal": {
+    "path": "docs/new ideas/STOQUIFY_TRANSACTION_HISTORY_ANALYTICS_AND_SECURITY_PROPOSAL_2026-07-14.md",
+    "sha256": "sha256:0628f08178fe0441fe22ccbd1a6b429c2bb07b2ea5d278e6dcb799ab117c6979"
+  },
+  "baseCommit": "8a406e93b0e798ed6f476ca5d81df37a2aaa38be",
+  "runtimeArtifactRoot": "what-next/transaction-history/runs/th-cash-payment-architecture-20260716-023/",
+  "scope": {
+    "lanes": [
+      "cash",
+      "payment"
+    ],
+    "includePaths": [
+      "app/[locale]/(dashboard)/dashboard/finance/cash-drawer/page.tsx",
+      "app/[locale]/(dashboard)/dashboard/finance/payments/page.tsx",
+      "app/[locale]/(dashboard)/dashboard/finance/reconciliation/page.tsx",
+      "app/[locale]/(dashboard)/dashboard/pos/page.tsx",
+      "actions/pos/drawer-dashboard.actions.ts",
+      "actions/payments/reconciliation.actions.ts",
+      "actions/payments/reconciliation-workbench.actions.ts",
+      "components/pos/CashDrawerManagementDashboard.tsx",
+      "components/finance/PaymentReconciliationWorkbench.tsx",
+      "components/finance/FinanceSpecializedLedgerSurfaces.tsx",
+      "hooks/posHooks/useDrawerDashboard.ts",
+      "hooks/payments/usePaymentReconciliationWorkbench.ts",
+      "hooks/payments/usePaymentReconciliationDashboard.ts",
+      "services/pos/drawer-dashboard.service.ts",
+      "services/pos/pos.service.ts",
+      "services/payments/payment-reconciliation-workbench.service.ts",
+      "services/reconciliation/payment-reconciliation-dashboard.service.ts",
+      "services/reconciliation/payment-reconciliation-run.service.ts",
+      "services/reconciliation/payment-suspense-workflow.service.ts",
+      "services/reconciliation/payment-reconciliation-certification.service.ts",
+      "prisma/schema.prisma",
+      "config/sidebar.ts",
+      "lib/security/rbac-permissions.ts"
+    ],
+    "excludePaths": [
+      "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/isolated-workspace/**",
+      "node_modules/**",
+      ".next/**"
+    ]
+  },
+  "stageAllowlists": {
+    "01": [
+      "what-next/transaction-history/runs/th-cash-payment-architecture-20260716-023/slices/cash-payment/01-architecture-gate.md",
+      "what-next/transaction-history/runs/th-cash-payment-architecture-20260716-023/slices/cash-payment/01-architecture-gate.json"
+    ],
+    "02": [
+      "what-next/transaction-history/runs/th-cash-payment-architecture-20260716-023/slices/cash-payment/02-security-proof-gate.md",
+      "what-next/transaction-history/runs/th-cash-payment-architecture-20260716-023/slices/cash-payment/02-security-proof-gate.json"
+    ],
+    "03": [
+      "what-next/transaction-history/runs/th-cash-payment-architecture-20260716-023/slices/cash-payment/03-accounting-control-gate.md",
+      "what-next/transaction-history/runs/th-cash-payment-architecture-20260716-023/slices/cash-payment/03-accounting-control-gate.json"
+    ],
+    "04": [
+      "what-next/transaction-history/runs/th-cash-payment-architecture-20260716-023/slices/cash-payment/04-read-model-optimizer.md"
+    ],
+    "05": [
+      "what-next/transaction-history/runs/th-cash-payment-architecture-20260716-023/slices/cash-payment/05-workbench-ux-contract.md"
+    ],
+    "06": [
+      "what-next/transaction-history/runs/th-cash-payment-architecture-20260716-023/slices/cash-payment/06-frontend-delivery.md"
+    ],
+    "07": [
+      "what-next/transaction-history/runs/th-cash-payment-architecture-20260716-023/slices/cash-payment/07-release-review.md"
+    ]
+  },
+  "orchestratorPolicy": {
+    "productCodeEdits": false,
+    "installSkills": false,
+    "deployMigrations": false
+  },
+  "gates": {
+    "foundationInventory": {
+      "status": "PASS",
+      "evidence": [
+        "what-next/transaction-history/runs/th-inventory-history-release-policy-isolated-20260716-021/slices/foundation-inventory/07-release-review.json"
+      ]
+    },
+    "arAccountingPrerequisites": {
+      "status": "NA",
+      "evidence": []
+    }
+  },
+  "createdAt": "2026-07-16T21:12:53.9536283Z"
+}

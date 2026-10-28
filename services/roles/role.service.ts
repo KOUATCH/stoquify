@@ -52,24 +52,7 @@ export async function resolveRoleOrganization(
     return ctx.orgId
   }
 
-  if (!ctx.isSuperUser) {
-    throw new ForbiddenError("Forbidden")
-  }
-
-  const organization = await db.organization.findFirst({
-    where: {
-      id: requestedOrgId,
-      isActive: true,
-      deletedAt: null,
-    },
-    select: { id: true },
-  })
-
-  if (!organization) {
-    throw new NotFoundError("Organization not found or inactive")
-  }
-
-  return organization.id
+  throw new ForbiddenError("Forbidden")
 }
 
 export async function listOrganizationRoles(input: {

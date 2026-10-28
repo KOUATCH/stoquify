@@ -99,4 +99,25 @@ describe("Kontava redaction policy service", () => {
       policy: "kontava-fiscal-authority-payload-redaction-policy",
     })
   })
+  it("redacts payroll HR document evidence hashes from source-data readers without document authority", () => {
+    const readOnly = evaluateRedaction({
+      field: "employee.evidence.latestDocumentHash",
+      category: "payroll_document_evidence",
+      actorPermissions: ["payroll.employees.read"],
+    })
+    const documentOwner = evaluateRedaction({
+      field: "employee.evidence.latestDocumentHash",
+      category: "payroll_document_evidence",
+      actorPermissions: ["payroll.employees.manage"],
+    })
+
+    expect(readOnly).toMatchObject({
+      allowed: false,
+      mode: "redact",
+      reasonCode: "MISSING_PERMISSION",
+      replacement: "[REDACTED:HR_DOCUMENT]",
+      policy: "kontava-payroll-document-evidence-redaction-policy",
+    })
+    expect(documentOwner.allowed).toBe(true)
+  })
 })

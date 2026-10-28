@@ -1,0 +1,61 @@
+{
+  "version": "GOV-01-2026-07-20",
+  "objective": "Coordinate the gated POS 9+ program without product implementation or release approval.",
+  "verdict": "BLOCKED",
+  "releasePosture": "NO-GO for POS 9+ and production offline selling",
+  "candidate": {
+    "id": "632e3fd3-dirty-26ec69547311",
+    "repository": "E:/ohada saas/Focused projects/stoquify",
+    "branch": "codex/service-boundary-burndown",
+    "commitSha": "632e3fd3c3328d4b67502cf7be2749f811f9b8f5",
+    "treeSha": "e678716f480869796ecfaebec4749f92aa69ff13",
+    "dirty": true,
+    "changedPathsAtBaseline": 411,
+    "statusCodes": {
+      " M": 157,
+      "??": 254
+    },
+    "dirtyWorktreeStatusSha256": "26ec69547311b64a81743910b431b31fc6374be3d172cbb77e786a5553be81cd",
+    "capturedBeforeGov01Artifacts": true,
+    "buildId": null,
+    "schemaDigest": null,
+    "configurationFingerprint": null,
+    "certifiable": false,
+    "limitations": [
+      "Dirty mutable worktree",
+      "No build identity",
+      "No schema/migration digest",
+      "No feature-flag/environment/provider/country/browser/hardware fingerprint"
+    ]
+  },
+  "skills": {
+    "installed": 19,
+    "quickValidate": "19/19 PASS",
+    "suiteValidate": "19/19 PASS"
+  },
+  "gov01": {
+    "status": "BLOCKED",
+    "artifactsCreated": true,
+    "acceptance": {
+      "oneAccountableOwnerPerPackage": true,
+      "dagCycleFree": true,
+      "orphanFree": true,
+      "evidenceRegistryCreated": true,
+      "candidateImmutable": false,
+      "decisionsApproved": false
+    }
+  },
+  "decisions": {
+    "approved": 0,
+    "required": 8
+  },
+  "holds": {
+    "active": "HP-1",
+    "future": [
+      "HP-2",
+      "HP-3"
+    ]
+  },
+  "nextPermittedAction": "Obtain human approval records for D-01, D-02, and D-07 plus versioned G1/G2/G5 design contracts; no specialist product implementation is dispatchable.",
+  "productMutationAuthorized": false
+}

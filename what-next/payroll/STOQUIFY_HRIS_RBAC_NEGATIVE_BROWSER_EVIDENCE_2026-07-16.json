@@ -1,0 +1,53 @@
+{
+  "checkedAt": "2026-08-01T09:58:48.777Z",
+  "auth": {
+    "role": "PAYROLL_E2E_REQUESTER",
+    "organizationId": "org_payroll_e2e_local",
+    "expectedHrisAccess": "DENIED"
+  },
+  "routes": [
+    {
+      "id": "people-directory-denied",
+      "path": "/en/dashboard/people"
+    },
+    {
+      "id": "people-profile-denied",
+      "path": "/en/dashboard/people/payroll_e2e_browser_2026_06_employee"
+    },
+    {
+      "id": "people-self-service-denied",
+      "path": "/en/dashboard/people/me"
+    },
+    {
+      "id": "people-team-denied",
+      "path": "/en/dashboard/people/team"
+    },
+    {
+      "id": "people-approvals-denied",
+      "path": "/en/dashboard/people/approvals"
+    },
+    {
+      "id": "people-history-denied",
+      "path": "/en/dashboard/people/history"
+    }
+  ],
+  "results": [
+    {
+      "routeId": "people-directory-denied-mobile",
+      "path": "/en/dashboard/people",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/people",
+      "permissionState": "DENIED",
+      "viewport": "mobile",
+      "seriousViolations": [],
+      "screenshot": "what-next/payroll/screenshots/hris-browser-accessibility-rbac-release-2026-07-16/people-directory-denied-mobile.png",
+      "layout": {
+        "viewportWidth": 390,
+        "documentWidth": 390,
+        "bodyWidth": 390,
+        "hasDocumentOverflow": false,
+        "overlappingElements": [],
+        "clippedElements": []
+      }
+    }
+  ]
+}

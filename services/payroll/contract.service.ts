@@ -39,6 +39,7 @@ type PayrollContractRecord = Prisma.PayrollContractGetPayload<{
 
 const READ_PERMISSIONS = ["payroll.contracts.read"]
 const MANAGE_PERMISSIONS = ["payroll.contracts.manage"]
+const HRIS_MANAGE_PERMISSIONS = ["hris.people.manage"]
 
 const dateInputSchema = z.union([z.string().trim().min(1), z.date()])
 const optionalDateInputSchema = z.union([z.string().trim().min(1), z.date(), z.null()]).optional()
@@ -119,11 +120,47 @@ export const terminatePayrollContractInputSchema = z.object({
   idempotencyKey: z.string().trim().min(1).max(200).optional(),
 })
 
+const requestPayrollContractActivationFromHrisInputSchema = z.object({
+  organizationId: z.string().trim().min(1),
+  actorId: z.string().trim().min(1),
+  actorPermissions: z.array(z.string()).optional().default([]),
+  employeeId: z.string().trim().min(1),
+  contractId: z.string().trim().min(1),
+  reasonHash: z.string().trim().min(8).max(256),
+  requestEvidenceHash: z.string().trim().min(8).max(256),
+  idempotencyKey: z.string().trim().min(1).max(200).optional(),
+})
+
+const approvePayrollContractActivationFromHrisInputSchema = z.object({
+  organizationId: z.string().trim().min(1),
+  actorId: z.string().trim().min(1),
+  actorPermissions: z.array(z.string()).optional().default([]),
+  employeeId: z.string().trim().min(1),
+  contractId: z.string().trim().min(1),
+  decisionReasonHash: z.string().trim().min(8).max(256),
+  approvalEvidenceHash: z.string().trim().min(8).max(256),
+  idempotencyKey: z.string().trim().min(1).max(200).optional(),
+})
+
+const hrisContractActivationPendingSchema = z.object({
+  requestId: z.string().trim().min(1),
+  requestedById: z.string().trim().min(1),
+  requestedAt: z.string().datetime(),
+  reasonHash: z.string().trim().min(8),
+  requestEvidenceHash: z.string().trim().min(8),
+})
+
 export type EmployeeContractWorkflowInput = z.input<typeof employeeContractWorkflowInputSchema>
 export type ResolvePayrollEmployeeForUserInput = z.input<typeof resolvePayrollEmployeeForUserInputSchema>
 export type CreatePayrollContractInput = z.input<typeof createPayrollContractInputSchema>
 export type UpdatePayrollContractInput = z.input<typeof updatePayrollContractInputSchema>
 export type TerminatePayrollContractInput = z.input<typeof terminatePayrollContractInputSchema>
+export type RequestPayrollContractActivationFromHrisInput = z.input<
+  typeof requestPayrollContractActivationFromHrisInputSchema
+>
+export type ApprovePayrollContractActivationFromHrisInput = z.input<
+  typeof approvePayrollContractActivationFromHrisInputSchema
+>
 
 export type PayrollContractRedaction = {
   field: string
@@ -147,6 +184,7 @@ export type PayrollContractWorkflowContract = {
   convention: string | null
   signedDocumentHashPresent: boolean
   activatedBusinessEventId: string | null
+  hrisApprovalStatus: "NOT_REQUESTED" | "REQUESTED" | "APPROVED" | "LEGACY_ACTIVE"
   redactions: PayrollContractRedaction[]
 }
 
@@ -320,6 +358,9 @@ function contractAuditSnapshot(contract: PayrollContractRecord | PayrollContract
   const signedDocumentHashPresent = "signedDocumentHashPresent" in contract
     ? contract.signedDocumentHashPresent
     : Boolean(contract.signedDocumentHash)
+  const hrisApprovalStatus = "hrisApprovalStatus" in contract
+    ? contract.hrisApprovalStatus
+    : hrisContractApprovalStatus(contract.metadata, contract.status)
 
   return {
     id: contract.id,
@@ -340,6 +381,7 @@ function contractAuditSnapshot(contract: PayrollContractRecord | PayrollContract
     convention: contract.convention,
     signedDocumentHashPresent,
     activatedBusinessEventId: contract.activatedBusinessEventId,
+    hrisApprovalStatus,
   }
 }
 
@@ -353,6 +395,54 @@ function buildContractMetadata(
     workflowSource: "payroll.employee_contract_workflow",
     lastWorkflowUpdatedAt: new Date().toISOString(),
   })
+}
+
+export function hrisContractActivationPending(metadata: Prisma.JsonValue | null | undefined) {
+  const root = metadataRecord(metadata)
+  const approval = metadataRecord(root.hrisContractApproval as Prisma.JsonValue | undefined)
+  const parsed = hrisContractActivationPendingSchema.safeParse(approval.pending)
+  return parsed.success ? parsed.data : null
+}
+
+function hrisContractApprovalStatus(
+  metadata: Prisma.JsonValue | null | undefined,
+  status: PayrollContractStatus,
+): PayrollContractWorkflowContract["hrisApprovalStatus"] {
+  if (hrisContractActivationPending(metadata)) return "REQUESTED"
+  const root = metadataRecord(metadata)
+  const approval = metadataRecord(root.hrisContractApproval as Prisma.JsonValue | undefined)
+  const latest = metadataRecord(approval.latest as Prisma.JsonValue | undefined)
+  if (latest.status === "APPROVED") return "APPROVED"
+  return status === PayrollContractStatus.ACTIVE ? "LEGACY_ACTIVE" : "NOT_REQUESTED"
+}
+
+function withHrisContractApproval(
+  metadata: Prisma.JsonValue | null | undefined,
+  pending: z.output<typeof hrisContractActivationPendingSchema> | null,
+  latest: Record<string, unknown>,
+) {
+  return buildContractMetadata(metadata, {
+    hrisContractApproval: {
+      version: 1,
+      pending,
+      latest,
+      updatedAt: new Date().toISOString(),
+    },
+  })
+}
+
+function hasApprovedHrisDocumentEvidence(
+  metadata: Prisma.JsonValue | null | undefined,
+  signedDocumentHash: string | null,
+) {
+  if (!signedDocumentHash) return false
+  const root = metadataRecord(metadata)
+  const evidence = metadataRecord(root.hrisDocumentEvidence as Prisma.JsonValue | undefined)
+  const current = metadataRecord(evidence.current as Prisma.JsonValue | undefined)
+  return current.status === "APPROVED" &&
+    current.artifactHash === signedDocumentHash &&
+    typeof current.approvalBusinessEventId === "string" &&
+    current.approvalBusinessEventId.length > 0
 }
 
 function statusSupportsPayrollEligibility(status: PayrollContractStatus) {
@@ -418,6 +508,7 @@ function mapContractForWorkflow(
     convention: contract.convention,
     signedDocumentHashPresent: Boolean(contract.signedDocumentHash),
     activatedBusinessEventId: contract.activatedBusinessEventId,
+    hrisApprovalStatus: hrisContractApprovalStatus(contract.metadata, contract.status),
     redactions: redactionSummary(salaryDecision),
   }
 }
@@ -443,6 +534,7 @@ function contractEventPayload(
     currency: contract.currency,
     signedDocumentHashPresent: Boolean(contract.signedDocumentHash),
     activatedBusinessEventId: contract.activatedBusinessEventId,
+    hrisApprovalStatus: hrisContractApprovalStatus(contract.metadata, contract.status),
     ...extra,
   }
 }
@@ -651,8 +743,11 @@ export async function createPayrollContract(
   const workingHoursPerMonth = parseOptionalDecimal(parsed.workingHoursPerMonth, "workingHoursPerMonth")
   assertEffectiveDateOrder(effectiveFrom, effectiveTo)
 
-  if (parsed.status === PayrollContractStatus.ACTIVE && !parsed.signedDocumentHash) {
-    throw new BusinessRuleError("Active contracts require signed contract evidence.")
+  if (parsed.status === PayrollContractStatus.ACTIVE) {
+    throw new BusinessRuleError("Contracts must be created as drafts and activated through HRIS approval.")
+  }
+  if (parsed.signedDocumentHash) {
+    throw new BusinessRuleError("Signed document evidence must be approved through the HRIS document workflow.")
   }
 
   return inTransaction(client, async (tx) => {
@@ -815,12 +910,23 @@ export async function updatePayrollContract(
 
     assertEffectiveDateOrder(nextEffectiveFrom, nextEffectiveTo)
 
+    if (existing.status !== PayrollContractStatus.ACTIVE && nextStatus === PayrollContractStatus.ACTIVE) {
+      throw new BusinessRuleError("Contract activation requires the HRIS maker-checker workflow.")
+    }
+    if (parsed.signedDocumentHash !== undefined) {
+      throw new BusinessRuleError("Signed document evidence changes require the HRIS document workflow.")
+    }
+
     if (parsed.baseSalary !== undefined) {
       const nextBaseSalary = parseDecimal(parsed.baseSalary, "baseSalary", false)
       if (existing.status === PayrollContractStatus.ACTIVE && !new Prisma.Decimal(existing.baseSalary).equals(nextBaseSalary)) {
         throw new BusinessRuleError("Active contract salary changes require the compensation approval workflow.")
       }
       updateData.baseSalary = nextBaseSalary
+    }
+
+    if (existing.status === PayrollContractStatus.ACTIVE) {
+      throw new BusinessRuleError("Active contracts cannot be amended in place; use an approved effective-dated lifecycle workflow.")
     }
 
     if (nextStatus === PayrollContractStatus.ACTIVE && !nextSignedDocumentHash) {
@@ -1003,5 +1109,220 @@ export async function terminatePayrollContract(
     }
   })
 }
+export async function requestPayrollContractActivationFromHris(
+  input: RequestPayrollContractActivationFromHrisInput,
+  client: DbClient = db,
+) {
+  const parsed = requestPayrollContractActivationFromHrisInputSchema.parse(input)
+  assertPermission(parsed.actorPermissions, HRIS_MANAGE_PERMISSIONS, "HRIS contract activation request")
 
+  return inTransaction(client, async (tx) => {
+    const existing = await tx.payrollContract.findFirst({
+      where: {
+        id: parsed.contractId,
+        employeeId: parsed.employeeId,
+        organizationId: parsed.organizationId,
+        deletedAt: null,
+      },
+      include: { employee: true },
+    }) as PayrollContractRecord | null
 
+    if (!existing) throw new NotFoundError("HRIS contract was not found for this employee and tenant.")
+    if (existing.status !== PayrollContractStatus.DRAFT) {
+      throw new BusinessRuleError("Only draft contracts can enter HRIS activation approval.")
+    }
+    if (!hasApprovedHrisDocumentEvidence(existing.metadata, existing.signedDocumentHash)) {
+      throw new BusinessRuleError("Contract activation requires approved signed document evidence.")
+    }
+
+    const openRequest = hrisContractActivationPending(existing.metadata)
+    if (openRequest) {
+      if (
+        openRequest.requestedById === parsed.actorId &&
+        openRequest.requestEvidenceHash === parsed.requestEvidenceHash
+      ) {
+        return {
+          contractId: existing.id,
+          employeeId: existing.employeeId,
+          status: "REQUESTED" as const,
+          requestId: openRequest.requestId,
+        }
+      }
+      throw new ConflictError("Contract already has an open HRIS activation request.")
+    }
+
+    const businessEventId = await recordContractEvent(tx, {
+      organizationId: parsed.organizationId,
+      actorId: parsed.actorId,
+      eventType: "hris.contract.activation.requested",
+      idempotencyKey: parsed.idempotencyKey ?? [
+        "hris-contract-activation-request",
+        parsed.organizationId,
+        existing.id,
+      ].join(":"),
+      contract: existing,
+      documentHash: parsed.requestEvidenceHash,
+      payload: {
+        contractId: existing.id,
+        employeeId: existing.employeeId,
+        reasonHash: parsed.reasonHash,
+        requestEvidencePresent: true,
+        signedDocumentHashPresent: true,
+      },
+    })
+    const pending = {
+      requestId: businessEventId,
+      requestedById: parsed.actorId,
+      requestedAt: new Date().toISOString(),
+      reasonHash: parsed.reasonHash,
+      requestEvidenceHash: parsed.requestEvidenceHash,
+    }
+
+    await tx.payrollContract.update({
+      where: { id: existing.id, organizationId: parsed.organizationId },
+      data: {
+        metadata: withHrisContractApproval(existing.metadata, pending, {
+          status: "REQUESTED",
+          requestId: businessEventId,
+          requestedAt: pending.requestedAt,
+        }),
+      },
+    })
+    await tx.auditLog.create({
+      data: {
+        entityType: "PayrollContract",
+        entityId: existing.id,
+        action: "HRIS_CONTRACT_ACTIVATION_REQUESTED",
+        userId: parsed.actorId,
+        organizationId: parsed.organizationId,
+        changes: safeJson({
+          employeeId: existing.employeeId,
+          requestId: businessEventId,
+          reasonHash: parsed.reasonHash,
+          requestEvidencePresent: true,
+        }),
+      },
+    })
+
+    return {
+      contractId: existing.id,
+      employeeId: existing.employeeId,
+      status: "REQUESTED" as const,
+      requestId: businessEventId,
+    }
+  })
+}
+
+export async function approvePayrollContractActivationFromHris(
+  input: ApprovePayrollContractActivationFromHrisInput,
+  client: DbClient = db,
+): Promise<PayrollContractMutationResult> {
+  const parsed = approvePayrollContractActivationFromHrisInputSchema.parse(input)
+  assertPermission(parsed.actorPermissions, HRIS_MANAGE_PERMISSIONS, "HRIS contract activation approval")
+
+  return inTransaction(client, async (tx) => {
+    const existing = await tx.payrollContract.findFirst({
+      where: {
+        id: parsed.contractId,
+        employeeId: parsed.employeeId,
+        organizationId: parsed.organizationId,
+        deletedAt: null,
+      },
+      include: { employee: true },
+    }) as PayrollContractRecord | null
+
+    if (!existing) throw new NotFoundError("HRIS contract was not found for this employee and tenant.")
+    const pending = hrisContractActivationPending(existing.metadata)
+    if (!pending) throw new NotFoundError("Open HRIS contract activation request was not found.")
+    if (pending.requestedById === parsed.actorId) {
+      throw new ForbiddenError("Contract activation requester cannot approve their own request.")
+    }
+    if (existing.status !== PayrollContractStatus.DRAFT) {
+      throw new BusinessRuleError("Only draft contracts can be approved for activation.")
+    }
+    if (!hasApprovedHrisDocumentEvidence(existing.metadata, existing.signedDocumentHash)) {
+      throw new BusinessRuleError("Contract activation requires approved signed document evidence.")
+    }
+
+    await assertNoActiveOverlap(tx, {
+      organizationId: parsed.organizationId,
+      employeeId: existing.employeeId,
+      contractId: existing.id,
+      effectiveFrom: existing.effectiveFrom,
+      effectiveTo: existing.effectiveTo,
+    })
+
+    const approvedAt = new Date().toISOString()
+    let updated = await tx.payrollContract.update({
+      where: { id: existing.id, organizationId: parsed.organizationId },
+      data: {
+        status: PayrollContractStatus.ACTIVE,
+        metadata: withHrisContractApproval(existing.metadata, null, {
+          status: "APPROVED",
+          requestId: pending.requestId,
+          requestedById: pending.requestedById,
+          approvedById: parsed.actorId,
+          approvedAt,
+          decisionReasonHash: parsed.decisionReasonHash,
+          requestEvidenceHash: pending.requestEvidenceHash,
+          approvalEvidenceHash: parsed.approvalEvidenceHash,
+        }),
+      },
+    })
+    const businessEventId = await recordContractEvent(tx, {
+      organizationId: parsed.organizationId,
+      actorId: parsed.actorId,
+      eventType: "hris.contract.activation.approved",
+      idempotencyKey: parsed.idempotencyKey ?? [
+        "hris-contract-activation-approve",
+        parsed.organizationId,
+        existing.id,
+        pending.requestId,
+      ].join(":"),
+      contract: updated,
+      documentHash: parsed.approvalEvidenceHash,
+      payload: {
+        contractId: existing.id,
+        employeeId: existing.employeeId,
+        requestId: pending.requestId,
+        requestedById: pending.requestedById,
+        approvedById: parsed.actorId,
+        decisionReasonHash: parsed.decisionReasonHash,
+        signedDocumentHashPresent: true,
+      },
+    })
+    updated = await tx.payrollContract.update({
+      where: { id: existing.id, organizationId: parsed.organizationId },
+      data: {
+        activatedBusinessEventId: businessEventId,
+        metadata: withHrisContractApproval(updated.metadata, null, {
+          status: "APPROVED",
+          requestId: pending.requestId,
+          requestedById: pending.requestedById,
+          approvedById: parsed.actorId,
+          approvedAt,
+          decisionReasonHash: parsed.decisionReasonHash,
+          requestEvidenceHash: pending.requestEvidenceHash,
+          approvalEvidenceHash: parsed.approvalEvidenceHash,
+          activationBusinessEventId: businessEventId,
+        }),
+      },
+    })
+
+    const salaryDecision = salaryRedactionFor({
+      actorPermissions: parsed.actorPermissions,
+      field: "contracts.baseSalary",
+    })
+    const mapped = mapContractForWorkflow(updated, salaryDecision)
+    await auditContractChange(tx, {
+      organizationId: parsed.organizationId,
+      actorId: parsed.actorId,
+      action: "HRIS_CONTRACT_ACTIVATED",
+      contractId: existing.id,
+      before: contractAuditSnapshot(existing),
+      after: contractAuditSnapshot(mapped),
+    })
+
+    return { contract: mapped, businessEventId }
+  })
+}

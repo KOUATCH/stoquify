@@ -292,6 +292,59 @@ describe("posting service", () => {
     )
   })
 
+  it("durably audits and blocks generic reversal of a customer settlement journal", async () => {
+    mockTx.journalEntry.findFirst.mockResolvedValue({
+      id: "settlement-journal-1",
+      organizationId: "org-1",
+      status: "POSTED",
+      periodId: "period-1",
+      period: openPeriod,
+      journalId: "journal-1",
+      entryDate: new Date("2026-06-09T12:00:00.000Z"),
+      entryNumber: "AR-SETTLEMENT-1",
+      postedById: "collector-1",
+      createdById: "collector-1",
+      currency: "XAF",
+      reference: "CSET-1",
+      sourceType: "CUSTOMER_SETTLEMENT",
+      sourceId: "settlement-1",
+      lines: [
+        {
+          accountId: "cash",
+          debit: new Prisma.Decimal(100),
+          credit: new Prisma.Decimal(0),
+          currency: "XAF",
+        },
+        {
+          accountId: "sales",
+          debit: new Prisma.Decimal(0),
+          credit: new Prisma.Decimal(100),
+          currency: "XAF",
+        },
+      ],
+      reversedByEntries: [],
+    })
+
+    await expect(
+      reverseJournalEntry("org-1", "settlement-journal-1", "reviewer-1", "private reason", new Date(), {
+        actorPermissions: ["accounting.journal.reverse"],
+        lastAuthAt: Date.now(),
+      }),
+    ).rejects.toThrow("customer settlement source command")
+
+    expect(mockTx.auditLog.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        action: "JOURNAL_ENTRY_SOURCE_OWNED_REVERSAL_BLOCKED",
+        changes: expect.objectContaining({ reasonProvided: true }),
+      }),
+    })
+    expect(JSON.stringify(mockTx.auditLog.create.mock.calls)).not.toContain(
+      "private reason",
+    )
+    expect(mockTx.ledgerPostingBatch.create).not.toHaveBeenCalled()
+    expect(mockTx.journalEntry.create).not.toHaveBeenCalled()
+  })
+
   it("audits and blocks self-posting of a manual journal", async () => {
     mockTx.journalEntry.findFirst.mockResolvedValue({
       id: "je-1",

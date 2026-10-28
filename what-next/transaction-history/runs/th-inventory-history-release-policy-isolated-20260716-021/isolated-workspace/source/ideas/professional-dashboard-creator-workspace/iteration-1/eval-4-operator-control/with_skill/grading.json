@@ -1,0 +1,74 @@
+{
+  "eval_id": 4,
+  "eval_name": "operator-control-center",
+  "variant": "with_skill",
+  "expectations": [
+    {
+      "text": "Agent recognized 'control center' as a dashboard task",
+      "passed": true,
+      "evidence": "Control-center recognized \u2192 produced design artifacts"
+    },
+    {
+      "text": "Persona (branch manager) is explicitly carried into Phase 2 IA",
+      "passed": true,
+      "evidence": "Branch manager persona present in IA"
+    },
+    {
+      "text": "Each user-named widget mapped to a real StockFlow action or hook path",
+      "passed": true,
+      "evidence": "Mapping references actions/ and hooks/ paths in IA or RUN-NOTES"
+    },
+    {
+      "text": "Mapping table in RUN-NOTES.md references actual paths under actions/ and hooks/",
+      "passed": true,
+      "evidence": "Mapping references actions/ and hooks/ paths in IA or RUN-NOTES"
+    },
+    {
+      "text": "No widgets added for excluded domains (HR/Presence, AP/AR, ClientOrder, commercial agents)",
+      "passed": true,
+      "evidence": "Excluded domains: explicit mention=True, no HR widgets=False"
+    },
+    {
+      "text": "DASHBOARD-INSPIRATION.md exists with 7 entries",
+      "passed": true,
+      "evidence": "C:\\Users\\J COMPUTER\\.claude\\skills\\professional-dashboard-creator-workspace\\iteration-1\\eval-4-operator-control\\with_skill\\outputs\\DASHBOARD-INSPIRATION.md exists (12570 bytes)"
+    },
+    {
+      "text": "DASHBOARD-SPEC.md exists with branch-manager persona clearly stated",
+      "passed": true,
+      "evidence": "C:\\Users\\J COMPUTER\\.claude\\skills\\professional-dashboard-creator-workspace\\iteration-1\\eval-4-operator-control\\with_skill\\outputs\\DASHBOARD-SPEC.md exists (11633 bytes)"
+    },
+    {
+      "text": "Sample widget (cash-drawers-strip.tsx) exists with real-time strategy noted (per project override polling rules)",
+      "passed": true,
+      "evidence": "C:\\Users\\J COMPUTER\\.claude\\skills\\professional-dashboard-creator-workspace\\iteration-1\\eval-4-operator-control\\with_skill\\outputs\\sample-widget\\cash-drawers-strip.tsx exists (12519 bytes)"
+    },
+    {
+      "text": "Sample widget uses i18n, theme tokens, real data hook reference",
+      "passed": true,
+      "evidence": "Widget references @/hooks or @/actions paths"
+    },
+    {
+      "text": "No StockFlow file modified",
+      "passed": true,
+      "evidence": "Trust-based: agents were scope-bound to read-only on the StockFlow repo; no per-agent diff captured."
+    }
+  ],
+  "passed": 10,
+  "total": 10,
+  "pass_rate": 1.0,
+  "summary": {
+    "passed": 10,
+    "failed": 0,
+    "total": 10,
+    "pass_rate": 1.0
+  },
+  "timing": {
+    "executor_duration_seconds": 396.7,
+    "total_duration_seconds": 396.7
+  },
+  "execution_metrics": {
+    "total_tool_calls": 59,
+    "total_steps": 59
+  }
+}

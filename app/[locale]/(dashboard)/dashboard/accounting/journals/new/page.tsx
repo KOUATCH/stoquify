@@ -3,12 +3,14 @@ import { FilePlus2, Scale } from "lucide-react"
 
 import { listChartAccountsAction } from "@/actions/accounting/accounts.actions"
 import { createManualJournalEntryAction, listJournalsAction } from "@/actions/accounting/journals.actions"
+import { checkPermission } from "@/config/useAuth"
 import {
   AccountingLinkButton,
   AccountingMessage,
   AccountingPageShell,
   AccountingPanel,
 } from "../../_components/accounting-ui"
+import { routeByKey, withAccountingSurfaceAccess } from "../../accounting-route-access"
 
 type AccountRow = {
   id: string
@@ -38,7 +40,10 @@ function resultPath(locale: string, ok: boolean, text: string) {
   return `/${locale}/dashboard/accounting/journals${ok ? "" : "/new"}?${key}=${encodeURIComponent(text)}`
 }
 
-export default async function NewJournalEntryPage({ params, searchParams }: PageProps) {
+async function NewJournalEntryPageImpl({ params, searchParams }: PageProps) {
+  await checkPermission("accounting.journal.create")
+  await checkPermission("accounting.journal.read")
+
   const { locale } = await params
   const resolvedSearchParams = searchParams ? await searchParams : {}
   const [accountsResponse, journalsResponse] = await Promise.all([
@@ -130,7 +135,7 @@ export default async function NewJournalEntryPage({ params, searchParams }: Page
           </div>
 
           <div className="overflow-x-auto rounded-lg border border-[var(--dash-border-subtle)]">
-            <table className="w-full min-w-[900px] text-sm">
+            <table className="dashboard-table-base w-full min-w-[900px] text-sm">
               <thead className="border-b border-[var(--dash-border-subtle)] text-left text-xs uppercase text-[var(--dash-text-faint)]">
                 <tr>
                   <th className="px-4 py-3">Account</th>
@@ -172,3 +177,19 @@ export default async function NewJournalEntryPage({ params, searchParams }: Page
   )
 }
 
+
+
+
+export default async function AccountingRoutePage(props: any = {}) {
+  const surface = routeByKey("accounting-journals-new")
+
+  if (!surface) {
+    throw new Error("Missing accounting route surface definition: accounting-journals-new")
+  }
+
+  return withAccountingSurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => NewJournalEntryPageImpl(props),
+  })
+}

@@ -481,8 +481,7 @@ describe("regulatory country pack foundation", () => {
       expect.arrayContaining([
         expect.objectContaining({
           code: "GOLDEN_FIXTURE_FAILED",
-          path:
-            "goldenFixtures.cm-allowance-transport-reviewed-2026.calculationScenario.reviewEvidence",
+          path: "goldenFixtures.cm-allowance-transport-reviewed-2026.calculationScenario.reviewEvidence",
           message: expect.stringContaining("source evidence hash"),
         }),
       ]),
@@ -496,7 +495,8 @@ describe("regulatory country pack foundation", () => {
     if (!allowanceFixture?.calculationScenario) {
       throw new Error("Allowance fixture missing from test pack");
     }
-    delete allowanceFixture.calculationScenario.expectedOutput.registerTaxableBaseAmount;
+    delete allowanceFixture.calculationScenario.expectedOutput
+      .registerTaxableBaseAmount;
     supported.header.hash = computeCountryPackHash(supported);
 
     const result = validateCountryPackForPublish(supported);
@@ -577,7 +577,9 @@ describe("regulatory country pack foundation", () => {
         expect.objectContaining({
           code: "GOLDEN_FIXTURE_FAILED",
           path: "goldenFixtures",
-          message: expect.stringContaining("PAYROLL_IRPP_YTD_CORRECTION_REPLAY"),
+          message: expect.stringContaining(
+            "PAYROLL_IRPP_YTD_CORRECTION_REPLAY",
+          ),
         }),
       ]),
     );
@@ -654,7 +656,10 @@ describe("regulatory country pack foundation", () => {
         "PAYROLL_IRPP_PERIOD_ADJUSTMENTS",
         {
           taxableBaseAmount: "200000.00",
-          adjustmentValues: { socialDeduction: "40000.00", familyRelief: "2000.00" },
+          adjustmentValues: {
+            socialDeduction: "40000.00",
+            familyRelief: "2000.00",
+          },
           currency: "XAF",
         },
         {
@@ -697,8 +702,7 @@ describe("regulatory country pack foundation", () => {
       expect.arrayContaining([
         expect.objectContaining({
           code: "GOLDEN_FIXTURE_FAILED",
-          path:
-            "goldenFixtures.cm-irpp-ytd-correction-reviewed-2026.calculationScenario.expectedOutput.taxAmountAdjustmentAmount",
+          path: "goldenFixtures.cm-irpp-ytd-correction-reviewed-2026.calculationScenario.expectedOutput.taxAmountAdjustmentAmount",
           message: expect.stringContaining("YTD correction replay"),
         }),
       ]),
@@ -745,8 +749,7 @@ describe("regulatory country pack foundation", () => {
       expect.arrayContaining([
         expect.objectContaining({
           code: "GOLDEN_FIXTURE_FAILED",
-          path:
-            "goldenFixtures.cm-irpp-period-calculation-reviewed-2026.calculationScenario.expectedOutput.calculationMode",
+          path: "goldenFixtures.cm-irpp-period-calculation-reviewed-2026.calculationScenario.expectedOutput.calculationMode",
           message: expect.stringContaining("calculationMode"),
         }),
       ]),
@@ -903,7 +906,7 @@ describe("regulatory country pack foundation", () => {
     expect(resolved.resolutionHash).toMatch(/^sha256:[a-f0-9]{64}$/);
   });
 
-  it("resolves Cameroon CNPS payroll parameters as regulator-confirmed fixtures", () => {
+  it("resolves Cameroon CNPS payroll parameters as source-checked draft fixtures", () => {
     const familyAllowance = resolveRegulatoryParameter<Record<string, unknown>>(
       "payroll.cnps.familyAllowanceRatesBps",
       {
@@ -932,7 +935,8 @@ describe("regulatory country pack foundation", () => {
     );
 
     expect(familyAllowance).toMatchObject({
-      verificationStatus: "REGULATOR_CONFIRMED",
+      verificationStatus: "SOURCE_CHECKED",
+      capabilityStatus: "SUPPORTED_DRAFT",
       legalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
       value: {
         general: 700,
@@ -942,7 +946,8 @@ describe("regulatory country pack foundation", () => {
       },
     });
     expect(occupationalRisk).toMatchObject({
-      verificationStatus: "REGULATOR_CONFIRMED",
+      verificationStatus: "SOURCE_CHECKED",
+      capabilityStatus: "SUPPORTED_DRAFT",
       legalRef: "CM_CNPS_CONTRIBUTION_DECREE_2016",
       value: {
         groupA: 175,
@@ -952,7 +957,8 @@ describe("regulatory country pack foundation", () => {
       },
     });
     expect(employerRules).toMatchObject({
-      verificationStatus: "REGULATOR_CONFIRMED",
+      verificationStatus: "SOURCE_CHECKED",
+      capabilityStatus: "SUPPORTED_DRAFT",
       legalRef: "CM_CNPS_EMPLOYER_RULES",
       value: { registrationRequired: true, employeeDeclarationRequired: true },
     });

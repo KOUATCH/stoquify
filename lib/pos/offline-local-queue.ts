@@ -67,7 +67,6 @@ export type EnqueueOfflineLocalEventInput = {
   sourceSnapshotHash?: string
   signature?: string
   metadata?: unknown
-  allowFinalFiscalNumbering?: boolean
 }
 
 export type OfflineSyncBatchEnvelope = {
@@ -207,7 +206,6 @@ function containsFinalFiscalClaim(value: unknown): boolean {
 }
 
 function assertProvisionalOnly(input: EnqueueOfflineLocalEventInput) {
-  if (input.allowFinalFiscalNumbering) return
   if (!containsFinalFiscalClaim(input.payload)) return
 
   throw new Error("Offline POS queue only permits provisional receipt evidence until country policy allows final fiscal numbering.")
@@ -269,8 +267,8 @@ export async function enqueueOfflineLocalEvent(
         ? input.metadata as Record<string, unknown>
         : {}),
       offlineReceiptPolicy: {
-        finalFiscalNumberingPermitted: Boolean(input.allowFinalFiscalNumbering),
-        receiptStatus: input.allowFinalFiscalNumbering ? "COUNTRY_POLICY_PERMITTED" : "PROVISIONAL_ONLY",
+        finalFiscalNumberingPermitted: false,
+        receiptStatus: "PROVISIONAL_ONLY",
       },
     },
   }

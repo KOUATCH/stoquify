@@ -1,0 +1,218 @@
+{
+  "schemaVersion": "1.0",
+  "traceId": "10f2e525-79f1-4e04-9259-74b4cb74213f",
+  "runId": "th-inventory-history-browser-smoke-authorized-20260716-019",
+  "sliceId": "foundation-inventory",
+  "stageId": "07",
+  "skillName": "stoquify-transaction-history-07-release-review",
+  "agentType": "API Tester/Code Reviewer",
+  "mode": "verify",
+  "status": "BLOCKED",
+  "activeLanes": [
+    "workbench",
+    "inventory"
+  ],
+  "blockedLanes": [],
+  "inputArtifacts": [
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/run-manifest.json",
+      "sha256": "sha256:9bd8c5fd32e68a3f42bbc34752b6a232e1197a8b47e00acf126536bf49c4148a"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/slices/foundation-inventory/07-release-review.json",
+      "sha256": "sha256:e7580c1ee990ca65b425cf5aa36cf20e0e0440d2f854a4999bf302f70f675809"
+    },
+    {
+      "path": "docs/skills-life-cycle/stoquify-transaction-history-skill-suite-src/stoquify-transaction-history-07-release-review/SKILL.md",
+      "sha256": "sha256:08c0abc3519de327908be728a2c124f9f7864cc84069664b4b4d3580b97701e7"
+    },
+    {
+      "path": "docs/skills-life-cycle/stoquify-transaction-history-skill-suite-src/stoquify-transaction-history-07-release-review/references/release-matrix.md",
+      "sha256": "sha256:0004519702163f5a631990385e9728bf60b84b8698b61037b011782d3b45fcb8"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/movements/page.tsx",
+      "sha256": "sha256:840bb46ae13303c72923fbca6e82ce13d945208cb13d6902db005b4245e95235"
+    },
+    {
+      "path": "components/dashboard/history/TransactionHistoryWorkbenchShell.tsx",
+      "sha256": "sha256:cf2223cf9dc67482e07e90cebb1df8210a24a5eb6fe682ee2032eaabe64719c9"
+    },
+    {
+      "path": "components/inventory/movements/InventoryMovementHistoryWorkbench.tsx",
+      "sha256": "sha256:a3c9b7164e0c0f5268cb7062de564a9ed0a7d78703a1a8ce455c305683218d21"
+    },
+    {
+      "path": "hooks/useInventoryMovementHistoryWorkbench.ts",
+      "sha256": "sha256:1bf7cfa87fee3c68a4f08743b3a43d57b90e08e10e6661a8e828d035489356e9"
+    }
+  ],
+  "inputFingerprint": "sha256:631a1e6e2ae0ece39e5683e35e9b679a06b9440afc39541751ba2bb8370ec66d",
+  "allowedEdits": [
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/slices/foundation-inventory/07-release-review.json",
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/slices/foundation-inventory/07-release-review.md",
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/logs/07-validator.log",
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/logs/07-fixture-permission-grant.log",
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/logs/07-dev-server.log",
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/logs/07-dev-server.err.log",
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/logs/07-dev-server.pid",
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/logs/07-browser-smoke.log",
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/logs/07-browser-smoke.json",
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/screenshots/inventory-movements-mobile.png",
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/screenshots/inventory-movements-desktop.png"
+  ],
+  "observedEdits": [
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/slices/foundation-inventory/07-release-review.json",
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/slices/foundation-inventory/07-release-review.md",
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/logs/07-validator.log",
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/logs/07-fixture-permission-grant.log",
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/logs/07-dev-server.log",
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/logs/07-dev-server.err.log",
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/logs/07-dev-server.pid",
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/logs/07-browser-smoke.log",
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/logs/07-browser-smoke.json",
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/screenshots/inventory-movements-mobile.png",
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/screenshots/inventory-movements-desktop.png",
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/run-state.json"
+  ],
+  "repository": {
+    "headBefore": "8a406e93b0e798ed6f476ca5d81df37a2aaa38be",
+    "headAfter": "8a406e93b0e798ed6f476ca5d81df37a2aaa38be",
+    "dirtyFilesBefore": [],
+    "dirtyFilesAfter": [
+      "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/slices/foundation-inventory/07-release-review.json",
+      "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/slices/foundation-inventory/07-release-review.md",
+      "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/logs/07-validator.log",
+      "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/logs/07-fixture-permission-grant.log",
+      "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/logs/07-dev-server.log",
+      "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/logs/07-dev-server.err.log",
+      "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/logs/07-dev-server.pid",
+      "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/logs/07-browser-smoke.log",
+      "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/logs/07-browser-smoke.json",
+      "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/screenshots/inventory-movements-mobile.png",
+      "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/screenshots/inventory-movements-desktop.png",
+      "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/run-state.json"
+    ]
+  },
+  "claims": [
+    {
+      "id": "TH07_PREREQUISITES",
+      "result": "PASS",
+      "evidence": [
+        "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/logs/07-validator.log",
+        "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/slices/foundation-inventory/07-release-review.json"
+      ]
+    },
+    {
+      "id": "TH07_ACCESSIBILITY",
+      "result": "GAP",
+      "evidence": [
+        "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/logs/07-browser-smoke.json",
+        "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/screenshots/inventory-movements-mobile.png",
+        "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/screenshots/inventory-movements-desktop.png",
+        "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/slices/foundation-inventory/07-release-review.md"
+      ]
+    },
+    {
+      "id": "TH07_POLICY_GATES",
+      "result": "GAP",
+      "evidence": [
+        "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/slices/foundation-inventory/07-release-review.md"
+      ]
+    },
+    {
+      "id": "TH07_SCOPED_VERDICT",
+      "result": "GAP",
+      "evidence": [
+        "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/slices/foundation-inventory/07-release-review.md"
+      ]
+    }
+  ],
+  "verification": [
+    {
+      "command": "Grant inventory.levels.read to local-only PAYROLL_E2E fixture role",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/logs/07-fixture-permission-grant.log"
+    },
+    {
+      "command": "Start local dev server with npm run dev",
+      "status": "FAIL",
+      "exitCode": 1,
+      "logPath": "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/logs/07-dev-server.err.log"
+    },
+    {
+      "command": "Authenticated Playwright smoke for /en/dashboard/inventory/movements after fixture grant",
+      "status": "FAIL",
+      "exitCode": 1,
+      "logPath": "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/logs/07-browser-smoke.log"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/slices/foundation-inventory/07-release-review.md",
+      "sha256": "sha256:1f555f62eb07deaad610a1c487b830eb5df7041811644b47d8956d94b7cba161"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/logs/07-validator.log",
+      "sha256": "sha256:5dca7ed8ce368f937994e91bf70f39665187c732bae1d864dd8caf78cdca136b"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/logs/07-fixture-permission-grant.log",
+      "sha256": "sha256:10ceff518699ebbc3ff8e665b4a5ed5fa33ba3284bc208021a343a90e778f9fe"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/logs/07-dev-server.log",
+      "sha256": "sha256:51424aaee24c55011ad47993ee76cc3f096e06ee8011cef12d32d38b7d879cd5"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/logs/07-dev-server.err.log",
+      "sha256": "sha256:8cc701034f6ac376252a02028ad49ecc64c1146bad655228aa31b81ef0980277"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/logs/07-dev-server.pid",
+      "sha256": "sha256:179bd3aaf7f41ee049a738bcc73f6cfe64780ae4a609d59b69f02657e2f96e21"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/logs/07-browser-smoke.log",
+      "sha256": "sha256:2018f740e65e75eaf7c963c42a61c88e3e02e32c59abff0d1789872c12e5fea5"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/logs/07-browser-smoke.json",
+      "sha256": "sha256:f513de2eab5b4888926dfcdd42346bba553f4dd5353c0903dc4b34eb89b33a87"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/screenshots/inventory-movements-mobile.png",
+      "sha256": "sha256:4031296c27fee99a826bd7b11de4029d44807104568199a3bbd01ff43da6a5df"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-browser-smoke-authorized-20260716-019/screenshots/inventory-movements-desktop.png",
+      "sha256": "sha256:1bb2b2dba48bc810a325f0f5d1e6f37fef801ed19fea98f586f92da39ed0de2f"
+    }
+  ],
+  "blockers": [
+    {
+      "severity": "high",
+      "code": "DEV_SERVER_PRISMA_GENERATE_EPERM",
+      "reason": "The authorized browser-smoke continuation could not certify the route because npm run dev exited during Prisma client generation with an EPERM rename on query_engine-windows.dll.node."
+    },
+    {
+      "severity": "medium",
+      "code": "ACCESSIBILITY_GATE_NOT_CERTIFIED",
+      "reason": "Inventory permission was granted to the local fixture, but the final authenticated browser/mobile/a11y pass remains incomplete after the dev-server failure."
+    },
+    {
+      "severity": "medium",
+      "code": "VERIFY_REPO_ISOLATED_RUN_PENDING",
+      "reason": "Full named policy gates and npm run verify:repo remain pending in an isolated checkout."
+    },
+    {
+      "severity": "medium",
+      "code": "PUBLIC_UPLOADTHING_PILOT_CONDITION",
+      "reason": "Public UploadThing storage remains pilot-only and not production release ready."
+    }
+  ],
+  "nextEligibleStages": [],
+  "startedAt": "2026-07-16T08:43:36.347Z",
+  "completedAt": "2026-07-16T08:43:36.347Z"
+}

@@ -7,6 +7,122 @@ import {
 } from "../sensitive-action.service"
 
 describe("sensitive action fraud-control backbone", () => {
+  it("requires explicit branch daily-close sign-off authority", () => {
+    const decision = evaluateSensitiveAction({
+      action: "branch.daily-close.sign",
+      actorId: "manager-1",
+      organizationId: "org-1",
+      actorPermissions: [],
+      subjectActorId: "operator-1",
+      lastAuthAt: Date.now(),
+    })
+
+    expect(decision).toMatchObject({
+      allowed: false,
+      reasonCode: "MISSING_PERMISSION",
+    })
+  })
+
+  it("requires fresh authentication for branch daily-close sign-off", () => {
+    const now = Date.now()
+    const decision = evaluateSensitiveAction({
+      action: "branch.daily-close.sign",
+      actorId: "manager-1",
+      organizationId: "org-1",
+      actorPermissions: ["branch.daily-close.sign"],
+      subjectActorId: "operator-1",
+      lastAuthAt: now - 301_000,
+      now,
+    })
+
+    expect(decision).toMatchObject({
+      allowed: false,
+      reasonCode: "FRESH_AUTH_REQUIRED",
+    })
+  })
+
+  it("blocks branch daily-close self-approval", () => {
+    const decision = evaluateSensitiveAction({
+      action: "branch.daily-close.sign",
+      actorId: "manager-1",
+      organizationId: "org-1",
+      actorPermissions: ["branch.daily-close.sign"],
+      subjectActorId: "manager-1",
+      lastAuthAt: Date.now(),
+    })
+
+    expect(decision).toMatchObject({
+      allowed: false,
+      reasonCode: "SELF_APPROVAL_BLOCKED",
+    })
+  })
+
+  it("allows a freshly authenticated distinct branch daily-close checker", () => {
+    const decision = evaluateSensitiveAction({
+      action: "branch.daily-close.sign",
+      actorId: "manager-1",
+      organizationId: "org-1",
+      actorPermissions: ["branch.daily-close.sign"],
+      subjectActorId: "operator-1",
+      lastAuthAt: Date.now(),
+    })
+
+    expect(decision).toMatchObject({
+      allowed: true,
+      reasonCode: "ALLOWED",
+      policy: {
+        permission: "branch.daily-close.sign",
+        riskTier: "critical",
+        requiredAssurance: "L1",
+        freshAuthMaxAgeSeconds: 300,
+        blockSelfApproval: true,
+        auditAction: "BRANCH_DAILY_CLOSE_SIGN_OFF_CONTROL",
+        detectorSignals: [
+          "branch_daily_close_sign_off_attempt",
+          "branch_daily_close_self_approval_attempt",
+          "branch_daily_close_evidence_drift",
+        ],
+      },
+    })
+  })
+
+  it("requires an independent freshly authenticated cash-shortage policy checker", () => {
+    const now = Date.now()
+    const allowed = evaluateSensitiveAction({
+      action: "cash-shortage.policy.approve",
+      actorId: "checker-1",
+      organizationId: "org-1",
+      actorPermissions: ["controls.manage"],
+      subjectActorId: "maker-1",
+      lastAuthAt: now,
+      now,
+    })
+    const selfApproval = evaluateSensitiveAction({
+      action: "cash-shortage.policy.approve",
+      actorId: "maker-1",
+      organizationId: "org-1",
+      actorPermissions: ["controls.manage"],
+      subjectActorId: "maker-1",
+      lastAuthAt: now,
+      now,
+    })
+
+    expect(allowed).toMatchObject({
+      allowed: true,
+      policy: {
+        permission: "controls.manage",
+        riskTier: "critical",
+        requiredAssurance: "L1",
+        freshAuthMaxAgeSeconds: 300,
+        blockSelfApproval: true,
+      },
+    })
+    expect(selfApproval).toMatchObject({
+      allowed: false,
+      reasonCode: "SELF_APPROVAL_BLOCKED",
+    })
+  })
+
   it("blocks self-approval for critical reconciliation sign-off", () => {
     const decision = evaluateSensitiveAction({
       action: "payment.reconciliation.sign",
@@ -170,6 +286,42 @@ describe("sensitive action fraud-control backbone", () => {
     })
   })
 
+  it("keeps payroll payment request and approval on distinct critical policies", () => {
+    const request = evaluateSensitiveAction({
+      action: "payroll.payment.request",
+      actorId: "requester-1",
+      organizationId: "org-1",
+      actorPermissions: ["payroll.payments.request"],
+      lastAuthAt: Date.now(),
+    })
+    const approval = evaluateSensitiveAction({
+      action: "payroll.payment.approve",
+      actorId: "requester-1",
+      organizationId: "org-1",
+      actorPermissions: ["payroll.payments.approve"],
+      subjectActorId: "requester-1",
+      lastAuthAt: Date.now(),
+    })
+
+    expect(request).toMatchObject({
+      allowed: true,
+      policy: expect.objectContaining({
+        permission: "payroll.payments.request",
+        auditAction: "PAYROLL_PAYMENT_REQUEST_CONTROL",
+        riskTier: "critical",
+      }),
+    })
+    expect(approval).toMatchObject({
+      allowed: false,
+      reasonCode: "SELF_APPROVAL_BLOCKED",
+      policy: expect.objectContaining({
+        permission: "payroll.payments.approve",
+        auditAction: "PAYROLL_PAYMENT_APPROVE_CONTROL",
+        riskTier: "critical",
+      }),
+    })
+  })
+
   it("blocks self-approval for payroll payment reconciliation settlement", () => {
     const decision = evaluateSensitiveAction({
       action: "payroll.payment.reconcile",
@@ -272,5 +424,35 @@ describe("sensitive action fraud-control backbone", () => {
       }),
     )
   })
-})
+  it("requires reports export authority and fresh authentication for inventory history exports", () => {
+    const missingPermission = evaluateSensitiveAction({
+      action: "inventory.history.export",
+      actorId: "inventory-controller-1",
+      organizationId: "org-1",
+      actorPermissions: ["inventory.levels.read"],
+      lastAuthAt: Date.now(),
+    })
+    const staleAuthentication = evaluateSensitiveAction({
+      action: "inventory.history.export",
+      actorId: "inventory-controller-1",
+      organizationId: "org-1",
+      actorPermissions: ["reports.export"],
+      lastAuthAt: Date.now() - 301_000,
+      now: Date.now(),
+    })
 
+    expect(missingPermission).toMatchObject({
+      allowed: false,
+      reasonCode: "MISSING_PERMISSION",
+    })
+    expect(staleAuthentication).toMatchObject({
+      allowed: false,
+      reasonCode: "FRESH_AUTH_REQUIRED",
+      policy: expect.objectContaining({
+        auditAction: "INVENTORY_HISTORY_EXPORT_CONTROL",
+        exportControl: true,
+        riskTier: "critical",
+      }),
+    })
+  })
+})

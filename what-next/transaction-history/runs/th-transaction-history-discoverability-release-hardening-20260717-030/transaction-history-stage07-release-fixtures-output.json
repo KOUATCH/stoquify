@@ -1,0 +1,189 @@
+{
+  "status": "PASS",
+  "checkedAt": "2026-07-17T14:31:18.502Z",
+  "gates": {
+    "roleMatrix": [
+      {
+        "id": "ROLE_MATRIX_AUTHENTICATED_BROWSER_PROOF",
+        "file": "what-next\\transaction-history\\runs\\th-transaction-history-discoverability-release-hardening-20260717-030\\transaction-history-authenticated-browser-a11y-output.json",
+        "status": "PASS",
+        "evidence": {
+          "role": "TRANSACTION_HISTORY_E2E",
+          "resultCount": 6,
+          "routes": [
+            "cash-payment-history",
+            "supplier-ap-history",
+            "customer-ar-history"
+          ]
+        }
+      },
+      {
+        "id": "ROLE_MATRIX_SEEDED_PERMISSIONS",
+        "file": "scripts/seed-transaction-history-e2e-user.js",
+        "status": "PASS",
+        "missing": []
+      },
+      {
+        "id": "ROLE_MATRIX_ROUTE_AND_ACTION_PERMISSIONS",
+        "file": "what-next/transaction-history/runs/th-transaction-history-discoverability-release-hardening-20260717-030/transaction-history-static-release-smoke-output.json",
+        "status": "PASS",
+        "missing": []
+      }
+    ],
+    "exportParity": [
+      {
+        "id": "EXPORT_PARITY_CASH_PAYMENT",
+        "file": "actions/pos/cash-payment-history.actions.ts",
+        "status": "PASS",
+        "missing": []
+      },
+      {
+        "id": "EXPORT_PARITY_SUPPLIER_AP",
+        "file": "actions/purchasing/ap-history.actions.ts",
+        "status": "PASS",
+        "missing": []
+      },
+      {
+        "id": "EXPORT_PARITY_CUSTOMER_AR",
+        "file": "actions/finance/ar-history.actions.ts",
+        "status": "PASS",
+        "missing": []
+      }
+    ],
+    "cursorBackdatedInsert": [
+      {
+        "id": "CURSOR_BACKDATED_CASH_PAYMENT",
+        "file": "services/pos/cash-payment-history.service.ts",
+        "status": "PASS",
+        "missing": []
+      },
+      {
+        "id": "CURSOR_BACKDATED_SUPPLIER_AP",
+        "file": "services/purchasing/ap-history.service.ts",
+        "status": "PASS",
+        "missing": []
+      },
+      {
+        "id": "CURSOR_TEST_COVERAGE",
+        "file": "services/purchasing/__tests__/ap-history.service.test.ts",
+        "status": "PASS",
+        "missing": []
+      }
+    ],
+    "accountingTieOut": [
+      {
+        "id": "ACCOUNTING_TIE_OUT_CASH_PAYMENT",
+        "file": "services/pos/cash-payment-history.service.ts",
+        "status": "PASS",
+        "missing": []
+      },
+      {
+        "id": "ACCOUNTING_TIE_OUT_SUPPLIER_AP",
+        "file": "services/purchasing/ap-history.service.ts",
+        "status": "PASS",
+        "missing": []
+      },
+      {
+        "id": "ACCOUNTING_TIE_OUT_CUSTOMER_AR",
+        "file": "services/accounting/ar-open-item.service.ts",
+        "status": "PASS",
+        "missing": []
+      },
+      {
+        "id": "ACCOUNTING_TIE_OUT_TEST_COVERAGE",
+        "file": "services/accounting/__tests__/ar-open-item.service.test.ts",
+        "status": "PASS",
+        "missing": []
+      }
+    ]
+  },
+  "checks": [
+    {
+      "id": "ROLE_MATRIX_AUTHENTICATED_BROWSER_PROOF",
+      "file": "what-next\\transaction-history\\runs\\th-transaction-history-discoverability-release-hardening-20260717-030\\transaction-history-authenticated-browser-a11y-output.json",
+      "status": "PASS",
+      "evidence": {
+        "role": "TRANSACTION_HISTORY_E2E",
+        "resultCount": 6,
+        "routes": [
+          "cash-payment-history",
+          "supplier-ap-history",
+          "customer-ar-history"
+        ]
+      }
+    },
+    {
+      "id": "ROLE_MATRIX_SEEDED_PERMISSIONS",
+      "file": "scripts/seed-transaction-history-e2e-user.js",
+      "status": "PASS",
+      "missing": []
+    },
+    {
+      "id": "ROLE_MATRIX_ROUTE_AND_ACTION_PERMISSIONS",
+      "file": "what-next/transaction-history/runs/th-transaction-history-discoverability-release-hardening-20260717-030/transaction-history-static-release-smoke-output.json",
+      "status": "PASS",
+      "missing": []
+    },
+    {
+      "id": "EXPORT_PARITY_CASH_PAYMENT",
+      "file": "actions/pos/cash-payment-history.actions.ts",
+      "status": "PASS",
+      "missing": []
+    },
+    {
+      "id": "EXPORT_PARITY_SUPPLIER_AP",
+      "file": "actions/purchasing/ap-history.actions.ts",
+      "status": "PASS",
+      "missing": []
+    },
+    {
+      "id": "EXPORT_PARITY_CUSTOMER_AR",
+      "file": "actions/finance/ar-history.actions.ts",
+      "status": "PASS",
+      "missing": []
+    },
+    {
+      "id": "CURSOR_BACKDATED_CASH_PAYMENT",
+      "file": "services/pos/cash-payment-history.service.ts",
+      "status": "PASS",
+      "missing": []
+    },
+    {
+      "id": "CURSOR_BACKDATED_SUPPLIER_AP",
+      "file": "services/purchasing/ap-history.service.ts",
+      "status": "PASS",
+      "missing": []
+    },
+    {
+      "id": "CURSOR_TEST_COVERAGE",
+      "file": "services/purchasing/__tests__/ap-history.service.test.ts",
+      "status": "PASS",
+      "missing": []
+    },
+    {
+      "id": "ACCOUNTING_TIE_OUT_CASH_PAYMENT",
+      "file": "services/pos/cash-payment-history.service.ts",
+      "status": "PASS",
+      "missing": []
+    },
+    {
+      "id": "ACCOUNTING_TIE_OUT_SUPPLIER_AP",
+      "file": "services/purchasing/ap-history.service.ts",
+      "status": "PASS",
+      "missing": []
+    },
+    {
+      "id": "ACCOUNTING_TIE_OUT_CUSTOMER_AR",
+      "file": "services/accounting/ar-open-item.service.ts",
+      "status": "PASS",
+      "missing": []
+    },
+    {
+      "id": "ACCOUNTING_TIE_OUT_TEST_COVERAGE",
+      "file": "services/accounting/__tests__/ar-open-item.service.test.ts",
+      "status": "PASS",
+      "missing": []
+    }
+  ],
+  "failed": []
+}

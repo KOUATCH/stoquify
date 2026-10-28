@@ -1,0 +1,210 @@
+{
+  "schemaVersion": "1.0",
+  "traceId": "4929e5aa-08fc-48d3-807f-6ad214dac8fd",
+  "runId": "th-inventory-history-browser-smoke-20260716-018",
+  "sliceId": "foundation-inventory",
+  "stageId": "07",
+  "skillName": "stoquify-transaction-history-07-release-review",
+  "agentType": "API Tester/Code Reviewer",
+  "mode": "verify",
+  "status": "BLOCKED",
+  "activeLanes": [
+    "workbench",
+    "inventory"
+  ],
+  "blockedLanes": [],
+  "inputArtifacts": [
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/run-manifest.json",
+      "sha256": "sha256:3a02424f0fb01532423c82394cd654bbeea83b0bcc33a86e9dfbebbb5405339f"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-release-matrix-20260716-017/slices/foundation-inventory/07-release-review.json",
+      "sha256": "sha256:7974c08d1520a35ff39001afb4678f88cccd8d3fc3a210ca6f3c0f3131455909"
+    },
+    {
+      "path": "docs/skills-life-cycle/stoquify-transaction-history-skill-suite-src/manifest.md",
+      "sha256": "sha256:2fcfa15c939ff2c524a7208d423abd1fbfac772454d4869381a41969557be404"
+    },
+    {
+      "path": "docs/skills-life-cycle/stoquify-transaction-history-skill-suite-src/stoquify-transaction-history-07-release-review/SKILL.md",
+      "sha256": "sha256:08c0abc3519de327908be728a2c124f9f7864cc84069664b4b4d3580b97701e7"
+    },
+    {
+      "path": "docs/skills-life-cycle/stoquify-transaction-history-skill-suite-src/stoquify-transaction-history-07-release-review/references/release-matrix.md",
+      "sha256": "sha256:0004519702163f5a631990385e9728bf60b84b8698b61037b011782d3b45fcb8"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/movements/page.tsx",
+      "sha256": "sha256:840bb46ae13303c72923fbca6e82ce13d945208cb13d6902db005b4245e95235"
+    },
+    {
+      "path": "components/dashboard/history/TransactionHistoryWorkbenchShell.tsx",
+      "sha256": "sha256:cf2223cf9dc67482e07e90cebb1df8210a24a5eb6fe682ee2032eaabe64719c9"
+    },
+    {
+      "path": "components/inventory/movements/InventoryMovementHistoryWorkbench.tsx",
+      "sha256": "sha256:a3c9b7164e0c0f5268cb7062de564a9ed0a7d78703a1a8ce455c305683218d21"
+    },
+    {
+      "path": "hooks/useInventoryMovementHistoryWorkbench.ts",
+      "sha256": "sha256:1bf7cfa87fee3c68a4f08743b3a43d57b90e08e10e6661a8e828d035489356e9"
+    }
+  ],
+  "inputFingerprint": "sha256:91ac761428a51cad762e61404f43dd1b0b2cc00ef4b1b1848cfc402a8dcdc235",
+  "allowedEdits": [
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/slices/foundation-inventory/07-release-review.json",
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/slices/foundation-inventory/07-release-review.md",
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/logs/07-validator.log",
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/logs/07-dev-server.log",
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/logs/07-browser-smoke.log",
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/logs/07-browser-smoke.json",
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/screenshots/inventory-movements-mobile.png",
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/screenshots/inventory-movements-desktop.png"
+  ],
+  "observedEdits": [
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/slices/foundation-inventory/07-release-review.json",
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/slices/foundation-inventory/07-release-review.md",
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/logs/07-dev-server.log",
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/logs/07-dev-server.err.log",
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/logs/07-dev-server.pid",
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/logs/07-browser-smoke.log",
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/logs/07-browser-smoke.json",
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/screenshots/inventory-movements-mobile.png",
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/screenshots/inventory-movements-desktop.png",
+    "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/run-state.json"
+  ],
+  "repository": {
+    "headBefore": "8a406e93b0e798ed6f476ca5d81df37a2aaa38be",
+    "headAfter": "8a406e93b0e798ed6f476ca5d81df37a2aaa38be",
+    "dirtyFilesBefore": [],
+    "dirtyFilesAfter": [
+      "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/slices/foundation-inventory/07-release-review.json",
+      "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/slices/foundation-inventory/07-release-review.md",
+      "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/logs/07-dev-server.log",
+      "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/logs/07-dev-server.err.log",
+      "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/logs/07-dev-server.pid",
+      "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/logs/07-browser-smoke.log",
+      "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/logs/07-browser-smoke.json",
+      "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/screenshots/inventory-movements-mobile.png",
+      "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/screenshots/inventory-movements-desktop.png",
+      "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/run-state.json"
+    ]
+  },
+  "claims": [
+    {
+      "id": "TH07_PREREQUISITES",
+      "result": "PASS",
+      "evidence": [
+        "what-next/transaction-history/runs/th-inventory-history-release-matrix-20260716-017/slices/foundation-inventory/07-release-review.json"
+      ]
+    },
+    {
+      "id": "TH07_ACCESSIBILITY",
+      "result": "GAP",
+      "evidence": [
+        "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/logs/07-browser-smoke.json",
+        "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/screenshots/inventory-movements-mobile.png",
+        "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/screenshots/inventory-movements-desktop.png",
+        "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/slices/foundation-inventory/07-release-review.md"
+      ]
+    },
+    {
+      "id": "TH07_REGRESSION",
+      "result": "PASS",
+      "evidence": [
+        "what-next/transaction-history/runs/th-inventory-history-release-matrix-20260716-017/logs/07-inventory-history-matrix-tests.log",
+        "what-next/transaction-history/runs/th-inventory-history-release-matrix-20260716-017/logs/07-frontend-regression-tests.log"
+      ]
+    },
+    {
+      "id": "TH07_POLICY_GATES",
+      "result": "GAP",
+      "evidence": [
+        "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/slices/foundation-inventory/07-release-review.md"
+      ]
+    },
+    {
+      "id": "TH07_SCOPED_VERDICT",
+      "result": "GAP",
+      "evidence": [
+        "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/slices/foundation-inventory/07-release-review.md"
+      ]
+    }
+  ],
+  "verification": [
+    {
+      "command": "Start local dev server with npm run dev",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/logs/07-dev-server.log"
+    },
+    {
+      "command": "Authenticated Playwright smoke for /en/dashboard/inventory/movements using playwright/.auth/payroll.json",
+      "status": "FAIL",
+      "exitCode": 1,
+      "logPath": "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/logs/07-browser-smoke.log"
+    },
+    {
+      "command": "Inventory-authorized Playwright storage-state discovery",
+      "status": "SKIPPED",
+      "exitCode": null,
+      "logPath": null
+    }
+  ],
+  "outputs": [
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/slices/foundation-inventory/07-release-review.md",
+      "sha256": "sha256:74c5cf349c0971f02c63f776107e61ab1681aa66bee27cffc5ee6a43caf54fb1"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/logs/07-dev-server.log",
+      "sha256": "sha256:2b1683499dc68be77694f6179277e518f008c909b7b6395f8adff10c5de8eb9e"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/logs/07-browser-smoke.log",
+      "sha256": "sha256:36326b716feb47661018f51739686450969981a9ff51cd093ebc23d2c92baee9"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/logs/07-browser-smoke.json",
+      "sha256": "sha256:b40cc60dd9fb567ad1fc12585a684c1b18af7d587d137608a84712da5ea30119"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/screenshots/inventory-movements-mobile.png",
+      "sha256": "sha256:44e37dac64aa0627842a6935a050caa25d79722ad4bce49355d9474c36fa7e67"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/screenshots/inventory-movements-desktop.png",
+      "sha256": "sha256:0f395d6a949de6d9156a9bae68b863a8da7c10030e3bdf63d32fddba0001034a"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-inventory-history-browser-smoke-20260716-018/logs/07-dev-server.err.log",
+      "sha256": "sha256:e19d500f86b4a4c287e9542011ba62ed4dd2fb75e388524f8d96c8692fc04355"
+    }
+  ],
+  "blockers": [
+    {
+      "severity": "high",
+      "code": "INVENTORY_AUTHORIZED_STORAGE_STATE_MISSING",
+      "reason": "Existing playwright/.auth/payroll.json is authenticated but lacks inventory permission, so /en/dashboard/inventory/movements renders the unauthorized redirect meta refresh instead of the inventory workbench."
+    },
+    {
+      "severity": "high",
+      "code": "ACCESSIBILITY_GATE_NOT_CERTIFIED",
+      "reason": "Axe reports critical meta-refresh violations on the unauthorized redirect state; this cannot certify the actual inventory-authorized route."
+    },
+    {
+      "severity": "medium",
+      "code": "VERIFY_REPO_ISOLATED_RUN_PENDING",
+      "reason": "Full named policy gates and npm run verify:repo remain pending in an isolated checkout."
+    },
+    {
+      "severity": "medium",
+      "code": "PUBLIC_UPLOADTHING_PILOT_CONDITION",
+      "reason": "Public UploadThing storage remains pilot-only and not production release ready."
+    }
+  ],
+  "nextEligibleStages": [],
+  "startedAt": "2026-07-16T08:34:34.691Z",
+  "completedAt": "2026-07-16T08:34:34.691Z"
+}

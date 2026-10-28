@@ -1,0 +1,542 @@
+STOQUIFY ENTERPRISE PROOF-DRIVEN ARCHITECTURE ASSESSMENT
+=========================================================
+
+Date: 2026-07-24
+Mode: read-only repository assessment and enterprise planning
+Implementation performed: no
+Full verification suite executed for this assessment: no
+
+1. EXECUTIVE VERDICT
+--------------------
+
+Enterprise transformation program: GO_WITH_GATES
+Unrestricted enterprise production claim: NO_GO
+Statutory or authority-certified claim: NO_GO
+Controlled bounded implementation slices: GO_WITH_GATES
+
+Stoquify already contains serious enterprise financial and operational
+foundations:
+
+- tenant-scoped domain services;
+- RBAC and fresh-auth seams;
+- POS and offline replay controls;
+- inventory event posting and reconciliation;
+- purchasing/AP maker-checker workflows;
+- payment reconciliation and suspense;
+- journal, period, ledger, and close-assurance models;
+- HRIS-to-payroll proof contracts;
+- deterministic hashes, business events, outboxes, audit records, and exports;
+- workflow-assurance findings and incidents;
+- extensive static gates and focused tests.
+
+Current evidence does not prove that the complete platform is
+enterprise-production-ready. Main blockers:
+
+1. Extensive uncommitted, overlapping work means several artifacts are not
+   bound to a clean authoritative revision.
+2. Module entitlements are derived from legacy/requested-module data rather
+   than a durable commercial source of truth.
+3. Country-pack readiness is blocked by source-artifact hash verification and
+   expert approval.
+4. Production-secret readiness is conditional.
+5. HRIS still uses payroll-named compatibility storage for important facts.
+6. Cross-domain close invalidation is not proven complete for every writer.
+7. Provider, authority, hardware, backup/restore, deployment, alert, and legal
+   evidence remain external.
+8. Architecture graphs predate the latest agent-runtime work.
+
+2. EVIDENCE INSPECTED AND FRESHNESS
+-----------------------------------
+
+Repository state:
+
+The active worktree contains modified and untracked files across Prisma, CI,
+permissions, agents, assurance, UI, actions, browser tests, migrations, and
+readiness reports. All existing changes must be treated as user-owned.
+
+Architecture graphs:
+
+- 6,380 nodes
+- 9,474 links
+- 3,320 service nodes
+- 928 component nodes
+- 757 action nodes
+- 526 app/route nodes
+- 408 library nodes
+- 255 hook nodes
+- 115 Prisma extraction nodes
+- 72 type nodes
+
+Relevant graph communities:
+
+- Services Community 42: module catalog and entitlement evaluation.
+- Actions Community 44: analytics report actions.
+- App Community 28: analytics route.
+
+Current gate output:
+
+- Ledger Close Truth: ready, 10/10
+- Payment Cash Truth: ready, 10/10
+- Purchasing/AP: ready, 10/10
+- Offline POS Replay: ready, 10/10
+- Trusted Reports/Exports: ready, 9/9
+- Public Identity Abuse: ready, 15/15
+- Daily Digest Cockpit: ready, 9/9, limited to that slice
+- API inventory: ready, with one semantically unclassified internal route
+- Migration readiness: ready, 8/8
+- CI configuration: ready, 11/11
+- Payroll immutability runtime: ready
+- Country packs: blocked, 10/12
+- Release secrets: conditional, 2/8
+- Module-surface ratchet: passed while ten active gaps remain
+
+This assessment inspected representative schema, service, action, route, test,
+graph, and readiness evidence. It did not rerun tests, builds, migrations, or
+gates because the task was read-only and the worktree is active.
+
+3. CAPABILITY AND MATURITY MATRIX
+---------------------------------
+
+Tenant/RBAC:
+  PROVEN for inspected boundaries. Not proof for every surface.
+
+Module catalog/observation:
+  PROVEN.
+
+Durable module entitlements:
+  PARTIAL. No persistent entitlement model.
+
+Platform-wide entitlement enforcement:
+  PARTIAL. Shared seams exist; coverage and durable truth are incomplete.
+
+Online POS:
+  PROVEN for inspected internal workflows.
+
+Offline POS:
+  IMPLEMENTED_NOT_PROVEN. Internal replay controls are strong; real device,
+  connectivity, authority, and recovery evidence is missing.
+
+Inventory event truth:
+  PROVEN for inspected posting paths.
+
+Inventory physical operations:
+  IMPLEMENTED_NOT_PROVEN at production scale.
+
+Purchasing/AP:
+  PROVEN for the internal control chain.
+
+Supplier/bank execution:
+  EXTERNAL_DEPENDENCY.
+
+Payment reconciliation:
+  PROVEN for the internal evidence chain.
+
+Accounting ledger and periods:
+  PROVEN for inspected internal paths.
+
+Close Assurance:
+  PROVEN as internal accountant-review evidence, not statutory certification.
+
+Complete close invalidation mesh:
+  PARTIAL.
+
+HRIS People Core:
+  PARTIAL.
+
+Full enterprise HRIS:
+  PARTIAL.
+
+Payroll certified input:
+  PROVEN for the controlled internal contract.
+
+Payroll payment/declaration production:
+  IMPLEMENTED_NOT_PROVEN.
+
+Country-pack compliance:
+  PARTIAL and BLOCKED for production.
+
+Trusted reports:
+  PROVEN for inspected slices.
+
+Role cockpits:
+  PARTIAL; only Daily Digest is currently certified by the inspected gate.
+
+Workflow Assurance:
+  IMPLEMENTED_NOT_PROVEN at whole-platform production level.
+
+AI agent runtime:
+  PARTIAL; local deterministic Command Agent proof exists, activation blocked.
+
+CI/migration configuration:
+  PROVEN as repository configuration.
+
+Production operations:
+  PARTIAL/EXTERNAL_DEPENDENCY.
+
+4. DOMAIN SOURCE-OF-TRUTH REGISTRY
+----------------------------------
+
+Tenant identity:
+  Owner: Organization/Auth
+
+Permissions:
+  Owner: RBAC control plane
+
+Module availability:
+  Target owner: persistent Module Control Plane
+  Current risk: derived legacy/requested-module truth
+
+Product and stock:
+  Owner: Inventory
+
+POS sale and terminal state:
+  Owner: POS/server replay
+
+Purchase commitments and receipts:
+  Owner: Purchasing
+
+Supplier invoices and payments:
+  Owner: Purchasing/AP
+
+Provider settlement:
+  Owner: Reconciliation/payment domain
+
+People and employment facts:
+  Owner: HRIS
+  Current risk: payroll-named compatibility storage
+
+Certified payroll input:
+  Owner: HRIS readiness contract consumed by Payroll
+
+Payroll result:
+  Owner: Payroll
+
+Journal and balance truth:
+  Owner: Accounting/Ledger
+
+Statutory interpretation:
+  Owner: versioned expert-approved Country Pack
+
+Evidence and blockers:
+  Owner: Assurance, without becoming a business writer
+
+5. CROSS-DOMAIN PROOF CHAINS
+-----------------------------
+
+POS -> Inventory -> Payment -> Ledger -> Fiscal -> Close
+
+Strengths:
+- tenant scope, transactions, business events, outboxes, hashes, replay checks;
+- deterministic inventory issue/return keys;
+- offline device, sequence, hash-chain, quarantine, and exact-once controls;
+- accounting and close seams.
+
+Unproven:
+- real devices and connectivity;
+- live card/mobile-money settlement;
+- fiscal authority delivery;
+- full offline-to-close chaos proof;
+- complete close invalidation after every correction.
+
+Purchasing -> Receipt -> Stock -> Invoice -> Match -> AP -> Payment ->
+Reconciliation -> Close
+
+Strengths:
+- maker-checker;
+- atomic receipt/stock posting;
+- three-way match;
+- bank-destination approval;
+- separate requester, approver, and releaser;
+- hashes, events, ledger, reconciliation, and close seams.
+
+Unproven:
+- supplier document authenticity;
+- bank ownership verification;
+- live provider execution;
+- complete AP mutation-to-close invalidation coverage.
+
+HRIS -> Certified Snapshot -> Payroll -> Payment/Declaration -> Accounting ->
+Close
+
+Strengths:
+- identity, contract, document, compensation, destination, and attendance proof;
+- maker-checker and source hashes;
+- fail-closed payroll input;
+- payroll immutability;
+- hashes, idempotency, events, and outboxes.
+
+Unproven or partial:
+- HRIS durable ownership migration;
+- refreshed HRIS final readiness;
+- country-pack approval;
+- live provider/authority integration;
+- complete privacy, document-vault, and retention operations.
+
+Certified Evidence Change -> Invalidation -> Blocker -> Correction ->
+Refreshed Pack
+
+Strengths:
+- multiple domain invalidation services;
+- reversals and corrections;
+- close source checks.
+
+Gap:
+- no current single artifact proves every close-impacting writer is covered.
+
+6. RISK REGISTER
+----------------
+
+P0 - Dirty worktree and unbound evidence
+Response: establish a clean, reproducible baseline.
+
+P0 - No persistent module entitlement truth
+Response: add durable lifecycle and pilot enforcement.
+
+P0 - Country-pack blockers
+Response: keep production automation fail-closed; obtain reviewed artifacts.
+
+P0 - Conditional production secrets
+Response: configure distinct strong secrets and rerun release mode.
+
+P1 - Full close invalidation mesh not proven
+Response: build writer registry and invalidation coverage gate.
+
+P1 - HRIS/payroll storage ownership ambiguity
+Response: execute versioned HRIS ownership migration.
+
+P1 - Agent activation operations incomplete
+Response: keep blocked until real approvals, scheduler, alerts, and clean CI.
+
+P1 - Surface inventory semantic/parser gaps
+Response: replace heuristic gaps with AST/registry evidence.
+
+P1 - Time-derived inventory reservation fallback key
+Response: require stable caller-provided idempotency identity.
+
+P2 - Stale graph
+Response: refresh after stabilization.
+
+P2 - Cockpit readiness limited to one slice
+Response: certify each role workspace.
+
+P2 - External provider/hardware/authority proof absent
+Response: maintain explicit external-evidence gates.
+
+P2 - Backup/restore/DR/on-call evidence incomplete
+Response: add production drills and evidence packs.
+
+7. CONTRADICTIONS AND STALE CLAIMS
+----------------------------------
+
+1. July 19 HRIS evidence says typecheck OOM. July 24 agent evidence records a
+   successful full typecheck with an 8 GB heap. HRIS readiness must be refreshed.
+2. API inventory reports ready while the internal agent reconciliation route is
+   unclassified. Source inspection shows a configured-secret and bearer guard,
+   making this an inventory-classification gap.
+3. Module ratchet passed while ten active gaps remain. Passed means no new
+   regression, not complete enforcement.
+4. Module service reports hard enforcement disabled and derives entitlements
+   from legacy/requested state despite shared enforcement seams.
+5. Static ready gates explicitly exclude provider, hardware, statutory, and
+   external certification.
+6. July 14 graphs do not include current agent-runtime work.
+7. Local agent certification references a base commit that excludes dirty work,
+   so the certificate is provisional until clean CI reproduction.
+
+8. TARGET ENTERPRISE ARCHITECTURE
+---------------------------------
+
+A. Identity and tenant control plane
+- organization/user truth;
+- RBAC and fresh auth;
+- resource scope;
+- persistent module entitlements;
+- immutable access decisions.
+
+B. Domain command plane
+- POS, inventory, purchasing/AP, payments, HRIS, payroll, accounting, compliance;
+- each domain owns its write model;
+- UI and reports never write business truth directly.
+
+C. Business-event spine
+- stable command identity;
+- transaction;
+- business event and outbox;
+- correlation, actor, tenant, hash, and replay state.
+
+D. Projection and accounting plane
+- event-derived inventory;
+- reconciliation-derived cash;
+- certified HRIS input for Payroll;
+- controlled accounting source links;
+- provenance-aware read models.
+
+E. Proof and assurance plane
+- evidence manifests and hashes;
+- findings, owners, waivers, invalidation, and proof packs;
+- explicit POSTED, OPERATIONAL, ESTIMATED, STALE, UNAVAILABLE, and
+  EXTERNALLY_UNVERIFIED states.
+
+F. Country-pack and external-adapter plane
+- versioned/effective-dated rules;
+- source hashes and expert approval;
+- sandbox/certification/production separation;
+- fail-closed unsupported automation.
+
+G. Operations and release plane
+- clean CI;
+- migration and secret gates;
+- scheduler/worker identity;
+- monitoring and alert acknowledgement;
+- backup/restore and DR;
+- controlled pilot and rollback.
+
+9. PRIORITIZED PROGRAM ROADMAP
+------------------------------
+
+Phase 0 - Evidence baseline and worktree reconciliation
+Phase 1 - Durable module entitlement control plane
+Phase 2 - Domain truth and allowed-writer registry
+Phase 3 - Complete close invalidation mesh
+Phase 4 - POS and inventory operational certification
+Phase 5 - Purchasing/AP/cash/provider operations
+Phase 6 - HRIS ownership migration and payroll closure
+Phase 7 - Country-pack production readiness
+Phase 8 - Production operations and controlled rollout
+
+10. RECOMMENDED NEXT BOUNDED IMPLEMENTATION SLICE
+-------------------------------------------------
+
+Persistent module entitlement foundation plus read-only Analytics enforcement
+pilot.
+
+Why:
+- closes a platform-wide source-of-truth gap;
+- reduces commercial leakage;
+- tests the shared guard contract;
+- avoids operational writes;
+- has existing permission and route tests;
+- maps to Services Community 42, Actions Community 44, and App Community 28.
+
+Expected files:
+
+- prisma/schema.prisma
+- additive module-entitlement migration
+- services/modules/module-control-contracts.ts
+- services/modules/module-entitlement.service.ts
+- services/modules/module-catalog.service.ts
+- services/_shared/protect.ts
+- lib/security/server-authz.ts
+- actions/modules/module-control.actions.ts
+- analytics actions and analytics pages
+- module, action, route, inventory, runtime, and browser tests
+
+Success:
+
+1. Durable organization/module entitlement truth.
+2. Deterministic active/read-only/suspended/expired/unavailable states.
+3. No wildcard or superuser entitlement bypass.
+4. Navigation, page, action, and read service agree.
+5. Denial happens before data access.
+6. Read-only allows reads and blocks writes.
+7. Deterministic legacy backfill without unexplained access loss.
+8. Complete lifecycle audit evidence.
+9. Core modules remain observe-only during the pilot.
+10. Pilot rollback preserves entitlement evidence.
+
+11. MIGRATION, BACKFILL, AND ROLLBACK
+-------------------------------------
+
+Migration:
+- additive model;
+- retain Organization.requestedModules in the first slice;
+- tenant/module, status, effective dates, source, version, flags, reason,
+  metadata, actor, timestamps, and supersession evidence.
+
+Backfill:
+1. dry-run legacy/requested state;
+2. generate deterministic proposed rows;
+3. report unknown slugs and dependency/access changes;
+4. require zero unexplained access loss;
+5. apply idempotently;
+6. reconcile decision equivalence.
+
+Rollback:
+- return Analytics pilot to observe mode;
+- preserve entitlement and audit rows;
+- use forward correction, not destructive rollback.
+
+12. VERIFICATION MATRIX
+-----------------------
+
+- Prisma validate and migration safety
+- service state/effective-date/dependency tests
+- tenant isolation and RBAC/entitlement composition
+- action denial before service read
+- route/UI state tests
+- idempotent backfill/provisioning
+- lifecycle audit evidence
+- core-module regression proof
+- module inventory and pilot gate
+- PostgreSQL smoke
+- desktop/mobile browser allowed and denied flows
+- typecheck, focused lint/Jest, policy gates
+- commit-bound evidence manifest
+
+13. REQUIRED PROOF ARTIFACTS
+----------------------------
+
+Store under:
+
+what-next/module-entitlement/runs/<run-id>/
+
+Include:
+- baseline manifest;
+- dry-run Markdown and JSON;
+- migration output;
+- focused test output;
+- tenant runtime smoke;
+- browser evidence;
+- inventory before/after;
+- redacted audit samples;
+- rollback exercise;
+- final decision;
+- commit SHA and worktree state;
+- skipped/external check register.
+
+14. HUMAN AND EXTERNAL DECISIONS
+--------------------------------
+
+Product:
+- module packaging, suspension, history access, and dependencies.
+
+Accounting:
+- close blockers, critical evidence, and waiver authority.
+
+HR/payroll/privacy:
+- HRIS migration, retention, sensitive access, and country approval.
+
+Security/operations:
+- secrets, scheduler identity, alert SLA, backup, restore, and incidents.
+
+Statutory:
+- qualified reviewers, source artifacts, offline fiscal policy, and authority
+  adapter approval.
+
+15. FINAL DECISION
+------------------
+
+GO_WITH_GATES for the staged enterprise program.
+
+NO_GO for claiming the full suite is currently enterprise-production-ready,
+statutory-certified, or ready for unrestricted agent activation.
+
+Next safe move:
+
+1. stabilize and bind current work to clean evidence;
+2. implement persistent module entitlement truth;
+3. pilot enforcement on read-only Analytics;
+4. prove the pilot;
+5. expand one bounded domain at a time.
+
+This assessment changed no production code and did not regenerate gates.

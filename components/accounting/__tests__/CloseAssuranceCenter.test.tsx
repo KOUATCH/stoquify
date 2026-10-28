@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react"
+import { fireEvent, render, screen, waitFor } from "@testing-library/react"
 
 import { CloseAssuranceCenter } from "@/components/accounting/CloseAssuranceCenter"
 import type { CloseAssuranceDashboardData } from "@/actions/accounting/close-assurance.actions"
@@ -10,6 +10,7 @@ import {
   useCommentOnCloseFinding,
   useExportClosePack,
   useRunCloseAssurance,
+  useUpdateAccountantReview,
 } from "@/hooks/accounting/useCloseAssurance"
 
 jest.mock("lucide-react", () => {
@@ -40,6 +41,7 @@ jest.mock("@/hooks/accounting/useCloseAssurance", () => ({
   useCommentOnCloseFinding: jest.fn(),
   useExportClosePack: jest.fn(),
   useRunCloseAssurance: jest.fn(),
+  useUpdateAccountantReview: jest.fn(),
 }))
 
 const mockUseCloseAssurance = useCloseAssurance as jest.Mock
@@ -49,6 +51,7 @@ const mockUseAssignCloseFinding = useAssignCloseFinding as jest.Mock
 const mockUseCommentOnCloseFinding = useCommentOnCloseFinding as jest.Mock
 const mockUseCloseWaiver = useCloseWaiver as jest.Mock
 const mockUseExportClosePack = useExportClosePack as jest.Mock
+const mockUseUpdateAccountantReview = useUpdateAccountantReview as jest.Mock
 
 function dashboardData(): CloseAssuranceDashboardData {
   const period = {
@@ -73,19 +76,31 @@ function dashboardData(): CloseAssuranceDashboardData {
       evidenceCoveragePct: 80,
       criticalBlockerCount: 1,
       highBlockerCount: 2,
+      correlationId: "corr-1",
+      runById: "user-runner",
+      startedAt: "2026-06-24T09:55:00.000Z",
+      completedAt: "2026-06-24T10:00:00.000Z",
+      createdAt: "2026-06-24T09:55:00.000Z",
     },
     source: {
+      mode: "CLOSE_ASSURANCE_CENTER",
+      organizationScoped: true,
       persisted: true,
       trustLevel: "T3",
+      provenance: "POSTED",
       asOf: "2026-06-24T10:00:00.000Z",
       sourceTables: ["close_runs", "journal_entries", "payment_reconciliation_runs"],
     },
     summary: {
       passedCount: 4,
       checklistCount: 8,
+      failedCount: 1,
+      warningCount: 1,
+      unavailableCount: 0,
       evidenceCount: 12,
       openFindingCount: 1,
       findingCount: 2,
+      commentCount: 0,
     },
     checklist: Array.from({ length: 6 }, (_, index) => ({
       id: `check-${index + 1}`,
@@ -98,6 +113,9 @@ function dashboardData(): CloseAssuranceDashboardData {
       evidenceCount: index + 1,
       sourceService: "close-assurance.service",
       blockerReason: index === 0 ? "Critical evidence gap blocks certification." : null,
+      nextActionHref: null,
+      ownerId: null,
+      dueAt: null,
     })),
     findings: [],
     evidenceItems: [],
@@ -111,21 +129,24 @@ function dashboardData(): CloseAssuranceDashboardData {
       certificationDisabledReason: "Open high or critical findings block certification.",
       packExportAvailable: true,
       packExportDisabledReason: "Draft close pack export is available.",
-      exportNotice: "Draft close pack export is available; certified export still enforces readiness gates.",
     },
   } as unknown as CloseAssuranceDashboardData
+}
+
+function setDashboardData(data: CloseAssuranceDashboardData) {
+  mockUseCloseAssurance.mockReturnValue({
+    data,
+    isLoading: false,
+    isFetching: false,
+    error: null,
+    refetch: jest.fn(),
+  })
 }
 
 describe("CloseAssuranceCenter", () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockUseCloseAssurance.mockReturnValue({
-      data: dashboardData(),
-      isLoading: false,
-      isFetching: false,
-      error: null,
-      refetch: jest.fn(),
-    })
+    setDashboardData(dashboardData())
     mockUseCloseEvidenceGraph.mockReturnValue({ data: null, isFetching: false })
     mockUseRunCloseAssurance.mockReturnValue({ isPending: false, mutateAsync: jest.fn() })
     mockUseAssignCloseFinding.mockReturnValue({ isPending: false, mutateAsync: jest.fn() })
@@ -135,9 +156,10 @@ describe("CloseAssuranceCenter", () => {
       draft: { isPending: false, mutateAsync: jest.fn() },
       certified: { isPending: false, mutateAsync: jest.fn() },
     })
+    mockUseUpdateAccountantReview.mockReturnValue({ isPending: false, mutateAsync: jest.fn() })
   })
 
-  it("keeps the checklist full width and pairs certification with export", () => {
+  it("keeps the checklist full width and pairs certification, review, and export", () => {
     const data = dashboardData()
 
     render(<CloseAssuranceCenter initialData={data} locale="en" />)
@@ -147,9 +169,118 @@ describe("CloseAssuranceCenter", () => {
       "divide-y",
       "divide-[var(--dash-border-subtle)]",
     )
-    expect(screen.getByTestId("close-certification-row")).toHaveClass("xl:grid-cols-2")
+    expect(screen.getByTestId("close-certification-row")).toHaveClass("xl:grid-cols-3")
     expect(screen.getByText("Close readiness checklist")).toBeInTheDocument()
     expect(screen.getByText("Certification controls")).toBeInTheDocument()
+    expect(screen.getByText("Accountant review")).toBeInTheDocument()
     expect(screen.getByText("Close pack export")).toBeInTheDocument()
+  })
+
+  it("surfaces partial data when close evidence domains are unavailable", () => {
+    const data = dashboardData()
+    data.source.provenance = "MIXED"
+    data.summary.unavailableCount = 2
+    data.provenance = [
+      {
+        label: "Payment reconciliation",
+        provenance: "UNAVAILABLE",
+        asOf: "2026-06-24T10:00:00.000Z",
+        periodStatus: "OPEN",
+        sourceTables: ["payment_reconciliation_runs"],
+        reason: "Payment reconciliation dashboard data is unavailable.",
+      },
+    ]
+    data.evidenceItems = [
+      {
+        id: "evidence-1",
+        checklistItemId: "check-1",
+        findingId: null,
+        evidenceType: "PAYMENT_RECONCILIATION_CERTIFICATE",
+        sourceTable: "payment_reconciliation_runs",
+        sourceType: "PaymentReconciliationRun",
+        sourceId: null,
+        sourceLabel: "Payment reconciliation evidence unavailable",
+        sourceDate: "2026-06-24T10:00:00.000Z",
+        sourceHash: null,
+        provenance: "UNAVAILABLE",
+        available: false,
+        unavailableReason: "Payment reconciliation dashboard data is unavailable.",
+        correlationId: "corr-1",
+      },
+    ]
+    setDashboardData(data)
+
+    render(<CloseAssuranceCenter initialData={data} locale="en" />)
+
+    expect(screen.getByTestId("close-partial-data-state")).toBeInTheDocument()
+    expect(screen.getByText("Partial data")).toBeInTheDocument()
+    expect(screen.getByText("2 unavailable checklist gates")).toBeInTheDocument()
+    expect(screen.getAllByText("Payment reconciliation").length).toBeGreaterThan(0)
+  })
+
+  it("keeps the no-period state visible and disables review writes without a close run", () => {
+    const data = dashboardData()
+    data.period = null
+    data.periods.currentOpenPeriod = null
+    data.periods.recentPeriods = []
+    data.run.id = null
+    setDashboardData(data)
+
+    render(<CloseAssuranceCenter initialData={data} locale="en" />)
+
+    expect(screen.getByText("No accounting period")).toBeInTheDocument()
+    expect(screen.getByRole("button", { name: "Run assessment" })).toBeDisabled()
+    expect(screen.getAllByText("Run close readiness before recording an accountant review.").length).toBeGreaterThan(0)
+  })
+
+  it("records accountant review decisions through the close assurance hook", async () => {
+    const updateReview = jest.fn().mockResolvedValue({ id: "review-1" })
+    mockUseUpdateAccountantReview.mockReturnValue({ isPending: false, mutateAsync: updateReview })
+
+    render(<CloseAssuranceCenter initialData={dashboardData()} locale="en" />)
+
+    fireEvent.change(screen.getByPlaceholderText("Document reviewer decision, requested changes, or close-readiness rationale."), {
+      target: { value: "Ready after reviewing source-linked evidence." },
+    })
+    fireEvent.click(screen.getByRole("button", { name: "Save review" }))
+
+    await waitFor(() => {
+      expect(updateReview).toHaveBeenCalledWith({
+        closeRunId: "close-run-1",
+        status: "READY_TO_CLOSE",
+        decisionNotes: "Ready after reviewing source-linked evidence.",
+      })
+    })
+  })
+
+  it("shows action errors inline when a protected close action rejects", async () => {
+    const updateReview = jest.fn().mockRejectedValue(new Error("Review service unavailable"))
+    mockUseUpdateAccountantReview.mockReturnValue({ isPending: false, mutateAsync: updateReview })
+
+    render(<CloseAssuranceCenter initialData={dashboardData()} locale="en" />)
+
+    fireEvent.click(screen.getByRole("button", { name: "Save review" }))
+
+    await waitFor(() => {
+      expect(screen.getByText("Close action needs attention")).toBeInTheDocument()
+      expect(screen.getByText("Review service unavailable")).toBeInTheDocument()
+    })
+  })
+
+  it("uses the safe fallback for raw protected action errors", async () => {
+    const updateReview = jest
+      .fn()
+      .mockRejectedValue(new Error("Prisma raw provider payload secret token leaked"))
+    mockUseUpdateAccountantReview.mockReturnValue({ isPending: false, mutateAsync: updateReview })
+
+    render(<CloseAssuranceCenter initialData={dashboardData()} locale="en" />)
+
+    fireEvent.click(screen.getByRole("button", { name: "Save review" }))
+
+    await waitFor(() => {
+      expect(screen.getAllByText("Close action needs attention").length).toBeGreaterThan(0)
+      expect(screen.queryByText(/secret token leaked/i)).not.toBeInTheDocument()
+      expect(screen.queryByText(/raw provider payload/i)).not.toBeInTheDocument()
+    })
   })
 })

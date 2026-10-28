@@ -1,0 +1,238 @@
+{
+  "schemaVersion": "1.0",
+  "traceId": "7ae28ec2-3045-4ed9-8cf3-8c3d319d6c07",
+  "runId": "th-cash-payment-security-accounting-remediation-20260717-024",
+  "sliceId": "cash-payment",
+  "stageId": "07",
+  "skillName": "stoquify-transaction-history-07-release-review",
+  "agentType": "API Tester/Code Reviewer",
+  "mode": "implement",
+  "status": "BLOCKED",
+  "activeLanes": [],
+  "blockedLanes": [
+    "cash",
+    "payment"
+  ],
+  "inputArtifacts": [
+    {
+      "path": "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/run-manifest.json",
+      "sha256": "sha256:13d994bfce1b12854ad1b1c0c03515b98578792e5213f054b8eec94b439fb3c9"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/slices/cash-payment/02-security-proof-gate.json",
+      "sha256": "sha256:9fdba16aee735178b3e8e40df0c633e627e6267b49994dd9fa0b33f848a3847b"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/slices/cash-payment/03-accounting-control-gate.json",
+      "sha256": "sha256:6499ba4d9a03dc0168e78c034055731f71caf0bf0fed446328a4f34938f9abb7"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/slices/cash-payment/04-read-model-optimizer.json",
+      "sha256": "sha256:ea837b870d24b1d12847ee2d5aabf1338fad610df88c5ec608a5a7198d5795b0"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/slices/cash-payment/05-workbench-ux-contract.json",
+      "sha256": "sha256:b99a32a9261c6f74e34657382367a060e433d274e18b51e0f2df9c0a605be839"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/slices/cash-payment/06-frontend-delivery.json",
+      "sha256": "sha256:4f15f949f767bd58b8d03a12813720b8a4028fb14304082e695fe186977f3e0e"
+    }
+  ],
+  "inputFingerprint": "sha256:4f15f949f767bd58b8d03a12813720b8a4028fb14304082e695fe186977f3e0e",
+  "allowedEdits": [
+    "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/slices/cash-payment/07-release-review.md",
+    "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/slices/cash-payment/07-release-review.json"
+  ],
+  "observedEdits": [
+    "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/slices/cash-payment/07-release-review.md",
+    "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/slices/cash-payment/07-release-review.json",
+    "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/run-state.json"
+  ],
+  "repository": {
+    "headBefore": "a27cb0328e044304590cecf20c47832df5e834d5",
+    "headAfter": "a27cb0328e044304590cecf20c47832df5e834d5",
+    "dirtyFilesBefore": [
+      "WORKTREE_DIRTY_SEE_PREVIOUS_RUN",
+      "app/[locale]/(dashboard)/dashboard/finance/cash-payment-history/page.tsx",
+      "components/finance/CashPaymentHistoryWorkbench.tsx",
+      "hooks/useCashPaymentHistoryWorkbench.ts",
+      "messages/en.json",
+      "messages/fr.json"
+    ],
+    "dirtyFilesAfter": [
+      "WORKTREE_DIRTY_SEE_PREVIOUS_RUN",
+      "app/[locale]/(dashboard)/dashboard/finance/cash-payment-history/page.tsx",
+      "components/finance/CashPaymentHistoryWorkbench.tsx",
+      "hooks/useCashPaymentHistoryWorkbench.ts",
+      "messages/en.json",
+      "messages/fr.json",
+      "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/slices/cash-payment/07-release-review.md",
+      "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/slices/cash-payment/07-release-review.json"
+    ]
+  },
+  "claims": [
+    {
+      "id": "TH07_PREREQUISITES",
+      "result": "PASS",
+      "evidence": [
+        "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/slices/cash-payment/06-frontend-delivery.json"
+      ]
+    },
+    {
+      "id": "TH07_CONTRACT_API",
+      "result": "GAP",
+      "evidence": [
+        "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/slices/cash-payment/07-release-review.md"
+      ]
+    },
+    {
+      "id": "TH07_TENANT",
+      "result": "GAP",
+      "evidence": [
+        "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/slices/cash-payment/07-release-review.md"
+      ]
+    },
+    {
+      "id": "TH07_RBAC",
+      "result": "GAP",
+      "evidence": [
+        "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/slices/cash-payment/07-release-review.md"
+      ]
+    },
+    {
+      "id": "TH07_FRESH_AUTH",
+      "result": "GAP",
+      "evidence": [
+        "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/slices/cash-payment/07-release-review.md"
+      ]
+    },
+    {
+      "id": "TH07_REDACTION",
+      "result": "GAP",
+      "evidence": [
+        "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/slices/cash-payment/07-release-review.md"
+      ]
+    },
+    {
+      "id": "TH07_ACCOUNTING",
+      "result": "GAP",
+      "evidence": [
+        "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/slices/cash-payment/07-release-review.md"
+      ]
+    },
+    {
+      "id": "TH07_PAGINATION",
+      "result": "GAP",
+      "evidence": [
+        "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/slices/cash-payment/07-release-review.md"
+      ]
+    },
+    {
+      "id": "TH07_BACKDATED_INSERT",
+      "result": "GAP",
+      "evidence": [
+        "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/slices/cash-payment/07-release-review.md"
+      ]
+    },
+    {
+      "id": "TH07_EXPORT",
+      "result": "GAP",
+      "evidence": [
+        "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/slices/cash-payment/07-release-review.md"
+      ]
+    },
+    {
+      "id": "TH07_TIMEZONE",
+      "result": "GAP",
+      "evidence": [
+        "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/slices/cash-payment/07-release-review.md"
+      ]
+    },
+    {
+      "id": "TH07_ACCESSIBILITY",
+      "result": "GAP",
+      "evidence": [
+        "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/slices/cash-payment/07-release-review.md"
+      ]
+    },
+    {
+      "id": "TH07_REGRESSION",
+      "result": "GAP",
+      "evidence": [
+        "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/slices/cash-payment/07-release-review.md"
+      ]
+    },
+    {
+      "id": "TH07_POLICY_GATES",
+      "result": "GAP",
+      "evidence": [
+        "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/slices/cash-payment/07-payment-cash-truth-readiness.gate-output",
+        "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/slices/cash-payment/07-release-review.md"
+      ]
+    },
+    {
+      "id": "TH07_SCOPED_VERDICT",
+      "result": "GAP",
+      "evidence": [
+        "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/slices/cash-payment/07-release-review.md"
+      ]
+    }
+  ],
+  "verification": [
+    {
+      "command": "Stage 00 validator after Stage 06 evidence",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": null
+    },
+    {
+      "command": "Stage 07 release matrix full typecheck, browser accessibility, policy gates, disposable fixtures",
+      "status": "SKIPPED",
+      "exitCode": null,
+      "logPath": "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/slices/cash-payment/07-release-review.md"
+    },
+    {
+      "command": "node scripts/payment-cash-truth-gate.js --mode fail --out <run>/07-payment-cash-truth-readiness.md --json-out <run>/07-payment-cash-truth-readiness.json",
+      "status": "PASS",
+      "exitCode": 0,
+      "logPath": "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/slices/cash-payment/07-payment-cash-truth-readiness.md"
+    },
+    {
+      "command": "$env:NODE_OPTIONS='--max-old-space-size=12288'; npx tsc --noEmit --pretty false --extendedDiagnostics",
+      "status": "SKIPPED",
+      "exitCode": null,
+      "logPath": "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/slices/cash-payment/07-release-review.md"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/slices/cash-payment/07-release-review.md",
+      "sha256": "sha256:8fcbf58d0308ed202a8fa5317f4d5a2904328ede68a97d51a820eee7d3512cca"
+    },
+    {
+      "path": "what-next/transaction-history/runs/th-cash-payment-security-accounting-remediation-20260717-024/slices/cash-payment/07-payment-cash-truth-readiness.gate-output",
+      "sha256": "sha256:870f15e0095db904dadf2cfc5d74c94b3f7c9ad33157208de49e26b0743457df"
+    }
+  ],
+  "blockers": [
+    {
+      "severity": "high",
+      "code": "FULL_TYPECHECK_TIMEOUT",
+      "reason": "Full typecheck did not complete within 240s at 8192MB or 600s at 12288MB."
+    },
+    {
+      "severity": "high",
+      "code": "AUTHENTICATED_BROWSER_A11Y_NOT_RUN",
+      "reason": "Authenticated desktop/mobile EN/FR browser and accessibility verification were not completed."
+    },
+    {
+      "severity": "medium",
+      "code": "RELEASE_MATRIX_FIXTURES_NOT_RUN",
+      "reason": "Independent disposable fixtures for pagination, backdated insert, export parity, timezone, RBAC matrix, remaining policy gates, and verify:repo were not run."
+    }
+  ],
+  "nextEligibleStages": [],
+  "startedAt": "2026-07-17T05:25:00Z",
+  "completedAt": "2026-07-17T05:40:00Z"
+}

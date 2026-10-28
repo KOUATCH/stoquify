@@ -5,14 +5,19 @@ jest.mock("@/lib/security/rbac", () => ({
 jest.mock("@/services/finance/finance-dashboard.service", () => ({
   getFinanceDashboard: jest.fn(),
 }))
+jest.mock("@/services/modules/module-entitlement.service", () => ({
+  observeModuleAccess: jest.fn(),
+}))
 
 import { requireAnyPermission } from "@/lib/security/rbac"
 import { getFinanceDashboard } from "@/services/finance/finance-dashboard.service"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 
 import { getFinanceDashboardAction } from "../finance-dashboard.actions"
 
 const mockRequireAnyPermission = requireAnyPermission as jest.Mock
 const mockGetFinanceDashboard = getFinanceDashboard as jest.Mock
+const mockObserveModuleAccess = observeModuleAccess as jest.Mock
 
 const dashboardData = {
   generatedAt: "2026-06-24T00:00:00.000Z",
@@ -39,6 +44,7 @@ describe("finance dashboard action", () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockRequireAnyPermission.mockResolvedValue({ orgId: "org-1", userId: "user-1", permissions: ["finance.receivables.read"] })
+    mockObserveModuleAccess.mockResolvedValue({ allowed: true, mode: "observe", moduleSlug: "payroll" })
     mockGetFinanceDashboard.mockResolvedValue(dashboardData)
   })
 
@@ -50,8 +56,17 @@ describe("finance dashboard action", () => {
       expect.arrayContaining(["finance.receivables.read", "finance.read"]),
       { resource: "FinanceDashboard", resourceId: "receivables" },
     )
+    expect(mockObserveModuleAccess).toHaveBeenCalledWith(
+      expect.objectContaining({
+        organizationId: "org-1",
+        userId: "user-1",
+        moduleSlug: "payroll",
+        surface: "FinanceDashboard.receivables.payrollForecast",
+        accessIntent: "read",
+      }),
+    )
     expect(mockGetFinanceDashboard).toHaveBeenCalledWith(
-      expect.objectContaining({ organizationId: "org-1", view: "receivables", period: "mtd" }),
+      expect.objectContaining({ organizationId: "org-1", view: "receivables", period: "mtd", payrollModuleDecision: expect.any(Object) }),
     )
   })
 

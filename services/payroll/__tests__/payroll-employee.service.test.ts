@@ -4,7 +4,7 @@ import {
   PayrollEmployeeStatus,
 } from "@prisma/client"
 
-import { ConflictError, ForbiddenError, NotFoundError } from "@/services/_shared/action-errors"
+import { BusinessRuleError, ConflictError, ForbiddenError, NotFoundError } from "@/services/_shared/action-errors"
 
 jest.mock("@/prisma/db", () => ({
   db: {
@@ -45,6 +45,9 @@ function buildTx() {
     user: {
       findFirst: jest.fn(),
       findMany: jest.fn(),
+    },
+    location: {
+      findFirst: jest.fn(),
     },
     payrollEmployee: {
       findMany: jest.fn(),
@@ -169,6 +172,12 @@ describe("payroll employee source-data service", () => {
       payrollReadyCandidates: 1,
     })
     expect(result.employees[0].userMapping.userEmailMasked).toBe("a***@example.com")
+    expect(result.employees[0].evidence.latestDocumentHash).toBe("[REDACTED:HR_DOCUMENT]")
+    expect(result.redaction.documentEvidenceDecision).toMatchObject({
+      allowed: false,
+      mode: "redact",
+      reasonCode: "MISSING_PERMISSION",
+    })
     expect(JSON.stringify(result.employees[0])).not.toContain("baseSalary")
     expect(JSON.stringify(result.employees[0])).not.toContain("bankAccount")
     expect(JSON.stringify(result.employees[0])).not.toContain("mobileMoneyPhone")
@@ -178,6 +187,132 @@ describe("payroll employee source-data service", () => {
           action: "PAYROLL_EMPLOYEE_SOURCE_DATA_READ",
           userId: "hr-1",
           organizationId: "org-1",
+          changes: expect.objectContaining({
+            purpose: "HRIS_PAYROLL_EMPLOYEE_SOURCE_DATA_EVIDENCE_READ",
+            documentEvidenceAccess: expect.objectContaining({
+              allowed: false,
+              policy: "kontava-payroll-document-evidence-redaction-policy",
+            }),
+          }),
+        }),
+      }),
+    )
+  })
+
+  it("accepts HRIS read permission and scopes user mapping to the active tenant", async () => {
+    const client = {
+      payrollEmployee: {
+        findMany: jest.fn().mockResolvedValue([employeeSourceRow()]),
+      },
+      user: {
+        findMany: jest.fn().mockResolvedValue([]),
+      },
+      auditLog: {
+        create: jest.fn(),
+      },
+    }
+
+    await getPayrollEmployeeSourceData(
+      {
+        organizationId: "org-1",
+        actorId: "user-1",
+        actorPermissions: ["hris.people.read"],
+        userId: "user-1",
+      },
+      client as any,
+    )
+
+    expect(client.payrollEmployee.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          organizationId: "org-1",
+          userId: "user-1",
+          deletedAt: null,
+        }),
+      }),
+    )
+  })
+  it("applies a server-resolved employee id set to manager source-data reads", async () => {
+    const client = {
+      payrollEmployee: {
+        findMany: jest.fn().mockResolvedValue([employeeSourceRow()]),
+      },
+      user: {
+        findMany: jest.fn().mockResolvedValue([]),
+      },
+      auditLog: {
+        create: jest.fn(),
+      },
+    }
+
+    const result = await getPayrollEmployeeSourceData({
+      organizationId: "org-1",
+      actorId: "manager-1",
+      actorPermissions: ["hris.people.read"],
+      employeeIds: ["emp-1"],
+    }, client as any)
+
+    expect(client.payrollEmployee.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          organizationId: "org-1",
+          id: { in: ["emp-1"] },
+          deletedAt: null,
+        }),
+      }),
+    )
+    expect(result.employees).toHaveLength(1)
+    expect(JSON.stringify(result.employees[0])).not.toMatch(/baseSalary|bankAccount|mobileMoneyPhone/)
+  })
+  it("returns HR document evidence hashes only to document-owning payroll roles", async () => {
+    const client = {
+      payrollEmployee: {
+        findMany: jest.fn().mockResolvedValue([employeeSourceRow()]),
+      },
+      user: {
+        findMany: jest.fn().mockResolvedValue([
+          {
+            id: "user-1",
+            name: null,
+            email: "alice@example.com",
+            firstName: "Alice",
+            lastName: "Ngono",
+            isActive: true,
+          },
+        ]),
+      },
+      auditLog: {
+        create: jest.fn(),
+      },
+    }
+
+    const result = await getPayrollEmployeeSourceData(
+      {
+        organizationId: "org-1",
+        actorId: "hr-admin-1",
+        actorPermissions: ["payroll.employees.read", "payroll.employees.manage"],
+        asOf: new Date("2026-06-26T00:00:00.000Z"),
+      },
+      client as any,
+    )
+
+    expect(result.employees[0].evidence.latestDocumentHash).toBe("sha256:identity-hash")
+    expect(result.redaction.documentEvidenceDecision).toMatchObject({
+      allowed: true,
+      mode: "allow",
+      reasonCode: "ALLOWED",
+    })
+    expect(client.auditLog.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          action: "PAYROLL_EMPLOYEE_SOURCE_DATA_READ",
+          changes: expect.objectContaining({
+            purpose: "HRIS_PAYROLL_EMPLOYEE_SOURCE_DATA_EVIDENCE_READ",
+            documentEvidenceAccess: expect.objectContaining({
+              allowed: true,
+              policy: "kontava-payroll-document-evidence-redaction-policy",
+            }),
+          }),
         }),
       }),
     )
@@ -201,6 +336,7 @@ describe("payroll employee source-data service", () => {
     ).rejects.toBeInstanceOf(ForbiddenError)
 
     expect(client.payrollEmployee.findMany).not.toHaveBeenCalled()
+    expect(client.auditLog.create).not.toHaveBeenCalled()
   })
 
   it("creates a payroll employee profile with tenant-bound user mapping, audit, and business event evidence", async () => {
@@ -292,7 +428,7 @@ describe("payroll employee source-data service", () => {
       upsertPayrollEmployeeSourceProfile({
         organizationId: "org-1",
         actorId: "hr-1",
-        actorPermissions: ["payroll.employees.manage"],
+        actorPermissions: ["hris.people.manage"],
         employeeNumber: "EMP-001",
         displayName: "Alice Ngono",
         userId: "other-tenant-user",
@@ -303,6 +439,35 @@ describe("payroll employee source-data service", () => {
     expect(tx.payrollEmployee.create).not.toHaveBeenCalled()
   })
 
+  it("rejects employee location when the location is outside the tenant", async () => {
+    const tx = buildTx()
+    useTransaction(tx)
+    tx.organization.findFirst.mockResolvedValue({ id: "org-1" })
+    tx.location.findFirst.mockResolvedValue(null)
+
+    await expect(
+      upsertPayrollEmployeeSourceProfile({
+        organizationId: "org-1",
+        actorId: "hr-1",
+        actorPermissions: ["payroll.employees.manage"],
+        employeeNumber: "EMP-001",
+        displayName: "Alice Ngono",
+        locationId: "other-tenant-location",
+        hireDate: "2026-01-01",
+      }),
+    ).rejects.toBeInstanceOf(NotFoundError)
+
+    expect(tx.location.findFirst).toHaveBeenCalledWith({
+      where: {
+        id: "other-tenant-location",
+        organizationId: "org-1",
+        deletedAt: null,
+      },
+      select: { id: true },
+    })
+    expect(tx.payrollEmployee.findMany).not.toHaveBeenCalled()
+    expect(tx.payrollEmployee.create).not.toHaveBeenCalled()
+  })
   it("rejects duplicate employee-number and user mappings that point to different records", async () => {
     const tx = buildTx()
     useTransaction(tx)
@@ -333,7 +498,7 @@ describe("payroll employee source-data service", () => {
       upsertPayrollEmployeeSourceProfile({
         organizationId: "org-1",
         actorId: "hr-1",
-        actorPermissions: ["payroll.employees.manage"],
+        actorPermissions: ["hris.people.manage"],
         employeeNumber: "EMP-001",
         displayName: "Alice Ngono",
         userId: "user-1",
@@ -345,6 +510,66 @@ describe("payroll employee source-data service", () => {
     expect(tx.payrollEmployee.update).not.toHaveBeenCalled()
   })
 
+  it("surfaces an open HRIS lifecycle request as a payroll-readiness blocker", async () => {
+    const client = {
+      payrollEmployee: {
+        findMany: jest.fn().mockResolvedValue([
+          employeeSourceRow({
+            metadata: {
+              hrisLifecycle: {
+                pending: {
+                  requestId: "lifecycle-request-1",
+                  status: "APPROVED",
+                },
+              },
+            },
+          }),
+        ]),
+      },
+      user: {
+        findMany: jest.fn().mockResolvedValue([
+          {
+            id: "user-1",
+            name: "Alice Ngono",
+            email: "alice@example.com",
+            firstName: "Alice",
+            lastName: "Ngono",
+            isActive: true,
+          },
+        ]),
+      },
+      auditLog: { create: jest.fn().mockResolvedValue({ id: "audit-1" }) },
+    }
+
+    const result = await getPayrollEmployeeSourceData({
+      organizationId: "org-1",
+      actorId: "hr-1",
+      actorPermissions: ["hris.people.read"],
+    }, client as never)
+
+    expect(result.employees[0].blockers).toContain("LIFECYCLE_REQUEST_PENDING")
+    expect(result.summary.payrollReadyCandidates).toBe(0)
+  })
+
+  it("rejects direct status changes for an existing employee", async () => {
+    const tx = buildTx()
+    useTransaction(tx)
+    tx.organization.findFirst.mockResolvedValue({ id: "org-1" })
+    tx.payrollEmployee.findMany.mockResolvedValue([employeeSourceRow()])
+
+    await expect(upsertPayrollEmployeeSourceProfile({
+      organizationId: "org-1",
+      actorId: "hr-1",
+      actorPermissions: ["hris.people.manage"],
+      employeeNumber: "EMP-001",
+      displayName: "Alice Ngono",
+      status: PayrollEmployeeStatus.SUSPENDED,
+      hireDate: "2025-01-01",
+    })).rejects.toBeInstanceOf(BusinessRuleError)
+
+    expect(tx.payrollEmployee.update).not.toHaveBeenCalled()
+    expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled()
+  })
   it("attaches HR evidence references without storing document payloads", async () => {
     const tx = buildTx()
     useTransaction(tx)

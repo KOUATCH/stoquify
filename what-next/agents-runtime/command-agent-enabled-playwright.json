@@ -1,0 +1,240 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-25T04:58:23.173Z",
+  "evidencePolicy": {
+    "source": "distilled-playwright-json",
+    "rawReportRetained": false,
+    "environmentIncluded": false
+  },
+  "playwrightVersion": "1.61.1",
+  "stats": {
+    "startTime": "2026-07-25T04:54:30.336Z",
+    "durationMs": 232761.64200000002,
+    "expected": 14,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "projects": [
+    {
+      "id": "auth-setup",
+      "name": "auth-setup"
+    },
+    {
+      "id": "transaction-history-auth-setup",
+      "name": "transaction-history-auth-setup"
+    },
+    {
+      "id": "payroll-authenticated-smoke",
+      "name": "payroll-authenticated-smoke"
+    },
+    {
+      "id": "command-agent-kill-switch-desktop",
+      "name": "command-agent-kill-switch-desktop"
+    },
+    {
+      "id": "command-agent-kill-switch-mobile",
+      "name": "command-agent-kill-switch-mobile"
+    },
+    {
+      "id": "command-agent-enabled-pilot-desktop",
+      "name": "command-agent-enabled-pilot-desktop"
+    },
+    {
+      "id": "command-agent-enabled-pilot-mobile",
+      "name": "command-agent-enabled-pilot-mobile"
+    },
+    {
+      "id": "command-agent-enabled-pilot-degradation",
+      "name": "command-agent-enabled-pilot-degradation"
+    },
+    {
+      "id": "hris-authenticated-release",
+      "name": "hris-authenticated-release"
+    },
+    {
+      "id": "close-assurance-authenticated-smoke",
+      "name": "close-assurance-authenticated-smoke"
+    },
+    {
+      "id": "hris-rbac-negative",
+      "name": "hris-rbac-negative"
+    },
+    {
+      "id": "transaction-history-authenticated-release",
+      "name": "transaction-history-authenticated-release"
+    }
+  ],
+  "tests": [
+    {
+      "projectId": "command-agent-enabled-pilot-mobile",
+      "projectName": "command-agent-enabled-pilot-mobile",
+      "file": "command-agent-enabled-pilot.spec.ts",
+      "title": "certifies the governed enabled Command Agent without activation authority",
+      "status": "passed",
+      "durationMs": 39917,
+      "retry": 0
+    },
+    {
+      "projectId": "command-agent-enabled-pilot-mobile",
+      "projectName": "command-agent-enabled-pilot-mobile",
+      "file": "command-agent-enabled-pilot.spec.ts",
+      "title": "denies a role outside the controlled pilot allowlist",
+      "status": "passed",
+      "durationMs": 12038,
+      "retry": 0
+    },
+    {
+      "projectId": "command-agent-enabled-pilot-desktop",
+      "projectName": "command-agent-enabled-pilot-desktop",
+      "file": "command-agent-enabled-pilot.spec.ts",
+      "title": "certifies the governed enabled Command Agent without activation authority",
+      "status": "passed",
+      "durationMs": 54422,
+      "retry": 0
+    },
+    {
+      "projectId": "command-agent-enabled-pilot-desktop",
+      "projectName": "command-agent-enabled-pilot-desktop",
+      "file": "command-agent-enabled-pilot.spec.ts",
+      "title": "denies a role outside the controlled pilot allowlist",
+      "status": "passed",
+      "durationMs": 9117,
+      "retry": 0
+    },
+    {
+      "projectId": "auth-setup",
+      "projectName": "auth-setup",
+      "file": "auth.setup.ts",
+      "title": "creates a tenant-scoped payroll and HRIS manager auth state",
+      "status": "passed",
+      "durationMs": 7230,
+      "retry": 0
+    },
+    {
+      "projectId": "auth-setup",
+      "projectName": "auth-setup",
+      "file": "auth.setup.ts",
+      "title": "creates an authenticated payroll requester without HRIS access",
+      "status": "passed",
+      "durationMs": 588,
+      "retry": 0
+    },
+    {
+      "projectId": "auth-setup",
+      "projectName": "auth-setup",
+      "file": "auth.setup.ts",
+      "title": "creates a second-tenant Command Agent isolation auth state",
+      "status": "passed",
+      "durationMs": 478,
+      "retry": 0
+    },
+    {
+      "projectId": "command-agent-enabled-pilot-degradation",
+      "projectName": "command-agent-enabled-pilot-degradation",
+      "file": "command-agent-release-degradation.spec.ts",
+      "title": "fails closed when the governed definition is DRAFT",
+      "status": "passed",
+      "durationMs": 22915,
+      "retry": 0
+    },
+    {
+      "projectId": "command-agent-enabled-pilot-degradation",
+      "projectName": "command-agent-enabled-pilot-degradation",
+      "file": "command-agent-release-degradation.spec.ts",
+      "title": "fails closed when the release role scope no longer matches",
+      "status": "passed",
+      "durationMs": 18563,
+      "retry": 0
+    },
+    {
+      "projectId": "command-agent-enabled-pilot-degradation",
+      "projectName": "command-agent-enabled-pilot-degradation",
+      "file": "command-agent-release-degradation.spec.ts",
+      "title": "fails closed when the release manifest no longer matches",
+      "status": "passed",
+      "durationMs": 17470,
+      "retry": 0
+    },
+    {
+      "projectId": "command-agent-enabled-pilot-degradation",
+      "projectName": "command-agent-enabled-pilot-degradation",
+      "file": "command-agent-release-degradation.spec.ts",
+      "title": "fails closed when a required approval has expired",
+      "status": "passed",
+      "durationMs": 16353,
+      "retry": 0
+    },
+    {
+      "projectId": "command-agent-enabled-pilot-degradation",
+      "projectName": "command-agent-enabled-pilot-degradation",
+      "file": "command-agent-release-degradation.spec.ts",
+      "title": "fails closed when required owner coverage has expired",
+      "status": "passed",
+      "durationMs": 14681,
+      "retry": 0
+    },
+    {
+      "projectId": "command-agent-enabled-pilot-degradation",
+      "projectName": "command-agent-enabled-pilot-degradation",
+      "file": "command-agent-release-degradation.spec.ts",
+      "title": "denies a second tenant without a governed release package",
+      "status": "passed",
+      "durationMs": 8377,
+      "retry": 0
+    },
+    {
+      "projectId": "command-agent-enabled-pilot-degradation",
+      "projectName": "command-agent-enabled-pilot-degradation",
+      "file": "command-agent-release-degradation.spec.ts",
+      "title": "shows a safe rollback state after release suspension",
+      "status": "passed",
+      "durationMs": 10507,
+      "retry": 0
+    }
+  ],
+  "certificationAssurance": {
+    "protectedBusinessDataUnchanged": true,
+    "fingerprintVersion": "agent-protected-business-data-v1",
+    "beforeHash": "sha256:8990cc283e026dd997527ecb211ff348793683a7e7a99f03e2b63ab0c88bfe5e",
+    "afterHash": "sha256:8990cc283e026dd997527ecb211ff348793683a7e7a99f03e2b63ab0c88bfe5e",
+    "allowedPersistence": {
+      "withinPolicy": true,
+      "expectedCommandExecutions": 2,
+      "before": {
+        "runs": 36,
+        "steps": 72,
+        "evidenceLinks": 360,
+        "feedback": 24,
+        "costs": 0,
+        "policyIncidents": 0
+      },
+      "after": {
+        "runs": 38,
+        "steps": 76,
+        "evidenceLinks": 380,
+        "feedback": 26,
+        "costs": 0,
+        "policyIncidents": 0
+      },
+      "delta": {
+        "runs": 2,
+        "steps": 4,
+        "evidenceLinks": 20,
+        "feedback": 2,
+        "costs": 0,
+        "policyIncidents": 0
+      },
+      "allowedTables": [
+        "agent_runs",
+        "agent_steps",
+        "agent_evidence_links",
+        "agent_feedback"
+      ],
+      "unchangedOptionalTables": [
+        "agent_cost_ledger",
+        "agent_policy_incidents"
+      ]
+    }
+  }
+}

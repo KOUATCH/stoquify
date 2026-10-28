@@ -1,5 +1,1 @@
-"use server"
-
-import { getOrgCategories } from "./getCategoriesAction"
-
-export default getOrgCategories
+export { getOrgCategories as default } from "./getCategoriesAction"

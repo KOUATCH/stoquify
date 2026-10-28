@@ -162,6 +162,9 @@ export async function auditExportSafetyDecision(
         allowed: decision.allowed,
         reasonCode: decision.reasonCode,
         exportContext: decision.exportContext,
+        metadata:
+          (decision.sensitiveActionDecision?.input.metadata as Prisma.InputJsonObject | undefined) ??
+          {},
         sensitiveActionReasonCode: decision.sensitiveActionDecision?.reasonCode ?? null,
       } satisfies Prisma.InputJsonObject,
     },

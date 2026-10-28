@@ -1,0 +1,942 @@
+{
+  "summary": {
+    "generatedAt": "2026-07-11T11:47:58.247Z",
+    "mode": "report-only",
+    "sourceInventoryGeneratedAt": "2026-07-11T11:47:41.359Z",
+    "recordCount": 36,
+    "activeFindingCount": 0,
+    "byStatus": {
+      "protected": 25,
+      "delegated": 3,
+      "helper": 3,
+      "allowed-public": 4,
+      "protected-mixed": 1
+    },
+    "byExecutionBoundary": {
+      "server-action": 30,
+      "delegated-re-export": 3,
+      "helper-module": 3
+    },
+    "byAuthorizationBoundary": {
+      "rbac-protected": 25,
+      "delegated-re-export": 3,
+      "helper-module": 3,
+      "token-bound-invitation": 1,
+      "public-registration": 1,
+      "public-reset-request": 1,
+      "mixed-protected-and-token-bound": 1,
+      "otp-bound-verification": 1
+    }
+  },
+  "records": [
+    {
+      "file": "actions/brands/getBrandsAction.ts",
+      "sourceExists": true,
+      "sourceInventory": {
+        "moduleSlug": "inventory",
+        "permission": "inventory.brands.read | inventory.brands.create | inventory.brands.update | inventory.brands.delete",
+        "guard": "requirePermission",
+        "classification": "mapped, enforcement candidate",
+        "observeOrEnforce": "report-only"
+      },
+      "executionBoundary": "server-action",
+      "authorizationBoundary": "rbac-protected",
+      "status": "protected",
+      "permissionDisposition": "required-and-present",
+      "moduleDisposition": "module-observed",
+      "guardMarkers": [
+        "requirePermission("
+      ],
+      "tenantMarkers": [
+        "assertCanUseOrganization(",
+        "ctx.orgId"
+      ],
+      "freshAuth": "not-detected",
+      "moduleObserve": "present",
+      "findings": [],
+      "recommendedAction": "Retain the trusted RBAC boundary and verify tenant and module evidence."
+    },
+    {
+      "file": "actions/brands/getOrgBrands.ts",
+      "sourceExists": true,
+      "sourceInventory": {
+        "moduleSlug": null,
+        "permission": null,
+        "guard": "none",
+        "classification": "unmapped, missing permission, enforcement candidate",
+        "observeOrEnforce": "report-only"
+      },
+      "executionBoundary": "delegated-re-export",
+      "authorizationBoundary": "delegated-re-export",
+      "status": "delegated",
+      "permissionDisposition": "inherited-from-delegate",
+      "moduleDisposition": "inherited-from-delegate",
+      "guardMarkers": [],
+      "tenantMarkers": [],
+      "freshAuth": "inherited-from-delegate",
+      "moduleObserve": "inherited-from-delegate",
+      "findings": [],
+      "recommendedAction": "Inspect and classify the delegated implementation instead of this shim."
+    },
+    {
+      "file": "actions/categories/createBulkCategories.ts",
+      "sourceExists": true,
+      "sourceInventory": {
+        "moduleSlug": null,
+        "permission": null,
+        "guard": "none",
+        "classification": "unmapped, missing permission, enforcement candidate",
+        "observeOrEnforce": "report-only"
+      },
+      "executionBoundary": "helper-module",
+      "authorizationBoundary": "helper-module",
+      "status": "helper",
+      "permissionDisposition": "not-applicable",
+      "moduleDisposition": "not-an-executable-surface",
+      "guardMarkers": [],
+      "tenantMarkers": [],
+      "freshAuth": "not-applicable",
+      "moduleObserve": "not-applicable",
+      "findings": [],
+      "recommendedAction": "Exclude this file from executable action permission findings."
+    },
+    {
+      "file": "actions/categories/createCategory.ts",
+      "sourceExists": true,
+      "sourceInventory": {
+        "moduleSlug": null,
+        "permission": null,
+        "guard": "none",
+        "classification": "unmapped, missing permission, enforcement candidate",
+        "observeOrEnforce": "report-only"
+      },
+      "executionBoundary": "delegated-re-export",
+      "authorizationBoundary": "delegated-re-export",
+      "status": "delegated",
+      "permissionDisposition": "inherited-from-delegate",
+      "moduleDisposition": "inherited-from-delegate",
+      "guardMarkers": [],
+      "tenantMarkers": [],
+      "freshAuth": "inherited-from-delegate",
+      "moduleObserve": "inherited-from-delegate",
+      "findings": [],
+      "recommendedAction": "Inspect and classify the delegated implementation instead of this shim."
+    },
+    {
+      "file": "actions/categories/getCategoriesAction.ts",
+      "sourceExists": true,
+      "sourceInventory": {
+        "moduleSlug": "inventory",
+        "permission": "inventory.categories.read | inventory.categories.create | inventory.categories.update | inventory.categories.delete",
+        "guard": "requirePermission",
+        "classification": "mapped, enforcement candidate",
+        "observeOrEnforce": "report-only"
+      },
+      "executionBoundary": "server-action",
+      "authorizationBoundary": "rbac-protected",
+      "status": "protected",
+      "permissionDisposition": "required-and-present",
+      "moduleDisposition": "module-observed",
+      "guardMarkers": [
+        "requirePermission("
+      ],
+      "tenantMarkers": [
+        "assertCanUseOrganization(",
+        "ctx.orgId"
+      ],
+      "freshAuth": "not-detected",
+      "moduleObserve": "present",
+      "findings": [],
+      "recommendedAction": "Retain the trusted RBAC boundary and verify tenant and module evidence."
+    },
+    {
+      "file": "actions/categories/getOrgCategories.ts",
+      "sourceExists": true,
+      "sourceInventory": {
+        "moduleSlug": null,
+        "permission": null,
+        "guard": "none",
+        "classification": "unmapped, missing permission, enforcement candidate",
+        "observeOrEnforce": "report-only"
+      },
+      "executionBoundary": "delegated-re-export",
+      "authorizationBoundary": "delegated-re-export",
+      "status": "delegated",
+      "permissionDisposition": "inherited-from-delegate",
+      "moduleDisposition": "inherited-from-delegate",
+      "guardMarkers": [],
+      "tenantMarkers": [],
+      "freshAuth": "inherited-from-delegate",
+      "moduleObserve": "inherited-from-delegate",
+      "findings": [],
+      "recommendedAction": "Inspect and classify the delegated implementation instead of this shim."
+    },
+    {
+      "file": "actions/locations/createLocation.ts",
+      "sourceExists": true,
+      "sourceInventory": {
+        "moduleSlug": "settings",
+        "permission": "locations.create",
+        "guard": "requirePermission",
+        "classification": "mapped, enforcement candidate",
+        "observeOrEnforce": "report-only"
+      },
+      "executionBoundary": "server-action",
+      "authorizationBoundary": "rbac-protected",
+      "status": "protected",
+      "permissionDisposition": "required-and-present",
+      "moduleDisposition": "module-observed",
+      "guardMarkers": [
+        "requirePermission("
+      ],
+      "tenantMarkers": [
+        "ctx.orgId"
+      ],
+      "freshAuth": "not-detected",
+      "moduleObserve": "present",
+      "findings": [],
+      "recommendedAction": "Retain the trusted RBAC boundary and verify tenant and module evidence."
+    },
+    {
+      "file": "actions/locations/deleteLocation.ts",
+      "sourceExists": true,
+      "sourceInventory": {
+        "moduleSlug": "settings",
+        "permission": "locations.delete",
+        "guard": "requirePermission",
+        "classification": "mapped, enforcement candidate",
+        "observeOrEnforce": "report-only"
+      },
+      "executionBoundary": "server-action",
+      "authorizationBoundary": "rbac-protected",
+      "status": "protected",
+      "permissionDisposition": "required-and-present",
+      "moduleDisposition": "module-observed",
+      "guardMarkers": [
+        "requirePermission("
+      ],
+      "tenantMarkers": [
+        "ctx.orgId"
+      ],
+      "freshAuth": "not-detected",
+      "moduleObserve": "present",
+      "findings": [],
+      "recommendedAction": "Retain the trusted RBAC boundary and verify tenant and module evidence."
+    },
+    {
+      "file": "actions/locations/getOrgLocations.ts",
+      "sourceExists": true,
+      "sourceInventory": {
+        "moduleSlug": "settings",
+        "permission": "locations.read",
+        "guard": "requirePermission",
+        "classification": "mapped, enforcement candidate",
+        "observeOrEnforce": "report-only"
+      },
+      "executionBoundary": "server-action",
+      "authorizationBoundary": "rbac-protected",
+      "status": "protected",
+      "permissionDisposition": "required-and-present",
+      "moduleDisposition": "module-observed",
+      "guardMarkers": [
+        "requirePermission("
+      ],
+      "tenantMarkers": [
+        "resolveActionOrganization("
+      ],
+      "freshAuth": "not-detected",
+      "moduleObserve": "present",
+      "findings": [],
+      "recommendedAction": "Retain the trusted RBAC boundary and verify tenant and module evidence."
+    },
+    {
+      "file": "actions/locations/location-management-actions.ts",
+      "sourceExists": true,
+      "sourceInventory": {
+        "moduleSlug": "settings",
+        "permission": "locations.read",
+        "guard": "requirePermission",
+        "classification": "mapped, enforcement candidate",
+        "observeOrEnforce": "report-only"
+      },
+      "executionBoundary": "server-action",
+      "authorizationBoundary": "rbac-protected",
+      "status": "protected",
+      "permissionDisposition": "required-and-present",
+      "moduleDisposition": "module-observed",
+      "guardMarkers": [
+        "requirePermission("
+      ],
+      "tenantMarkers": [
+        "assertCanUseOrganization("
+      ],
+      "freshAuth": "not-detected",
+      "moduleObserve": "present",
+      "findings": [],
+      "recommendedAction": "Retain the trusted RBAC boundary and verify tenant and module evidence."
+    },
+    {
+      "file": "actions/locations/updateLocationById.ts",
+      "sourceExists": true,
+      "sourceInventory": {
+        "moduleSlug": "settings",
+        "permission": "locations.update",
+        "guard": "requirePermission",
+        "classification": "mapped, enforcement candidate",
+        "observeOrEnforce": "report-only"
+      },
+      "executionBoundary": "server-action",
+      "authorizationBoundary": "rbac-protected",
+      "status": "protected",
+      "permissionDisposition": "required-and-present",
+      "moduleDisposition": "module-observed",
+      "guardMarkers": [
+        "requirePermission("
+      ],
+      "tenantMarkers": [
+        "ctx.orgId"
+      ],
+      "freshAuth": "not-detected",
+      "moduleObserve": "present",
+      "findings": [],
+      "recommendedAction": "Retain the trusted RBAC boundary and verify tenant and module evidence."
+    },
+    {
+      "file": "actions/organization/organization-settings-actions.ts",
+      "sourceExists": true,
+      "sourceInventory": {
+        "moduleSlug": "settings",
+        "permission": "system.organization.read",
+        "guard": "requirePermission",
+        "classification": "mapped, enforcement candidate",
+        "observeOrEnforce": "report-only"
+      },
+      "executionBoundary": "server-action",
+      "authorizationBoundary": "rbac-protected",
+      "status": "protected",
+      "permissionDisposition": "required-and-present",
+      "moduleDisposition": "module-observed",
+      "guardMarkers": [
+        "requirePermission("
+      ],
+      "tenantMarkers": [
+        "assertCanUseOrganization(",
+        "ctx.orgId"
+      ],
+      "freshAuth": "present",
+      "moduleObserve": "present",
+      "findings": [],
+      "recommendedAction": "Retain the trusted RBAC boundary and verify tenant and module evidence."
+    },
+    {
+      "file": "actions/roles/createRole.ts",
+      "sourceExists": true,
+      "sourceInventory": {
+        "moduleSlug": "settings",
+        "permission": "roles.create",
+        "guard": "requirePermission",
+        "classification": "mapped, enforcement candidate",
+        "observeOrEnforce": "report-only"
+      },
+      "executionBoundary": "server-action",
+      "authorizationBoundary": "rbac-protected",
+      "status": "protected",
+      "permissionDisposition": "required-and-present",
+      "moduleDisposition": "module-observed",
+      "guardMarkers": [
+        "requirePermission("
+      ],
+      "tenantMarkers": [
+        "ctx.orgId"
+      ],
+      "freshAuth": "present",
+      "moduleObserve": "present",
+      "findings": [],
+      "recommendedAction": "Retain the trusted RBAC boundary and verify tenant and module evidence."
+    },
+    {
+      "file": "actions/roles/getOrgRoles.ts",
+      "sourceExists": true,
+      "sourceInventory": {
+        "moduleSlug": "settings",
+        "permission": "roles.read",
+        "guard": "requirePermission",
+        "classification": "mapped, enforcement candidate",
+        "observeOrEnforce": "report-only"
+      },
+      "executionBoundary": "server-action",
+      "authorizationBoundary": "rbac-protected",
+      "status": "protected",
+      "permissionDisposition": "required-and-present",
+      "moduleDisposition": "module-observed",
+      "guardMarkers": [
+        "requirePermission("
+      ],
+      "tenantMarkers": [
+        "ctx.orgId"
+      ],
+      "freshAuth": "not-detected",
+      "moduleObserve": "present",
+      "findings": [],
+      "recommendedAction": "Retain the trusted RBAC boundary and verify tenant and module evidence."
+    },
+    {
+      "file": "actions/roles/getRoleById.ts",
+      "sourceExists": true,
+      "sourceInventory": {
+        "moduleSlug": "settings",
+        "permission": "roles.read",
+        "guard": "requirePermission",
+        "classification": "mapped, enforcement candidate",
+        "observeOrEnforce": "report-only"
+      },
+      "executionBoundary": "server-action",
+      "authorizationBoundary": "rbac-protected",
+      "status": "protected",
+      "permissionDisposition": "required-and-present",
+      "moduleDisposition": "module-observed",
+      "guardMarkers": [
+        "requirePermission("
+      ],
+      "tenantMarkers": [
+        "ctx.orgId"
+      ],
+      "freshAuth": "not-detected",
+      "moduleObserve": "present",
+      "findings": [],
+      "recommendedAction": "Retain the trusted RBAC boundary and verify tenant and module evidence."
+    },
+    {
+      "file": "actions/roles/role-auth.ts",
+      "sourceExists": true,
+      "sourceInventory": {
+        "moduleSlug": "settings",
+        "permission": "roles.read | roles.create | roles.update | roles.permissions.assign",
+        "guard": "requirePermission",
+        "classification": "mapped, enforcement candidate",
+        "observeOrEnforce": "report-only"
+      },
+      "executionBoundary": "helper-module",
+      "authorizationBoundary": "helper-module",
+      "status": "helper",
+      "permissionDisposition": "not-applicable",
+      "moduleDisposition": "not-an-executable-surface",
+      "guardMarkers": [
+        "requirePermission("
+      ],
+      "tenantMarkers": [],
+      "freshAuth": "not-applicable",
+      "moduleObserve": "not-applicable",
+      "findings": [],
+      "recommendedAction": "Exclude this file from executable action permission findings."
+    },
+    {
+      "file": "actions/roles/role-utils.ts",
+      "sourceExists": true,
+      "sourceInventory": {
+        "moduleSlug": null,
+        "permission": null,
+        "guard": "none",
+        "classification": "not applicable: internal display helper",
+        "observeOrEnforce": "report-only"
+      },
+      "executionBoundary": "helper-module",
+      "authorizationBoundary": "helper-module",
+      "status": "helper",
+      "permissionDisposition": "not-applicable",
+      "moduleDisposition": "not-an-executable-surface",
+      "guardMarkers": [],
+      "tenantMarkers": [],
+      "freshAuth": "not-applicable",
+      "moduleObserve": "not-applicable",
+      "findings": [],
+      "recommendedAction": "Exclude this file from executable action permission findings."
+    },
+    {
+      "file": "actions/roles/updateRole.ts",
+      "sourceExists": true,
+      "sourceInventory": {
+        "moduleSlug": "settings",
+        "permission": "roles.update",
+        "guard": "requirePermission",
+        "classification": "mapped, enforcement candidate",
+        "observeOrEnforce": "report-only"
+      },
+      "executionBoundary": "server-action",
+      "authorizationBoundary": "rbac-protected",
+      "status": "protected",
+      "permissionDisposition": "required-and-present",
+      "moduleDisposition": "module-observed",
+      "guardMarkers": [
+        "requirePermission("
+      ],
+      "tenantMarkers": [
+        "ctx.orgId"
+      ],
+      "freshAuth": "present",
+      "moduleObserve": "present",
+      "findings": [],
+      "recommendedAction": "Retain the trusted RBAC boundary and verify tenant and module evidence."
+    },
+    {
+      "file": "actions/storage/photo-upload-actions.ts",
+      "sourceExists": true,
+      "sourceInventory": {
+        "moduleSlug": "inventory",
+        "permission": "inventory.items.create | inventory.items.update",
+        "guard": "requireAnyPermission",
+        "classification": "mapped, enforcement candidate",
+        "observeOrEnforce": "report-only"
+      },
+      "executionBoundary": "server-action",
+      "authorizationBoundary": "rbac-protected",
+      "status": "protected",
+      "permissionDisposition": "required-and-present",
+      "moduleDisposition": "module-observed",
+      "guardMarkers": [
+        "requireAnyPermission("
+      ],
+      "tenantMarkers": [
+        "assertCanUseOrganization(",
+        "ctx.orgId"
+      ],
+      "freshAuth": "not-detected",
+      "moduleObserve": "present",
+      "findings": [],
+      "recommendedAction": "Retain the trusted RBAC boundary and verify tenant and module evidence."
+    },
+    {
+      "file": "actions/storage/storage-config-actions.ts",
+      "sourceExists": true,
+      "sourceInventory": {
+        "moduleSlug": "settings",
+        "permission": "inventory.items.create | inventory.items.update | system.settings.read | system.settings.update",
+        "guard": "requireAnyPermission",
+        "classification": "mapped, enforcement candidate",
+        "observeOrEnforce": "report-only"
+      },
+      "executionBoundary": "server-action",
+      "authorizationBoundary": "rbac-protected",
+      "status": "protected",
+      "permissionDisposition": "required-and-present",
+      "moduleDisposition": "module-observed",
+      "guardMarkers": [
+        "requirePermission(",
+        "requireAnyPermission("
+      ],
+      "tenantMarkers": [
+        "assertCanUseOrganization(",
+        "ctx.orgId"
+      ],
+      "freshAuth": "present",
+      "moduleObserve": "present",
+      "findings": [],
+      "recommendedAction": "Retain the trusted RBAC boundary and verify tenant and module evidence."
+    },
+    {
+      "file": "actions/taxRate/createActionTaxRate.ts",
+      "sourceExists": true,
+      "sourceInventory": {
+        "moduleSlug": "settings",
+        "permission": "taxes.create",
+        "guard": "requirePermission",
+        "classification": "mapped, enforcement candidate",
+        "observeOrEnforce": "report-only"
+      },
+      "executionBoundary": "server-action",
+      "authorizationBoundary": "rbac-protected",
+      "status": "protected",
+      "permissionDisposition": "required-and-present",
+      "moduleDisposition": "module-observed",
+      "guardMarkers": [
+        "requirePermission("
+      ],
+      "tenantMarkers": [
+        "assertCanUseOrganization("
+      ],
+      "freshAuth": "not-detected",
+      "moduleObserve": "present",
+      "findings": [],
+      "recommendedAction": "Retain the trusted RBAC boundary and verify tenant and module evidence."
+    },
+    {
+      "file": "actions/taxRate/getOrgTaxRates.ts",
+      "sourceExists": true,
+      "sourceInventory": {
+        "moduleSlug": "settings",
+        "permission": "taxes.read",
+        "guard": "requirePermission",
+        "classification": "mapped, enforcement candidate",
+        "observeOrEnforce": "report-only"
+      },
+      "executionBoundary": "server-action",
+      "authorizationBoundary": "rbac-protected",
+      "status": "protected",
+      "permissionDisposition": "required-and-present",
+      "moduleDisposition": "module-observed",
+      "guardMarkers": [
+        "requirePermission("
+      ],
+      "tenantMarkers": [
+        "ctx.orgId"
+      ],
+      "freshAuth": "not-detected",
+      "moduleObserve": "present",
+      "findings": [],
+      "recommendedAction": "Retain the trusted RBAC boundary and verify tenant and module evidence."
+    },
+    {
+      "file": "actions/taxRate/tax-rate-management-actions.ts",
+      "sourceExists": true,
+      "sourceInventory": {
+        "moduleSlug": "settings",
+        "permission": "taxes.read",
+        "guard": "requirePermission",
+        "classification": "mapped, enforcement candidate",
+        "observeOrEnforce": "report-only"
+      },
+      "executionBoundary": "server-action",
+      "authorizationBoundary": "rbac-protected",
+      "status": "protected",
+      "permissionDisposition": "required-and-present",
+      "moduleDisposition": "module-observed",
+      "guardMarkers": [
+        "requirePermission("
+      ],
+      "tenantMarkers": [
+        "assertCanUseOrganization(",
+        "ctx.orgId"
+      ],
+      "freshAuth": "not-detected",
+      "moduleObserve": "present",
+      "findings": [],
+      "recommendedAction": "Retain the trusted RBAC boundary and verify tenant and module evidence."
+    },
+    {
+      "file": "actions/units/deleteUnit.ts",
+      "sourceExists": true,
+      "sourceInventory": {
+        "moduleSlug": "inventory",
+        "permission": "inventory.units.delete",
+        "guard": "requirePermission",
+        "classification": "mapped, enforcement candidate",
+        "observeOrEnforce": "report-only"
+      },
+      "executionBoundary": "server-action",
+      "authorizationBoundary": "rbac-protected",
+      "status": "protected",
+      "permissionDisposition": "required-and-present",
+      "moduleDisposition": "module-observed",
+      "guardMarkers": [
+        "requirePermission("
+      ],
+      "tenantMarkers": [
+        "ctx.orgId"
+      ],
+      "freshAuth": "not-detected",
+      "moduleObserve": "present",
+      "findings": [],
+      "recommendedAction": "Retain the trusted RBAC boundary and verify tenant and module evidence."
+    },
+    {
+      "file": "actions/units/getOrgUnits.ts",
+      "sourceExists": true,
+      "sourceInventory": {
+        "moduleSlug": "inventory",
+        "permission": "inventory.units.read",
+        "guard": "requirePermission",
+        "classification": "mapped, enforcement candidate",
+        "observeOrEnforce": "report-only"
+      },
+      "executionBoundary": "server-action",
+      "authorizationBoundary": "rbac-protected",
+      "status": "protected",
+      "permissionDisposition": "required-and-present",
+      "moduleDisposition": "module-observed",
+      "guardMarkers": [
+        "requirePermission("
+      ],
+      "tenantMarkers": [
+        "resolveActionOrganization("
+      ],
+      "freshAuth": "not-detected",
+      "moduleObserve": "present",
+      "findings": [],
+      "recommendedAction": "Retain the trusted RBAC boundary and verify tenant and module evidence."
+    },
+    {
+      "file": "actions/units/unit-management-actions.ts",
+      "sourceExists": true,
+      "sourceInventory": {
+        "moduleSlug": null,
+        "permission": "inventory.units.read",
+        "guard": "requirePermission",
+        "classification": "unmapped, enforcement candidate",
+        "observeOrEnforce": "report-only"
+      },
+      "executionBoundary": "server-action",
+      "authorizationBoundary": "rbac-protected",
+      "status": "protected",
+      "permissionDisposition": "required-and-present",
+      "moduleDisposition": "module-not-detected",
+      "guardMarkers": [
+        "requirePermission("
+      ],
+      "tenantMarkers": [
+        "assertCanUseOrganization("
+      ],
+      "freshAuth": "not-detected",
+      "moduleObserve": "not-detected",
+      "findings": [],
+      "recommendedAction": "Retain the trusted RBAC boundary and verify tenant and module evidence."
+    },
+    {
+      "file": "actions/users/createInvitedUser.ts",
+      "sourceExists": true,
+      "sourceInventory": {
+        "moduleSlug": null,
+        "permission": null,
+        "guard": "none",
+        "classification": "not applicable: token-bound invitation acceptance",
+        "observeOrEnforce": "report-only"
+      },
+      "executionBoundary": "server-action",
+      "authorizationBoundary": "token-bound-invitation",
+      "status": "allowed-public",
+      "permissionDisposition": "reviewed-token-exception",
+      "moduleDisposition": "identity-outside-module-entitlement",
+      "guardMarkers": [],
+      "tenantMarkers": [],
+      "freshAuth": "not-detected",
+      "moduleObserve": "not-detected",
+      "findings": [],
+      "recommendedAction": "Preserve invitation-token redemption and single-use expiry checks."
+    },
+    {
+      "file": "actions/users/createUser.ts",
+      "sourceExists": true,
+      "sourceInventory": {
+        "moduleSlug": null,
+        "permission": null,
+        "guard": "none",
+        "classification": "not applicable: public organization onboarding",
+        "observeOrEnforce": "report-only"
+      },
+      "executionBoundary": "server-action",
+      "authorizationBoundary": "public-registration",
+      "status": "allowed-public",
+      "permissionDisposition": "reviewed-public-exception",
+      "moduleDisposition": "identity-outside-module-entitlement",
+      "guardMarkers": [],
+      "tenantMarkers": [],
+      "freshAuth": "not-detected",
+      "moduleObserve": "not-detected",
+      "findings": [],
+      "recommendedAction": "Preserve public registration; assess abuse resistance separately."
+    },
+    {
+      "file": "actions/users/deleteUser.ts",
+      "sourceExists": true,
+      "sourceInventory": {
+        "moduleSlug": "settings",
+        "permission": "users.delete",
+        "guard": "requirePermission",
+        "classification": "mapped, enforcement candidate",
+        "observeOrEnforce": "report-only"
+      },
+      "executionBoundary": "server-action",
+      "authorizationBoundary": "rbac-protected",
+      "status": "protected",
+      "permissionDisposition": "required-and-present",
+      "moduleDisposition": "module-observed",
+      "guardMarkers": [
+        "requirePermission("
+      ],
+      "tenantMarkers": [
+        "ctx.orgId"
+      ],
+      "freshAuth": "present",
+      "moduleObserve": "present",
+      "findings": [],
+      "recommendedAction": "Retain the trusted RBAC boundary and verify tenant and module evidence."
+    },
+    {
+      "file": "actions/users/getOrgInvites.ts",
+      "sourceExists": true,
+      "sourceInventory": {
+        "moduleSlug": "settings",
+        "permission": "users.invite | users.read",
+        "guard": "requireAnyPermission",
+        "classification": "mapped, enforcement candidate",
+        "observeOrEnforce": "report-only"
+      },
+      "executionBoundary": "server-action",
+      "authorizationBoundary": "rbac-protected",
+      "status": "protected",
+      "permissionDisposition": "required-and-present",
+      "moduleDisposition": "module-observed",
+      "guardMarkers": [
+        "requireAnyPermission("
+      ],
+      "tenantMarkers": [
+        "assertCanUseOrganization(",
+        "ctx.orgId"
+      ],
+      "freshAuth": "not-detected",
+      "moduleObserve": "present",
+      "findings": [],
+      "recommendedAction": "Retain the trusted RBAC boundary and verify tenant and module evidence."
+    },
+    {
+      "file": "actions/users/getOrgUsers.ts",
+      "sourceExists": true,
+      "sourceInventory": {
+        "moduleSlug": "settings",
+        "permission": "users.read",
+        "guard": "requirePermission",
+        "classification": "mapped, enforcement candidate",
+        "observeOrEnforce": "report-only"
+      },
+      "executionBoundary": "server-action",
+      "authorizationBoundary": "rbac-protected",
+      "status": "protected",
+      "permissionDisposition": "required-and-present",
+      "moduleDisposition": "module-observed",
+      "guardMarkers": [
+        "requirePermission("
+      ],
+      "tenantMarkers": [
+        "assertCanUseOrganization(",
+        "ctx.orgId"
+      ],
+      "freshAuth": "not-detected",
+      "moduleObserve": "present",
+      "findings": [],
+      "recommendedAction": "Retain the trusted RBAC boundary and verify tenant and module evidence."
+    },
+    {
+      "file": "actions/users/getUserById.ts",
+      "sourceExists": true,
+      "sourceInventory": {
+        "moduleSlug": "settings",
+        "permission": "users.read",
+        "guard": "requirePermission",
+        "classification": "mapped, enforcement candidate",
+        "observeOrEnforce": "report-only"
+      },
+      "executionBoundary": "server-action",
+      "authorizationBoundary": "rbac-protected",
+      "status": "protected",
+      "permissionDisposition": "required-and-present",
+      "moduleDisposition": "module-observed",
+      "guardMarkers": [
+        "requirePermission(",
+        "requireRbacContext("
+      ],
+      "tenantMarkers": [
+        "ctx.orgId"
+      ],
+      "freshAuth": "not-detected",
+      "moduleObserve": "present",
+      "findings": [],
+      "recommendedAction": "Retain the trusted RBAC boundary and verify tenant and module evidence."
+    },
+    {
+      "file": "actions/users/sendInvite.ts",
+      "sourceExists": true,
+      "sourceInventory": {
+        "moduleSlug": "settings",
+        "permission": "users.invite",
+        "guard": "requirePermission",
+        "classification": "mapped, enforcement candidate",
+        "observeOrEnforce": "report-only"
+      },
+      "executionBoundary": "server-action",
+      "authorizationBoundary": "rbac-protected",
+      "status": "protected",
+      "permissionDisposition": "required-and-present",
+      "moduleDisposition": "module-observed",
+      "guardMarkers": [
+        "requirePermission("
+      ],
+      "tenantMarkers": [
+        "ctx.orgId"
+      ],
+      "freshAuth": "present",
+      "moduleObserve": "present",
+      "findings": [],
+      "recommendedAction": "Retain the trusted RBAC boundary and verify tenant and module evidence."
+    },
+    {
+      "file": "actions/users/sendResetLink.ts",
+      "sourceExists": true,
+      "sourceInventory": {
+        "moduleSlug": null,
+        "permission": null,
+        "guard": "none",
+        "classification": "not applicable: public password reset request",
+        "observeOrEnforce": "report-only"
+      },
+      "executionBoundary": "server-action",
+      "authorizationBoundary": "public-reset-request",
+      "status": "allowed-public",
+      "permissionDisposition": "reviewed-public-exception",
+      "moduleDisposition": "identity-outside-module-entitlement",
+      "guardMarkers": [],
+      "tenantMarkers": [],
+      "freshAuth": "not-detected",
+      "moduleObserve": "not-detected",
+      "findings": [],
+      "recommendedAction": "Preserve enumeration-resistant responses; assess rate limiting separately."
+    },
+    {
+      "file": "actions/users/updateUserPassword.ts",
+      "sourceExists": true,
+      "sourceInventory": {
+        "moduleSlug": "settings",
+        "permission": "users.password.reset",
+        "guard": "requirePermission",
+        "classification": "mapped, enforcement candidate",
+        "observeOrEnforce": "report-only"
+      },
+      "executionBoundary": "server-action",
+      "authorizationBoundary": "mixed-protected-and-token-bound",
+      "status": "protected-mixed",
+      "permissionDisposition": "required-and-present",
+      "moduleDisposition": "settings-protected-plus-identity-token",
+      "guardMarkers": [
+        "requirePermission(",
+        "requireRbacContext("
+      ],
+      "tenantMarkers": [
+        "ctx.orgId"
+      ],
+      "freshAuth": "present",
+      "moduleObserve": "present",
+      "findings": [],
+      "recommendedAction": "Keep protected password changes separate from token-bound reset completion."
+    },
+    {
+      "file": "actions/users/verifyOtp.ts",
+      "sourceExists": true,
+      "sourceInventory": {
+        "moduleSlug": null,
+        "permission": null,
+        "guard": "none",
+        "classification": "not applicable: public email verification",
+        "observeOrEnforce": "report-only"
+      },
+      "executionBoundary": "server-action",
+      "authorizationBoundary": "otp-bound-verification",
+      "status": "allowed-public",
+      "permissionDisposition": "reviewed-token-exception",
+      "moduleDisposition": "identity-outside-module-entitlement",
+      "guardMarkers": [],
+      "tenantMarkers": [],
+      "freshAuth": "not-detected",
+      "moduleObserve": "not-detected",
+      "findings": [],
+      "recommendedAction": "Preserve OTP verification and expiry checks in the identity service."
+    }
+  ]
+}

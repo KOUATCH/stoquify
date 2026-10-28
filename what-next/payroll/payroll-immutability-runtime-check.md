@@ -1,6 +1,6 @@
 # Payroll Immutability Runtime Check
 
-Generated: 2026-07-06T06:16:06.532Z
+Generated: 2026-08-22T14:24:26.391Z
 Mode: `fail`
 Status: `ready`
 
@@ -31,20 +31,20 @@ Status: `ready`
 
 ## Forbidden Mutation Checks
 
-- blocked: block_run_update - P2010: PrismaClientKnownRequestError
-- blocked: block_run_delete - P2010: PrismaClientKnownRequestError
-- blocked: block_run_line_update - P2010: PrismaClientKnownRequestError
-- blocked: block_payslip_update - P2010: PrismaClientKnownRequestError
-- blocked: block_payslip_line_update - P2010: PrismaClientKnownRequestError
-- blocked: block_payment_batch_update - P2010: PrismaClientKnownRequestError
-- blocked: block_payment_batch_status_reversal - P2010: PrismaClientKnownRequestError
-- blocked: block_payment_allocation_update - P2010: PrismaClientKnownRequestError
-- blocked: block_declaration_update - P2010: PrismaClientKnownRequestError
-- blocked: block_declaration_delete - P2010: PrismaClientKnownRequestError
-- blocked: block_declaration_evidence_update - P2010: PrismaClientKnownRequestError
-- blocked: block_declaration_evidence_delete - P2010: PrismaClientKnownRequestError
-- blocked: block_employee_balance_event_update - P2010: PrismaClientKnownRequestError
-- blocked: block_employee_balance_event_delete - P2010: PrismaClientKnownRequestError
+- blocked: block_run_update - 23000: error: Cannot modify immutable payroll evidence: payroll run payroll_immut_run_1787408666138_g7rp6yw
+- blocked: block_run_delete - 23000: error: Cannot delete immutable payroll evidence: payroll run payroll_immut_run_1787408666138_g7rp6yw
+- blocked: block_run_line_update - 23000: error: Cannot modify immutable payroll evidence: payroll run line payroll_immut_run_line_1787408666138_g7rp6yw
+- blocked: block_payslip_update - 23000: error: Cannot modify immutable payroll evidence: payslip payroll_immut_payslip_1787408666138_g7rp6yw
+- blocked: block_payslip_line_update - 23000: error: Cannot modify immutable payroll evidence: payslip line payroll_immut_payslip_line_1787408666138_g7rp6yw
+- blocked: block_payment_batch_update - 23000: error: Cannot modify immutable payroll evidence: payment batch payroll_immut_batch_1787408666138_g7rp6yw
+- blocked: block_payment_batch_status_reversal - 23000: error: Cannot change immutable payroll payment lifecycle status from RELEASED to DRAFT for payment batch payroll_immut_batch_1787408666138_g7rp6yw
+- blocked: block_payment_allocation_update - 23000: error: Cannot modify immutable payroll evidence: payment allocation payroll_immut_allocation_1787408666138_g7rp6yw
+- blocked: block_declaration_update - 23000: error: Cannot modify immutable payroll evidence: declaration payroll_immut_declaration_1787408666138_g7rp6yw
+- blocked: block_declaration_delete - 23000: error: Cannot delete immutable payroll evidence: declaration payroll_immut_declaration_1787408666138_g7rp6yw
+- blocked: block_declaration_evidence_update - 23000: error: Cannot modify immutable payroll evidence: declaration evidence payroll_immut_declaration_evidence_1787408666138_g7rp6yw
+- blocked: block_declaration_evidence_delete - 23000: error: Cannot delete immutable payroll evidence: declaration evidence payroll_immut_declaration_evidence_1787408666138_g7rp6yw
+- blocked: block_employee_balance_event_update - 23000: error: Cannot modify immutable payroll evidence: employee balance event payroll_immut_balance_event_1787408666138_g7rp6yw
+- blocked: block_employee_balance_event_delete - 23000: error: Cannot delete immutable payroll evidence: employee balance event payroll_immut_balance_event_1787408666138_g7rp6yw
 
 ## Allowed Lifecycle Checks
 

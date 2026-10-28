@@ -308,4 +308,23 @@ describe("buildTodaysOperatingTruthModel", () => {
     })
     expect(paymentAction?.value).toEqual(expect.stringContaining("10,000"))
   })
+
+  it("formats dashboard financial totals with XOF in French", () => {
+    const dashboard = buildDashboard()
+    dashboard.organization.currency = "XOF"
+
+    const model = buildTodaysOperatingTruthModel({
+      dashboard,
+      locale: "fr",
+      dashboardBasePath: "/fr/dashboard",
+      selectedLocationLabel: "Tous les lieux",
+    })
+    const expectedRevenue = new Intl.NumberFormat("fr", {
+      style: "currency",
+      currency: "XOF",
+    }).format(dashboard.kpis.revenue.current)
+
+    expect(model.kpis.find((kpi) => kpi.label === "Revenu")?.value).toBe(expectedRevenue)
+    expect(model.brief.summary).toContain(expectedRevenue)
+  })
 })

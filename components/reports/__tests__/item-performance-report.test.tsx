@@ -39,6 +39,7 @@ const provenance = {
   knownBlockers: [],
   rowCount: 1,
   filterHash: "a".repeat(64),
+  currency: "XAF",
 } satisfies ItemPerformanceReport["provenance"]
 
 function report(overrides: Partial<ItemPerformanceReport> = {}): ItemPerformanceReport {

@@ -209,6 +209,7 @@ function supportedIrppPack() {
       ...cameroonCountryPack.header,
       capabilityMatrix: {
         ...cameroonCountryPack.header.capabilityMatrix,
+        "payroll.cnps": "SUPPORTED" as const,
         "payroll.irpp": "SUPPORTED" as const,
         "payroll.compensation": "SUPPORTED" as const,
         "payroll.attendance": "SUPPORTED" as const,
@@ -278,7 +279,7 @@ describe("payroll statutory scenario coverage service", () => {
     ]);
   });
 
-  it("keeps the active Cameroon pack blocked for full production while CNPS coverage is executable", () => {
+  it("keeps source-checked CNPS coverage executable but blocked pending independent approval", () => {
     const validation =
       validatePayrollCountryPackCalculationFixtures(cameroonCountryPack);
 
@@ -288,7 +289,7 @@ describe("payroll statutory scenario coverage service", () => {
     );
 
     expect(summary.status).toBe("BLOCKED");
-    expect(summary.readyFamilyCount).toBe(3);
+    expect(summary.readyFamilyCount).toBe(0);
     expect(summary.requiredFamilyCount).toBe(11);
     expect(summary.requiredReviewTopicCount).toBe(
       REQUIRED_ACTIVE_REVIEW_TOPICS.length,
@@ -301,19 +302,22 @@ describe("payroll statutory scenario coverage service", () => {
     );
     expect(summary.missingReviewTopics).toEqual(REQUIRED_IRPP_REVIEW_TOPICS);
     expect(family(summary, "CNPS_PENSION")).toMatchObject({
-      status: "READY",
+      status: "BLOCKED",
+      capabilityStatus: "SUPPORTED_DRAFT",
       passedScenarioCount: 1,
       coveredReviewTopics: REQUIRED_CNPS_PENSION_REVIEW_TOPICS,
       missingReviewTopics: [],
     });
     expect(family(summary, "CNPS_FAMILY_ALLOWANCE")).toMatchObject({
-      status: "READY",
+      status: "BLOCKED",
+      capabilityStatus: "SUPPORTED_DRAFT",
       passedScenarioCount: 3,
       coveredReviewTopics: REQUIRED_CNPS_FAMILY_ALLOWANCE_REVIEW_TOPICS,
       missingReviewTopics: [],
     });
     expect(family(summary, "CNPS_OCCUPATIONAL_RISK")).toMatchObject({
-      status: "READY",
+      status: "BLOCKED",
+      capabilityStatus: "SUPPORTED_DRAFT",
       passedScenarioCount: 3,
       coveredReviewTopics: REQUIRED_CNPS_OCCUPATIONAL_RISK_REVIEW_TOPICS,
       missingReviewTopics: [],

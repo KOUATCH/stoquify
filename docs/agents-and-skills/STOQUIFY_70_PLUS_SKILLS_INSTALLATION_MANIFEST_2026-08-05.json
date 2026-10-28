@@ -1,0 +1,375 @@
+{
+  "schema_version": "1.0",
+  "document_id": "stoquify-70-plus-skills-installation-feasibility-2026-08-05",
+  "generated_on": "2026-08-05",
+  "phase": "A",
+  "status": "human_approval_required",
+  "execution_authorized": false,
+  "candidate_threshold": 70,
+  "candidate_count": 7,
+  "below_threshold_candidates_included": 0,
+  "phase_a_actions": {
+    "installed": [],
+    "downloaded": [],
+    "executed": [],
+    "activated": [],
+    "application_checks_run": [],
+    "reason_application_checks_omitted": "Phase A changed no application code or dependencies."
+  },
+  "codex": {
+    "project_local_destination": "E:\\ohada saas\\Focused projects\\stoquify\\.codex\\skills",
+    "installer": "C:\\Users\\J COMPUTER\\.codex\\skills\\.system\\skill-installer\\scripts\\install-skill-from-github.py",
+    "validator": "C:\\Users\\J COMPUTER\\.codex\\skills\\.system\\skill-creator\\scripts\\quick_validate.py",
+    "validation_rule": "Every installed Codex skill must pass the current validator before first use; validation is not certification.",
+    "existing_conflicts": [
+      {
+        "candidate": "Anthropic Skill Creator",
+        "installed_path": "C:\\Users\\J COMPUTER\\.codex\\skills\\.system\\skill-creator",
+        "conflict": "Duplicate name and function; the installed Codex system skill remains authoritative."
+      }
+    ]
+  },
+  "candidates": [
+    {
+      "id": "supabase-postgres-best-practices",
+      "publisher": "Supabase",
+      "score": 93.5,
+      "original_verdict": "Adopt now, governed and pinned.",
+      "phase_a_recommendation": "Eligible for a separate Phase B project-local, report-only Codex skill install.",
+      "install_type": "project_local_codex_skill",
+      "installable_unit": "skills/supabase-postgres-best-practices",
+      "source": "https://github.com/supabase/agent-skills",
+      "pin": {
+        "type": "commit",
+        "value": "1ad9aaeb49caafd9e95c0a91116f71890eebbc53",
+        "status": "resolved"
+      },
+      "license": {
+        "spdx": "MIT",
+        "notice_required": true,
+        "legal_review": "Before vendoring or redistribution"
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": null,
+        "status": "not_computed_phase_a_no_download",
+        "phase_b_requirement": "Create a per-file SHA-256 manifest and record the upstream commit/tree before use."
+      },
+      "dependencies": [],
+      "network_calls": [],
+      "credentials": [],
+      "writes": ["The approved installer would create only .codex/skills/supabase-postgres-best-practices."],
+      "hooks": [],
+      "update_behavior": "Manual reviewed repin only; no auto-update.",
+      "proposed_commands": [
+        "& 'C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe' 'C:\\Users\\J COMPUTER\\.codex\\skills\\.system\\skill-installer\\scripts\\install-skill-from-github.py' --repo supabase/agent-skills --path skills/supabase-postgres-best-practices --ref 1ad9aaeb49caafd9e95c0a91116f71890eebbc53 --dest 'E:\\ohada saas\\Focused projects\\stoquify\\.codex\\skills'"
+      ],
+      "commands_executed": false,
+      "preflight": [
+        "Inspect and allowlist every file at the pin.",
+        "Record license, notice, file inventory, SHA-256 values, links, writes, and absence of scripts/hooks/network/credentials.",
+        "Check destination collision."
+      ],
+      "validation": [
+        "Run the current Codex skill validator before use.",
+        "Pilot report-only on bounded non-sensitive database review.",
+        "Human DB/security review; negative tenant, migration rollback, query-plan, and concurrency evidence remain authoritative."
+      ],
+      "rollback": [
+        "Resolve and verify the exact project-local target.",
+        "Remove only .codex/skills/supabase-postgres-best-practices.",
+        "Reload Codex and verify absence and clean residue."
+      ],
+      "removal_test_required_before_promotion": true,
+      "approval_owner": ["Database Architecture", "Security", "Agent Governance", "Legal/Procurement"],
+      "blocked_status": false
+    },
+    {
+      "id": "web-quality-audit",
+      "publisher": "Addy Osmani",
+      "score": 83.5,
+      "original_verdict": "Adopt now as a governed checklist, not as certification.",
+      "phase_a_recommendation": "Eligible for a separate Phase B project-local guidance install after content and script allowlisting.",
+      "install_type": "project_local_codex_skill_conditional",
+      "installable_unit": "skills/web-quality-audit",
+      "source": "https://github.com/addyosmani/web-quality-skills",
+      "pin": {
+        "type": "commit",
+        "value": "7b59d48aaf1f793935002f4998dfccc656f40839",
+        "status": "resolved"
+      },
+      "license": {
+        "spdx": "MIT",
+        "notice_required": true,
+        "legal_review": "Before vendoring or redistribution"
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": null,
+        "status": "not_computed_phase_a_no_download",
+        "phase_b_requirement": "Create a per-file SHA-256 manifest after approved acquisition."
+      },
+      "dependencies": ["None for guidance; Lighthouse, accessibility, and browser evidence tools are separate."],
+      "network_calls": ["None required for guidance; browser/URL measurement is separately approved."],
+      "credentials": [],
+      "writes": ["Installer destination only; any bundled helper scripts must be explicitly allowlisted or excluded."],
+      "hooks": [],
+      "update_behavior": "Manual reviewed repin only; no auto-update.",
+      "proposed_commands": [
+        "& 'C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe' 'C:\\Users\\J COMPUTER\\.codex\\skills\\.system\\skill-installer\\scripts\\install-skill-from-github.py' --repo addyosmani/web-quality-skills --path skills/web-quality-audit --ref 7b59d48aaf1f793935002f4998dfccc656f40839 --dest 'E:\\ohada saas\\Focused projects\\stoquify\\.codex\\skills'"
+      ],
+      "commands_executed": false,
+      "preflight": [
+        "Inventory SKILL.md, references, scripts, commands, links, network expectations, and writes.",
+        "Block or create an approved content-only package if executable helpers are present.",
+        "Record license, notice, and SHA-256 manifest."
+      ],
+      "validation": [
+        "Run the current Codex skill validator before use.",
+        "Pilot report-only on one bounded non-sensitive journey.",
+        "Compare with deterministic browser, accessibility, localization, and design evidence."
+      ],
+      "rollback": [
+        "Remove only .codex/skills/web-quality-audit.",
+        "Reload Codex and verify no hooks, caches, root documents, or output residue."
+      ],
+      "removal_test_required_before_promotion": true,
+      "approval_owner": ["Frontend/Platform", "Accessibility", "Security", "Agent Governance", "Legal/Procurement"],
+      "blocked_status": "conditional_on_content_allowlist"
+    },
+    {
+      "id": "impeccable",
+      "publisher": "Paul Bakaus / Impeccable",
+      "score": 83.0,
+      "original_verdict": "Adopt capability via controlled read-only pilot.",
+      "phase_a_recommendation": "Detector-only disposable CLI pilot; do not install the agent bundle or hooks first.",
+      "install_type": "disposable_cli_pilot_not_codex_skill",
+      "installable_unit": "impeccable npm CLI detector; skill/hook bundle is a separate denied surface",
+      "source": "https://github.com/pbakaus/impeccable",
+      "pin": {
+        "type": "commit_and_release",
+        "value": "source ae5e95101a6979e7f7973a4ff57680b3c7adc1ec; CLI 3.5.0; Skill 4.0.4",
+        "status": "resolved_but_artifact_integrity_pending"
+      },
+      "license": {
+        "spdx": "Apache-2.0",
+        "notice_required": true,
+        "notice_file": "NOTICE.md"
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": null,
+        "status": "blocked_pending_npm_tarball_integrity_and_approved_download"
+      },
+      "dependencies": ["Node.js >=22.18", "impeccable@3.5.0 transitive npm dependencies to be inventoried"],
+      "network_calls": ["npm registry acquisition", "URL/live/browser modes can use network and are denied in first pilot"],
+      "credentials": [],
+      "writes": ["Installer/update can write provider folders, .impeccable state, PRODUCT.md, DESIGN.md, and .gitignore patterns; denied."],
+      "hooks": ["Codex .codex/hooks.json invoking .agents/skills/impeccable/scripts/hook.mjs; denied."],
+      "update_behavior": "Explicit pinned reinstall only; no impeccable update or auto-update.",
+      "proposed_commands": [
+        "npm pack impeccable@3.5.0 --ignore-scripts",
+        "npm install --prefix 'E:\\ohada saas\\Focused projects\\stoquify\\.codex\\vendor-pilots\\impeccable-3.5.0' --ignore-scripts --no-audit --no-fund impeccable@3.5.0",
+        "& 'E:\\ohada saas\\Focused projects\\stoquify\\.codex\\vendor-pilots\\impeccable-3.5.0\\node_modules\\.bin\\impeccable.cmd' detect --no-config 'E:\\ohada saas\\Focused projects\\stoquify\\.codex\\vendor-pilots\\fixtures\\impeccable'"
+      ],
+      "commands_executed": false,
+      "preflight": ["Inspect package scripts, tarball integrity, transitive dependencies, CLI entrypoint, network and writes.", "Deny hooks, init, document, live, URL scans, root documents, and autonomous changes."],
+      "validation": ["Verify version and checksums.", "Run only on synthetic seeded fixtures.", "Observe processes, network and outputs; compare precision with existing Stoquify evidence."],
+      "rollback": ["Remove the exact disposable pilot directory and outputs.", "Verify no Impeccable skill, hook, .impeccable, PRODUCT.md, DESIGN.md, or config residue."],
+      "removal_test_required_before_promotion": true,
+      "approval_owner": ["Design System", "Frontend/Platform", "Security", "Agent Governance", "Legal/Procurement"],
+      "blocked_status": "blocked_until_npm_provenance_preflight_and_detector_pilot_approval"
+    },
+    {
+      "id": "open-code-review",
+      "publisher": "Alibaba",
+      "score": 82.5,
+      "original_verdict": "Controlled pilot; data-governance override blocks direct adoption.",
+      "phase_a_recommendation": "Synthetic-only skill and pinned CLI pilot after egress, provider and binary approvals.",
+      "install_type": "project_local_codex_skill_plus_disposable_cli",
+      "installable_unit": "skills/open-code-review plus separate ocr Windows binary",
+      "source": "https://github.com/alibaba/open-code-review",
+      "pin": {
+        "type": "release_tag",
+        "value": "v1.8.8",
+        "observed_commit": "6dc3eb0",
+        "status": "release_resolved_binary_asset_and_digest_pending"
+      },
+      "license": {
+        "spdx": "Apache-2.0",
+        "notice_required": true
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": null,
+        "status": "blocked_pending_exact_windows_release_asset_and_vendor_digest"
+      },
+      "dependencies": ["Git >=2.41", "ocr Windows binary", "Configured LLM in default mode; delegation/local boundary preferred"],
+      "network_calls": ["LLM provider", "Optional telemetry/MCP/CI surfaces; all denied unless separately approved"],
+      "credentials": ["Provider URL/token/model in default mode; forbidden during Phase A and requires separate approval"],
+      "writes": ["Config, sessions and review output; npm package postinstall can download a binary"],
+      "hooks": ["CI, MCP and agent integrations exist but are not approved"],
+      "update_behavior": "Manual reviewed release repin only; no latest URL or npm global install.",
+      "proposed_commands": [
+        "& 'C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe' 'C:\\Users\\J COMPUTER\\.codex\\skills\\.system\\skill-installer\\scripts\\install-skill-from-github.py' --repo alibaba/open-code-review --path skills/open-code-review --ref v1.8.8 --dest 'E:\\ohada saas\\Focused projects\\stoquify\\.codex\\skills'"
+      ],
+      "commands_executed": false,
+      "source_egress_controls": ["Synthetic repository only", "No Stoquify source/diffs/names/prompts/data", "Approved provider/DPA/residency/retention/deletion", "Telemetry and content logging disabled", "No auto-fix, MCP, CI or PR comments"],
+      "preflight": ["Resolve exact v1.8.8 Windows asset and checksum.", "Review SBOM/dependencies and binary provenance.", "Approve provider and egress contract; create disposable synthetic fixture."],
+      "validation": ["Validate Codex skill before use.", "Verify binary version/digest offline.", "Preview synthetic scope; benchmark seeded findings, file selection, lines, false positives, network and writes."],
+      "rollback": ["Remove exact skill, binary, config, session store and synthetic output.", "Revoke/delete provider token and verify no hook, MCP, CI or source residue."],
+      "removal_test_required_before_promotion": true,
+      "approval_owner": ["AppSec", "Privacy", "Legal/Procurement", "Platform", "Quality Engineering", "Agent Governance"],
+      "blocked_status": "blocked_from_stoquify_source_and_pending_binary_provider_approval"
+    },
+    {
+      "id": "sentry-nextjs-sdk",
+      "publisher": "Sentry",
+      "score": 78.5,
+      "original_verdict": "Controlled, privacy-hardened pilot only; do not install upstream examples unchanged.",
+      "phase_a_recommendation": "Blocked until privacy contract and safe content-only distribution are approved.",
+      "install_type": "legacy_skill_superseded_by_codex_plugin_and_runtime_sdk",
+      "installable_unit": "No currently approved unit; legacy skill is frozen, current plugin includes hosted MCP, SDK is an application dependency",
+      "source": "https://github.com/getsentry/sentry-for-ai",
+      "pin": {
+        "type": "source_reference_only",
+        "value": "d33bb6d87734316d7561be0f9b78bec795ecd795",
+        "status": "direct_install_blocked_generated_distribution_pin_unresolved"
+      },
+      "license": {
+        "spdx": "MIT",
+        "notice_required": true
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": null,
+        "status": "blocked_no_approved_install_artifact"
+      },
+      "dependencies": ["Current Codex plugin", "Hosted Sentry MCP", "Optional @sentry/nextjs SDK and SaaS service"],
+      "network_calls": ["mcp.sentry.dev", "Sentry ingestion/API", "Source-map upload", "Optional Seer/AI"],
+      "credentials": ["DSN", "Auth/CI token", "Service account and roles"],
+      "writes": ["Plugin/MCP config", "Application SDK config and dependencies", "Source-map/release integration"],
+      "hooks": ["Generated Codex plugin automatically configures hosted Sentry MCP"],
+      "update_behavior": "No update approved; future source, plugin and SDK pins require separate review.",
+      "proposed_commands": [],
+      "commands_executed": false,
+      "privacy_controls": {
+        "sendDefaultPii": false,
+        "includeLocalVariables": false,
+        "sessionReplay": "disabled",
+        "beforeSend": "deny-by-default with adversarial synthetic scrubbing tests",
+        "retention": "short, explicit and contract-approved",
+        "residency": "explicit approved region and processing map; verify organization settings and DPA",
+        "forbidden_data": ["customer", "payroll", "financial", "authentication", "provider", "audit", "production", "request bodies", "headers", "cookies", "tokens", "tenant identifiers", "employee fields"],
+        "forbidden_features": ["MCP", "Seer auto-fix", "GitHub repository connection", "production activation", "AI input/output capture"]
+      },
+      "preflight": ["Approve telemetry data contract, DPA, subprocessor/residency/retention/deletion and incident ownership.", "Resolve immutable generated Codex distribution or content-only bundle and checksums.", "Approve exact SDK pin/lifecycle scripts only if application pilot is separately authorized."],
+      "validation": ["No validation can begin while blocked.", "Future staging-only pilot uses synthetic sensitive-field probes and verifies zero forbidden fields.", "Run focused application checks only if approved code/dependency changes occur."],
+      "rollback": ["Remove SDK config/code/dependency/lockfile changes, MCP/plugin, DSN/token and source-map integration.", "Verify ingestion stops, delete pilot data/project as approved, and confirm no residue."],
+      "removal_test_required_before_promotion": true,
+      "approval_owner": ["Privacy/DPO", "Security", "Legal/Procurement", "Platform/SRE", "Application Owner", "Incident Owner", "Agent Governance"],
+      "blocked_status": "hard_block_privacy_contract_and_distribution"
+    },
+    {
+      "id": "supply-chain-risk-auditor",
+      "publisher": "Trail of Bits",
+      "score": 74.5,
+      "original_verdict": "Controlled advisory pilot.",
+      "phase_a_recommendation": "Do not install unchanged; create a reviewed Stoquify-owned advisory adaptation.",
+      "install_type": "quarantine_reference_then_internal_adaptation",
+      "installable_unit": "plugins/supply-chain-risk-auditor/skills/supply-chain-risk-auditor",
+      "source": "https://github.com/trailofbits/skills",
+      "pin": {
+        "type": "commit",
+        "value": "cfe5d7b1619e47fb5b38b7e2561dad7e5f1e89af",
+        "status": "resolved"
+      },
+      "license": {
+        "spdx": "CC-BY-SA-4.0",
+        "notice_required": true,
+        "share_alike": true,
+        "legal_review": "Required before adaptation or distribution"
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": null,
+        "status": "not_computed_phase_a_no_download"
+      },
+      "dependencies": ["GitHub CLI gh", "Upstream Bash-oriented workflow"],
+      "network_calls": ["Live GitHub metadata/API queries"],
+      "credentials": ["Potential gh authenticated identity/scopes; not inspected in Phase A"],
+      "writes": ["Upstream creates .supply-chain-risk-auditor/results.md"],
+      "hooks": [],
+      "update_behavior": "Manual reviewed repin and re-adaptation only.",
+      "proposed_commands": [
+        "& 'C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe' 'C:\\Users\\J COMPUTER\\.codex\\skills\\.system\\skill-installer\\scripts\\install-skill-from-github.py' --repo trailofbits/skills --path plugins/supply-chain-risk-auditor/skills/supply-chain-risk-auditor --ref cfe5d7b1619e47fb5b38b7e2561dad7e5f1e89af --dest 'E:\\ohada saas\\Focused projects\\stoquify\\.codex\\vendor-pilots\\quarantine'"
+      ],
+      "commands_executed": false,
+      "advisory_limitations": ["Not active vulnerability scanning", "Not runtime dependency analysis", "Not license compliance auditing", "Not SCA/SBOM/CVE/release certification"],
+      "preflight": ["Legal approval for CC-BY-SA-4.0.", "Translate Bash/write workflow to read-only PowerShell/Codex controls.", "Approve GitHub queries/scopes and existing release-evidence output path."],
+      "validation": ["Validate adapted Codex skill before use.", "Compare advisory results with deterministic scanners and human review.", "Reject unsupported claims and parallel evidence stores."],
+      "rollback": ["Remove exact quarantine/adapted skill and approved outputs.", "Verify no .supply-chain-risk-auditor directory or release-gate change; revoke pilot GitHub permission if granted."],
+      "removal_test_required_before_promotion": true,
+      "approval_owner": ["AppSec/Supply Chain", "Legal/Procurement", "Platform", "Release Engineering", "Agent Governance"],
+      "blocked_status": "blocked_from_upstream_as_is_pending_legal_and_adaptation"
+    },
+    {
+      "id": "anthropic-skill-creator",
+      "publisher": "Anthropic",
+      "score": 70.5,
+      "original_verdict": "Selectively adapt methods; no whole-skill install.",
+      "phase_a_recommendation": "Internal pattern adaptation only; do not install.",
+      "install_type": "internal_pattern_adaptation_no_external_install",
+      "installable_unit": "skills/skill-creator (reference only)",
+      "source": "https://github.com/anthropics/skills",
+      "pin": {
+        "type": "commit",
+        "value": "690f15cac7f7b4c055c5ab109c79ed9259934081",
+        "status": "resolved_reference_only"
+      },
+      "license": {
+        "spdx": "Apache-2.0",
+        "notice_required": true,
+        "scope": "skill-specific license"
+      },
+      "checksum": {
+        "algorithm": "SHA-256",
+        "value": null,
+        "status": "not_applicable_no_install_phase_a"
+      },
+      "dependencies": ["Upstream assumes Claude-specific helpers and POSIX/Bash workflows"],
+      "network_calls": ["Potential Claude runtime/API in upstream workflow; not adopted"],
+      "credentials": ["None approved"],
+      "writes": ["Upstream evaluation artifacts and process helpers; only reviewed internal deltas may be created later"],
+      "hooks": [],
+      "update_behavior": "No external installation or update; review source changes only when revisiting methods.",
+      "proposed_commands": [],
+      "commands_executed": false,
+      "duplicate_conflict": "Existing Codex system skill-creator at C:\\Users\\J COMPUTER\\.codex\\skills\\.system\\skill-creator",
+      "adaptable_patterns": ["with-skill versus baseline", "discriminating assertions", "blind review", "human example review", "token/time capture", "variance analysis", "trigger-description tests"],
+      "preflight": ["Map each selected pattern to existing Codex lifecycle and avoid duplicate authority.", "Record Apache notice if expressive content is adapted."],
+      "validation": ["Validate any future internal skill with the current Codex validator.", "Use synthetic examples and human review; benchmarks do not certify safety."],
+      "rollback": ["Remove only the reviewed internal adaptation delta.", "Do not modify or remove the Codex system skill-creator."],
+      "removal_test_required_before_promotion": true,
+      "approval_owner": ["Agent Governance", "Quality Engineering", "Security", "Legal/Procurement"],
+      "blocked_status": "no_install_duplicate_internal_adaptation_only"
+    }
+  ],
+  "application_checks_if_future_scope_changes_code_or_dependencies": [
+    "npm run typecheck",
+    "npm run lint",
+    "npm run policy:gates",
+    "npm run prisma:validate",
+    "npm run test:e2e -- --project=<approved-focused-project>"
+  ],
+  "full_build_or_test_suite": "Do not run unless the approved integration scope requires it.",
+  "human_approval_gate": {
+    "status": "STOP",
+    "message": "Phase A is complete. No Phase B action is authorized.",
+    "safest_next_scope": [
+      "Supabase project-local report-only skill at commit 1ad9aaeb49caafd9e95c0a91116f71890eebbc53",
+      "Addy project-local checklist skill at commit 7b59d48aaf1f793935002f4998dfccc656f40839 after content/script allowlisting"
+    ],
+    "sentry": "disabled"
+  }
+}

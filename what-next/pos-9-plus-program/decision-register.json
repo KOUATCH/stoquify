@@ -1,0 +1,247 @@
+{
+  "version": "GOV-01-2026-07-20",
+  "status": "BLOCKED",
+  "approvedCount": 0,
+  "requiredCount": 8,
+  "decisions": [
+    {
+      "id": "D-01",
+      "title": "STORE_CREDIT disposition",
+      "status": "BLOCKING-UNAPPROVED",
+      "accountableOwner": "Product and Payments/Accounting Control; CFO/Controller approval",
+      "recommendation": "Disable, hide, and reject server-side now; treat an internal liability ledger as a separate governed program.",
+      "options": [
+        "Disable",
+        "External authoritative wallet",
+        "Internal liability ledger"
+      ],
+      "blocks": [
+        "HON-01",
+        "PAY-01",
+        "RET-02"
+      ],
+      "gates": [
+        "G1",
+        "G6"
+      ],
+      "approval": {
+        "status": "UNAPPROVED",
+        "approver": null,
+        "approvedAt": null,
+        "record": null
+      }
+    },
+    {
+      "id": "D-02",
+      "title": "Physical active-session boundary",
+      "status": "BLOCKING-UNAPPROVED",
+      "accountableOwner": "POS Operations Product Owner and Data/Platform Architect",
+      "recommendation": "Use an explicit physical register/terminal claim with one active terminal session and one active drawer claim enforced in the database; cashier is the actor, not the physical lock.",
+      "options": [
+        "Cashier",
+        "Terminal",
+        "Drawer",
+        "Explicit register-device-drawer claim"
+      ],
+      "blocks": [
+        "SEC-01",
+        "SH-01",
+        "SH-02",
+        "DEV-01"
+      ],
+      "gates": [
+        "G2",
+        "G5"
+      ],
+      "approval": {
+        "status": "UNAPPROVED",
+        "approver": null,
+        "approvedAt": null,
+        "record": null
+      }
+    },
+    {
+      "id": "D-03",
+      "title": "First electronic provider rail",
+      "status": "BLOCKING-UNAPPROVED",
+      "accountableOwner": "Payments Product Owner, Treasury/Reconciliation, and Security",
+      "recommendation": "Pilot one named provider in one country with sandbox, signed webhook/status query, reversal, statement feed, and kill switch.",
+      "options": [
+        "Named card acquirer",
+        "Named mobile-money provider",
+        "Named bank rail",
+        "Keep electronic rails disabled"
+      ],
+      "blocks": [
+        "PAY-02",
+        "PAY-03",
+        "PAY-04",
+        "REC-01",
+        "DEV-01",
+        "RCP-01"
+      ],
+      "gates": [
+        "G1",
+        "G5",
+        "G6",
+        "G8"
+      ],
+      "approval": {
+        "status": "UNAPPROVED",
+        "approver": null,
+        "approvedAt": null,
+        "record": null
+      }
+    },
+    {
+      "id": "D-04",
+      "title": "Offline tender and risk policy",
+      "status": "BLOCKING-UNAPPROVED",
+      "accountableOwner": "Risk/Product, Offline Architect, and Finance",
+      "recommendation": "Cash-only bounded pilot after G3/G4, with tenant/store/device/value/time/queue/session/country caps; no electronic offline without provider certification.",
+      "options": [
+        "No offline selling",
+        "Bounded cash-only",
+        "Provider-certified electronic offline",
+        "Broader risk-scored modes"
+      ],
+      "blocks": [
+        "OFF-01",
+        "OFF-02",
+        "OFF-03",
+        "OFF-04",
+        "OFF-05",
+        "OFF-06"
+      ],
+      "gates": [
+        "G1",
+        "G3",
+        "G4",
+        "G5",
+        "G6",
+        "G8"
+      ],
+      "approval": {
+        "status": "UNAPPROVED",
+        "approver": null,
+        "approvedAt": null,
+        "record": null
+      }
+    },
+    {
+      "id": "D-05",
+      "title": "Supported hardware and browser matrix",
+      "status": "BLOCKING-UNAPPROVED",
+      "accountableOwner": "POS Operations and Device QA/Support",
+      "recommendation": "Certify a narrow named browser/OS/scanner/printer/drawer/terminal matrix first; fail all other combinations closed.",
+      "options": [
+        "Browser/manual only",
+        "Narrow named desktop kit",
+        "Tablet/handheld expansion"
+      ],
+      "blocks": [
+        "DEV-01",
+        "A11Y-01",
+        "CERT-02"
+      ],
+      "gates": [
+        "G4",
+        "G7",
+        "G8"
+      ],
+      "approval": {
+        "status": "UNAPPROVED",
+        "approver": null,
+        "approvedAt": null,
+        "record": null
+      }
+    },
+    {
+      "id": "D-06",
+      "title": "Returns and refund policy",
+      "status": "BLOCKING-UNAPPROVED",
+      "accountableOwner": "Retail Operations Product Owner, Controller, and Payments/Risk",
+      "recommendation": "Approve line/quantity partial and full returns, supervised cross-shift handling, policy-bound cross-location, cash-availability, provider outcome states, fiscal corrections, fresh auth, and risk-based maker-checker.",
+      "options": [
+        "Retain narrow full same-shift",
+        "Controlled partial/cross-shift",
+        "Provider-specific plus manual exception"
+      ],
+      "blocks": [
+        "PAY-04",
+        "RET-01",
+        "RET-02",
+        "RET-03"
+      ],
+      "gates": [
+        "G1",
+        "G2",
+        "G5",
+        "G6",
+        "G7"
+      ],
+      "approval": {
+        "status": "UNAPPROVED",
+        "approver": null,
+        "approvedAt": null,
+        "record": null
+      }
+    },
+    {
+      "id": "D-07",
+      "title": "Country, currency, tax, fiscal, and language scope",
+      "status": "BLOCKING-UNAPPROVED",
+      "accountableOwner": "Country Product Owner, Controller/Tax Counsel, and Localization Lead",
+      "recommendation": "Certify one named launch country first with EN/FR, approved XAF/minor units, tax/fiscal labels, rounding, and receipt-correction rules; prohibit silent USD/0.01 fallbacks.",
+      "options": [
+        "One country pack",
+        "OHADA multi-country batch",
+        "Generic fallback"
+      ],
+      "blocks": [
+        "PAY-01",
+        "RCP-01",
+        "LOC-01"
+      ],
+      "gates": [
+        "G1",
+        "G6",
+        "G7"
+      ],
+      "approval": {
+        "status": "UNAPPROVED",
+        "approver": null,
+        "approvedAt": null,
+        "record": null
+      }
+    },
+    {
+      "id": "D-08",
+      "title": "POS 9+ SLO and performance budgets",
+      "status": "BLOCKING-UNAPPROVED",
+      "accountableOwner": "Product/SRE, Frontend Performance, and Support",
+      "recommendation": "Baseline on the approved hardware/network/catalog matrix, then approve percentile scan/search/render/charge/replay/recovery, availability, and error budgets.",
+      "options": [
+        "Baseline then budget",
+        "Percentile targets by certified matrix"
+      ],
+      "blocks": [
+        "UX-03",
+        "OPS-01",
+        "CERT-01",
+        "CERT-02",
+        "REL-01"
+      ],
+      "gates": [
+        "G7",
+        "G8"
+      ],
+      "approval": {
+        "status": "UNAPPROVED",
+        "approver": null,
+        "approvedAt": null,
+        "record": null
+      }
+    }
+  ]
+}

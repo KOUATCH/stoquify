@@ -11,6 +11,7 @@ describe("financial report read-model provenance", () => {
       end: new Date("2026-06-30T23:59:59.999Z"),
       sourceTables: ["salesOrder", "payment"],
       rowCount: 12,
+      currency: "XAF",
     })
 
     expect(provenance).toMatchObject({
@@ -21,6 +22,7 @@ describe("financial report read-model provenance", () => {
       certificationLabel: "Internal management report only",
       rowCount: 12,
       sourceTables: ["salesOrder", "payment"],
+      currency: "XAF",
     })
     expect(provenance.knownBlockers).toEqual(
       expect.arrayContaining([

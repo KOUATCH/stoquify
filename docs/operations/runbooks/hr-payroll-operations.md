@@ -1,6 +1,6 @@
 # HR/Payroll Operations Runbook
 
-Last updated: 2026-06-29
+Last updated: 2026-07-02
 
 Scope: Aqstoqflow HR/Payroll operational readiness for the implemented, service-owned payroll workflows.
 
@@ -50,11 +50,29 @@ Use these existing evidence inputs before escalating an operational payroll inci
 - Runtime immutability: run `npm run payroll:immutability:runtime` and attach `what-next/payroll/payroll-immutability-runtime-check.md`.
 - Setup readiness and dry run: review `what-next/payroll/AQSTOQFLOW_HR_PAYROLL_PROMPT_06_SETUP_READINESS_DRY_RUN_REPORT_2026-06-26.md` and run `node scripts/payroll-seed-backfill-dry-run.js --dry-run true` for the target tenant parameters when live setup evidence is needed.
 - Route smoke: use `__tests__/payroll-dashboard-routes.smoke.test.tsx` for implemented route coverage only.
-- Browser smoke: `npm run ui:smoke:payroll` requires a running local server and `playwright/.auth/payroll.json`; if either is missing, record an environment skip and rely on route-smoke/static route-list evidence until browser auth is provisioned.
+- Browser smoke: `npm run ui:smoke:payroll` now runs through `scripts/payroll-browser-smoke.js`, requires a running server and `playwright/.auth/payroll.json`, and fails early with auth bootstrap guidance if the storage state is missing.
 - Release evidence: review `what-next/payroll/AQSTOQFLOW_HR_PAYROLL_PHASE_1_ASSURANCE_RELEASE_GATES_REPORT_2026-06-27.md` and `what-next/payroll/AQSTOQFLOW_HR_PAYROLL_PHASE_1_CLOSE_DATA_TRUST_REPORT_2026-06-27.md` after release-impacting repairs.
 - Release policy: use `npm run policy:gates` for release-impacting repairs.
 
 Do not paste dry-run output that contains tenant-specific identifiers into broad channels. Keep incident summaries to aggregate, redacted evidence only.
+
+## Prompt 19 Browser Smoke Runbook
+
+Use this only for implemented payroll routes after `npm run build:app`, `npm run auth:payroll:bootstrap`, and focused Prompt 19 route/service tests are green.
+
+1. Prefer the standalone server path when Next output is `standalone`:
+   - Start the app with `node .next/standalone/server.js` and set `PORT` plus `HOSTNAME` for the isolated smoke port.
+   - Example environment: `PORT=3010`, `HOSTNAME=127.0.0.1`, `PAYROLL_SMOKE_BASE_URL=http://127.0.0.1:3010`.
+2. Use `PAYROLL_SMOKE_SERVER_MODE=standalone npm run ui:smoke:payroll:dry-run` to print the standalone server command, route list, auth-state path, output path, screenshots path, and timeout settings before CI wiring.
+3. Use `PAYROLL_SMOKE_SERVER_MODE=next-start` only as a developer fallback when validating against `npm run start -- -p <port>`.
+4. Keep `PAYROLL_SMOKE_BASE_URL`, `PAYROLL_SMOKE_TIMEOUT_MS`, `PAYROLL_SMOKE_WARMUP_TIMEOUT_MS`, `PAYROLL_SMOKE_STORAGE_STATE`, `PAYROLL_SMOKE_OUT`, and `PAYROLL_SMOKE_SCREENSHOTS_DIR` configurable in CI.
+5. Do not claim Prompt 19 browser smoke if the auth state is missing, if any route redirects to login, if screenshots are missing, or if the JSON report contains `"ok": false`.
+
+Validation:
+
+- `npm test -- --runTestsByPath scripts/__tests__/payroll-browser-smoke.test.js scripts/__tests__/ui-route-smoke-gate.test.js __tests__/payroll-dashboard-routes.smoke.test.tsx --runInBand`
+- `npm run ui:smoke:payroll:dry-run`
+- `npm run ui:smoke:payroll` against an isolated current-workspace server.
 
 ## Payroll Cycle Operation
 
@@ -348,7 +366,7 @@ Before handing payroll operations to production readiness:
 - Runbook sections above were reviewed.
 - `npm run policy:gates` passes.
 - Typecheck passes.
-- Browser smoke is either executed with a running server and payroll auth state or explicitly recorded as an environment skip.
+- Browser smoke is executed through `npm run ui:smoke:payroll` with a running isolated server, tenant-scoped payroll auth state, JSON evidence, and required screenshots; otherwise it is explicitly recorded as an environment skip.
 - Declaration and payment settlement evidence carry source payroll register proof where required.
 - Authority and payment automation claims have adapter certification harness certificate hashes, or remain blocked/manual.
 - No incident payload leaks salary/person/payment destination/authority data.

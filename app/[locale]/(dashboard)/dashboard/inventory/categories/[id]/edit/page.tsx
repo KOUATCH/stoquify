@@ -4,14 +4,14 @@ import { getCategoryById, getOrgCategories } from "@/actions/categories/getCateg
 import { ModernCategoryForm } from "@/components/categories/ModernCategoryForm"
 import { getAuthenticatedUser, checkPermission } from "@/config/useAuth"
 import { pickLocale } from "@/i18n/routing"
-import { PERMISSIONS } from "@/lib/permissions"
+import { routeByKey, withInventorySurfaceAccess } from "../../../inventory-route-access"
 
 interface CategoryEditPageProps {
   params: Promise<{ locale: string; id: string }>
 }
 
-export default async function CategoryEditPage({ params }: CategoryEditPageProps) {
-  await checkPermission(PERMISSIONS.UPDATE_CATEGORIES)
+async function CategoryEditPageImpl({ params }: CategoryEditPageProps) {
+  await checkPermission("inventory.categories.update")
 
   const { locale: rawLocale, id } = await params
   const locale = pickLocale(rawLocale)
@@ -39,4 +39,20 @@ export default async function CategoryEditPage({ params }: CategoryEditPageProps
       returnHref={`/${locale}/dashboard/inventory/categories`}
     />
   )
+}
+
+
+
+export default async function InventoryRoutePage(props: any = {}) {
+  const surface = routeByKey("inventory-categories-edit")
+
+  if (!surface) {
+    throw new Error("Missing inventory route surface definition: inventory-categories-edit")
+  }
+
+  return withInventorySurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => CategoryEditPageImpl(props),
+  })
 }

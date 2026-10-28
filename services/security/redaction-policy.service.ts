@@ -5,6 +5,7 @@ import type { ModuleEntitlementDecision } from "@/services/modules/module-contro
 
 export type SensitiveFieldCategory =
   | "payroll_person_amount"
+  | "payroll_document_evidence"
   | "supplier_bank_detail"
   | "payment_provider_reference"
   | "reconciliation_suspense_detail"
@@ -77,6 +78,16 @@ export const REDACTION_POLICIES: Record<SensitiveFieldCategory, RedactionPolicy>
     moduleSlug: "payroll",
     deniedMode: "redact",
     replacement: "[REDACTED:PAYROLL]",
+    auditSensitive: true,
+  },
+  payroll_document_evidence: {
+    category: "payroll_document_evidence",
+    policy: "kontava-payroll-document-evidence-redaction-policy",
+    label: "Payroll HR document evidence",
+    requiredPermissions: ["payroll.employees.manage", "payroll.contracts.manage"],
+    moduleSlug: "payroll",
+    deniedMode: "redact",
+    replacement: "[REDACTED:HR_DOCUMENT]",
     auditSensitive: true,
   },
   supplier_bank_detail: {

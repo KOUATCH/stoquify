@@ -27,6 +27,7 @@ const copy = {
     pending: "pending",
     conflicts: "conflicts",
     blockers: "blockers",
+    stalePolicy: "expired policy",
     noDevice: "No enrolled offline device for this terminal.",
     asOf: "As of",
     retry: "Retry",
@@ -43,6 +44,7 @@ const copy = {
     pending: "en attente",
     conflicts: "conflits",
     blockers: "blocages",
+    stalePolicy: "politique expiree",
     noDevice: "Aucun appareil hors ligne enrole pour ce terminal.",
     asOf: "A",
     retry: "Reessayer",
@@ -122,7 +124,8 @@ export function OfflineSyncStatusStrip({
   const conflictCount = summary ? summary.openConflictCount : 0
   const pendingCount = summary ? summary.pendingEventCount : 0
   const blockerCount = summary ? summary.closeBlockerCount : 0
-  const blocked = conflictCount > 0 || blockerCount > 0
+  const stalePolicyCount = summary ? summary.stalePolicyDeviceCount : 0
+  const blocked = conflictCount > 0 || blockerCount > 0 || stalePolicyCount > 0
 
   return (
     <section className={cn(
@@ -157,7 +160,11 @@ export function OfflineSyncStatusStrip({
         </Badge>
         <Badge variant={blockerCount > 0 ? "secondary" : "outline"} className={blockerCount > 0 ? "" : "border-white/15 bg-white/5 text-[var(--dash-text-soft)]"}>
           {blockerCount} {t.blockers}
-        </Badge>
+        </Badge>        {stalePolicyCount > 0 ? (
+          <Badge variant="destructive">
+            {stalePolicyCount} {t.stalePolicy}
+          </Badge>
+        ) : null}
         {data?.asOf ? (
           <span className="flex items-center gap-1 text-xs text-[var(--dash-text-muted)]">
             <Wifi className="h-3.5 w-3.5" />

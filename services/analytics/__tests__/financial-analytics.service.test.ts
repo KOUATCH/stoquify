@@ -10,6 +10,8 @@ import {
   PayrollPaymentBatchStatus,
   PayrollPayslipStatus,
   PayrollRunStatus,
+  PayrollRunTransitionEvidenceStatus,
+  PayrollRunTransitionOrigin,
   Prisma,
 } from "@prisma/client"
 
@@ -68,6 +70,26 @@ const completeEffectiveComponentSnapshot = {
   overtimeMinutes: 0,
   leaveMinutes: 0,
 }
+
+function runtimeTransition(toStatus: PayrollRunStatus, fromVersion: number) {
+  return {
+    toStatus,
+    fromVersion,
+    toVersion: fromVersion + 1,
+    actorId: "payroll-actor",
+    transitionedAt: new Date("2026-06-15T10:00:00.000Z"),
+    businessEventId: "event-" + toStatus,
+    origin: PayrollRunTransitionOrigin.RUNTIME,
+    evidenceStatus: PayrollRunTransitionEvidenceStatus.VERIFIED,
+  }
+}
+
+const completeRuntimeTransitionEvidence = [
+  runtimeTransition(PayrollRunStatus.REVIEWED, 1),
+  runtimeTransition(PayrollRunStatus.APPROVED, 2),
+  runtimeTransition(PayrollRunStatus.EMITTED, 3),
+  runtimeTransition(PayrollRunStatus.POSTED, 4),
+]
 
 function payrollForecastMetrics(overrides: Record<string, unknown> = {}) {
   return {
@@ -164,6 +186,7 @@ describe("financial analytics payroll facts", () => {
       {
         id: "run-1",
         status: PayrollRunStatus.POSTED,
+        transitions: completeRuntimeTransitionEvidence,
         ledgerPostingBatchId: "ledger-run-1",
         postedBusinessEventId: "event-run-1",
         paymentBatches: [
@@ -246,12 +269,86 @@ describe("financial analytics payroll facts", () => {
     })
   })
 
+  it.each([
+    [
+      "missing post-cutover",
+      completeRuntimeTransitionEvidence.slice(0, 3),
+      "PAYROLL_TRANSITION_PROOF_MISSING",
+    ],
+    [
+      "legacy partial",
+      [
+        {
+          ...runtimeTransition(PayrollRunStatus.POSTED, 4),
+          fromVersion: null,
+          toVersion: null,
+          actorId: null,
+          transitionedAt: null,
+          businessEventId: null,
+          origin: PayrollRunTransitionOrigin.LEGACY_BACKFILL,
+          evidenceStatus:
+            PayrollRunTransitionEvidenceStatus.LEGACY_PARTIAL_EVIDENCE,
+        },
+      ],
+      "PAYROLL_TRANSITION_LEGACY_PARTIAL_EVIDENCE",
+    ],
+  ])(
+    "omits payroll finance facts when transition evidence is %s",
+    async (_case, transitions, expectedBlocker) => {
+      mockBaseFinancialReads()
+      mockDb.payrollRun.findMany.mockResolvedValue([
+        {
+          id: "run-transition-proof",
+          status: PayrollRunStatus.POSTED,
+          transitions,
+          ledgerPostingBatchId: "ledger-run-transition-proof",
+          postedBusinessEventId: "event-run-transition-proof",
+          paymentBatches: [],
+          lines: [],
+        },
+      ])
+      mockDb.accountingSourceLink.findMany.mockResolvedValue([
+        {
+          id: "link-run-transition-proof",
+          sourceType: AccountingSourceType.PAYROLL_RUN,
+          sourceId: "run-transition-proof",
+          postingBatch: { status: LedgerPostingBatchStatus.POSTED },
+        },
+      ])
+
+      const result = await getFinancialMetricsReadModel({
+        ...periodInput,
+        actorPermissions: ["EMPLOYEE_SALARY_READ"],
+      })
+
+      expect(mockDb.payrollRun.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({ organizationId: "org-1" }),
+          include: expect.objectContaining({
+            transitions: expect.objectContaining({
+              select: expect.objectContaining({ businessEventId: true }),
+            }),
+          }),
+        }),
+      )
+      expect(result.expenses.salaries).toBe(0)
+      expect(result.taxes.payrollTax).toBe(0)
+      expect(result.payrollEvidence).toMatchObject({
+        status: "NON_AUTHORITATIVE",
+        authoritative: false,
+        reasonCode: "PAYROLL_EVIDENCE_INCOMPLETE",
+        blockerCodes: expect.arrayContaining([expectedBlocker]),
+      })
+    },
+  )
+
   it("omits payroll finance facts when effective component proof is incomplete", async () => {
     mockBaseFinancialReads()
     mockDb.payrollRun.findMany.mockResolvedValue([
       {
         id: "run-1",
         status: PayrollRunStatus.POSTED,
+        transitions: completeRuntimeTransitionEvidence,
         ledgerPostingBatchId: "ledger-run-1",
         postedBusinessEventId: "event-run-1",
         paymentBatches: [

@@ -1,14 +1,16 @@
-import {
-  AccountingSourceType,
-  ComplianceAdapterEnvironment,
-  FiscalDocumentStatus,
-  FiscalDocumentType,
-  Prisma,
-} from "@prisma/client"
+import { Prisma } from "@prisma/client"
 
 jest.mock("@/prisma/db", () => ({
   db: {
     $transaction: jest.fn(),
+    pOSSession: { findFirst: jest.fn() },
+    pOSStation: { findFirst: jest.fn() },
+    pOSCommitResult: {
+      findUnique: jest.fn(),
+      findFirst: jest.fn(),
+      updateMany: jest.fn(),
+    },
+    auditLog: { create: jest.fn() },
   },
 }))
 
@@ -32,35 +34,62 @@ jest.mock("@/services/accounting/postings/post-void", () => ({
   postVoid: jest.fn(),
 }))
 
+jest.mock("@/services/accounting/customer-receivable-document.service", () => ({
+  CUSTOMER_RECEIVABLE_REFERENCE_TYPE: "CUSTOMER_RECEIVABLE_DOCUMENT",
+  ensurePostedCustomerReceivableDocumentInTx: jest.fn(),
+}))
+
+jest.mock("@/services/accounting/customer-receivable-lifecycle.service", () => ({
+  voidCustomerReceivableDocumentInTx: jest.fn(),
+}))
+
 jest.mock("@/services/compliance/fiscal-document.service", () => ({
   createFiscalDocumentFromPostedSource: jest.fn(),
 }))
 
 jest.mock("@/services/pos/receipt.service", () => ({
+  getPOSSaleCommitReceipt: jest.fn(),
   getSalesReceipt: jest.fn(),
   sendReceipt: jest.fn(),
 }))
 
 import { db } from "@/prisma/db"
 import { getOpenPeriodForDate } from "@/services/accounting/periods.service"
+import {
+  ensurePostedCustomerReceivableDocumentInTx,
+} from "@/services/accounting/customer-receivable-document.service"
+import {
+  voidCustomerReceivableDocumentInTx,
+} from "@/services/accounting/customer-receivable-lifecycle.service"
 import { postPayment } from "@/services/accounting/postings/post-payment"
 import { postRefund } from "@/services/accounting/postings/post-refund"
 import { postSale } from "@/services/accounting/postings/post-sale"
 import { postVoid } from "@/services/accounting/postings/post-void"
 import { createFiscalDocumentFromPostedSource } from "@/services/compliance/fiscal-document.service"
-import { getSalesReceipt, sendReceipt } from "@/services/pos/receipt.service"
-import { commitPOSSale, refundPOSSale, voidPOSSale } from "../pos.service"
+import { getPOSSaleCommitReceipt, sendReceipt } from "@/services/pos/receipt.service"
+import { POS_CUSTOMER_LOCATION_MISMATCH } from "../pos-customer.service"
+import { commitPOSSale, openPOSShift, refundPOSSale, voidPOSSale } from "../pos.service"
 
 const mockDb = db as unknown as {
   $transaction: jest.Mock
+  pOSSession: { findFirst: jest.Mock }
+  pOSStation: { findFirst: jest.Mock }
+  pOSCommitResult: {
+    findUnique: jest.Mock
+    findFirst: jest.Mock
+    updateMany: jest.Mock
+  }
+  auditLog: { create: jest.Mock }
 }
 const mockGetOpenPeriodForDate = getOpenPeriodForDate as jest.Mock
+const mockEnsurePostedReceivable = ensurePostedCustomerReceivableDocumentInTx as jest.Mock
+const mockVoidReceivable = voidCustomerReceivableDocumentInTx as jest.Mock
 const mockPostSale = postSale as jest.Mock
 const mockPostPayment = postPayment as jest.Mock
 const mockPostRefund = postRefund as jest.Mock
 const mockPostVoid = postVoid as jest.Mock
 const mockCreateFiscalDocumentFromPostedSource = createFiscalDocumentFromPostedSource as jest.Mock
-const mockGetSalesReceipt = getSalesReceipt as jest.Mock
+const mockGetSalesReceipt = getPOSSaleCommitReceipt as jest.Mock
 const mockSendReceipt = sendReceipt as jest.Mock
 
 function expectNoAuditAction(action: string) {
@@ -83,14 +112,26 @@ const mockTx = {
   salesOrder: {
     findFirst: jest.fn(),
     update: jest.fn(),
+    updateMany: jest.fn(),
   },
   pOSSession: {
+    create: jest.fn(),
     findFirst: jest.fn(),
     update: jest.fn(),
+    updateMany: jest.fn(),
+  },
+  pOSStation: {
+    updateMany: jest.fn(),
+  },
+  pOSCommitResult: {
+    findUnique: jest.fn(),
+    create: jest.fn(),
+    updateMany: jest.fn(),
   },
   customer: {
     findFirst: jest.fn(),
     update: jest.fn(),
+    updateMany: jest.fn(),
   },
   customerLedgerEntry: {
     create: jest.fn(),
@@ -105,8 +146,10 @@ const mockTx = {
     findMany: jest.fn(),
   },
   cashDrawer: {
+    create: jest.fn(),
     findFirst: jest.fn(),
     update: jest.fn(),
+    updateMany: jest.fn(),
   },
   cashDrawerTransaction: {
     create: jest.fn(),
@@ -115,6 +158,10 @@ const mockTx = {
     findFirst: jest.fn(),
     create: jest.fn(),
     update: jest.fn(),
+  },
+  paymentTransaction: {
+    findFirst: jest.fn(),
+    updateMany: jest.fn(),
   },
   paymentRefund: {
     create: jest.fn(),
@@ -132,6 +179,9 @@ const mockTx = {
   },
   auditLog: {
     create: jest.fn(),
+  },
+  closeRun: {
+    findMany: jest.fn(),
   },
 }
 
@@ -197,6 +247,30 @@ function draftSaleFixture() {
   }
 }
 
+function activeSessionFixture() {
+  return {
+    id: "session-1",
+    expectedBalance: decimal(50_000),
+    terminal: {
+      id: "terminal-1",
+      organizationId: "org-1",
+      locationId: "loc-1",
+      currentSessionId: "session-1",
+      isActive: true,
+    },
+    cashDrawerTransactions: [
+      {
+        cashDrawer: {
+          id: "drawer-1",
+          isOpen: true,
+          currentBalance: decimal(50_000),
+          expectedBalance: decimal(50_000),
+        },
+      },
+    ],
+  }
+}
+
 function completedSaleFixture() {
   return {
     ...draftSaleFixture(),
@@ -228,6 +302,7 @@ function commitInput() {
   return {
     organizationId: "org-1",
     userId: "cashier-1",
+    clientCommitId: "pos-commit-1",
     salesOrderId: "sale-1",
     locationId: "loc-1",
     terminalId: "terminal-1",
@@ -235,12 +310,53 @@ function commitInput() {
     customerId: "customer-1",
     tenders: [
       {
-        method: "CARD" as const,
+        method: "CASH" as const,
         amount: 118,
-        reference: "CARD-AUTH-1",
-        cardLast4: "4242",
       },
     ],
+    receipt: { channel: "NONE" as const },
+  }
+}
+
+function completedCommitRecord() {
+  const completion = mockDb.pOSCommitResult.updateMany.mock.calls.at(-1)?.[0]
+  if (!completion) throw new Error("Expected a completed POS commit result write")
+
+  return {
+    id: "pos-commit-result-1",
+    organizationId: "org-1",
+    locationId: "loc-1",
+    terminalId: "terminal-1",
+    sessionId: "session-1",
+    salesOrderId: "sale-1",
+    actorId: "cashier-1",
+    clientCommitId: "pos-commit-1",
+    requestHash: completion.where.requestHash,
+    requestSchemaVersion: 1,
+    status: "COMPLETED" as const,
+    resultEnvelope: completion.data.resultEnvelope,
+    resultHash: completion.data.resultHash,
+  }
+}
+
+function committedCommitRecord() {
+  const commit = mockTx.pOSCommitResult.updateMany.mock.calls.at(-1)?.[0]
+  if (!commit) throw new Error("Expected a committed POS commit result write")
+
+  return {
+    id: "pos-commit-result-1",
+    organizationId: "org-1",
+    locationId: "loc-1",
+    terminalId: "terminal-1",
+    sessionId: "session-1",
+    salesOrderId: "sale-1",
+    actorId: "cashier-1",
+    clientCommitId: "pos-commit-1",
+    requestHash: commit.where.requestHash,
+    requestSchemaVersion: 1,
+    status: "COMMITTED" as const,
+    resultEnvelope: commit.data.resultEnvelope,
+    resultHash: commit.data.resultHash,
   }
 }
 
@@ -259,18 +375,30 @@ function correctionInput(reason = "Customer requested return") {
 describe("commitPOSSale accounting wiring", () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockEnsurePostedReceivable.mockResolvedValue({
+      document: { id: "receivable-document-1" },
+      state: { id: "receivable-state-1" },
+      replayed: false,
+    })
+    mockVoidReceivable.mockResolvedValue({ state: { id: "void-state-1" }, replayed: false })
     mockDb.$transaction.mockImplementation(async (handler: (tx: typeof mockTx) => Promise<unknown>) => handler(mockTx))
     mockTx.salesOrder.findFirst.mockResolvedValue(draftSaleFixture())
-    mockTx.pOSSession.findFirst.mockResolvedValue({
-      id: "session-1",
-      expectedBalance: decimal(50_000),
-    })
+    mockTx.pOSCommitResult.findUnique.mockResolvedValue(null)
+    mockTx.pOSCommitResult.create.mockResolvedValue({ id: "pos-commit-result-1" })
+    mockTx.pOSCommitResult.updateMany.mockResolvedValue({ count: 1 })
+    mockDb.pOSCommitResult.findUnique.mockResolvedValue(null)
+    mockDb.pOSCommitResult.findFirst.mockResolvedValue(null)
+    mockDb.pOSCommitResult.updateMany.mockResolvedValue({ count: 1 })
+    mockDb.auditLog.create.mockResolvedValue({ id: "audit-conflict-1" })
+    mockTx.pOSSession.findFirst.mockResolvedValue(activeSessionFixture())
     mockTx.customer.findFirst.mockResolvedValue({
       id: "customer-1",
       code: "CUST-001",
       currentBalance: decimal(0),
       creditLimit: decimal(1000),
     })
+    mockTx.customer.updateMany.mockResolvedValue({ count: 1 })
+    mockTx.customerLedgerEntry.create.mockResolvedValue({ id: "customer-ledger-entry-1" })
     mockGetOpenPeriodForDate.mockResolvedValue({ id: "period-1" })
     mockTx.item.findFirst.mockResolvedValue({
       id: "item-1",
@@ -306,10 +434,13 @@ describe("commitPOSSale accounting wiring", () => {
         totalCost: decimal(60),
       },
     ])
+    mockTx.closeRun.findMany.mockResolvedValue([])
     mockTx.inventoryTransaction.create.mockResolvedValue({ id: "inventory-transaction-1" })
     mockTx.payment.findFirst.mockResolvedValue(null)
     mockTx.payment.create.mockResolvedValue({ id: "payment-1" })
     mockTx.payment.update.mockResolvedValue({ id: "payment-1" })
+    mockTx.paymentTransaction.findFirst.mockResolvedValue(null)
+    mockTx.paymentTransaction.updateMany.mockResolvedValue({ count: 1 })
     mockTx.paymentRefund.create.mockResolvedValue({ id: "refund-1" })
     mockTx.businessEvent.findUnique.mockResolvedValue(null)
     mockTx.businessEvent.create.mockImplementation(async (args) => ({
@@ -318,6 +449,9 @@ describe("commitPOSSale accounting wiring", () => {
       outboxMessages: args.data.outboxMessages.create,
     }))
     mockTx.pOSSession.update.mockResolvedValue({ id: "session-1" })
+    mockTx.pOSSession.updateMany.mockResolvedValue({ count: 1 })
+    mockTx.cashDrawer.updateMany.mockResolvedValue({ count: 1 })
+    mockTx.salesOrder.updateMany.mockResolvedValue({ count: 1 })
     mockTx.salesOrder.update.mockResolvedValue({
       id: "sale-1",
       status: "COMPLETED",
@@ -326,11 +460,11 @@ describe("commitPOSSale accounting wiring", () => {
     mockTx.auditLog.create.mockResolvedValue({ id: "audit-1" })
     mockPostSale.mockResolvedValue({ id: "sale-je-1", entryNumber: "VT-20260610-0001", postingBatchId: "batch-1" })
     mockPostPayment.mockResolvedValue({ id: "payment-je-1", entryNumber: "BQ-20260610-0002" })
-    mockPostRefund.mockResolvedValue({ id: "refund-je-1", entryNumber: "RF-20260610-0001" })
-    mockPostVoid.mockResolvedValue({ id: "void-je-1", entryNumber: "VD-20260610-0001" })
+    mockPostRefund.mockResolvedValue({ id: "refund-je-1", entryNumber: "RF-20260610-0001", postingBatchId: "refund-batch-1" })
+    mockPostVoid.mockResolvedValue({ id: "void-je-1", entryNumber: "VD-20260610-0001", postingBatchId: "void-batch-1" })
     mockCreateFiscalDocumentFromPostedSource.mockResolvedValue({
       id: "fiscal-doc-1",
-      status: FiscalDocumentStatus.QUEUED,
+      status: "QUEUED",
       authorityChannel: "CM_DGI_E_SERVICES_PORTAL",
       submissions: [{ id: "submission-1", status: "PENDING" }],
     })
@@ -344,6 +478,12 @@ describe("commitPOSSale accounting wiring", () => {
     expect(result).toMatchObject({
       saleId: "sale-1",
       orderNumber: "POS-20260610-0001",
+      fiscalDocument: null,
+      fiscalization: {
+        requestId: "pos-sale:sale-1:fiscalization:v1",
+        status: "PENDING",
+        watermark: "NOT FOR STATUTORY USE",
+      },
       status: "COMPLETED",
       paymentStatus: "PAID",
       accountingMovements: {
@@ -361,6 +501,17 @@ describe("commitPOSSale accounting wiring", () => {
         totalCredits: 178,
       },
     })
+    expect(mockTx.customer.findFirst).toHaveBeenCalledWith(expect.objectContaining({
+      where: expect.objectContaining({
+        id: "customer-1",
+        organizationId: "org-1",
+        OR: expect.arrayContaining([{
+          locationAssignments: {
+            some: { organizationId: "org-1", locationId: "loc-1" },
+          },
+        }]),
+      }),
+    }))
     expect(mockPostSale).toHaveBeenCalledWith(
       "org-1",
       expect.objectContaining({
@@ -379,58 +530,69 @@ describe("commitPOSSale accounting wiring", () => {
       }),
       mockTx,
     )
-    expect(mockCreateFiscalDocumentFromPostedSource).toHaveBeenCalledWith(
-      expect.objectContaining({
-        organizationId: "org-1",
-        createdById: "cashier-1",
-        documentType: FiscalDocumentType.POS_RECEIPT,
-        sourceType: AccountingSourceType.POS_SALE,
-        sourceId: "sale-1",
-        sourceNumber: "POS-20260610-0001",
-        countryCode: "CM",
-        currency: "XAF",
-        idempotencyKey: "pos-sale:sale-1:fiscal-document",
-        enqueueCertification: true,
-        authorityChannel: "CM_DGI_E_SERVICES_PORTAL",
-        adapterKey: "CM_DGI_SANDBOX",
-        adapterEnvironment: ComplianceAdapterEnvironment.SANDBOX,
-        lines: [
-          expect.objectContaining({
-            sourceLineId: "line-1",
-            itemId: "item-1",
-            description: "Fiscal item",
-            quantity: "2.000",
-            unitPrice: "50.00",
-            taxRateBps: 1800,
-            taxAmount: "18.00",
-            lineSubtotal: "100.00",
-            lineTotal: "118.00",
-          }),
-        ],
-      }),
-      mockTx,
-    )
-    expect(mockPostPayment.mock.invocationCallOrder[0]).toBeLessThan(
-      mockCreateFiscalDocumentFromPostedSource.mock.invocationCallOrder[0],
-    )
+    expect(mockCreateFiscalDocumentFromPostedSource).not.toHaveBeenCalled()
     expect(mockTx.salesOrder.update.mock.invocationCallOrder[0]).toBeLessThan(
       mockPostSale.mock.invocationCallOrder[0],
     )
     expect(mockTx.payment.create.mock.invocationCallOrder[0]).toBeLessThan(
       mockPostPayment.mock.invocationCallOrder[0],
     )
-    expect(mockTx.payment.findFirst).toHaveBeenCalledWith(
+    expect(mockTx.payment.findFirst).not.toHaveBeenCalled()
+    expect(mockTx.payment.create).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: expect.objectContaining({
+        data: expect.objectContaining({
           organizationId: "org-1",
-          method: "CARD",
-          OR: expect.arrayContaining([
-            { transactionId: "CARD-AUTH-1" },
-            { authorizationCode: "CARD-AUTH-1" },
-          ]),
+          salesOrderId: "sale-1",
+          method: "CASH",
+          status: "PAID",
         }),
       }),
     )
+    expect(mockTx.pOSCommitResult.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        organizationId: "org-1",
+        locationId: "loc-1",
+        terminalId: "terminal-1",
+        sessionId: "session-1",
+        salesOrderId: "sale-1",
+        actorId: "cashier-1",
+        clientCommitId: "pos-commit-1",
+        requestSchemaVersion: 1,
+        status: "CLAIMED",
+      }),
+    })
+    expect(mockTx.closeRun.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          organizationId: "org-1",
+        }),
+      }),
+    )
+    expect(mockTx.pOSSession.updateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          id: "session-1",
+          organizationId: "org-1",
+          terminalId: "terminal-1",
+          locationId: "loc-1",
+          userId: "cashier-1",
+          status: "ACTIVE",
+        },
+      }),
+    )
+    expect(mockTx.salesOrder.updateMany).toHaveBeenCalledWith({
+      where: {
+        id: "sale-1",
+        organizationId: "org-1",
+        locationId: "loc-1",
+        terminalId: "terminal-1",
+        sessionId: "session-1",
+        createdById: "cashier-1",
+        status: "DRAFT",
+        deletedAt: null,
+      },
+      data: { status: "COMPLETED" },
+    })
     expect(mockTx.auditLog.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
@@ -453,22 +615,27 @@ describe("commitPOSSale accounting wiring", () => {
           sourceId: "sale-1",
           postingBatchId: "batch-1",
           payload: expect.objectContaining({
-            fiscalDocument: expect.objectContaining({
-              id: "fiscal-doc-1",
-              status: FiscalDocumentStatus.QUEUED,
-              authorityChannel: "CM_DGI_E_SERVICES_PORTAL",
-              submissionStatuses: ["PENDING"],
+            fiscalization: expect.objectContaining({
+              requestId: "pos-sale:sale-1:fiscalization:v1",
+              status: "PENDING",
+              watermark: "NOT FOR STATUTORY USE",
             }),
           }),
           outboxMessages: {
-            create: [
+            create: expect.arrayContaining([
               expect.objectContaining({
                 organizationId: "org-1",
                 channel: "NOTIFICATION",
                 eventName: "pos.sale.finalized",
                 idempotencyKey: "POS:pos-sale:sale-1:finalized:NOTIFICATION:pos.sale.finalized",
               }),
-            ],
+              expect.objectContaining({
+                organizationId: "org-1",
+                channel: "FISCALIZATION",
+                eventName: "pos.sale.fiscalization.requested",
+                idempotencyKey: "pos-sale:sale-1:fiscalization:v1",
+              }),
+            ]),
           },
         }),
         include: { outboxMessages: true },
@@ -478,12 +645,354 @@ describe("commitPOSSale accounting wiring", () => {
       salesOrderId: "sale-1",
       organizationId: "org-1",
     })
+    expect(mockDb.pOSCommitResult.updateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          id: "pos-commit-result-1",
+          organizationId: "org-1",
+          status: "COMMITTED",
+        }),
+        data: expect.objectContaining({
+          status: "COMPLETED",
+          completedAt: expect.any(Date),
+        }),
+      }),
+    )
+  })
+
+  it("returns the immutable original result for an identical client commit retry", async () => {
+    const original = await commitPOSSale(commitInput())
+    const existing = completedCommitRecord()
+    const saleReads = mockTx.salesOrder.findFirst.mock.calls.length
+    const paymentWrites = mockTx.payment.create.mock.calls.length
+    const stockWrites = mockTx.inventoryTransaction.create.mock.calls.length
+    const ledgerWrites = mockPostSale.mock.calls.length
+    mockTx.pOSCommitResult.findUnique.mockResolvedValue(existing)
+
+    const replay = await commitPOSSale(commitInput())
+
+    expect(replay).toEqual({ ...original, replayed: true })
+    expect(mockTx.salesOrder.findFirst).toHaveBeenCalledTimes(saleReads)
+    expect(mockTx.payment.create).toHaveBeenCalledTimes(paymentWrites)
+    expect(mockTx.inventoryTransaction.create).toHaveBeenCalledTimes(stockWrites)
+    expect(mockPostSale).toHaveBeenCalledTimes(ledgerWrites)
+    expect(mockDb.pOSCommitResult.updateMany).toHaveBeenCalledTimes(1)
+  })
+
+  it("recovers a PostgreSQL unique-claim race as an exact replay", async () => {
+    const original = await commitPOSSale(commitInput())
+    const existing = completedCommitRecord()
+    const paymentWrites = mockTx.payment.create.mock.calls.length
+    const ledgerWrites = mockPostSale.mock.calls.length
+    mockDb.$transaction.mockRejectedValueOnce({
+      name: "PrismaClientKnownRequestError",
+      code: "P2002",
+      clientVersion: "6.19.3",
+      meta: {
+        target: ["organizationId", "terminalId", "clientCommitId"],
+      },
+    })
+    mockDb.pOSCommitResult.findUnique.mockResolvedValue(existing)
+
+    await expect(commitPOSSale(commitInput())).resolves.toEqual({
+      ...original,
+      replayed: true,
+    })
+    expect(mockTx.payment.create).toHaveBeenCalledTimes(paymentWrites)
+    expect(mockPostSale).toHaveBeenCalledTimes(ledgerWrites)
+  })
+
+  it("rejects and audits reuse of a client commit id with a changed payload", async () => {
+    await commitPOSSale(commitInput())
+    const existing = completedCommitRecord()
+    const paymentWrites = mockTx.payment.create.mock.calls.length
+    const ledgerWrites = mockPostSale.mock.calls.length
+    mockTx.pOSCommitResult.findUnique.mockResolvedValue(existing)
+
+    await expect(commitPOSSale({
+      ...commitInput(),
+      notes: "Changed after the original response was lost",
+    })).rejects.toMatchObject({
+      code: "DUPLICATE_KEY_CONFLICT",
+      status: 409,
+    })
+
+    expect(mockDb.auditLog.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        entityType: "POSCommitResult",
+        entityId: "pos-commit-result-1",
+        action: "POS_SALE_COMMIT_IDEMPOTENCY_CONFLICT",
+        organizationId: "org-1",
+        userId: "cashier-1",
+        changes: expect.objectContaining({
+          clientCommitId: "pos-commit-1",
+          existingRequestHash: existing.requestHash,
+          attemptedRequestHash: expect.any(String),
+        }),
+      }),
+    })
+    expect(mockTx.payment.create).toHaveBeenCalledTimes(paymentWrites)
+    expect(mockPostSale).toHaveBeenCalledTimes(ledgerWrites)
+  })
+
+  it("safely completes receipt hydration after a response loss without reposting the sale", async () => {
+    await commitPOSSale(commitInput())
+    const existing = committedCommitRecord()
+    const paymentWrites = mockTx.payment.create.mock.calls.length
+    const ledgerWrites = mockPostSale.mock.calls.length
+    mockTx.pOSCommitResult.findUnique.mockResolvedValue(existing)
+    mockDb.pOSCommitResult.updateMany.mockClear()
+    mockDb.pOSCommitResult.updateMany.mockResolvedValue({ count: 1 })
+    mockGetSalesReceipt.mockResolvedValueOnce({
+      receipt: { id: "receipt-recovered" },
+      digitalReceiptUrl: "",
+    })
+
+    const replay = await commitPOSSale(commitInput())
+
+    expect(replay).toMatchObject({
+      replayed: true,
+      saleId: "sale-1",
+      receiptStatus: "READY",
+      receipt: { receipt: { id: "receipt-recovered" }, digitalReceiptUrl: "" },
+    })
+    expect(mockTx.payment.create).toHaveBeenCalledTimes(paymentWrites)
+    expect(mockPostSale).toHaveBeenCalledTimes(ledgerWrites)
+    expect(mockDb.pOSCommitResult.updateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ status: "COMMITTED" }),
+        data: expect.objectContaining({ status: "COMPLETED" }),
+      }),
+    )
+  })
+
+  it("rejects a cross-location customer before claiming or posting the sale", async () => {
+    mockTx.customer.findFirst.mockResolvedValue(null)
+
+    await expect(commitPOSSale(commitInput())).rejects.toMatchObject({
+      message: POS_CUSTOMER_LOCATION_MISMATCH,
+      status: 404,
+    })
+
+    expect(mockTx.salesOrder.updateMany).not.toHaveBeenCalled()
+    expect(mockTx.pOSSession.updateMany).not.toHaveBeenCalled()
+    expect(mockTx.inventoryTransaction.create).not.toHaveBeenCalled()
+    expect(mockTx.payment.create).not.toHaveBeenCalled()
+    expect(mockPostSale).not.toHaveBeenCalled()
+  })
+
+  it("rejects a terminal that no longer points to the cashier session", async () => {
+    mockTx.pOSSession.findFirst.mockResolvedValue({
+      ...activeSessionFixture(),
+      terminal: {
+        ...activeSessionFixture().terminal,
+        currentSessionId: "session-other",
+      },
+    })
+
+    await expect(commitPOSSale(commitInput())).rejects.toMatchObject({
+      code: "CONFLICT",
+      status: 409,
+      message: "Terminal and active cashier shift state do not match",
+    })
+
+    expect(mockTx.customer.findFirst).not.toHaveBeenCalled()
+    expect(mockTx.pOSSession.updateMany).not.toHaveBeenCalled()
+    expect(mockTx.salesOrder.updateMany).not.toHaveBeenCalled()
+    expect(mockTx.payment.create).not.toHaveBeenCalled()
+  })
+
+  it("rejects inconsistent server cart totals before claiming stock or money", async () => {
+    mockTx.salesOrder.findFirst.mockResolvedValue({
+      ...draftSaleFixture(),
+      total: decimal(119),
+    })
+
+    await expect(commitPOSSale(commitInput())).rejects.toMatchObject({
+      code: "CONFLICT",
+      status: 409,
+      message: "Cart totals changed; refresh the cart before completing the sale",
+    })
+
+    expect(mockTx.pOSSession.updateMany).not.toHaveBeenCalled()
+    expect(mockTx.salesOrder.updateMany).not.toHaveBeenCalled()
+    expect(mockTx.inventoryTransaction.create).not.toHaveBeenCalled()
+    expect(mockTx.payment.create).not.toHaveBeenCalled()
+    expect(mockPostSale).not.toHaveBeenCalled()
+  })
+
+  it("claims the terminal-linked session balance and compare-and-swaps the opening drawer for cash", async () => {
+    const result = await commitPOSSale({
+      ...commitInput(),
+      tenders: [{ method: "CASH" as const, amount: 120 }],
+    })
+
+    expect(result).toMatchObject({ amountPaid: 118, changeDue: 2 })
+    expect(mockTx.pOSSession.updateMany).toHaveBeenCalledWith({
+      where: expect.objectContaining({
+        id: "session-1",
+        expectedBalance: expect.any(Prisma.Decimal),
+        terminal: {
+          is: {
+            id: "terminal-1",
+            organizationId: "org-1",
+            locationId: "loc-1",
+            currentSessionId: "session-1",
+            isActive: true,
+          },
+        },
+      }),
+      data: { status: "ACTIVE" },
+    })
+    const sessionClaim = mockTx.pOSSession.updateMany.mock.calls[0][0]
+    expect(sessionClaim.where.expectedBalance.eq("50000.00")).toBe(true)
+    expect(mockTx.cashDrawer.updateMany).toHaveBeenCalledWith({
+      where: {
+        id: "drawer-1",
+        isOpen: true,
+        currentBalance: expect.any(Prisma.Decimal),
+        expectedBalance: expect.any(Prisma.Decimal),
+      },
+      data: {
+        currentBalance: expect.any(Prisma.Decimal),
+        expectedBalance: expect.any(Prisma.Decimal),
+      },
+    })
+    const drawerClaim = mockTx.cashDrawer.updateMany.mock.calls[0][0]
+    expect(drawerClaim.where.currentBalance.eq("50000.00")).toBe(true)
+    expect(drawerClaim.where.expectedBalance.eq("50000.00")).toBe(true)
+    expect(drawerClaim.data.currentBalance.eq("50118.00")).toBe(true)
+    expect(drawerClaim.data.expectedBalance.eq("50118.00")).toBe(true)
+    expect(mockTx.cashDrawerTransaction.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        cashDrawerId: "drawer-1",
+        sessionId: "session-1",
+        type: "SALE",
+        amount: expect.any(Prisma.Decimal),
+        balanceBefore: expect.any(Prisma.Decimal),
+        balanceAfter: expect.any(Prisma.Decimal),
+      }),
+    })
+  })
+
+  it("stops downstream payment and ledger writes when the cash drawer compare-and-swap is lost", async () => {
+    mockTx.cashDrawer.updateMany.mockResolvedValueOnce({ count: 0 })
+
+    await expect(commitPOSSale({
+      ...commitInput(),
+      tenders: [{ method: "CASH" as const, amount: 118 }],
+    })).rejects.toMatchObject({
+      code: "CONFLICT",
+      status: 409,
+      message: "Cash drawer changed; refresh before completing the sale",
+    })
+
+    expect(mockTx.cashDrawerTransaction.create).not.toHaveBeenCalled()
+    expect(mockTx.payment.create).not.toHaveBeenCalled()
+    expect(mockPostSale).not.toHaveBeenCalled()
+    expect(mockPostPayment).not.toHaveBeenCalled()
+  })
+
+  it("retains the on-account receivable and customer-ledger behavior", async () => {
+    mockTx.salesOrder.update.mockResolvedValueOnce({
+      id: "sale-1",
+      status: "COMPLETED",
+      paymentStatus: "PENDING",
+    })
+    const result = await commitPOSSale({
+      ...commitInput(),
+      tenders: [
+        {
+          method: "ON_ACCOUNT" as const,
+          amount: 118,
+        },
+      ],
+    })
+    expect(result).toMatchObject({ amountPaid: 0, onAccountAmount: 118, paymentStatus: "PENDING" })
+    expect(mockEnsurePostedReceivable).toHaveBeenCalledWith(
+      mockTx,
+      expect.objectContaining({ organizationId: "org-1", salesOrderId: "sale-1" }),
+    )
+    expect(mockTx.customerLedgerEntry.create).toHaveBeenCalled()
+    expect(mockTx.payment.create).toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.objectContaining({ method: "CREDIT", status: "PENDING" }),
+    }))
+    expect(mockTx.paymentTransaction.findFirst).not.toHaveBeenCalled()
+    expect(mockPostPayment).not.toHaveBeenCalled()
+  })
+
+  it("rejects email receipt delivery before opening a transaction", async () => {
+    await expect(commitPOSSale({
+      ...commitInput(),
+      receipt: {
+        channel: "EMAIL",
+        destination: "customer@example.test",
+        locale: "EN",
+      },
+    })).rejects.toThrow(
+      "This development POS pilot supports an on-screen non-statutory receipt only; delivery channels are disabled",
+    )
+
+    expect(mockDb.$transaction).not.toHaveBeenCalled()
+    expect(mockSendReceipt).not.toHaveBeenCalled()
+  })
+
+  it("rejects WhatsApp receipt delivery before opening a transaction", async () => {
+    await expect(commitPOSSale({
+      ...commitInput(),
+      receipt: {
+        channel: "WHATSAPP",
+        destination: "+237699000000",
+        locale: "EN",
+        whatsAppCustomerOptInConfirmed: true,
+      },
+    })).rejects.toThrow(
+      "This development POS pilot supports an on-screen non-statutory receipt only; delivery channels are disabled",
+    )
+
+    expect(mockDb.$transaction).not.toHaveBeenCalled()
+    expect(mockSendReceipt).not.toHaveBeenCalled()
+  })
+
+  it("rejects store credit before opening a transaction or producing sale effects", async () => {
+    const input = {
+      ...commitInput(),
+      tenders: [
+        {
+          method: "STORE_CREDIT" as const,
+          amount: 118,
+          reference: "UNVERIFIED-INSTRUMENT",
+        },
+      ],
+    }
+
+    await expect(commitPOSSale(input)).rejects.toThrow(
+      "Store credit tender is unavailable until an authoritative store-credit instrument ledger is implemented",
+    )
+
+    expect(mockDb.$transaction).not.toHaveBeenCalled()
+    expect(mockTx.salesOrder.updateMany).not.toHaveBeenCalled()
+    expect(mockTx.salesOrder.update).not.toHaveBeenCalled()
+    expect(mockTx.inventoryTransaction.create).not.toHaveBeenCalled()
+    expect(mockTx.customer.update).not.toHaveBeenCalled()
+    expect(mockTx.customerLedgerEntry.create).not.toHaveBeenCalled()
+    expect(mockTx.cashDrawerTransaction.create).not.toHaveBeenCalled()
+    expect(mockTx.payment.create).not.toHaveBeenCalled()
+    expect(mockTx.auditLog.create).not.toHaveBeenCalled()
+    expect(mockTx.businessEvent.create).not.toHaveBeenCalled()
+    expect(mockPostSale).not.toHaveBeenCalled()
+    expect(mockPostPayment).not.toHaveBeenCalled()
+    expect(mockGetSalesReceipt).not.toHaveBeenCalled()
+    expect(mockSendReceipt).not.toHaveBeenCalled()
   })
 
   it("does not return a committed sale or receipt when payment posting fails", async () => {
     mockPostPayment.mockRejectedValueOnce(new Error("payment posting failed"))
 
-    await expect(commitPOSSale(commitInput())).rejects.toThrow("payment posting failed")
+    await expect(commitPOSSale(commitInput())).rejects.toMatchObject({
+      code: "INTERNAL_ERROR",
+      message: "POS sale could not be completed safely",
+    })
 
     expect(mockPostSale).toHaveBeenCalledTimes(1)
     expect(mockPostPayment).toHaveBeenCalledTimes(1)
@@ -498,7 +1007,10 @@ describe("commitPOSSale accounting wiring", () => {
   it("does not post payment, audit, or receipt when sale posting fails", async () => {
     mockPostSale.mockRejectedValueOnce(new Error("sale posting failed"))
 
-    await expect(commitPOSSale(commitInput())).rejects.toThrow("sale posting failed")
+    await expect(commitPOSSale(commitInput())).rejects.toMatchObject({
+      code: "INTERNAL_ERROR",
+      message: "POS sale could not be completed safely",
+    })
 
     expect(mockPostSale).toHaveBeenCalledTimes(1)
     expect(mockPostPayment).not.toHaveBeenCalled()
@@ -510,47 +1022,15 @@ describe("commitPOSSale accounting wiring", () => {
     expectNoBusinessEvent("pos.sale.finalized")
   })
 
-  it("uses a stable tenant-scoped fiscal document idempotency key when the kernel returns an existing document", async () => {
-    mockCreateFiscalDocumentFromPostedSource.mockResolvedValueOnce({
-      id: "existing-fiscal-doc-1",
-      status: FiscalDocumentStatus.QUEUED,
-      authorityChannel: "CM_DGI_E_SERVICES_PORTAL",
-      submissions: [{ id: "existing-submission-1", status: "PENDING" }],
-    })
+  it("does not finalize audit, event, or receipt when sale posting lacks a batch", async () => {
+    mockPostSale.mockResolvedValueOnce({ id: "sale-je-1", entryNumber: "VT-20260610-0001", postingBatchId: null })
 
-    await commitPOSSale(commitInput())
-
-    expect(mockCreateFiscalDocumentFromPostedSource).toHaveBeenCalledTimes(1)
-    expect(mockCreateFiscalDocumentFromPostedSource.mock.calls[0][0]).toEqual(
-      expect.objectContaining({
-        organizationId: "org-1",
-        sourceType: AccountingSourceType.POS_SALE,
-        sourceId: "sale-1",
-        idempotencyKey: "pos-sale:sale-1:fiscal-document",
-      }),
+    await expect(commitPOSSale(commitInput())).rejects.toThrow(
+      "POS sale posting did not produce the required ledger posting batch.",
     )
-    expect(mockTx.businessEvent.create).toHaveBeenCalledWith(
-      expect.objectContaining({
-        data: expect.objectContaining({
-          payload: expect.objectContaining({
-            fiscalDocument: expect.objectContaining({
-              id: "existing-fiscal-doc-1",
-              status: FiscalDocumentStatus.QUEUED,
-            }),
-          }),
-        }),
-      }),
-    )
-  })
-
-  it("rolls back the sale response and receipt when fiscal document creation fails", async () => {
-    mockCreateFiscalDocumentFromPostedSource.mockRejectedValueOnce(new Error("posted ledger source missing"))
-
-    await expect(commitPOSSale(commitInput())).rejects.toThrow("posted ledger source missing")
 
     expect(mockPostSale).toHaveBeenCalledTimes(1)
     expect(mockPostPayment).toHaveBeenCalledTimes(1)
-    expect(mockCreateFiscalDocumentFromPostedSource).toHaveBeenCalledTimes(1)
     expect(mockGetSalesReceipt).not.toHaveBeenCalled()
     expect(mockSendReceipt).not.toHaveBeenCalled()
     expectNoAuditAction("POS_SALE_POSTED")
@@ -558,19 +1038,171 @@ describe("commitPOSSale accounting wiring", () => {
     expectNoBusinessEvent("pos.sale.finalized")
   })
 
-  it("blocks duplicate electronic provider references before capture", async () => {
-    mockTx.payment.findFirst.mockResolvedValueOnce({
-      id: "payment-existing",
-      paymentNumber: "PAY-EXISTING",
+  it("uses a stable tenant-scoped fiscalization request idempotency key", async () => {
+    await commitPOSSale(commitInput())
+
+    expect(mockTx.businessEvent.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          outboxMessages: {
+            create: expect.arrayContaining([
+              expect.objectContaining({
+                organizationId: "org-1",
+                channel: "FISCALIZATION",
+                idempotencyKey: "pos-sale:sale-1:fiscalization:v1",
+              }),
+            ]),
+          },
+        }),
+      }),
+    )
+  })
+
+  it("does not let country-pack or fiscal adapter failures roll back the completed sale", async () => {
+    mockCreateFiscalDocumentFromPostedSource.mockRejectedValueOnce(new Error("posted ledger source missing"))
+
+    await expect(commitPOSSale(commitInput())).resolves.toMatchObject({
+      saleId: "sale-1",
+      fiscalization: { status: "PENDING" },
     })
 
-    await expect(commitPOSSale(commitInput())).rejects.toThrow(/already been captured/i)
+    expect(mockPostSale).toHaveBeenCalledTimes(1)
+    expect(mockPostPayment).toHaveBeenCalledTimes(1)
+    expect(mockCreateFiscalDocumentFromPostedSource).not.toHaveBeenCalled()
+    expect(mockGetSalesReceipt).toHaveBeenCalled()
+    expect(mockTx.businessEvent.create).toHaveBeenCalled()
+  })
 
-    expect(mockTx.payment.findFirst).toHaveBeenCalledTimes(1)
+  it("returns committed sale truth when receipt hydration fails after the transaction", async () => {
+    mockGetSalesReceipt.mockRejectedValueOnce(new Error("receipt read unavailable"))
+
+    await expect(commitPOSSale(commitInput())).resolves.toMatchObject({
+      saleId: "sale-1",
+      status: "COMPLETED",
+      receipt: null,
+      receiptStatus: "RETRY_REQUIRED",
+      delivery: null,
+    })
+
+    expect(mockPostSale).toHaveBeenCalledTimes(1)
+    expect(mockPostPayment).toHaveBeenCalledTimes(1)
+    expect(mockTx.businessEvent.create).toHaveBeenCalled()
+    expect(mockSendReceipt).not.toHaveBeenCalled()
+  })
+
+  it("blocks a manual electronic reference before opening a transaction", async () => {
+    await expect(commitPOSSale({
+      ...commitInput(),
+      tenders: [{
+        method: "CARD" as const,
+        amount: 118,
+        reference: "CARD-AUTH-1",
+        cardLast4: "4242",
+      }],
+    })).rejects.toThrow(
+      "Electronic tenders require provider-authoritative payment transaction evidence",
+    )
+
+    expect(mockDb.$transaction).not.toHaveBeenCalled()
+    expect(mockTx.payment.findFirst).not.toHaveBeenCalled()
     expect(mockTx.payment.create).not.toHaveBeenCalled()
     expect(mockPostSale).not.toHaveBeenCalled()
     expect(mockPostPayment).not.toHaveBeenCalled()
     expect(mockGetSalesReceipt).not.toHaveBeenCalled()
+  })
+
+  it("marks an electronic tender paid only after claiming provider-authoritative evidence", async () => {
+    mockTx.paymentTransaction.findFirst.mockResolvedValueOnce({
+      id: "payment-transaction-1",
+      organizationId: "org-1",
+      legacyPaymentId: null,
+      providerAccountId: "provider-account-1",
+      providerAuthorityEventId: "provider-event-1",
+      direction: "INBOUND",
+      state: "CONFIRMED",
+      amount: decimal(118),
+      currencyCode: "XAF",
+      providerTransactionId: "provider-tx-1",
+      providerReference: "provider-ref-1",
+      confirmedAt: new Date("2026-08-18T09:00:00.000Z"),
+      providerAccount: {
+        id: "provider-account-1",
+        organizationId: "org-1",
+        providerCode: "CARD_ACQUIRER",
+        displayName: "Approved acquirer",
+        status: "ACTIVE",
+        currencyCode: "XAF",
+        paymentRail: {
+          organizationId: "org-1",
+          type: "CARD",
+          currencyCode: "XAF",
+          isActive: true,
+        },
+      },
+      providerAuthorityEvent: {
+        id: "provider-event-1",
+        organizationId: "org-1",
+        providerAccountId: "provider-account-1",
+        providerTransactionId: "provider-tx-1",
+        providerReference: "provider-ref-1",
+        status: "PROCESSED",
+        signatureValid: true,
+        direction: "INBOUND",
+        amount: decimal(118),
+        currencyCode: "XAF",
+        occurredAt: new Date("2026-08-18T08:59:58.000Z"),
+      },
+    })
+
+    await expect(commitPOSSale({
+      ...commitInput(),
+      tenders: [{
+        method: "CARD" as const,
+        amount: 118,
+        paymentTransactionId: "payment-transaction-1",
+        cardLast4: "4242",
+      }],
+    })).resolves.toMatchObject({ paymentStatus: "PAID", amountPaid: 118 })
+
+    expect(mockTx.payment.create).toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.objectContaining({
+        method: "CARD",
+        status: "PAID",
+        transactionId: "provider-tx-1",
+        authorizationCode: "provider-ref-1",
+      }),
+    }))
+    expect(mockTx.paymentTransaction.updateMany).toHaveBeenCalledWith({
+      where: expect.objectContaining({
+        id: "payment-transaction-1",
+        organizationId: "org-1",
+        providerAuthorityEventId: "provider-event-1",
+        legacyPaymentId: null,
+      }),
+      data: { legacyPaymentId: "payment-1" },
+    })
+    expect(mockPostPayment).toHaveBeenCalled()
+  })
+
+  it("stops before stock and payment writes when the cashier-owned active shift claim is lost", async () => {
+    mockTx.pOSSession.updateMany.mockResolvedValueOnce({ count: 0 })
+
+    await expect(commitPOSSale(commitInput())).rejects.toMatchObject({ code: "CONFLICT", status: 409 })
+
+    expect(mockTx.salesOrder.updateMany).not.toHaveBeenCalled()
+    expect(mockTx.inventoryTransaction.create).not.toHaveBeenCalled()
+    expect(mockTx.payment.create).not.toHaveBeenCalled()
+    expect(mockPostSale).not.toHaveBeenCalled()
+  })
+
+  it("stops before financial side effects when another request already claimed the draft sale", async () => {
+    mockTx.salesOrder.updateMany.mockResolvedValueOnce({ count: 0 })
+
+    await expect(commitPOSSale(commitInput())).rejects.toMatchObject({ code: "CONFLICT", status: 409 })
+
+    expect(mockTx.inventoryTransaction.create).not.toHaveBeenCalled()
+    expect(mockTx.payment.create).not.toHaveBeenCalled()
+    expect(mockPostSale).not.toHaveBeenCalled()
   })
 
   it("refunds a fully paid POS sale and posts each refund inside the transaction", async () => {
@@ -589,6 +1221,7 @@ describe("commitPOSSale accounting wiring", () => {
       paymentStatus: "REFUNDED",
       refundIds: ["refund-1"],
       refundJournalEntryIds: ["refund-je-1"],
+      refundPostingBatchIds: ["refund-batch-1"],
       totalRefunded: 118,
     })
     expect(mockTx.paymentRefund.create).toHaveBeenCalledWith(
@@ -601,6 +1234,33 @@ describe("commitPOSSale accounting wiring", () => {
         }),
       }),
     )
+    expect(mockTx.pOSSession.updateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          id: "session-1",
+          organizationId: "org-1",
+          terminalId: "terminal-1",
+          locationId: "loc-1",
+          userId: "cashier-1",
+          status: "ACTIVE",
+        },
+      }),
+    )
+    expect(mockTx.salesOrder.updateMany).toHaveBeenCalledWith(expect.objectContaining({
+      where: {
+        id: "sale-1",
+        organizationId: "org-1",
+        locationId: "loc-1",
+        terminalId: "terminal-1",
+        sessionId: "session-1",
+        status: "COMPLETED",
+        deletedAt: null,
+      },
+      data: expect.objectContaining({
+        status: "RETURNED",
+        paymentStatus: "REFUNDED",
+      }),
+    }))
     expect(mockPostRefund).toHaveBeenCalledWith(
       "org-1",
       expect.objectContaining({
@@ -615,6 +1275,7 @@ describe("commitPOSSale accounting wiring", () => {
           action: "POS_SALE_REFUND",
           changes: expect.objectContaining({
             refundJournalEntryIds: ["refund-je-1"],
+            refundPostingBatchIds: ["refund-batch-1"],
           }),
         }),
       }),
@@ -628,10 +1289,25 @@ describe("commitPOSSale accounting wiring", () => {
           idempotencyKey: "pos-refund:sale-1:refund-1",
           sourceType: "POS_REFUND",
           sourceId: "sale-1",
+          postingBatchId: "refund-batch-1",
         }),
         include: { outboxMessages: true },
       }),
     )
+  })
+
+  it("does not finalize refund audit or event when refund posting lacks a batch", async () => {
+    mockTx.salesOrder.findFirst.mockResolvedValue(completedSaleFixture())
+    mockPostRefund.mockResolvedValueOnce({ id: "refund-je-1", entryNumber: "RF-20260610-0001", postingBatchId: null })
+
+    await expect(refundPOSSale(correctionInput())).rejects.toThrow(
+      "POS refund posting refund-1 did not produce the required ledger posting batch.",
+    )
+
+    expect(mockTx.paymentRefund.create).toHaveBeenCalledTimes(1)
+    expect(mockPostRefund).toHaveBeenCalledTimes(1)
+    expectNoAuditAction("POS_SALE_REFUND")
+    expectNoBusinessEvent("pos.refund.issued")
   })
 
   it("does not finalize refund audit when refund posting fails", async () => {
@@ -643,6 +1319,17 @@ describe("commitPOSSale accounting wiring", () => {
     expect(mockTx.paymentRefund.create).toHaveBeenCalledTimes(1)
     expect(mockPostRefund).toHaveBeenCalledTimes(1)
     expectNoAuditAction("POS_SALE_REFUND")
+    expectNoBusinessEvent("pos.refund.issued")
+  })
+
+  it("stops a duplicate refund before restock, drawer, payment, or posting side effects", async () => {
+    mockTx.salesOrder.findFirst.mockResolvedValue(completedSaleFixture())
+    mockTx.salesOrder.updateMany.mockResolvedValueOnce({ count: 0 })
+
+    await expect(refundPOSSale(correctionInput())).rejects.toMatchObject({ code: "CONFLICT", status: 409 })
+
+    expect(mockTx.paymentRefund.create).not.toHaveBeenCalled()
+    expect(mockPostRefund).not.toHaveBeenCalled()
     expectNoBusinessEvent("pos.refund.issued")
   })
 
@@ -661,6 +1348,7 @@ describe("commitPOSSale accounting wiring", () => {
       status: "CANCELLED",
       paymentStatus: "CANCELLED",
       voidJournalEntryId: "void-je-1",
+      voidPostingBatchId: "void-batch-1",
     })
     expect(mockTx.payment.update).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -668,6 +1356,33 @@ describe("commitPOSSale accounting wiring", () => {
         data: { status: "CANCELLED" },
       }),
     )
+    expect(mockTx.pOSSession.updateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          id: "session-1",
+          organizationId: "org-1",
+          terminalId: "terminal-1",
+          locationId: "loc-1",
+          userId: "cashier-1",
+          status: "ACTIVE",
+        },
+      }),
+    )
+    expect(mockTx.salesOrder.updateMany).toHaveBeenCalledWith(expect.objectContaining({
+      where: {
+        id: "sale-1",
+        organizationId: "org-1",
+        locationId: "loc-1",
+        terminalId: "terminal-1",
+        sessionId: "session-1",
+        status: "COMPLETED",
+        deletedAt: null,
+      },
+      data: expect.objectContaining({
+        status: "CANCELLED",
+        paymentStatus: "CANCELLED",
+      }),
+    }))
     expect(mockPostVoid).toHaveBeenCalledWith(
       "org-1",
       expect.objectContaining({
@@ -682,6 +1397,7 @@ describe("commitPOSSale accounting wiring", () => {
           action: "POS_SALE_VOID",
           changes: expect.objectContaining({
             voidJournalEntryId: "void-je-1",
+            voidPostingBatchId: "void-batch-1",
           }),
         }),
       }),
@@ -695,10 +1411,84 @@ describe("commitPOSSale accounting wiring", () => {
           idempotencyKey: "pos-void:sale-1:void-je-1",
           sourceType: "POS_VOID",
           sourceId: "sale-1",
+          postingBatchId: "void-batch-1",
         }),
         include: { outboxMessages: true },
       }),
     )
+  })
+
+  it("delegates an on-account void balance claim to the customer-ledger kernel", async () => {
+    const sale = completedSaleFixture()
+    sale.payments = [
+      {
+        id: "payment-credit-1",
+        paymentNumber: "PAY-CREDIT-1",
+        amount: decimal(118),
+        method: "CREDIT",
+        status: "PENDING",
+        refundedAmount: decimal(0),
+        deletedAt: null,
+        refunds: [],
+      },
+    ]
+    mockTx.salesOrder.findFirst.mockResolvedValue(sale)
+    mockTx.customer.findFirst.mockResolvedValue({
+      id: "customer-1",
+      currentBalance: decimal(118),
+      creditLimit: decimal(1000),
+    })
+
+    await voidPOSSale(correctionInput("Void on-account sale"))
+
+    expect(mockTx.customer.update).not.toHaveBeenCalled()
+    expect(mockTx.customer.updateMany).toHaveBeenCalledWith({
+      where: {
+        id: "customer-1",
+        organizationId: "org-1",
+        deletedAt: null,
+        currentBalance: expect.any(Prisma.Decimal),
+      },
+      data: { currentBalance: expect.any(Prisma.Decimal) },
+    })
+    const balanceClaim = mockTx.customer.updateMany.mock.calls[0][0]
+    expect(balanceClaim.where.currentBalance.eq("118.00")).toBe(true)
+    expect(balanceClaim.data.currentBalance.eq("0.00")).toBe(true)
+    const ledgerData = mockTx.customerLedgerEntry.create.mock.calls[0][0].data
+    expect(ledgerData).toMatchObject({
+      customerId: "customer-1",
+      organizationId: "org-1",
+      type: "CREDIT_NOTE",
+      description: "POS void POS-20260610-0001",
+      referenceType: "CUSTOMER_RECEIVABLE_DOCUMENT",
+      referenceId: "receivable-document-1",
+    })
+    expect(ledgerData.debit.eq("0.00")).toBe(true)
+    expect(ledgerData.credit.eq("118.00")).toBe(true)
+    expect(ledgerData.balanceAfter.eq("0.00")).toBe(true)
+    expect(mockVoidReceivable).toHaveBeenCalledWith(
+      mockTx,
+      expect.objectContaining({
+        organizationId: "org-1",
+        documentId: "receivable-document-1",
+        actorId: "cashier-1",
+        salesOrderId: "sale-1",
+        reason: "Void on-account sale",
+      }),
+    )
+  })
+
+  it("does not finalize void audit or event when void posting lacks a batch", async () => {
+    mockTx.salesOrder.findFirst.mockResolvedValue(completedSaleFixture())
+    mockPostVoid.mockResolvedValueOnce({ id: "void-je-1", entryNumber: "VD-20260610-0001", postingBatchId: null })
+
+    await expect(voidPOSSale(correctionInput("Wrong sale tendered"))).rejects.toThrow(
+      "POS void posting did not produce the required ledger posting batch.",
+    )
+
+    expect(mockPostVoid).toHaveBeenCalledTimes(1)
+    expectNoAuditAction("POS_SALE_VOID")
+    expectNoBusinessEvent("pos.sale.voided")
   })
 
   it("does not finalize void audit when void posting fails", async () => {
@@ -710,5 +1500,46 @@ describe("commitPOSSale accounting wiring", () => {
     expect(mockPostVoid).toHaveBeenCalledTimes(1)
     expectNoAuditAction("POS_SALE_VOID")
     expectNoBusinessEvent("pos.sale.voided")
+  })
+})
+
+describe("openPOSShift terminal safety", () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+    mockDb.pOSStation.findFirst.mockResolvedValue({
+      id: "terminal-1",
+      name: "Till 1",
+      terminalNumber: "T01",
+    })
+    mockDb.pOSSession.findFirst.mockResolvedValue(null)
+    mockDb.$transaction.mockImplementation(
+      async (handler: (tx: typeof mockTx) => Promise<unknown>) => handler(mockTx),
+    )
+    mockTx.pOSSession.create.mockResolvedValue({ id: "session-2", terminalId: "terminal-1" })
+  })
+
+  it("fails safely when another cashier claims a terminal after the availability read", async () => {
+    mockTx.pOSStation.updateMany.mockResolvedValue({ count: 0 })
+
+    await expect(openPOSShift({
+      organizationId: "org-1",
+      userId: "cashier-2",
+      locationId: "loc-1",
+      terminalId: "terminal-1",
+      openingBalance: "0",
+    })).rejects.toThrow("Terminal already has an open shift")
+
+    expect(mockTx.pOSStation.updateMany).toHaveBeenCalledWith({
+      where: {
+        id: "terminal-1",
+        organizationId: "org-1",
+        locationId: "loc-1",
+        isActive: true,
+        currentSessionId: null,
+      },
+      data: { currentSessionId: "session-2" },
+    })
+    expect(mockTx.cashDrawer.findFirst).not.toHaveBeenCalled()
+    expect(mockTx.cashDrawerTransaction.create).not.toHaveBeenCalled()
   })
 })

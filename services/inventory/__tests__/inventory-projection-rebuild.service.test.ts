@@ -106,4 +106,74 @@ describe("rebuildInventoryProjection", () => {
     expect(mockedDb.inventoryLevel.findMany).toHaveBeenCalled()
     expect((mockedDb.inventoryLevel as unknown as { update?: jest.Mock }).update).toBeUndefined()
   })
+  it("uses effective and recorded cutoffs instead of row creation time", async () => {
+    const asOf = new Date("2026-06-30T23:59:59Z")
+    const recordedThrough = new Date("2026-07-01T12:00:00Z")
+    mockedDb.inventoryTransaction.findMany.mockResolvedValue([])
+    mockedDb.inventoryLevel.findMany.mockResolvedValue([])
+
+    const result = await rebuildInventoryProjection({
+      organizationId: "org-1",
+      asOf,
+      recordedThrough,
+    })
+
+    expect(mockedDb.inventoryTransaction.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          organizationId: "org-1",
+          effectiveAt: { lte: asOf },
+          recordedAt: { lte: recordedThrough },
+        }),
+        orderBy: [
+          { effectiveAt: "asc" },
+          { recordedAt: "asc" },
+          { id: "asc" },
+        ],
+      }),
+    )
+    expect(result.asOf).toBe(asOf.toISOString())
+    expect(result.recordedThrough).toBe(recordedThrough.toISOString())
+  })
+
+  it("reports stored stock that has no immutable movement support", async () => {
+    mockedDb.inventoryTransaction.findMany.mockResolvedValue([])
+    mockedDb.inventoryLevel.findMany.mockResolvedValue([
+      {
+        itemId: "item-1",
+        locationId: "loc-1",
+        quantityOnHand: decimal("4"),
+        averageCost: decimal("100"),
+        totalValue: decimal("400"),
+      },
+    ])
+
+    const result = await rebuildInventoryProjection({ organizationId: "org-1" })
+
+    expect(result.driftCount).toBe(1)
+    expect(result.drifts).toEqual([
+      expect.objectContaining({
+        type: "UNEXPLAINED_LEVEL",
+        itemId: "item-1",
+        locationId: "loc-1",
+        expected: {
+          quantityOnHand: "0.000",
+          totalValue: "0.00",
+          averageCost: "0.00",
+        },
+      }),
+    ])
+  })
+
+  it("rejects a future recorded cutoff before reading stock evidence", async () => {
+    await expect(
+      rebuildInventoryProjection({
+        organizationId: "org-1",
+        recordedThrough: new Date(Date.now() + 60_000),
+      }),
+    ).rejects.toThrow(/recordedThrough cannot be in the future/i)
+
+    expect(mockedDb.inventoryTransaction.findMany).not.toHaveBeenCalled()
+    expect(mockedDb.inventoryLevel.findMany).not.toHaveBeenCalled()
+  })
 })

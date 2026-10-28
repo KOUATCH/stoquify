@@ -1,9 +1,10 @@
 import "server-only"
 
-import type { Prisma } from "@prisma/client"
+import { Prisma } from "@prisma/client"
 
 import { logger } from "@/lib/logger"
 import { db } from "@/prisma/db"
+import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
 import {
   MODULE_CONTROL_MODE,
   type CommercialModuleSlug,
@@ -12,6 +13,7 @@ import {
   type ModuleEntitlementDecision,
   type ModuleEntitlementEvaluationInput,
   type ModuleEntitlementStatus,
+  type TenantModuleActivationResult,
   type TenantModuleEntitlement,
 } from "./module-control-contracts"
 import {
@@ -190,6 +192,73 @@ export async function getModuleControlCenterData(input: {
   }
 }
 
+export async function activateTenantModule(input: {
+  organizationId: string
+  actorId: string
+  moduleSlug: CommercialModuleSlug
+}): Promise<TenantModuleActivationResult> {
+  const catalogEntry = getModuleCatalogEntry(input.moduleSlug)
+
+  if (!catalogEntry || !["available", "beta"].includes(catalogEntry.status)) {
+    throw new BusinessRuleError("This module cannot be activated for a tenant")
+  }
+
+  const activatedAt = new Date()
+
+  return db.$transaction(
+    async (tx) => {
+      const organization = await tx.organization.findFirst({
+        where: { id: input.organizationId, deletedAt: null },
+        select: { id: true, requestedModules: true },
+      })
+
+      if (!organization) {
+        throw new NotFoundError("Organization not found")
+      }
+
+      const normalized = new Set(normalizeRequestedModuleSlugs(organization.requestedModules).slugs)
+      const activationOrder = requiredModuleActivationOrder(input.moduleSlug)
+      const addedModules = activationOrder.filter((moduleSlug) => !normalized.has(moduleSlug))
+      const requestedModules = [...organization.requestedModules, ...addedModules]
+
+      if (addedModules.length > 0) {
+        await tx.organization.update({
+          where: { id: organization.id },
+          data: { requestedModules: { set: requestedModules } },
+        })
+      }
+
+      await tx.auditLog.create({
+        data: {
+          entityType: "OrganizationModuleEntitlement",
+          entityId: `${organization.id}:${input.moduleSlug}`,
+          action: addedModules.length > 0 ? "MODULE_ENTITLEMENT_ACTIVATED" : "MODULE_ENTITLEMENT_ALREADY_ACTIVE",
+          organizationId: organization.id,
+          userId: input.actorId,
+          changes: {
+            moduleSlug: input.moduleSlug,
+            addedModules,
+            beforeRequestedModules: organization.requestedModules,
+            afterRequestedModules: requestedModules,
+            requiredDependencies: activationOrder.filter((moduleSlug) => moduleSlug !== input.moduleSlug),
+            activatedAt: activatedAt.toISOString(),
+          } satisfies Prisma.InputJsonObject,
+        },
+      })
+
+      return {
+        organizationId: organization.id,
+        moduleSlug: input.moduleSlug,
+        addedModules,
+        requestedModules,
+        alreadyActive: addedModules.length === 0,
+        activatedAt: activatedAt.toISOString(),
+      }
+    },
+    { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
+  )
+}
+
 export async function recordModuleEntitlementDecision(decision: ModuleEntitlementDecision) {
   try {
     await db.auditLog.create({
@@ -265,3 +334,21 @@ function normalizeNow(value: Date | string | null | undefined) {
   return new Date()
 }
 
+function requiredModuleActivationOrder(moduleSlug: CommercialModuleSlug) {
+  const ordered: CommercialModuleSlug[] = []
+  const visited = new Set<CommercialModuleSlug>()
+
+  function visit(current: CommercialModuleSlug) {
+    if (visited.has(current)) return
+    visited.add(current)
+
+    for (const dependency of getModuleCatalogEntry(current)?.dependencies ?? []) {
+      if (dependency.dependencyType === "required") visit(dependency.dependsOnSlug)
+    }
+
+    ordered.push(current)
+  }
+
+  visit(moduleSlug)
+  return ordered
+}

@@ -1,0 +1,267 @@
+{
+  "schemaVersion": 1,
+  "decisionId": "stoquify-agent-runtime-phase3-entry-2026-07-25",
+  "evaluatedAt": "2026-08-18T03:33:48.673Z",
+  "target": "phase3",
+  "status": "BLOCKED",
+  "eligible": false,
+  "activationAuthorizedByGate": false,
+  "phase3AuthorizedByGate": false,
+  "recordedPhase3AuthorityPresent": false,
+  "summary": {
+    "checks": 34,
+    "passed": 0,
+    "blockers": 34,
+    "secretValuesPrinted": false
+  },
+  "checks": [
+    {
+      "id": "AUTHORIZED_SCOPE_COMPLETE",
+      "title": "All authorized repository requirements pass",
+      "passed": false,
+      "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_AUTHORIZED_SCOPE_REQUIREMENTS_AUDIT_2026-07-25.json"
+    },
+    {
+      "id": "FROZEN_COMMIT_VERIFIED",
+      "title": "Phase 2A frozen commit remains verified",
+      "passed": false,
+      "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.json"
+    },
+    {
+      "id": "CLEAN_RELEASE_READY",
+      "title": "Frozen release has clean release identity",
+      "passed": false,
+      "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.json"
+    },
+    {
+      "id": "GLOBAL_RELEASE_READY",
+      "title": "Global release evidence has no release blockers",
+      "passed": false,
+      "evidencePath": "what-next/skills-life-cycle/stoquify-ohada-leadership-release-evidence-index-2026-07-11.json"
+    },
+    {
+      "id": "PRODUCTION_SECRETS_READY",
+      "title": "Production-purpose secret preflight is ready",
+      "passed": false,
+      "evidencePath": "what-next/release-secret-preflight.json"
+    },
+    {
+      "id": "MIGRATION_TARGET_READY",
+      "title": "Migration and non-local database target are ready",
+      "passed": false,
+      "evidencePath": "what-next/prisma-migration-deployment-readiness.json"
+    },
+    {
+      "id": "STATUTORY_AUTHORITY_READY",
+      "title": "Statutory source and expert evidence are ready",
+      "passed": false,
+      "evidencePath": "what-next/statutory-country-pack-production-readiness.json"
+    },
+    {
+      "id": "CREDENTIAL_ROTATION_READY",
+      "title": "Credential rotation register is ready",
+      "passed": false,
+      "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_CREDENTIAL_ROTATION_REGISTER_2026-07-25.json"
+    },
+    {
+      "id": "OPERATIONAL_RELEASE_READY",
+      "title": "Operational release is ready for independent review",
+      "passed": false,
+      "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_OPERATIONAL_RELEASE_EVIDENCE_2026-07-25.json"
+    },
+    {
+      "id": "PROMOTION_POINT_1_REVIEW_ACCEPTED",
+      "title": "Promotion point 1 is REVIEW_ACCEPTED",
+      "passed": false,
+      "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+    },
+    {
+      "id": "PROMOTION_POINT_2_COMPLETED",
+      "title": "Promotion point 2 is COMPLETED",
+      "passed": false,
+      "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+    },
+    {
+      "id": "PROMOTION_POINT_3_COMPLETED",
+      "title": "Promotion point 3 is COMPLETED",
+      "passed": false,
+      "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+    },
+    {
+      "id": "PROMOTION_POINT_4_COMPLETED",
+      "title": "Promotion point 4 is COMPLETED",
+      "passed": false,
+      "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+    },
+    {
+      "id": "PROMOTION_POINT_5_COMPLETED",
+      "title": "Promotion point 5 is COMPLETED",
+      "passed": false,
+      "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+    },
+    {
+      "id": "PROMOTION_POINT_6_COMPLETED",
+      "title": "Promotion point 6 is COMPLETED",
+      "passed": false,
+      "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+    },
+    {
+      "id": "PROMOTION_POINT_7_COMPLETED",
+      "title": "Promotion point 7 is COMPLETED",
+      "passed": false,
+      "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+    },
+    {
+      "id": "PROMOTION_POINT_8_COMPLETED",
+      "title": "Promotion point 8 is COMPLETED",
+      "passed": false,
+      "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+    },
+    {
+      "id": "PROMOTION_POINT_9_COMPLETED",
+      "title": "Promotion point 9 is COMPLETED",
+      "passed": false,
+      "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+    },
+    {
+      "id": "PROMOTION_POINT_10_COMPLETED",
+      "title": "Promotion point 10 is COMPLETED",
+      "passed": false,
+      "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+    },
+    {
+      "id": "PROMOTION_POINT_11_APPROVED_GO",
+      "title": "Promotion point 11 is APPROVED_GO",
+      "passed": false,
+      "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+    },
+    {
+      "id": "ENTERPRISE_GATE_017_GO",
+      "title": "Enterprise gate 017 records approved GO",
+      "passed": false,
+      "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+    },
+    {
+      "id": "PILOT_EXIT_STATUS_READY",
+      "title": "Pilot exit register is ready for Phase 3 review",
+      "passed": false,
+      "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_PILOT_EXIT_REGISTER_2026-07-25.json"
+    },
+    {
+      "id": "PILOT_RELEASE_BINDING",
+      "title": "Pilot exit evidence is bound to commit, artifact, and evidence bundle",
+      "passed": false,
+      "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_PILOT_EXIT_REGISTER_2026-07-25.json"
+    },
+    {
+      "id": "PILOT_SCOPE_AND_ACTIVATION_EVIDENCE",
+      "title": "Pilot has activation reference and hashed tenant/role scope",
+      "passed": false,
+      "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_PILOT_EXIT_REGISTER_2026-07-25.json"
+    },
+    {
+      "id": "PILOT_OBSERVATION_COMPLETE",
+      "title": "Pilot has a bounded completed observation window and successful runs",
+      "passed": false,
+      "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_PILOT_EXIT_REGISTER_2026-07-25.json"
+    },
+    {
+      "id": "PILOT_SAFETY_CLEAN",
+      "title": "Pilot records zero authority, tenant, execution, and secret violations",
+      "passed": false,
+      "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_PILOT_EXIT_REGISTER_2026-07-25.json"
+    },
+    {
+      "id": "PILOT_OPERATIONS_EVIDENCE",
+      "title": "Pilot monitoring, support, rollback, and incident evidence are complete",
+      "passed": false,
+      "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_PILOT_EXIT_REGISTER_2026-07-25.json"
+    },
+    {
+      "id": "PILOT_INCIDENTS_CLEAN",
+      "title": "Pilot has zero critical, high, and unresolved incidents",
+      "passed": false,
+      "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_PILOT_EXIT_REGISTER_2026-07-25.json"
+    },
+    {
+      "id": "PILOT_EXIT_APPROVALS",
+      "title": "Product, security, finance-domain, and release approvals are complete",
+      "passed": false,
+      "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_PILOT_EXIT_REGISTER_2026-07-25.json"
+    },
+    {
+      "id": "PILOT_APPROVER_SEGREGATION",
+      "title": "Pilot exit approvers are four distinct directory identities",
+      "passed": false,
+      "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_PILOT_EXIT_REGISTER_2026-07-25.json"
+    },
+    {
+      "id": "PILOT_PHASE3_RECOMMENDATION",
+      "title": "Pilot exit register recommends Phase 3 without self-authorizing it",
+      "passed": false,
+      "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_PILOT_EXIT_REGISTER_2026-07-25.json"
+    },
+    {
+      "id": "PHASE2B_PILOT_COMPLETED",
+      "title": "Promotion point 12 records completed Phase 2B pilot",
+      "passed": false,
+      "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+    },
+    {
+      "id": "PHASE3_GO_APPROVED",
+      "title": "Promotion point 13 records approved Phase 3 GO",
+      "passed": false,
+      "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+    },
+    {
+      "id": "PHASE3_AUTHORITY_RECORDED",
+      "title": "Authoritative promotion ledger records Phase 3 authority",
+      "passed": false,
+      "evidencePath": "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json"
+    }
+  ],
+  "blockers": [
+    "AUTHORIZED_SCOPE_COMPLETE",
+    "FROZEN_COMMIT_VERIFIED",
+    "CLEAN_RELEASE_READY",
+    "GLOBAL_RELEASE_READY",
+    "PRODUCTION_SECRETS_READY",
+    "MIGRATION_TARGET_READY",
+    "STATUTORY_AUTHORITY_READY",
+    "CREDENTIAL_ROTATION_READY",
+    "OPERATIONAL_RELEASE_READY",
+    "PROMOTION_POINT_1_REVIEW_ACCEPTED",
+    "PROMOTION_POINT_2_COMPLETED",
+    "PROMOTION_POINT_3_COMPLETED",
+    "PROMOTION_POINT_4_COMPLETED",
+    "PROMOTION_POINT_5_COMPLETED",
+    "PROMOTION_POINT_6_COMPLETED",
+    "PROMOTION_POINT_7_COMPLETED",
+    "PROMOTION_POINT_8_COMPLETED",
+    "PROMOTION_POINT_9_COMPLETED",
+    "PROMOTION_POINT_10_COMPLETED",
+    "PROMOTION_POINT_11_APPROVED_GO",
+    "ENTERPRISE_GATE_017_GO",
+    "PILOT_EXIT_STATUS_READY",
+    "PILOT_RELEASE_BINDING",
+    "PILOT_SCOPE_AND_ACTIVATION_EVIDENCE",
+    "PILOT_OBSERVATION_COMPLETE",
+    "PILOT_SAFETY_CLEAN",
+    "PILOT_OPERATIONS_EVIDENCE",
+    "PILOT_INCIDENTS_CLEAN",
+    "PILOT_EXIT_APPROVALS",
+    "PILOT_APPROVER_SEGREGATION",
+    "PILOT_PHASE3_RECOMMENDATION",
+    "PHASE2B_PILOT_COMPLETED",
+    "PHASE3_GO_APPROVED",
+    "PHASE3_AUTHORITY_RECORDED"
+  ],
+  "safety": {
+    "evidenceMutated": false,
+    "activationAttempted": false,
+    "phase3Started": false,
+    "authorityGrantedByGate": false,
+    "businessWriteAuthorityAdded": false,
+    "secretValuesPrinted": false
+  }
+}

@@ -7,6 +7,7 @@ import {
   postJournalEntryAction,
   reverseJournalEntryAction,
 } from "@/actions/accounting/journals.actions"
+import { checkPermission } from "@/config/useAuth"
 import {
   AccountingLinkButton,
   AccountingMessage,
@@ -16,6 +17,7 @@ import {
   accountingDate,
   formatAccountingMoney,
 } from "../_components/accounting-ui"
+import { routeByKey, withAccountingSurfaceAccess } from "../accounting-route-access"
 
 type JournalEntryRow = {
   id: string
@@ -48,7 +50,9 @@ function resultPath(locale: string, ok: boolean, text: string) {
   return `/${locale}/dashboard/accounting/journals?${key}=${encodeURIComponent(text)}`
 }
 
-export default async function AccountingJournalsPage({ params, searchParams }: PageProps) {
+async function AccountingJournalsPageImpl({ params, searchParams }: PageProps) {
+  await checkPermission("accounting.journal.read")
+
   const { locale } = await params
   const resolvedSearchParams = searchParams ? await searchParams : {}
   const [journalsResponse, entriesResponse] = await Promise.all([
@@ -121,7 +125,7 @@ export default async function AccountingJournalsPage({ params, searchParams }: P
 
       <AccountingPanel title="Journal queue" description={entriesResponse.success ? "Draft, posted, and reversed manual ledger entries." : entriesResponse.error || "Entries unavailable."}>
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[980px] text-sm">
+          <table className="dashboard-table-base w-full min-w-[980px] text-sm">
             <thead className="border-b border-[var(--dash-border-subtle)] text-left text-xs uppercase text-[var(--dash-text-faint)]">
               <tr>
                 <th className="px-4 py-3">Entry</th>
@@ -183,3 +187,19 @@ export default async function AccountingJournalsPage({ params, searchParams }: P
   )
 }
 
+
+
+
+export default async function AccountingRoutePage(props: any = {}) {
+  const surface = routeByKey("accounting-journals")
+
+  if (!surface) {
+    throw new Error("Missing accounting route surface definition: accounting-journals")
+  }
+
+  return withAccountingSurfaceAccess({
+    params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
+    surface,
+    onAllowed: async () => AccountingJournalsPageImpl(props),
+  })
+}
