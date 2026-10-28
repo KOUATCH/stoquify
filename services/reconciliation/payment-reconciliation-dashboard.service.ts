@@ -363,14 +363,15 @@ export async function getPaymentReconciliationDashboardData(organizationId: stri
   const readyForSignoffCount = recentRuns.filter((run) => run.status === ReconciliationRunStatus.READY_FOR_SIGNOFF).length
   const signedRunCount = recentRuns.filter((run) => run.status === ReconciliationRunStatus.SIGNED).length
   const needsReview = recentRuns.some((run) => run.status === ReconciliationRunStatus.NEEDS_REVIEW || run.status === ReconciliationRunStatus.BLOCKED)
+  const hasUnresolvedBlockers = needsReview || criticalExceptionCount > 0 || suspenseItems.length > 0
 
   const certificationStatus =
-    signedRunCount > 0
-      ? "SIGNED"
-      : readyForSignoffCount > 0
-        ? "READY_FOR_SIGNOFF"
-        : needsReview || criticalExceptionCount > 0 || suspenseItems.length > 0
-          ? "NEEDS_REVIEW"
+    hasUnresolvedBlockers
+      ? "NEEDS_REVIEW"
+      : signedRunCount > 0
+        ? "SIGNED"
+        : readyForSignoffCount > 0
+          ? "READY_FOR_SIGNOFF"
           : providerEventCount > 0 || statementLineCount > 0
             ? "READY_FOR_RUN"
             : "NO_EVIDENCE"

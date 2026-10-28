@@ -27,6 +27,8 @@ import type {
   PaymentTruthMetrics,
   PayrollFinanceForecastMetrics,
   SnapshotBlocker,
+  TenantOperatingCommandBlockerState,
+  TenantOperatingCommandCard,
   SnapshotResult,
   SnapshotScopeInput,
   TenantOperatingMetrics,
@@ -37,6 +39,7 @@ import { getPaymentTruthSnapshot } from "./payment-truth-snapshot.service"
 import {
   blocker,
   buildSnapshotResult,
+  createFreshness,
   maxDate,
   normalizeSnapshotScope,
   toNumber,
@@ -344,7 +347,7 @@ async function buildTenantOperatingSnapshot(input: {
     }),
   ])
 
-  const metrics: TenantOperatingMetrics = {
+  const metricsBase: Omit<TenantOperatingMetrics, "commandCards"> = {
     activeLocationCount,
     completedSalesCount,
     completedSalesRevenue: toNumber(salesTotals._sum.total),
@@ -416,7 +419,7 @@ async function buildTenantOperatingSnapshot(input: {
             severity: "high",
             gate: "payroll_employee_balance",
             title: "Employee balance recovery cases are open",
-            detail: `${activeEmployeeBalanceCaseCount} active employee balance case(s) have ${metrics.employeeBalanceOutstandingAmount.toFixed(
+            detail: `${activeEmployeeBalanceCaseCount} active employee balance case(s) have ${metricsBase.employeeBalanceOutstandingAmount.toFixed(
               2,
             )} outstanding.`,
             sourceTables: ["payroll_employee_balance_cases", "payroll_employee_balance_events"],
@@ -425,6 +428,20 @@ async function buildTenantOperatingSnapshot(input: {
         ]
       : []),
   ]
+
+  const metrics: TenantOperatingMetrics = {
+    ...metricsBase,
+    commandCards: buildTenantOperatingCommandCards({
+      scope,
+      metrics: metricsBase,
+      paymentTruth,
+      inventoryCash,
+      closeReadiness,
+      payrollFinanceForecast,
+      ledgerTrustIncidentCount,
+      activeEmployeeBalanceCaseCount,
+    }),
+  }
 
   const redactions = [...paymentTruth.redactions]
   const status =
@@ -504,6 +521,215 @@ async function buildTenantOperatingSnapshot(input: {
   })
 }
 
+type TenantOperatingBaseMetrics = Omit<TenantOperatingMetrics, "commandCards">
+
+type TenantOperatingCommandCardInput = Omit<TenantOperatingCommandCard, "freshness"> & {
+  sourceMaxUpdatedAt?: Date | string | null
+}
+
+function buildTenantOperatingCommandCards(input: {
+  scope: NormalizedSnapshotScope
+  metrics: TenantOperatingBaseMetrics
+  paymentTruth: SnapshotResult<PaymentTruthMetrics>
+  inventoryCash: SnapshotResult<InventoryCashMetrics>
+  closeReadiness: SnapshotResult<CloseReadinessMetrics>
+  payrollFinanceForecast: PayrollFinanceForecastResult
+  ledgerTrustIncidentCount: number
+  activeEmployeeBalanceCaseCount: number
+}): TenantOperatingCommandCard[] {
+  const { scope, metrics, paymentTruth, inventoryCash, closeReadiness, payrollFinanceForecast } = input
+  const paymentIssueCount =
+    metrics.paymentTruth.criticalExceptionCount +
+    metrics.paymentTruth.openExceptionCount +
+    metrics.paymentTruth.openSuspenseCount
+  const internalCollectedAmount = metrics.paymentTruth.internalCollectedAmount ?? metrics.cashCollected
+  const externalMatchedAmount = metrics.paymentTruth.externalMatchedAmount ?? 0
+  const cashVarianceAmount = metrics.paymentTruth.cashVarianceAmount ?? internalCollectedAmount - externalMatchedAmount
+  const stockIssueCount = metrics.inventoryCash.zeroStockLevelCount + metrics.inventoryCash.negativeStockLevelCount
+  const closeIssueCount =
+    closeReadiness.blockers.length +
+    toNumber(metrics.closeReadiness.blockedCloseRunCount) +
+    toNumber(metrics.closeReadiness.criticalOpenFindingCount) +
+    toNumber(metrics.closeReadiness.unavailableEvidenceCount)
+  const payrollUiState: TenantOperatingCommandCard["uiState"] =
+    metrics.payrollFinanceForecast.blockerCodes.length > 0
+      ? "blocked"
+      : metrics.payrollFinanceForecast.authoritative
+        ? "fresh"
+        : "partial"
+  const complianceUiState: TenantOperatingCommandCard["uiState"] = metrics.payrollFinanceForecast.blockerCodes.some((code) =>
+    code.includes("DECLARATION"),
+  )
+    ? "blocked"
+    : metrics.payrollFinanceForecast.declarationCount > 0
+      ? "partial"
+      : "module_unavailable"
+  const securityUiState: TenantOperatingCommandCard["uiState"] = input.ledgerTrustIncidentCount > 0 ? "blocked" : "module_unavailable"
+
+  return [
+    commandCard(scope, {
+      id: "payment",
+      label: "Cash truth",
+      detail: `Internal collected ${internalCollectedAmount.toFixed(2)}, external matched ${externalMatchedAmount.toFixed(
+        2,
+      )}, variance ${cashVarianceAmount.toFixed(2)}, suspense ${metrics.paymentTruth.openSuspenseAmount.toFixed(
+        2,
+      )}, issues ${paymentIssueCount}.`,
+      metricLabel: "External matched",
+      value: externalMatchedAmount,
+      valueFormat: "currency",
+      scope: "tenant_period",
+      uiState: snapshotUiState(paymentTruth),
+      evidenceGrade: paymentTruth.evidenceGrade,
+      blockerState: snapshotBlockerState(paymentTruth),
+      blockerCount: paymentTruth.blockers.length,
+      actionRoute: "/dashboard/finance/reconciliation",
+      proofRoute: "/dashboard/finance/reconciliation",
+      requiredPermission: "payments.reconciliation.read",
+      sourceModules: ["payments", "finance"],
+      sourceMaxUpdatedAt: paymentTruth.freshness.sourceMaxUpdatedAt,
+    }),
+    commandCard(scope, {
+      id: "ap",
+      label: "AP exposure",
+      detail: "Purchase-order exposure is visible; invoice, match, and payment proof remain a Phase 3 source.",
+      metricLabel: "Pending purchase orders",
+      value: metrics.pendingPurchaseOrderCount,
+      valueFormat: "number",
+      scope: "tenant_period",
+      uiState: "partial",
+      evidenceGrade: "operational",
+      blockerState: "partial",
+      blockerCount: metrics.pendingPurchaseOrderCount,
+      actionRoute: "/dashboard/purchases/payables",
+      proofRoute: "/dashboard/purchases/payables",
+      requiredPermission: "finance.payables.read",
+      sourceModules: ["purchasing", "finance"],
+      sourceMaxUpdatedAt: null,
+    }),
+    commandCard(scope, {
+      id: "close",
+      label: "Close confidence",
+      detail: "Close runs, findings, unavailable evidence, and source-link readiness.",
+      metricLabel: "Close blockers",
+      value: closeIssueCount,
+      valueFormat: "number",
+      scope: "tenant_period",
+      uiState: snapshotUiState(closeReadiness),
+      evidenceGrade: closeReadiness.evidenceGrade,
+      blockerState: snapshotBlockerState(closeReadiness),
+      blockerCount: closeReadiness.blockers.length,
+      actionRoute: "/dashboard/accounting/close",
+      proofRoute: "/dashboard/accounting/close",
+      requiredPermission: "accounting.close.read",
+      sourceModules: ["accounting", "close"],
+      sourceMaxUpdatedAt: closeReadiness.freshness.sourceMaxUpdatedAt,
+    }),
+    commandCard(scope, {
+      id: "stock",
+      label: "Stock-to-cash",
+      detail: "Stock exception count tied to inventory-cash readiness; physical count proof arrives later.",
+      metricLabel: "Stock exceptions",
+      value: stockIssueCount,
+      valueFormat: "number",
+      scope: "tenant_period",
+      uiState: snapshotUiState(inventoryCash),
+      evidenceGrade: inventoryCash.evidenceGrade,
+      blockerState: snapshotBlockerState(inventoryCash),
+      blockerCount: inventoryCash.blockers.length,
+      actionRoute: "/dashboard/finance/stock-to-cash",
+      proofRoute: "/dashboard/finance/stock-to-cash",
+      requiredPermission: "finance.read",
+      sourceModules: ["inventory", "payments", "finance"],
+      sourceMaxUpdatedAt: inventoryCash.freshness.sourceMaxUpdatedAt,
+    }),
+    commandCard(scope, {
+      id: "compliance",
+      label: "Compliance pressure",
+      detail: "Compact statutory pressure from declaration evidence; country-pack operations stay on compliance pages.",
+      metricLabel: "Upcoming declarations",
+      value: metrics.payrollFinanceForecast.declarationCount || null,
+      valueFormat: "number",
+      scope: "tenant_period",
+      uiState: complianceUiState,
+      evidenceGrade: complianceUiState === "blocked" ? "blocked" : metrics.payrollFinanceForecast.declarationCount > 0 ? "operational" : "raw",
+      blockerState: complianceUiState === "blocked" ? "blocked" : complianceUiState === "partial" ? "partial" : "unavailable",
+      blockerCount: metrics.payrollFinanceForecast.blockerCodes.filter((code) => code.includes("DECLARATION")).length,
+      actionRoute: "/dashboard/compliance",
+      proofRoute: "/dashboard/compliance",
+      requiredPermission: "compliance.documents.read",
+      sourceModules: ["compliance", "payroll"],
+      sourceMaxUpdatedAt: payrollFinanceForecast.sourceMaxUpdatedAt,
+    }),
+    commandCard(scope, {
+      id: "payroll",
+      label: "Payroll pressure",
+      detail: metrics.payrollFinanceForecast.message,
+      metricLabel: "Upcoming payroll cash",
+      value: metrics.payrollFinanceForecast.authoritative ? metrics.payrollFinanceForecast.totalUpcomingAmount : null,
+      valueFormat: "currency",
+      scope: "tenant_period",
+      uiState: payrollUiState,
+      evidenceGrade: metrics.payrollFinanceForecast.authoritative ? "posted" : "blocked",
+      blockerState: payrollUiState === "blocked" ? "blocked" : payrollUiState === "partial" ? "partial" : "none",
+      blockerCount: metrics.payrollFinanceForecast.blockerCodes.length + input.activeEmployeeBalanceCaseCount,
+      actionRoute: "/dashboard/payroll",
+      proofRoute: "/dashboard/payroll/payments",
+      requiredPermission: "payroll.command.read",
+      sourceModules: ["payroll", "payments", "accounting"],
+      sourceMaxUpdatedAt: payrollFinanceForecast.sourceMaxUpdatedAt,
+    }),
+    commandCard(scope, {
+      id: "security",
+      label: "Security posture",
+      detail: input.ledgerTrustIncidentCount > 0
+        ? "Assurance incidents are blocking trusted operating intelligence."
+        : "Security posture mini-brief is not connected yet; use settings security for operator controls.",
+      metricLabel: "Blocking assurance incidents",
+      value: input.ledgerTrustIncidentCount > 0 ? input.ledgerTrustIncidentCount : null,
+      valueFormat: "number",
+      scope: "tenant",
+      uiState: securityUiState,
+      evidenceGrade: input.ledgerTrustIncidentCount > 0 ? "blocked" : "raw",
+      blockerState: input.ledgerTrustIncidentCount > 0 ? "blocked" : "unavailable",
+      blockerCount: input.ledgerTrustIncidentCount,
+      actionRoute: "/dashboard/settings/security",
+      proofRoute: "/dashboard/assurance/control-tower",
+      requiredPermission: "PASSWORD_READ",
+      sourceModules: ["dashboard", "security"],
+      sourceMaxUpdatedAt: null,
+    }),
+  ]
+}
+
+function commandCard(
+  scope: NormalizedSnapshotScope,
+  input: TenantOperatingCommandCardInput,
+): TenantOperatingCommandCard {
+  const { sourceMaxUpdatedAt, ...card } = input
+
+  return {
+    ...card,
+    freshness: createFreshness({
+      generatedAt: scope.now,
+      sourceMaxUpdatedAt: maxDate([sourceMaxUpdatedAt]),
+      maxAgeMinutes: scope.maxAgeMinutes,
+    }),
+  }
+}
+
+function snapshotUiState(snapshot: SnapshotResult<unknown>): TenantOperatingCommandCard["uiState"] {
+  return snapshot.uiState ?? snapshot.status
+}
+
+function snapshotBlockerState(snapshot: SnapshotResult<unknown>): TenantOperatingCommandBlockerState {
+  if (snapshot.status === "blocked" || snapshot.blockers.some((item) => item.severity === "critical" || item.severity === "high")) {
+    return "blocked"
+  }
+  if (snapshot.status === "failed" || snapshot.status === "building") return "unavailable"
+  if (["empty", "partial", "stale"].includes(snapshot.status) || snapshot.blockers.length > 0) return "partial"
+  return "none"
+}
 type PayrollFinanceForecastResult = {
   metrics: PayrollFinanceForecastMetrics
   sourceMaxUpdatedAt: Date | null

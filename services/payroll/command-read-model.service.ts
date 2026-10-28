@@ -20,6 +20,10 @@ import { hasAnyRbacPermission } from "@/lib/security/rbac-permissions"
 import { db } from "@/prisma/db"
 import { ForbiddenError } from "@/services/_shared/action-errors"
 import type { ModuleEntitlementDecision } from "@/services/modules/module-control-contracts"
+import {
+  getAccountantPortalData,
+  type PayrollAuditProofPack,
+} from "@/services/accounting/data-trust.service"
 import { evaluateRedaction, type RedactionDecision } from "@/services/security/redaction-policy.service"
 import { getPayrollEmployeeSourceData } from "./employee.service"
 import { getPaymentEvidenceReadiness } from "./payment-evidence.service"
@@ -64,6 +68,9 @@ type PayrollCommandFinalReleaseEvidence = {
     sourceEvidenceHashCount: string | number | boolean | null
     requiredReviewTopicCount: string | number | boolean | null
     requiredReviewTopics: string | number | boolean | null
+    requiredReadyFamilies: string | number | boolean | null
+    requiredReadyFamiliesPresent: string | number | boolean | null
+    missingRequiredReadyFamilies: string | number | boolean | null
   } | null
   countryPackReviewIntake: {
     status: string | null
@@ -78,6 +85,21 @@ type PayrollCommandFinalReleaseEvidence = {
     freshAuthSatisfied: boolean | null
     approvalEvidenceHashPresent: boolean
   } | null
+  browserValidation: {
+    gateStatus: string | null
+    evidenceHash: string | null
+    blockerCodes: string[]
+    checkedAt: string | null
+    routeSmokeCheckedAt: string | null
+    routeSmokeOk: boolean | null
+    routeCount: number
+    expectedRouteCount: number
+    checkCount: number
+    surfaceCount: number
+    safeErrorCount: number
+    seriousViolationCount: number
+    mobileOverflowCount: number
+  } | null
   gates: Array<{
     key: string
     label: string
@@ -87,6 +109,32 @@ type PayrollCommandFinalReleaseEvidence = {
     source: string
   }>
   redactionPolicy: PayrollFinalReleaseReadinessPack["redaction"]["policy"]
+}
+
+type PayrollCommandAccountingAuditProof = {
+  available: boolean
+  status: PayrollAuditProofPack["proofGates"][number]["status"] | "UNAVAILABLE"
+  generatedAt: string | null
+  scopeHash: string | null
+  periodId: string | null
+  trustLevel: PayrollAuditProofPack["certification"]["trustLevel"] | null
+  verdict: PayrollAuditProofPack["certification"]["verdict"] | null
+  exportable: boolean
+  blockerCount: number
+  criticalBlockerCount: number
+  highBlockerCount: number
+  proofGateCount: number
+  blockedProofGateCount: number
+  reviewProofGateCount: number
+  sourceLinkCount: number
+  sourceTableCount: number
+  redactionMode: PayrollAuditProofPack["redaction"]["mode"] | "UNAVAILABLE"
+  redactionExcluded: string[]
+  sourceTables: string[]
+  aggregateEvidence: Record<string, number>
+  proofGates: PayrollAuditProofPack["proofGates"]
+  blockers: PayrollAuditProofPack["blockers"]
+  latestSourceLinks: PayrollAuditProofPack["latestSourceLinks"]
 }
 
 export const payrollCommandReadModelInputSchema = z.object({
@@ -192,8 +240,12 @@ export type PayrollCommandReadModel = {
     currentPeriodRuns: number
     currentPeriodPaymentBatches: number
     currentPeriodDeclarations: number
+    payrollAuditProofGates: number
+    payrollAuditBlockedProofGates: number
+    payrollAuditReviewProofGates: number
+    payrollAuditSourceLinks: number
   }
-  readiness: Record<"employees" | "contracts" | "compensation" | "attendance" | "paymentDestinations" | "employeeBalances" | "payrollRun" | "payrollRegister" | "payments" | "declarations" | "posting" | "close" | "adapterOperations" | "pilotCertification" | "finalRelease", PayrollCommandReadiness>
+  readiness: Record<"employees" | "contracts" | "compensation" | "attendance" | "paymentDestinations" | "employeeBalances" | "payrollRun" | "payrollRegister" | "payments" | "declarations" | "posting" | "close" | "accountingAuditProof" | "adapterOperations" | "pilotCertification" | "finalRelease", PayrollCommandReadiness>
   blockers: PayrollCommandBlocker[]
   nextActions: PayrollCommandNextAction[]
   adapterOperations: Pick<PayrollAdapterOperationsReadModel, "summary" | "providerHealth" | "authorityExecutions" | "paymentAdapterGaps" | "adapterChaosGate" | "redaction">
@@ -280,6 +332,7 @@ export type PayrollCommandReadModel = {
       missingInputs: string[]
     }
     finalRelease: PayrollCommandFinalReleaseEvidence
+    accountingAuditProof: PayrollCommandAccountingAuditProof
   }
   freshness: Array<{ source: string; asOf: string | null; status: "fresh" | "stale" | "unknown"; ageHours: number | null }>
   sourceScope: {
@@ -290,6 +343,9 @@ export type PayrollCommandReadModel = {
     employeeCoverageComplete: boolean
     paymentEvidenceCoverageComplete: boolean
     employeeBalanceCoverageComplete: boolean
+    accountingAuditProofAvailable: boolean
+    accountingAuditProofGateCount: number
+    accountingAuditProofSourceLinkCount: number
     sourceServices: string[]
   }
   workbench: PayrollWorkbenchData
@@ -464,9 +520,22 @@ function finalReleaseEvidence(
 ): PayrollCommandFinalReleaseEvidence {
   const statutoryGate = pack.gates.find((gate) => gate.key === "statutory_setup") ?? null
   const countryPackGate = pack.gates.find((gate) => gate.key === "country_pack_review_intake") ?? null
+  const browserGate = pack.gates.find((gate) => gate.key === "browser_validation") ?? null
   const statutorySummary: Record<string, string | number | boolean | null> =
     statutoryGate?.summary ?? {}
   const countryPackReview = pack.evidence.countryPackReviewIntake
+  const browserValidation = pack.evidence.browserValidation ?? {
+    checkedAt: null,
+    routeSmokeCheckedAt: null,
+    routeSmokeOk: null,
+    routeCount: 0,
+    expectedRouteCount: 11,
+    checkCount: 0,
+    surfaceCount: 0,
+    safeErrorCount: 0,
+    seriousViolationCount: 0,
+    mobileOverflowCount: 0,
+  }
 
   return {
     decision: pack.decision,
@@ -492,6 +561,9 @@ function finalReleaseEvidence(
           sourceEvidenceHashCount: valueFromSummary(statutorySummary, "sourceEvidenceHashCount"),
           requiredReviewTopicCount: valueFromSummary(statutorySummary, "requiredReviewTopicCount"),
           requiredReviewTopics: valueFromSummary(statutorySummary, "requiredReviewTopics"),
+          requiredReadyFamilies: valueFromSummary(statutorySummary, "requiredStatutoryReadyFamilies"),
+          requiredReadyFamiliesPresent: valueFromSummary(statutorySummary, "requiredStatutoryReadyFamiliesPresent"),
+          missingRequiredReadyFamilies: valueFromSummary(statutorySummary, "missingRequiredStatutoryReadyFamilies"),
         }
       : null,
     countryPackReviewIntake: countryPackGate
@@ -509,6 +581,23 @@ function finalReleaseEvidence(
           approvalEvidenceHashPresent: countryPackReview.approvalEvidenceHashPresent,
         }
       : null,
+    browserValidation: browserGate
+      ? {
+          gateStatus: browserGate.status,
+          evidenceHash: browserGate.evidenceHash,
+          blockerCodes: browserGate.blockerCodes,
+          checkedAt: browserValidation.checkedAt,
+          routeSmokeCheckedAt: browserValidation.routeSmokeCheckedAt,
+          routeSmokeOk: browserValidation.routeSmokeOk,
+          routeCount: browserValidation.routeCount,
+          expectedRouteCount: browserValidation.expectedRouteCount,
+          checkCount: browserValidation.checkCount,
+          surfaceCount: browserValidation.surfaceCount,
+          safeErrorCount: browserValidation.safeErrorCount,
+          seriousViolationCount: browserValidation.seriousViolationCount,
+          mobileOverflowCount: browserValidation.mobileOverflowCount,
+        }
+      : null,
     gates: pack.gates.map((gate) => ({
       key: gate.key,
       label: gate.label,
@@ -518,6 +607,74 @@ function finalReleaseEvidence(
       source: gate.source,
     })),
     redactionPolicy: pack.redaction.policy,
+  }
+}
+
+function accountingAuditProofEvidence(
+  pack: PayrollAuditProofPack | null,
+  periodId: string | null,
+): PayrollCommandAccountingAuditProof {
+  if (!pack) {
+    return {
+      available: false,
+      status: "UNAVAILABLE",
+      generatedAt: null,
+      scopeHash: null,
+      periodId,
+      trustLevel: null,
+      verdict: null,
+      exportable: false,
+      blockerCount: 0,
+      criticalBlockerCount: 0,
+      highBlockerCount: 0,
+      proofGateCount: 0,
+      blockedProofGateCount: 0,
+      reviewProofGateCount: 0,
+      sourceLinkCount: 0,
+      sourceTableCount: 0,
+      redactionMode: "UNAVAILABLE",
+      redactionExcluded: [],
+      sourceTables: [],
+      aggregateEvidence: {},
+      proofGates: [],
+      blockers: [],
+      latestSourceLinks: [],
+    }
+  }
+
+  const blockedProofGateCount = pack.proofGates.filter((gate) => gate.status === "BLOCKED").length
+  const reviewProofGateCount = pack.proofGates.filter((gate) => gate.status === "REVIEW").length
+
+  return {
+    available: true,
+    status: blockedProofGateCount > 0 ? "BLOCKED" : reviewProofGateCount > 0 ? "REVIEW" : "PASS",
+    generatedAt: pack.generatedAt,
+    scopeHash: pack.scopeHash,
+    periodId,
+    trustLevel: pack.certification.trustLevel,
+    verdict: pack.certification.verdict,
+    exportable: pack.certification.exportable,
+    blockerCount: pack.certification.blockerCount,
+    criticalBlockerCount: pack.certification.criticalBlockerCount,
+    highBlockerCount: pack.certification.highBlockerCount,
+    proofGateCount: pack.proofGates.length,
+    blockedProofGateCount,
+    reviewProofGateCount,
+    sourceLinkCount: pack.latestSourceLinks.length,
+    sourceTableCount: pack.sourceTables.length,
+    redactionMode: pack.redaction.mode,
+    redactionExcluded: [...pack.redaction.excluded],
+    sourceTables: [...pack.sourceTables],
+    aggregateEvidence: { ...pack.aggregateEvidence },
+    proofGates: pack.proofGates.map((gate) => ({
+      gate: gate.gate,
+      status: gate.status,
+      blockerCount: gate.blockerCount,
+      blockerIds: [...gate.blockerIds],
+      evidence: [...gate.evidence],
+    })),
+    blockers: pack.blockers.map((blocker) => ({ ...blocker })),
+    latestSourceLinks: pack.latestSourceLinks.map((link) => ({ ...link })),
   }
 }
 
@@ -621,6 +778,7 @@ function routeForNextAction(source: string) {
     "payroll.payments": "/dashboard/finance/payments",
     "payroll.declarations": "/dashboard/payroll/declarations",
     "payroll.periods": "/dashboard/payroll/setup",
+    "accounting.payroll_auditor_proof": "/dashboard/accounting/accountant-portal",
   }
 
   return routesBySource[source] ?? null
@@ -789,7 +947,7 @@ export async function getPayrollCommandReadModel(
       })
     : []
   const currentRunIds = currentRuns.map((run) => run.id)
-  const [currentPaymentBatches, currentDeclarations, closeRun, frozenAttendanceSnapshots] = await Promise.all([
+  const [currentPaymentBatches, currentDeclarations, closeRun, frozenAttendanceSnapshots, accountantPortal] = await Promise.all([
     currentRunIds.length
       ? client.payrollPaymentBatch.findMany({
           where: { organizationId: parsed.organizationId, payrollRunId: { in: currentRunIds } },
@@ -820,6 +978,13 @@ export async function getPayrollCommandReadModel(
           },
         })
       : Promise.resolve(0),
+    currentPeriod?.accountingPeriodId
+      ? getAccountantPortalData({
+          organizationId: parsed.organizationId,
+          periodId: currentPeriod.accountingPeriodId,
+          limit: Math.min(parsed.limit, 25),
+        }, client, asOf)
+      : Promise.resolve(null),
   ])
 
   const latestRun = currentRuns[0] ?? null
@@ -862,6 +1027,10 @@ export async function getPayrollCommandReadModel(
     persistPack: false,
   }, client)
   const finalRelease = finalReleaseEvidence(finalReleasePack)
+  const accountingAuditProof = accountingAuditProofEvidence(
+    accountantPortal?.payrollAuditProofPack ?? null,
+    currentPeriod?.accountingPeriodId ?? null,
+  )
   const pilotCertificationInput = pilotCertificationInputEvidence({
     latestRun: latestRun
       ? {
@@ -961,6 +1130,22 @@ export async function getPayrollCommandReadModel(
   if (closeRun && closeRun.criticalBlockerCount > 0) {
     addBlocker(blockers, { code: "PAYROLL_CLOSE_CRITICAL_BLOCKERS_OPEN", domain: "close", severity: "critical", message: "Close assurance has critical blockers for the accounting period linked to payroll.", source: "services/accounting/close-assurance-pack.service.ts", count: closeRun.criticalBlockerCount })
   }
+  if (accountingAuditProof.status === "BLOCKED") {
+    addBlocker(blockers, { code: "PAYROLL_ACCOUNTING_AUDITOR_PROOF_BLOCKED", domain: "close", severity: "critical", message: "Payroll auditor proof pack has blocked accounting, register, payment, or declaration proof gates.", source: "services/accounting/data-trust.service.ts", count: accountingAuditProof.blockedProofGateCount })
+  }
+  if (accountingAuditProof.status === "REVIEW") {
+    addBlocker(blockers, { code: "PAYROLL_ACCOUNTING_AUDITOR_PROOF_REVIEW_REQUIRED", domain: "close", severity: "high", message: "Payroll auditor proof pack has review-required proof gates before close signoff.", source: "services/accounting/data-trust.service.ts", count: accountingAuditProof.reviewProofGateCount })
+  }
+  if (accountingAuditProof.available && accountingAuditProof.status !== "PASS") {
+    addAction(nextActions, parsed.actorPermissions, {
+      id: "review-payroll-auditor-proof-pack",
+      label: "Review payroll auditor proof pack gates",
+      priority: accountingAuditProof.status === "BLOCKED" ? "critical" : "high",
+      requiredPermission: "accounting.audit.read",
+      source: "accounting.payroll_auditor_proof",
+      blockedBy: accountingAuditProof.blockers.map((blocker) => blocker.id),
+    })
+  }
   if (latestRun && pilotCertification.status === "NOT_EVALUATED") {
     addBlocker(blockers, { code: "PAYROLL_PILOT_CYCLE_CERTIFICATE_MISSING", domain: "certification", severity: "medium", message: "The latest payroll run has no controlled pilot-cycle certification audit evidence yet.", source: "services/payroll/payroll-pilot-cycle-certification.service.ts", count: 1 })
   }
@@ -1009,6 +1194,10 @@ export async function getPayrollCommandReadModel(
     currentPeriodRuns: currentRuns.length,
     currentPeriodPaymentBatches: currentPaymentBatches.length,
     currentPeriodDeclarations: currentDeclarations.length,
+    payrollAuditProofGates: accountingAuditProof.proofGateCount,
+    payrollAuditBlockedProofGates: accountingAuditProof.blockedProofGateCount,
+    payrollAuditReviewProofGates: accountingAuditProof.reviewProofGateCount,
+    payrollAuditSourceLinks: accountingAuditProof.sourceLinkCount,
   }
 
   const blockerCodes = (domain: PayrollCommandBlocker["domain"]) => blockers.filter((blocker) => blocker.domain === domain).map((blocker) => blocker.code)
@@ -1089,6 +1278,7 @@ export async function getPayrollCommandReadModel(
       declarations: readiness(latestDeclaration?.status === PayrollDeclarationStatus.REJECTED || latestDeclaration?.status === PayrollDeclarationStatus.PAYMENT_DUE ? "ACTION_REQUIRED" : currentDeclarations.length > 0 ? "READY" : latestRun ? "ACTION_REQUIRED" : "UNKNOWN", "payroll.declarations", currentDeclarations.length > 0 ? "Declaration data is available for the current period." : "Declaration preparation waits for a posted payroll run.", blockerCodes("declaration"), { currentPeriodDeclarations: currentDeclarations.length, openDeclarations: workbench.counts.openDeclarations }),
       posting: readiness(workbench.counts.ledgerBlockers > 0 ? "BLOCKED" : "READY", "payroll.ledger_posting", workbench.counts.ledgerBlockers > 0 ? "Ledger posting blockers must be cleared." : "Payroll posting blockers are clear.", blockerCodes("posting"), { ledgerBlockers: workbench.counts.ledgerBlockers }),
       close: readiness(!closeRun ? "UNKNOWN" : closeRun.criticalBlockerCount > 0 ? "BLOCKED" : closeRun.highBlockerCount > 0 ? "ACTION_REQUIRED" : "READY", "accounting.close_assurance", !closeRun ? "Close assurance has not produced a current linked close run." : closeRun.criticalBlockerCount > 0 ? "Critical close blockers are open." : "Close assurance is available for the payroll-linked period.", blockerCodes("close"), closeRun ? { criticalBlockerCount: closeRun.criticalBlockerCount, highBlockerCount: closeRun.highBlockerCount } : undefined),
+      accountingAuditProof: readiness(accountingAuditProof.status === "UNAVAILABLE" ? "UNKNOWN" : accountingAuditProof.status === "PASS" ? "READY" : accountingAuditProof.status === "BLOCKED" ? "BLOCKED" : "ACTION_REQUIRED", "accounting.payroll_auditor_proof", accountingAuditProof.status === "UNAVAILABLE" ? "Payroll auditor proof waits for a linked accounting period." : accountingAuditProof.status === "PASS" ? "Payroll auditor proof gates are pass-ready for close evidence." : accountingAuditProof.status === "BLOCKED" ? "Payroll auditor proof has blocked gates that prevent close signoff." : "Payroll auditor proof has review-required gates before close signoff.", accountingAuditProof.blockers.map((blocker) => blocker.id), { proofGateCount: accountingAuditProof.proofGateCount, blockedProofGateCount: accountingAuditProof.blockedProofGateCount, reviewProofGateCount: accountingAuditProof.reviewProofGateCount, sourceLinkCount: accountingAuditProof.sourceLinkCount }),
       adapterOperations: readiness(adapterOperations.summary.providerBlocked + adapterOperations.summary.authorityDeadLetter > 0 ? "BLOCKED" : adapterOperations.summary.providerActionRequired + adapterOperations.summary.authorityHarnessGaps + adapterOperations.summary.paymentAdapterGaps + adapterOperations.summary.adapterChaosGateBlockers > 0 ? "ACTION_REQUIRED" : adapterOperations.summary.providerAccounts > 0 ? "READY" : "UNKNOWN", "payroll.adapter_operations", adapterOperations.summary.providerBlocked + adapterOperations.summary.authorityDeadLetter > 0 ? "Adapter operations have provider or authority dead-letter blockers." : adapterOperations.summary.providerActionRequired + adapterOperations.summary.authorityHarnessGaps + adapterOperations.summary.paymentAdapterGaps + adapterOperations.summary.adapterChaosGateBlockers > 0 ? "Adapter operations require evidence, certification, or chaos-gate follow-up." : adapterOperations.summary.providerAccounts > 0 ? "Adapter operations are ready for monitored payroll workflows." : "Adapter operations have no provider account evidence yet.", blockerCodes("adapter"), { providerBlocked: adapterOperations.summary.providerBlocked, authorityDeadLetter: adapterOperations.summary.authorityDeadLetter, authorityHarnessGaps: adapterOperations.summary.authorityHarnessGaps, paymentAdapterGaps: adapterOperations.summary.paymentAdapterGaps, adapterChaosGateBlockers: adapterOperations.summary.adapterChaosGateBlockers }),
       pilotCertification: readiness(pilotCertificationState, "payroll.pilot_cycle_certification", pilotCertificationMessage, pilotCertificationBlockerCodes, { blockerCount: pilotCertification.blockerCount, missingSignoffRoles: pilotCertification.missingSignoffRoles.length, releaseGateCount: pilotCertification.releaseGateCount }),
       finalRelease: readiness(finalReleaseState, "payroll.final_release_readiness", finalReleaseMessage, finalRelease.blockerCodes, { blockerCount: finalRelease.blockerCount, criticalBlockerCount: finalRelease.criticalBlockerCount, gateCount: finalRelease.gateCount, passGateCount: finalRelease.passGateCount }),
@@ -1183,6 +1373,7 @@ export async function getPayrollCommandReadModel(
       pilotCertification,
       pilotCertificationInput,
       finalRelease,
+      accountingAuditProof,
     },
     freshness: [
       toFreshness("payroll.period", currentPeriod?.updatedAt, asOf),
@@ -1194,6 +1385,7 @@ export async function getPayrollCommandReadModel(
       toFreshness("payroll.latest_payment_batch", latestPaymentBatch?.updatedAt, asOf),
       toFreshness("payroll.latest_declaration", latestDeclaration?.updatedAt, asOf),
       toFreshness("accounting.close_run", closeRun?.asOf, asOf),
+      toFreshness("accounting.payroll_auditor_proof", accountingAuditProof.generatedAt, asOf),
       toFreshness("payroll.pilot_cycle_certification", pilotCertification.evaluatedAt, asOf),
       toFreshness("payroll.final_release_readiness", finalRelease.generatedAt, asOf),
     ],
@@ -1205,6 +1397,9 @@ export async function getPayrollCommandReadModel(
       employeeCoverageComplete: activeEmployees <= employeeSourceData.employees.length,
       paymentEvidenceCoverageComplete: activeEmployees <= paymentEvidence.employees.length,
       employeeBalanceCoverageComplete: employeeBalanceWorkbench.sourceScope.coverageComplete,
+      accountingAuditProofAvailable: accountingAuditProof.available,
+      accountingAuditProofGateCount: accountingAuditProof.proofGateCount,
+      accountingAuditProofSourceLinkCount: accountingAuditProof.sourceLinkCount,
       sourceServices: [
         adapterOperations.sourceScope.sourceService,
         "services/payroll/payroll-control.service.ts",
@@ -1213,6 +1408,7 @@ export async function getPayrollCommandReadModel(
         employeeBalanceWorkbench.sourceScope.sourceService,
         "services/payroll/payroll-pilot-cycle-certification.service.ts",
         "services/payroll/payroll-final-release-readiness.service.ts",
+        "services/accounting/data-trust.service.ts",
         "services/payroll/command-read-model.service.ts",
       ],
     },

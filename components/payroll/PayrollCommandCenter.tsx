@@ -373,9 +373,52 @@ function buildProofSubjects(data: PayrollCommandReadModel, locale: Locale): Proo
       { label: "Country-pack target families", value: data.evidence.finalRelease.countryPackReviewIntake?.targetFamilies.join(", ") || null },
       { label: "Country-pack fresh auth", value: displayValue(data.evidence.finalRelease.countryPackReviewIntake?.freshAuthSatisfied) },
       { label: "Country-pack approval evidence", value: displayValue(data.evidence.finalRelease.countryPackReviewIntake?.approvalEvidenceHashPresent) },
+      { label: "Browser gate status", value: data.evidence.finalRelease.browserValidation?.gateStatus ?? null },
+      { label: "Browser gate hash", value: data.evidence.finalRelease.browserValidation?.evidenceHash ?? null },
+      { label: "Route smoke ok", value: displayValue(data.evidence.finalRelease.browserValidation?.routeSmokeOk) },
+      { label: "Route smoke checked", value: data.evidence.finalRelease.browserValidation?.routeSmokeCheckedAt ?? null },
+      { label: "Authenticated routes", value: data.evidence.finalRelease.browserValidation ? `${data.evidence.finalRelease.browserValidation.routeCount}/${data.evidence.finalRelease.browserValidation.expectedRouteCount}` : null },
+      { label: "Browser checks", value: displayValue(data.evidence.finalRelease.browserValidation?.checkCount) },
+      { label: "Surface checks", value: displayValue(data.evidence.finalRelease.browserValidation?.surfaceCount) },
+      { label: "Safe-error states", value: displayValue(data.evidence.finalRelease.browserValidation?.safeErrorCount) },
+      { label: "Serious accessibility", value: displayValue(data.evidence.finalRelease.browserValidation?.seriousViolationCount) },
+      { label: "Mobile overflow", value: displayValue(data.evidence.finalRelease.browserValidation?.mobileOverflowCount) },
       { label: "Blocker codes", value: data.evidence.finalRelease.blockerCodes.join(", ") || null },
       { label: "Release gate requirements", value: String(data.evidence.finalRelease.releaseGateRequirementCount) },
       { label: "Redaction policy", value: data.evidence.finalRelease.redactionPolicy },
+    ],
+  })
+
+  const accountingAudit = data.evidence.accountingAuditProof
+  subjects.push({
+    id: "accounting-audit-proof",
+    label: "Payroll auditor proof pack",
+    status: accountingAudit.status,
+    source: "accounting.payroll_auditor_proof",
+    href: localizePath("/dashboard/accounting/accountant-portal", locale),
+    rows: [
+      { label: "Available", value: displayValue(accountingAudit.available) },
+      { label: "Generated", value: accountingAudit.generatedAt },
+      { label: "Accounting period", value: accountingAudit.periodId },
+      { label: "Scope hash", value: accountingAudit.scopeHash },
+      { label: "Trust level", value: accountingAudit.trustLevel },
+      { label: "Verdict", value: accountingAudit.verdict },
+      { label: "Exportable", value: displayValue(accountingAudit.exportable) },
+      { label: "Blockers", value: String(accountingAudit.blockerCount) },
+      { label: "Critical blockers", value: String(accountingAudit.criticalBlockerCount) },
+      { label: "High blockers", value: String(accountingAudit.highBlockerCount) },
+      { label: "Proof gates", value: String(accountingAudit.proofGateCount) },
+      { label: "Blocked gates", value: String(accountingAudit.blockedProofGateCount) },
+      { label: "Review gates", value: String(accountingAudit.reviewProofGateCount) },
+      { label: "Source links", value: String(accountingAudit.sourceLinkCount) },
+      { label: "Source tables", value: accountingAudit.sourceTables.join(", ") || null },
+      { label: "Redaction mode", value: accountingAudit.redactionMode },
+      { label: "Redaction excludes", value: accountingAudit.redactionExcluded.join(", ") || null },
+      { label: "Gate details", value: accountingAudit.proofGates.map((gate) => `${gate.gate}:${gate.status}`).join(", ") || null },
+      { label: "Gate blockers", value: accountingAudit.proofGates.flatMap((gate) => gate.blockerIds).join(", ") || null },
+      { label: "Blocker list", value: accountingAudit.blockers.map((blocker) => `${blocker.id}:${blocker.severity}`).join(", ") || null },
+      { label: "Source link hashes", value: accountingAudit.latestSourceLinks.map((link) => link.sourceLinkHash).join(", ") || null },
+      { label: "Aggregate gaps", value: Object.entries(accountingAudit.aggregateEvidence).filter(([, value]) => value > 0).map(([key, value]) => `${key}:${value}`).join(", ") || "0" },
     ],
   })
 
@@ -814,9 +857,11 @@ function FinanceState({ data, proofSubjects, onProof }: { data: PayrollCommandRe
   const paymentProof = proofSubjects.find((subject) => subject.id === "latest-payment-batch") ?? null
   const declarationProof = proofSubjects.find((subject) => subject.id === "latest-declaration") ?? null
   const closeProof = proofSubjects.find((subject) => subject.id === "close-run") ?? null
+  const accountingAuditProof = proofSubjects.find((subject) => subject.id === "accounting-audit-proof") ?? null
+  const accountingAudit = data.evidence.accountingAuditProof
 
   return (
-    <section className="grid gap-4 xl:grid-cols-3">
+    <section className="grid gap-4 xl:grid-cols-4">
       <div className="rounded-lg border border-white/10 bg-white/[0.05]">
         <div className="border-b border-white/10 px-4 py-3">
           <h2 className="text-sm font-semibold text-white">Payment state</h2>
@@ -856,6 +901,20 @@ function FinanceState({ data, proofSubjects, onProof }: { data: PayrollCommandRe
           </div>
           <p className="text-sm text-slate-300">{data.evidence.closeRun?.readinessScore ?? "n/a"} readiness score</p>
           <ProofButton subject={closeProof} onClick={onProof} />
+        </div>
+      </div>
+
+      <div className="rounded-lg border border-white/10 bg-white/[0.05]">
+        <div className="border-b border-white/10 px-4 py-3">
+          <h2 className="text-sm font-semibold text-white">Auditor proof</h2>
+        </div>
+        <div className="space-y-3 p-4">
+          <div className="flex flex-wrap gap-2">
+            <Badge value={accountingAudit.status} />
+            <Badge value={accountingAudit.trustLevel ?? "PENDING"} />
+          </div>
+          <p className="text-sm text-slate-300">{accountingAudit.blockedProofGateCount} blocked, {accountingAudit.reviewProofGateCount} review, {accountingAudit.proofGateCount} total gate(s)</p>
+          <ProofButton subject={accountingAuditProof} onClick={onProof} />
         </div>
       </div>
     </section>
@@ -1209,6 +1268,7 @@ function CountryPackReviewIntakePanel({ data }: { data: PayrollCommandReadModel 
 
 function FinalReleasePanel({ data, proofSubjects, onProof }: { data: PayrollCommandReadModel; proofSubjects: ProofSubject[]; onProof: (subject: ProofSubject) => void }) {
   const finalRelease = data.evidence.finalRelease
+  const browserValidation = finalRelease.browserValidation
   const finalReleaseProof = proofSubjects.find((subject) => subject.id === "final-release") ?? null
 
   return (
@@ -1240,6 +1300,29 @@ function FinalReleasePanel({ data, proofSubjects, onProof }: { data: PayrollComm
         <Metric label="Review topics" value={displayValue(finalRelease.statutorySetup?.requiredReviewTopicCount)} icon={ClipboardList} tone="bg-sky-400/12 text-sky-200" />
         <Metric label="Pack approval" value={finalRelease.countryPackReviewIntake?.status ?? "Missing"} icon={ShieldCheck} tone="bg-violet-400/12 text-violet-100" />
       </div>
+
+      {browserValidation ? (
+        <div className="grid gap-3 border-b border-white/10 px-4 py-3 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <Eye className="h-4 w-4 text-cyan-200" aria-hidden="true" />
+              <p className="text-sm font-semibold text-white">Browser validation</p>
+              <Badge value={browserValidation.gateStatus} />
+            </div>
+            <p className="mt-1 break-words text-xs text-slate-400">
+              Route smoke {browserValidation.routeCount}/{browserValidation.expectedRouteCount}; browser checks {browserValidation.checkCount}; surfaces {browserValidation.surfaceCount}
+            </p>
+          </div>
+          <dl className="grid gap-2 sm:grid-cols-2">
+            <DetailRow label="Route smoke ok" value={browserValidation.routeSmokeOk} />
+            <DetailRow label="Route checked" value={dateTimeLabel(browserValidation.routeSmokeCheckedAt)} />
+            <DetailRow label="A11y checked" value={dateTimeLabel(browserValidation.checkedAt)} />
+            <DetailRow label="Safe errors" value={browserValidation.safeErrorCount} />
+            <DetailRow label="Serious a11y" value={browserValidation.seriousViolationCount} />
+            <DetailRow label="Mobile overflow" value={browserValidation.mobileOverflowCount} />
+          </dl>
+        </div>
+      ) : null}
 
       <div className="divide-y divide-white/10">
         {finalRelease.gates.map((gate) => (

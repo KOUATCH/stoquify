@@ -130,6 +130,39 @@ describe("command center dashboard primitives", () => {
     expect(screen.getByText(/journal/)).toBeInTheDocument()
   })
 
+  it("renders cash-truth status cards as reconciliation proof actions", () => {
+    render(
+      <StatusStrip
+        title="Trust states"
+        items={[
+          {
+            id: "payment",
+            label: "Cash truth",
+            value: "XAF 10,000",
+            detail: "Internal collected 10000.00, external matched 10000.00, variance 0.00.",
+            tone: "success",
+            href: "/en/dashboard/finance/reconciliation",
+            source: "tenant period",
+            proof: {
+              state: "operational",
+              source: "/dashboard/finance/reconciliation",
+              sourceCount: 0,
+            },
+          },
+        ]}
+      />,
+    )
+
+    const cashTruthLink = screen.getByRole("link", { name: /Cash truth/i })
+
+    expect(cashTruthLink).toHaveAttribute("href", "/en/dashboard/finance/reconciliation")
+    expect(cashTruthLink).toHaveTextContent("XAF 10,000")
+    expect(cashTruthLink).toHaveTextContent("tenant period")
+    expect(cashTruthLink).toHaveTextContent("Operational")
+    expect(cashTruthLink).toHaveTextContent(/\/dashboard\/finance\/reconciliation/)
+    expect(cashTruthLink).toHaveTextContent("0 sources")
+  })
+
   it("handles standard filters, search callbacks, and permission locked states", () => {
     const onSearch = jest.fn()
     const onReady = jest.fn()

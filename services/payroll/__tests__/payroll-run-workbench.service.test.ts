@@ -24,6 +24,10 @@ jest.mock("@/services/accounting/posting.service", () => ({
   linkAccountingSource: jest.fn(),
 }));
 
+jest.mock("@/services/accounting/data-trust.service", () => ({
+  getAccountantPortalData: jest.fn(),
+}));
+
 jest.mock("@/services/accounting/periods.service", () => ({
   getOpenPeriodForDate: jest.fn(),
 }));
@@ -60,6 +64,7 @@ import {
 } from "@prisma/client";
 
 import { db } from "@/prisma/db";
+import { getAccountantPortalData } from "@/services/accounting/data-trust.service";
 
 import { getPayrollRunWorkbenchData } from "../payroll-control.service";
 
@@ -80,11 +85,87 @@ const mockDb = db as unknown as {
   };
 };
 
+const mockGetAccountantPortalData = getAccountantPortalData as jest.Mock;
+
+function payrollAuditProofPack() {
+  return {
+    kind: "AQSTOQFLOW_PAYROLL_AUDITOR_PROOF_PACK_READ_MODEL",
+    version: 1,
+    generatedAt: "2026-06-30T10:00:00.000Z",
+    scopeHash: "sha256:audit-scope",
+    organizationScoped: true,
+    redaction: {
+      mode: "HASHES_AND_AGGREGATES_ONLY",
+      excluded: [
+        "employee identifiers",
+        "bank and mobile-money details",
+        "raw salary rows",
+      ],
+    },
+    certification: {
+      trustLevel: "T2",
+      verdict: "PARTIAL",
+      exportable: false,
+      blockerCount: 1,
+      criticalBlockerCount: 1,
+      highBlockerCount: 0,
+    },
+    sourceTables: [
+      "payroll_runs",
+      "payroll_payment_batches",
+      "accounting_source_links",
+    ],
+    aggregateEvidence: {
+      declarationRegisterProofGaps: 1,
+      paymentRegisterProofGaps: 1,
+      paymentsMissingLedger: 0,
+    },
+    proofGates: [
+      {
+        gate: "payroll.declarations.proof",
+        status: "BLOCKED",
+        blockerCount: 1,
+        blockerIds: ["payroll-declaration-register-proof-missing"],
+        evidence: ["payroll declaration evidence source register hash"],
+      },
+      {
+        gate: "payroll.accounting.source-link",
+        status: "PASS",
+        blockerCount: 0,
+        blockerIds: [],
+        evidence: ["accounting source link hashes"],
+      },
+    ],
+    blockers: [
+      {
+        id: "payroll-declaration-register-proof-missing",
+        severity: "critical",
+        gate: "payroll.declarations.proof",
+        title: "Declaration register proof missing",
+      },
+    ],
+    latestSourceLinks: [
+      {
+        sourceLinkHash: "sha256:source-link-proof",
+        sourceType: "PAYROLL_RUN",
+        sourceNumber: null,
+        sourceRefHash: "sha256:run-ref",
+        journalEntryNumber: "JE-2026-06",
+        postingBatchId: "ledger-batch-1",
+        postingStatus: "POSTED",
+        createdAt: "2026-06-30T09:20:00.000Z",
+      },
+    ],
+  };
+}
+
+
 describe("payroll run workbench service", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockDb.auditLog.create.mockResolvedValue({ id: "audit-1" });
     mockDb.user.findMany.mockResolvedValue([]);
+    mockGetAccountantPortalData.mockResolvedValue(null);
   });
 
   it("builds a proof-backed run lifecycle read model with close blockers", async () => {
@@ -149,6 +230,7 @@ describe("payroll run workbench service", () => {
           periodStart,
           periodEnd,
           payDate,
+          accountingPeriodId: "acct-period-1",
         },
         _count: {
           lines: 2,
@@ -261,6 +343,10 @@ describe("payroll run workbench service", () => {
       },
     ]);
 
+    mockGetAccountantPortalData.mockResolvedValue({
+      payrollAuditProofPack: payrollAuditProofPack(),
+    });
+
     const result = await getPayrollRunWorkbenchData({
       organizationId: "org-1",
       actorId: "controller-1",
@@ -288,6 +374,58 @@ describe("payroll run workbench service", () => {
         policy: "kontava-proof-hidden-identifier-policy",
       }),
     );
+    expect(mockGetAccountantPortalData).toHaveBeenCalledWith(
+      {
+        organizationId: "org-1",
+        periodId: "acct-period-1",
+        limit: 25,
+      },
+      mockDb,
+      expect.any(Date),
+    );
+    expect(result.accountingAuditProof).toEqual(
+      expect.objectContaining({
+        available: true,
+        status: "BLOCKED",
+        periodId: "acct-period-1",
+        scopeHash: "sha256:audit-scope",
+        redactionMode: "HASHES_AND_AGGREGATES_ONLY",
+        blockerCount: 1,
+        proofGateCount: 2,
+        blockedProofGateCount: 1,
+        sourceLinkCount: 1,
+      }),
+    );
+    expect(result.accountingAuditProof.proofGates).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          gate: "payroll.declarations.proof",
+          status: "BLOCKED",
+          blockerIds: ["payroll-declaration-register-proof-missing"],
+        }),
+      ]),
+    );
+    expect(result.accountingAuditProof.latestSourceLinks).toEqual([
+      expect.objectContaining({
+        sourceLinkHash: "sha256:source-link-proof",
+        sourceRefHash: "sha256:run-ref",
+        postingBatchId: "ledger-batch-1",
+      }),
+    ]);
+    expect(result.sourceScope).toEqual(
+      expect.objectContaining({
+        accountingAuditProofAvailable: true,
+        accountingAuditProofGateCount: 2,
+        accountingAuditProofSourceLinkCount: 1,
+        accountingAuditProofPeriodId: "acct-period-1",
+        returnedAccountingPeriodIds: ["acct-period-1"],
+        accountingAuditProofCoverageComplete: true,
+      }),
+    );
+    expect(JSON.stringify(result.accountingAuditProof)).not.toContain("EMP-001");
+    expect(JSON.stringify(result.accountingAuditProof)).not.toContain("Ada Payroll");
+    expect(JSON.stringify(result.accountingAuditProof)).not.toContain("paymentDestinationHash");
+
     expect(result.paymentRequesterCandidates).toEqual([
       expect.objectContaining({
         userId: "requester-1",
@@ -373,6 +511,13 @@ describe("payroll run workbench service", () => {
               reasonCode: "ALLOWED",
               policy: "kontava-proof-hidden-identifier-policy",
             }),
+            accountingAuditProof: expect.objectContaining({
+              available: true,
+              status: "BLOCKED",
+              periodId: "acct-period-1",
+              proofGateCount: 2,
+              sourceLinkCount: 1,
+            }),
           }),
         }),
       }),
@@ -447,6 +592,7 @@ describe("payroll run workbench service", () => {
           periodStart,
           periodEnd,
           payDate,
+          accountingPeriodId: "acct-period-1",
         },
         _count: {
           lines: 1,
@@ -620,6 +766,7 @@ describe("payroll run workbench service", () => {
           periodStart,
           periodEnd,
           payDate,
+          accountingPeriodId: "acct-period-1",
         },
         _count: {
           lines: 1,

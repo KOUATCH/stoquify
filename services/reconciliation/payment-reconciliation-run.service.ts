@@ -363,14 +363,16 @@ export async function runPaymentReconciliation(
 
         const externalAmount = event?.amount ?? line?.amount
         const externalCurrency = event?.currencyCode ?? line?.currencyCode ?? transaction.currencyCode
+        const eventAmountMismatch = Boolean(event?.amount && !sameAmount(transaction.amount, event.amount))
+        const lineAmountMismatch = Boolean(line?.amount && !sameAmount(transaction.amount, line.amount))
 
-        if (event && event.amount && !sameAmount(transaction.amount, event.amount)) {
+        if (eventAmountMismatch || lineAmountMismatch) {
           const suspense = await createExceptionAndSuspense(tx, {
             organizationId: input.organizationId,
             providerAccountId: providerAccount.id,
             reconciliationRunId: run.id,
             paymentTransactionId: transaction.id,
-            providerEventId: event.id,
+            providerEventId: event?.id,
             statementLineId: line?.id,
             type: PaymentExceptionType.AMOUNT_MISMATCH,
             severity: ExceptionSeverity.HIGH,
@@ -379,7 +381,9 @@ export async function runPaymentReconciliation(
             direction: transaction.direction,
             evidence: {
               transactionAmount: money(transaction.amount).toFixed(2),
-              providerAmount: money(event.amount).toFixed(2),
+              providerAmount: event?.amount ? money(event.amount).toFixed(2) : null,
+              statementAmount: line?.amount ? money(line.amount).toFixed(2) : null,
+              mismatchSource: eventAmountMismatch ? "PROVIDER_EVENT" : "STATEMENT_LINE",
               rule: "AMOUNT_MISMATCH",
             },
             correlationId,
@@ -388,7 +392,7 @@ export async function runPaymentReconciliation(
           exceptionCount += 1
           suspenseCount += 1
           suspenseAmount = suspenseAmount.plus(transaction.amount)
-          matchedEventIds.add(event.id)
+          if (event) matchedEventIds.add(event.id)
           if (line) matchedLineIds.add(line.id)
           matchedTransactionIds.add(transaction.id)
           continue
@@ -418,6 +422,25 @@ export async function runPaymentReconciliation(
               },
             },
           })
+
+          if (event) {
+            await tx.providerEvent.update({
+              where: { id: event.id },
+              data: {
+                status: ProviderEventStatus.PROCESSED,
+                processedAt: now,
+              },
+            })
+          }
+
+          if (line) {
+            await tx.statementLine.update({
+              where: { id: line.id },
+              data: {
+                status: StatementLineStatus.MATCHED,
+              },
+            })
+          }
 
           matchCount += 1
           matchedTransactionIds.add(transaction.id)

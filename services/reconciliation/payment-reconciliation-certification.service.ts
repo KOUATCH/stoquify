@@ -31,6 +31,33 @@ type ControlledResult<T> =
   | { denied: SensitiveActionDecision; value?: never }
   | { denied?: never; value: T }
 
+type ReconciliationEvidenceSubject = {
+  type:
+    | "RECONCILIATION_RUN"
+    | "ACCOUNTING_PERIOD"
+    | "PAYMENT_TRANSACTION"
+    | "PROVIDER_EVENT"
+    | "STATEMENT_LINE"
+    | "LEDGER_POSTING_BATCH"
+    | "PAYMENT_EXCEPTION"
+    | "SUSPENSE_ITEM"
+  id: string
+}
+
+type ReconciliationCertificationBlocker = {
+  code:
+    | "RUN_NOT_READY_FOR_SIGNOFF"
+    | "MISSING_PROVIDER_OR_STATEMENT_EVIDENCE"
+    | "ACCOUNTING_PERIOD_NOT_OPEN"
+    | "OPEN_EXCEPTIONS"
+    | "OPEN_SUSPENSE"
+    | "SUSPENSE_LEDGER_BATCH_MISSING"
+  severity: "CRITICAL" | "HIGH" | "MEDIUM"
+  message: string
+  count: number
+  evidenceSubjects: ReconciliationEvidenceSubject[]
+}
+
 export type SignReconciliationRunInput = {
   organizationId: string
   runId: string
@@ -111,15 +138,23 @@ export type ReconciliationRunDetail = {
     openExceptionCount: number
     openSuspenseCount: number
   }
+  certification: {
+    signoffEligible: boolean
+    periodStatus: string | null
+    blockers: ReconciliationCertificationBlocker[]
+  }
   matchRecords: Array<{
     id: string
     status: string
     rule: string
     confidence: string
+    amountMatched: string | null
+    currencyCode: string
     paymentTransactionId: string | null
     providerEventId: string | null
     statementLineId: string | null
     ledgerPostingBatchId: string | null
+    evidenceSubjects: ReconciliationEvidenceSubject[]
   }>
   exceptions: Array<{
     id: string
@@ -128,7 +163,12 @@ export type ReconciliationRunDetail = {
     status: string
     sourceType: string | null
     sourceId: string | null
+    paymentTransactionId: string | null
+    providerEventId: string | null
+    statementLineId: string | null
     suspenseItemId: string | null
+    unresolved: boolean
+    evidenceSubjects: ReconciliationEvidenceSubject[]
   }>
   suspenseItems: Array<{
     id: string
@@ -137,7 +177,10 @@ export type ReconciliationRunDetail = {
     severity: string
     amount: string
     currencyCode: string
+    paymentTransactionId: string | null
     ledgerPostingBatchId: string | null
+    unresolved: boolean
+    evidenceSubjects: ReconciliationEvidenceSubject[]
   }>
 }
 
@@ -187,6 +230,28 @@ function openSuspenseStatuses(): SuspenseStatus[] {
     SuspenseStatus.RESOLUTION_PROPOSED,
     SuspenseStatus.REOPENED,
   ]
+}
+
+function evidenceSubjects(input: {
+  reconciliationRunId?: string | null
+  accountingPeriodId?: string | null
+  paymentTransactionId?: string | null
+  providerEventId?: string | null
+  statementLineId?: string | null
+  ledgerPostingBatchId?: string | null
+  paymentExceptionId?: string | null
+  suspenseItemId?: string | null
+}): ReconciliationEvidenceSubject[] {
+  const subjects: ReconciliationEvidenceSubject[] = []
+  if (input.reconciliationRunId) subjects.push({ type: "RECONCILIATION_RUN", id: input.reconciliationRunId })
+  if (input.accountingPeriodId) subjects.push({ type: "ACCOUNTING_PERIOD", id: input.accountingPeriodId })
+  if (input.paymentTransactionId) subjects.push({ type: "PAYMENT_TRANSACTION", id: input.paymentTransactionId })
+  if (input.providerEventId) subjects.push({ type: "PROVIDER_EVENT", id: input.providerEventId })
+  if (input.statementLineId) subjects.push({ type: "STATEMENT_LINE", id: input.statementLineId })
+  if (input.ledgerPostingBatchId) subjects.push({ type: "LEDGER_POSTING_BATCH", id: input.ledgerPostingBatchId })
+  if (input.paymentExceptionId) subjects.push({ type: "PAYMENT_EXCEPTION", id: input.paymentExceptionId })
+  if (input.suspenseItemId) subjects.push({ type: "SUSPENSE_ITEM", id: input.suspenseItemId })
+  return subjects
 }
 
 async function auditReconciliationCertification(
@@ -253,7 +318,8 @@ export async function getReconciliationRunDetail(
 ): Promise<ReconciliationRunDetail> {
   const run = await loadRunForCertification(db, organizationId, runId)
 
-  const [providerEventCount, statementLineCount, matchRecords, exceptions, suspenseItems] = await Promise.all([
+  const [period, providerEventCount, statementLineCount, matchRecords, exceptions, suspenseItems] = await Promise.all([
+    run.accountingPeriod ? Promise.resolve(run.accountingPeriod) : resolveOpenAccountingPeriod(db, organizationId, run.businessDate),
     db.providerEvent.count({
       where: {
         organizationId,
@@ -277,6 +343,8 @@ export async function getReconciliationRunDetail(
         status: true,
         rule: true,
         confidence: true,
+        amountMatched: true,
+        currencyCode: true,
         paymentTransactionId: true,
         providerEventId: true,
         statementLineId: true,
@@ -294,6 +362,9 @@ export async function getReconciliationRunDetail(
         status: true,
         sourceType: true,
         sourceId: true,
+        paymentTransactionId: true,
+        providerEventId: true,
+        statementLineId: true,
         suspenseItemId: true,
       },
     }),
@@ -308,13 +379,96 @@ export async function getReconciliationRunDetail(
         severity: true,
         amount: true,
         currencyCode: true,
+        paymentTransactionId: true,
         ledgerPostingBatchId: true,
       },
     }),
   ])
 
-  const openExceptionCount = exceptions.filter((item) => openExceptionStatuses().includes(item.status)).length
-  const openSuspenseCount = suspenseItems.filter((item) => openSuspenseStatuses().includes(item.status)).length
+  const openExceptions = exceptions.filter((item) => openExceptionStatuses().includes(item.status))
+  const openSuspenseItems = suspenseItems.filter((item) => openSuspenseStatuses().includes(item.status))
+  const suspenseWithoutLedgerItems = suspenseItems.filter(
+    (item) => item.status === SuspenseStatus.POSTED_TO_SUSPENSE && !item.ledgerPostingBatchId,
+  )
+  const openExceptionCount = openExceptions.length
+  const openSuspenseCount = openSuspenseItems.length
+  const certificationBlockers: ReconciliationCertificationBlocker[] = []
+
+  if (run.status !== ReconciliationRunStatus.READY_FOR_SIGNOFF && run.status !== ReconciliationRunStatus.SIGNED) {
+    certificationBlockers.push({
+      code: "RUN_NOT_READY_FOR_SIGNOFF",
+      severity: "MEDIUM",
+      message: "Reconciliation run must reach ready-for-signoff before certification.",
+      count: 1,
+      evidenceSubjects: evidenceSubjects({ reconciliationRunId: run.id }),
+    })
+  }
+
+  if (providerEventCount + statementLineCount === 0) {
+    certificationBlockers.push({
+      code: "MISSING_PROVIDER_OR_STATEMENT_EVIDENCE",
+      severity: "CRITICAL",
+      message: "Provider event or statement evidence is required before sign-off.",
+      count: 1,
+      evidenceSubjects: evidenceSubjects({ reconciliationRunId: run.id }),
+    })
+  }
+
+  if (!period || period.status !== AccountingPeriodStatus.OPEN) {
+    certificationBlockers.push({
+      code: "ACCOUNTING_PERIOD_NOT_OPEN",
+      severity: "CRITICAL",
+      message: "An open accounting period is required before reconciliation sign-off.",
+      count: 1,
+      evidenceSubjects: evidenceSubjects({ reconciliationRunId: run.id, accountingPeriodId: period?.id ?? run.accountingPeriodId }),
+    })
+  }
+
+  if (openExceptionCount > 0) {
+    certificationBlockers.push({
+      code: "OPEN_EXCEPTIONS",
+      severity: "HIGH",
+      message: "Open reconciliation exceptions must be resolved before sign-off.",
+      count: openExceptionCount,
+      evidenceSubjects: openExceptions.flatMap((item) =>
+        evidenceSubjects({
+          paymentExceptionId: item.id,
+          paymentTransactionId: item.paymentTransactionId,
+          providerEventId: item.providerEventId,
+          statementLineId: item.statementLineId,
+          suspenseItemId: item.suspenseItemId,
+        }),
+      ),
+    })
+  }
+
+  if (openSuspenseCount > 0) {
+    certificationBlockers.push({
+      code: "OPEN_SUSPENSE",
+      severity: "HIGH",
+      message: "Open suspense items must be resolved before sign-off.",
+      count: openSuspenseCount,
+      evidenceSubjects: openSuspenseItems.flatMap((item) =>
+        evidenceSubjects({
+          suspenseItemId: item.id,
+          paymentTransactionId: item.paymentTransactionId,
+          ledgerPostingBatchId: item.ledgerPostingBatchId,
+        }),
+      ),
+    })
+  }
+
+  if (suspenseWithoutLedgerItems.length > 0) {
+    certificationBlockers.push({
+      code: "SUSPENSE_LEDGER_BATCH_MISSING",
+      severity: "HIGH",
+      message: "Posted suspense items must include a ledger posting batch before sign-off.",
+      count: suspenseWithoutLedgerItems.length,
+      evidenceSubjects: suspenseWithoutLedgerItems.flatMap((item) =>
+        evidenceSubjects({ suspenseItemId: item.id, paymentTransactionId: item.paymentTransactionId }),
+      ),
+    })
+  }
 
   return {
     source: {
@@ -359,15 +513,28 @@ export async function getReconciliationRunDetail(
       openExceptionCount,
       openSuspenseCount,
     },
+    certification: {
+      signoffEligible: run.status === ReconciliationRunStatus.READY_FOR_SIGNOFF && certificationBlockers.length === 0,
+      periodStatus: period?.status ?? null,
+      blockers: certificationBlockers,
+    },
     matchRecords: matchRecords.map((record) => ({
       id: record.id,
       status: record.status,
       rule: record.rule,
       confidence: decimalString(record.confidence),
+      amountMatched: record.amountMatched ? decimalString(record.amountMatched) : null,
+      currencyCode: record.currencyCode,
       paymentTransactionId: record.paymentTransactionId,
       providerEventId: record.providerEventId,
       statementLineId: record.statementLineId,
       ledgerPostingBatchId: record.ledgerPostingBatchId,
+      evidenceSubjects: evidenceSubjects({
+        paymentTransactionId: record.paymentTransactionId,
+        providerEventId: record.providerEventId,
+        statementLineId: record.statementLineId,
+        ledgerPostingBatchId: record.ledgerPostingBatchId,
+      }),
     })),
     exceptions: exceptions.map((exception) => ({
       id: exception.id,
@@ -376,7 +543,18 @@ export async function getReconciliationRunDetail(
       status: exception.status,
       sourceType: exception.sourceType,
       sourceId: exception.sourceId,
+      paymentTransactionId: exception.paymentTransactionId,
+      providerEventId: exception.providerEventId,
+      statementLineId: exception.statementLineId,
       suspenseItemId: exception.suspenseItemId,
+      unresolved: openExceptionStatuses().includes(exception.status),
+      evidenceSubjects: evidenceSubjects({
+        paymentExceptionId: exception.id,
+        paymentTransactionId: exception.paymentTransactionId,
+        providerEventId: exception.providerEventId,
+        statementLineId: exception.statementLineId,
+        suspenseItemId: exception.suspenseItemId,
+      }),
     })),
     suspenseItems: suspenseItems.map((item) => ({
       id: item.id,
@@ -385,7 +563,14 @@ export async function getReconciliationRunDetail(
       severity: item.severity,
       amount: decimalString(item.amount),
       currencyCode: item.currencyCode,
+      paymentTransactionId: item.paymentTransactionId,
       ledgerPostingBatchId: item.ledgerPostingBatchId,
+      unresolved: openSuspenseStatuses().includes(item.status),
+      evidenceSubjects: evidenceSubjects({
+        suspenseItemId: item.id,
+        paymentTransactionId: item.paymentTransactionId,
+        ledgerPostingBatchId: item.ledgerPostingBatchId,
+      }),
     })),
   }
 }

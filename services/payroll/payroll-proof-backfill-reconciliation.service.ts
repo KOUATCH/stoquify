@@ -49,6 +49,12 @@ export type PayrollProofBackfillStatutoryScenarioSetupGate = {
   requiredFamilyCount: number;
   blockerCodes: string[];
   requiredReviewTopics: string[];
+  requiredLifecycleProofFieldCount: number;
+  requiredLifecycleProofFields: string[];
+  coveredLifecycleProofFieldCount: number;
+  coveredLifecycleProofFields: string[];
+  missingLifecycleProofFieldCount: number;
+  missingLifecycleProofFields: string[];
   reviewEvidence: PayrollStatutoryScenarioReviewEvidenceSummary;
   reviewedProofChain: PayrollStatutoryReviewedProofChain;
   families: Array<{
@@ -62,6 +68,9 @@ export type PayrollProofBackfillStatutoryScenarioSetupGate = {
     reviewStatuses: string[];
     sourceEvidenceHashCount: number;
     requiredReviewTopics: string[];
+    requiredLifecycleProofFields: string[];
+    coveredLifecycleProofFields: string[];
+    missingLifecycleProofFields: string[];
     blockerCode: string | null;
   }>;
 };
@@ -87,6 +96,8 @@ export type PayrollProofBackfillReconciliationCertificate = {
     executionEnabled: boolean | null;
     mutationAttempted: boolean | null;
     correctionIntentCount: number | null;
+    correctionIntentLineageHashCount: number;
+    correctionIntentLineageHashes: string[];
     recordedAt: string | null;
     validated: boolean;
     validationBlockers: string[];
@@ -163,6 +174,10 @@ const DATA_TRUST_BLOCKER_BY_GAP: Record<
     "payroll-payment-settlement-register-proof-missing",
   paymentBatchMissingSettlementLifecycleProof:
     "payroll-payment-settlement-lifecycle-proof-missing",
+  paymentBatchMissingProviderReceiptProof:
+    "payroll-payment-provider-receipt-proof-missing",
+  paymentBatchMissingSettlementReplayProof:
+    "payroll-payment-settlement-replay-proof-missing",
 };
 
 function stablePayload(value: unknown): unknown {
@@ -191,6 +206,7 @@ function emptyStatutoryScenarioReviewEvidence(): PayrollStatutoryScenarioReviewE
     reviewedOn: [],
     legalRefs: [],
     sourceEvidenceHashes: [],
+    coveredReviewTopics: [],
   };
 }
 
@@ -198,19 +214,27 @@ function statutoryScenarioSetupGate(
   plan: PayrollSeedBackfillDryRunPlan,
   correctionIntentCount: number | null,
 ): PayrollProofBackfillStatutoryScenarioSetupGate {
-  const coverage = plan.readiness.checks.countryPack.calculationFixtures.scenarioCoverage;
+  const coverage =
+    plan.readiness.checks.countryPack.calculationFixtures.scenarioCoverage;
   if (!coverage) {
     const reviewEvidence = emptyStatutoryScenarioReviewEvidence();
     return {
       status: null,
       countryCode: plan.readiness.checks.countryPack.countryCode,
-      packVersion: plan.readiness.checks.countryPack.calculationFixtures.packVersion,
+      packVersion:
+        plan.readiness.checks.countryPack.calculationFixtures.packVersion,
       coverageHash: null,
       executableScenarioCount: 0,
       readyFamilyCount: 0,
       requiredFamilyCount: 0,
       blockerCodes: ["PAYROLL_STATUTORY_SCENARIO_COVERAGE_MISSING"],
       requiredReviewTopics: [],
+      requiredLifecycleProofFieldCount: 0,
+      requiredLifecycleProofFields: [],
+      coveredLifecycleProofFieldCount: 0,
+      coveredLifecycleProofFields: [],
+      missingLifecycleProofFieldCount: 0,
+      missingLifecycleProofFields: [],
       reviewEvidence,
       reviewedProofChain: buildPayrollStatutoryReviewedProofChain({
         status: null,
@@ -220,11 +244,14 @@ function statutoryScenarioSetupGate(
         requiredFamilyCount: 0,
         blockerCodes: ["PAYROLL_STATUTORY_SCENARIO_COVERAGE_MISSING"],
         registerProofGapCount:
-          plan.proofBackfill.gapCounts.payrollRunMissingStatutoryScenarioCoverage,
+          plan.proofBackfill.gapCounts
+            .payrollRunMissingStatutoryScenarioCoverage,
         declarationRegisterProofGapCount:
-          plan.proofBackfill.gapCounts.declarationEvidenceMissingSourceRegisterHash,
+          plan.proofBackfill.gapCounts
+            .declarationEvidenceMissingSourceRegisterHash,
         paymentSettlementRegisterProofGapCount:
-          plan.proofBackfill.gapCounts.paymentBatchMissingSettlementRegisterProof,
+          plan.proofBackfill.gapCounts
+            .paymentBatchMissingSettlementRegisterProof,
         correctionIntentCount,
         requireCorrectionLifecycleEvidence: true,
       }),
@@ -241,6 +268,18 @@ function statutoryScenarioSetupGate(
     requiredFamilyCount: coverage.requiredFamilyCount,
     blockerCodes: coverage.blockers.map((blocker) => blocker.code).sort(),
     requiredReviewTopics: [...coverage.requiredReviewTopics].sort(),
+    requiredLifecycleProofFieldCount: coverage.requiredLifecycleProofFieldCount,
+    requiredLifecycleProofFields: [
+      ...coverage.requiredLifecycleProofFields,
+    ].sort(),
+    coveredLifecycleProofFieldCount: coverage.coveredLifecycleProofFieldCount,
+    coveredLifecycleProofFields: [
+      ...coverage.coveredLifecycleProofFields,
+    ].sort(),
+    missingLifecycleProofFieldCount: coverage.missingLifecycleProofFieldCount,
+    missingLifecycleProofFields: [
+      ...coverage.missingLifecycleProofFields,
+    ].sort(),
     reviewEvidence: coverage.reviewEvidence,
     families: coverage.families
       .map((family) => ({
@@ -252,8 +291,18 @@ function statutoryScenarioSetupGate(
         failedScenarioCount: family.failedScenarioCount,
         certificationStatus: family.certificationStatus,
         reviewStatuses: [...family.reviewStatuses].sort(),
-        sourceEvidenceHashCount: family.reviewEvidence.sourceEvidenceHashes.length,
+        sourceEvidenceHashCount:
+          family.reviewEvidence.sourceEvidenceHashes.length,
         requiredReviewTopics: [...family.requiredReviewTopics].sort(),
+        requiredLifecycleProofFields: [
+          ...family.requiredLifecycleProofFields,
+        ].sort(),
+        coveredLifecycleProofFields: [
+          ...family.coveredLifecycleProofFields,
+        ].sort(),
+        missingLifecycleProofFields: [
+          ...family.missingLifecycleProofFields,
+        ].sort(),
         blockerCode: family.blockerCode,
       }))
       .sort((left, right) => left.family.localeCompare(right.family)),
@@ -268,6 +317,12 @@ function statutoryScenarioSetupGate(
     requiredFamilyCount: coverage.requiredFamilyCount,
     blockerCodes: coverage.blockers.map((blocker) => blocker.code),
     reviewEvidence: coverage.reviewEvidence,
+    requiredLifecycleProofFieldCount: coverage.requiredLifecycleProofFieldCount,
+    requiredLifecycleProofFields: coverage.requiredLifecycleProofFields,
+    coveredLifecycleProofFieldCount: coverage.coveredLifecycleProofFieldCount,
+    coveredLifecycleProofFields: coverage.coveredLifecycleProofFields,
+    missingLifecycleProofFieldCount: coverage.missingLifecycleProofFieldCount,
+    missingLifecycleProofFields: coverage.missingLifecycleProofFields,
   });
 
   return {
@@ -283,7 +338,8 @@ function statutoryScenarioSetupGate(
       registerProofGapCount:
         plan.proofBackfill.gapCounts.payrollRunMissingStatutoryScenarioCoverage,
       declarationRegisterProofGapCount:
-        plan.proofBackfill.gapCounts.declarationEvidenceMissingSourceRegisterHash,
+        plan.proofBackfill.gapCounts
+          .declarationEvidenceMissingSourceRegisterHash,
       paymentSettlementRegisterProofGapCount:
         plan.proofBackfill.gapCounts.paymentBatchMissingSettlementRegisterProof,
       correctionIntentCount,
@@ -390,10 +446,21 @@ function validateSourceCertificate(input: {
     input.source.adapterChaosReleaseGateHash,
   );
   const missingSignoffs = stringArray(input.source.missingSignoffs);
-  const correctionIntentCount = numberOrNull(input.source.correctionIntentCount) ??
+  const correctionIntentCount =
+    numberOrNull(input.source.correctionIntentCount) ??
     (Array.isArray(input.source.correctionIntents)
       ? input.source.correctionIntents.length
       : null);
+  const sourceCorrectionIntents = Array.isArray(input.source.correctionIntents)
+    ? input.source.correctionIntents.map((intent) => asRecord(intent))
+    : [];
+  const correctionIntentLineageHashes = Array.from(
+    new Set(
+      sourceCorrectionIntents
+        .map((intent) => stringOrNull(intent.periodLineageHash))
+        .filter((hash): hash is string => Boolean(hash)),
+    ),
+  ).sort();
 
   if (
     input.source.kind !==
@@ -428,6 +495,47 @@ function validateSourceCertificate(input: {
   if (ledgerKey && ledgerKey !== input.auditLogEntityId) {
     blockers.push("SOURCE_LEDGER_KEY_AUDIT_ENTITY_MISMATCH");
   }
+  if ((correctionIntentCount ?? 0) > 0) {
+    if (sourceCorrectionIntents.length === 0) {
+      blockers.push("SOURCE_CORRECTION_INTENTS_MISSING");
+    }
+    if (
+      sourceCorrectionIntents.length > 0 &&
+      correctionIntentCount !== null &&
+      sourceCorrectionIntents.length !== correctionIntentCount
+    ) {
+      blockers.push("SOURCE_CORRECTION_INTENT_COUNT_MISMATCH");
+    }
+    const lineageMissing = sourceCorrectionIntents.some(
+      (intent) =>
+        !stringOrNull(intent.periodLineageHash) ||
+        !stringOrNull(intent.periodStart) ||
+        !stringOrNull(intent.periodEnd) ||
+        !stringOrNull(intent.payDate) ||
+        !stringOrNull(intent.proofBackfillEvidenceRef) ||
+        !stringOrNull(intent.dryRunEvidenceHash),
+    );
+    if (lineageMissing) {
+      blockers.push("SOURCE_CORRECTION_INTENT_LINEAGE_MISSING");
+    }
+    const dryRunHashMismatch = sourceCorrectionIntents.some((intent) => {
+      const intentDryRunHash = stringOrNull(intent.dryRunEvidenceHash);
+      return Boolean(
+        intentDryRunHash &&
+        dryRunEvidenceHash &&
+        intentDryRunHash !== dryRunEvidenceHash,
+      );
+    });
+    if (dryRunHashMismatch) {
+      blockers.push("SOURCE_CORRECTION_INTENT_DRY_RUN_HASH_MISMATCH");
+    }
+    const mutationPolicyInvalid = sourceCorrectionIntents.some(
+      (intent) => intent.mutationAllowed !== false,
+    );
+    if (mutationPolicyInvalid) {
+      blockers.push("SOURCE_CORRECTION_INTENT_MUTATION_POLICY_INVALID");
+    }
+  }
   if (input.source.dryRunEvidenceMatches !== true) {
     blockers.push("SOURCE_DRY_RUN_EVIDENCE_NOT_APPROVED");
   }
@@ -455,9 +563,11 @@ function validateSourceCertificate(input: {
     certificateHash,
     dryRunEvidenceHash,
     adapterChaosReleaseGateHash,
-    adapterChaosReleaseGateHashMatches: input.expectedAdapterChaosReleaseGateHash
-      ? adapterChaosReleaseGateHash === input.expectedAdapterChaosReleaseGateHash
-      : Boolean(adapterChaosReleaseGateHash),
+    adapterChaosReleaseGateHashMatches:
+      input.expectedAdapterChaosReleaseGateHash
+        ? adapterChaosReleaseGateHash ===
+          input.expectedAdapterChaosReleaseGateHash
+        : Boolean(adapterChaosReleaseGateHash),
     missingSignoffs,
     dryRunEvidenceMatches: input.source.dryRunEvidenceMatches === true,
     approvalBundleHashPresent: Boolean(
@@ -473,6 +583,8 @@ function validateSourceCertificate(input: {
         ? input.source.mutationAttempted
         : null,
     correctionIntentCount,
+    correctionIntentLineageHashCount: correctionIntentLineageHashes.length,
+    correctionIntentLineageHashes,
     validated: blockers.length === 0,
     blockers,
   };
@@ -589,8 +701,7 @@ export async function reconcilePayrollProofBackfillCertificate(
       ledgerKey: sourceValidation.ledgerKey,
       certificateHash: sourceValidation.certificateHash,
       dryRunEvidenceHash: sourceValidation.dryRunEvidenceHash,
-      adapterChaosReleaseGateHash:
-        sourceValidation.adapterChaosReleaseGateHash,
+      adapterChaosReleaseGateHash: sourceValidation.adapterChaosReleaseGateHash,
       adapterChaosReleaseGateHashMatches:
         sourceValidation.adapterChaosReleaseGateHashMatches,
       status: sourceValidation.status,
@@ -600,6 +711,10 @@ export async function reconcilePayrollProofBackfillCertificate(
       executionEnabled: sourceValidation.executionEnabled,
       mutationAttempted: sourceValidation.mutationAttempted,
       correctionIntentCount: sourceValidation.correctionIntentCount,
+      correctionIntentLineageHashCount:
+        sourceValidation.correctionIntentLineageHashCount,
+      correctionIntentLineageHashes:
+        sourceValidation.correctionIntentLineageHashes,
       recordedAt: sourceAudit.createdAt
         ? normalizeDate(sourceAudit.createdAt, now).toISOString()
         : null,

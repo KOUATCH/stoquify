@@ -508,6 +508,25 @@
       "providerAccounts": "Provider accounts",
       "signoffQueue": "Sign-off queue",
       "runFacts": "{matches} match(es), {exceptions} exception(s), suspense {suspense}",
+      "detail": {
+        "title": "Selected run proof",
+        "description": "{matches} match(es), {exceptions} unresolved exception(s), {suspense} unresolved suspense item(s), {subjects} proof subject(s)",
+        "eligible": "Eligible",
+        "blocked": "Blocked",
+        "error": "Run proof unavailable.",
+        "unavailable": "Select a run to inspect proof.",
+        "matches": "Matches",
+        "exceptions": "Exceptions",
+        "suspense": "Suspense",
+        "proofSubjects": "Proof subjects",
+        "blockers": "Blockers",
+        "matchedEvidence": "Matched evidence",
+        "unresolvedExceptions": "Unresolved exceptions",
+        "suspenseLinks": "Suspense links",
+        "subjectCount": "{count} proof subject(s)",
+        "emptyRows": "None",
+        "noBlockers": "No certification blocker"
+      },
       "statuses": {
         "NO_EVIDENCE": "No evidence",
         "READY_FOR_RUN": "Ready for run",
@@ -530,6 +549,7 @@
       },
       "actions": {
         "run": "Run",
+        "inspect": "Proof",
         "sign": "Sign",
         "export": "Export"
       },
@@ -637,7 +657,7 @@
     "proof": {
       "open": "Open proof",
       "loading": "Loading proof",
-      "unavailable": "No payment transaction proof is linked to this row.",
+      "unavailable": "No supported proof trail is linked to this row.",
       "error": "Payment transaction proof could not be loaded safely."
     },
     "metrics": {

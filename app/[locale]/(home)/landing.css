@@ -9,36 +9,36 @@
 
 .landing-root {
   /* Semantic surfaces */
-  --color-canvas: #07110f;
-  --color-chrome: #0c1714;
-  --color-surface-deep: #0f1f1b;
-  --color-surface-panel: #182923;
-  --color-surface-panel-raised: #24352d;
-  --color-surface-panel-hover: #30463a;
-  --color-surface-soft: #101914;
-  --color-surface-paper: #19251c;
-  --color-surface-tint: #273a2c;
+  --color-canvas: #06111f;
+  --color-chrome: #071827;
+  --color-surface-deep: #0a1d2d;
+  --color-surface-panel: #102b3b;
+  --color-surface-panel-raised: #16394b;
+  --color-surface-panel-hover: #1f4c61;
+  --color-surface-soft: #081724;
+  --color-surface-paper: #0d2231;
+  --color-surface-tint: #14374a;
 
   /* Semantic borders */
-  --color-border-subtle: #253a32;
-  --color-border-muted: #3e594b;
-  --color-border-strong: #6f8a7a;
-  --color-paper-border: #344a3b;
+  --color-border-subtle: #17364a;
+  --color-border-muted: #2d6682;
+  --color-border-strong: #4ba6c9;
+  --color-paper-border: #224b62;
 
   /* Brand and accents */
-  --color-brand: #278f82;
-  --color-brand-hover: #1f7a70;
-  --color-brand-soft: rgba(39, 143, 130, 0.16);
-  --color-brand-glow: rgba(39, 143, 130, 0.28);
-  --color-editorial: #e4b85d;
-  --color-warm: #d86f53;
-  --color-spruce: #46d9c0;
+  --color-brand: #25d56f;
+  --color-brand-hover: #17bc5b;
+  --color-brand-soft: rgba(37, 213, 111, 0.16);
+  --color-brand-glow: rgba(37, 213, 111, 0.32);
+  --color-editorial: #25d56f;
+  --color-warm: #f2c66d;
+  --color-spruce: #55d7ff;
 
   /* Semantic status */
-  --color-success: #39c985;
-  --color-warning: #f2b84b;
+  --color-success: #25d56f;
+  --color-warning: #f2c66d;
   --color-danger: #ef6f6c;
-  --color-info: #61b7ff;
+  --color-info: #55d7ff;
 
   /* Text */
   --color-text-primary: #f7faf8;
@@ -58,7 +58,7 @@
   --rule-2: var(--color-border-muted);
   --rule-3: var(--color-border-strong);
   --accent: var(--color-brand);
-  --accent-hi: #8cc8ff;
+  --accent-hi: #8fdfff;
   --accent-glow: var(--color-brand-glow);
   --signal-up: var(--color-success);
   --signal-warn: var(--color-warning);
@@ -72,7 +72,7 @@
   --text-faint: var(--color-text-tertiary);
   --text-dim: var(--color-text-muted);
   --num: var(--color-text-primary);
-  --num-pos: #73e6b5;
+  --num-pos: #70f2a6;
   --num-neg: #ff9b9b;
   --paper-0: var(--color-surface-soft);
   --paper-1: var(--color-surface-paper);
@@ -84,6 +84,7 @@
 
 .landing-root {
   background:
+    radial-gradient(circle at 72% 2%, rgba(85, 215, 255, 0.2), transparent 30rem),
     linear-gradient(180deg, var(--color-canvas), var(--color-surface-deep) 34rem, var(--color-surface-soft) 100rem);
 }
 
@@ -96,7 +97,7 @@
   border: 1px solid color-mix(in srgb, var(--color-border-subtle) 82%, transparent);
   background:
     linear-gradient(145deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.018)),
-    rgba(23, 37, 43, 0.84);
+    rgba(8, 25, 39, 0.86);
   box-shadow: 0 24px 70px rgba(2, 8, 23, 0.24);
   -webkit-backdrop-filter: blur(14px);
   backdrop-filter: blur(14px);
@@ -104,8 +105,10 @@
 
 .landing-root .landing-hero {
   background:
-    linear-gradient(135deg, rgba(70, 217, 192, 0.10), transparent 34rem),
-    linear-gradient(315deg, rgba(228, 184, 93, 0.10), transparent 30rem),
+    radial-gradient(circle at 64% 5%, rgba(85, 215, 255, 0.34), transparent 20rem),
+    radial-gradient(circle at 86% 42%, rgba(37, 213, 111, 0.2), transparent 24rem),
+    linear-gradient(135deg, rgba(85, 215, 255, 0.12), transparent 34rem),
+    linear-gradient(315deg, rgba(37, 213, 111, 0.1), transparent 30rem),
     var(--color-canvas);
 }
 
@@ -132,7 +135,7 @@
   height: 11rem;
   pointer-events: none;
   background:
-    linear-gradient(90deg, rgba(70, 217, 192, 0.16), transparent 36%, rgba(228, 184, 93, 0.12)),
+    linear-gradient(90deg, rgba(85, 215, 255, 0.2), transparent 36%, rgba(37, 213, 111, 0.16)),
     linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent);
   opacity: 0.72;
 }
@@ -177,8 +180,8 @@
 /* The fine grid that lives under hero + connected-workflow */
 .landing-grid-bg {
   background-image:
-    linear-gradient(to right, rgba(210, 221, 216, 0.055) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(210, 221, 216, 0.055) 1px, transparent 1px);
+    linear-gradient(to right, rgba(143, 223, 255, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(143, 223, 255, 0.07) 1px, transparent 1px);
   background-size: 64px 64px;
   mask-image: linear-gradient(180deg, black, transparent 92%);
   -webkit-mask-image: linear-gradient(180deg, black, transparent 92%);
@@ -186,8 +189,8 @@
 
 .landing-root .surface-grid {
   background-image:
-    linear-gradient(to right, rgba(238, 247, 242, 0.052) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(238, 247, 242, 0.052) 1px, transparent 1px);
+    linear-gradient(to right, rgba(143, 223, 255, 0.055) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(143, 223, 255, 0.055) 1px, transparent 1px);
   background-size: 48px 48px;
 }
 

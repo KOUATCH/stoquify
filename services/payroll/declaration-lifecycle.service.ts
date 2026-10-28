@@ -17,6 +17,7 @@ import {
   recordCloseCertificationInvalidationsForSourceInTx,
   type CloseCertificationInvalidationSourceCode,
 } from "@/services/accounting/close-assurance-pack.service";
+import { getAccountantPortalData } from "@/services/accounting/data-trust.service";
 import {
   assertSensitiveActionAllowed,
   auditSensitiveActionDecision,
@@ -37,6 +38,7 @@ import {
   resolvePayrollAuthorityAdapterContract,
   resolvePayrollAuthorityLifecycleContract,
 } from "./payroll-adapter-registry.service";
+import { payrollRouteAccountingAuditProof } from "./payroll-accounting-audit-proof";
 
 type DbClient = typeof db | Prisma.TransactionClient;
 type BusinessEventTx = Parameters<typeof recordBusinessEventInTx>[0];
@@ -344,6 +346,12 @@ function declarationCountryPackRegisterProofMetadata(metadata: unknown) {
     countryPackRegisterProofStatus:
       metadataString(metadataRecord, "countryPackRegisterProofStatus") ??
       metadataString(payload, "countryPackRegisterProofStatus"),
+    compositeRegisterProofHash:
+      metadataString(metadataRecord, "compositeRegisterProofHash") ??
+      metadataString(payload, "compositeRegisterProofHash"),
+    compositeRegisterProofStatus:
+      metadataString(metadataRecord, "compositeRegisterProofStatus") ??
+      metadataString(payload, "compositeRegisterProofStatus"),
     countryPackLineProofHashes,
     statutoryScenarioCoverageHash:
       metadataString(metadataRecord, "statutoryScenarioCoverageHash") ??
@@ -795,6 +803,8 @@ function declarationBlockers(input: {
   payloadHash: string | null;
   countryPackRegisterProofHash: string | null;
   countryPackRegisterProofStatus: string | null;
+  compositeRegisterProofHash: string | null;
+  compositeRegisterProofStatus: string | null;
   latestEvidence: {
     sourceRegisterHash: string | null;
     productionSubmissionSupported: boolean;
@@ -845,6 +855,21 @@ function declarationBlockers(input: {
         "Prepared declaration evidence must carry matched country-pack register proof from the payroll register before close certification can trust statutory declarations.",
       nextAction:
         "Prepare declarations again from a payroll run with matched country-pack register proof.",
+    });
+  }
+
+  if (
+    !input.compositeRegisterProofHash ||
+    input.compositeRegisterProofStatus !== "MATCHED"
+  ) {
+    blockers.push({
+      id: "PAYROLL_DECLARATION_COMPOSITE_REGISTER_PROOF_MISSING",
+      severity: "high",
+      title: "Composite register proof is missing",
+      detail:
+        "Prepared declaration evidence must carry matched composite register proof tying component, country-pack, and mapping evidence together before close certification can trust statutory declarations.",
+      nextAction:
+        "Prepare declarations again from a payroll run with matched composite register proof.",
     });
   }
 
@@ -1027,6 +1052,7 @@ export async function getPayrollDeclarationWorkbenchData(
               select: {
                 id: true,
                 name: true,
+                accountingPeriodId: true,
                 periodStart: true,
                 periodEnd: true,
                 payDate: true,
@@ -1099,6 +1125,12 @@ export async function getPayrollDeclarationWorkbenchData(
     const countryPackRegisterProofStatus =
       metadataString(declarationMetadata, "countryPackRegisterProofStatus") ??
       metadataString(payloadMetadata, "countryPackRegisterProofStatus");
+    const compositeRegisterProofHash =
+      metadataString(declarationMetadata, "compositeRegisterProofHash") ??
+      metadataString(payloadMetadata, "compositeRegisterProofHash");
+    const compositeRegisterProofStatus =
+      metadataString(declarationMetadata, "compositeRegisterProofStatus") ??
+      metadataString(payloadMetadata, "compositeRegisterProofStatus");
     const countryPackLineProofHashes = [
       ...metadataStringArray(declarationMetadata, "countryPackLineProofHashes"),
       ...metadataStringArray(payloadMetadata, "countryPackLineProofHashes"),
@@ -1125,6 +1157,8 @@ export async function getPayrollDeclarationWorkbenchData(
       payloadHash: declaration.payloadHash,
       countryPackRegisterProofHash,
       countryPackRegisterProofStatus,
+      compositeRegisterProofHash,
+      compositeRegisterProofStatus,
       latestEvidence,
     });
 
@@ -1170,6 +1204,8 @@ export async function getPayrollDeclarationWorkbenchData(
           id: declaration.payrollRun.payrollPeriod.id,
           name: declaration.payrollRun.payrollPeriod.name,
           status: declaration.payrollRun.payrollPeriod.status,
+          accountingPeriodId:
+            declaration.payrollRun.payrollPeriod.accountingPeriodId,
           periodStart: dateIso(
             declaration.payrollRun.payrollPeriod.periodStart,
           ),
@@ -1194,6 +1230,14 @@ export async function getPayrollDeclarationWorkbenchData(
         countryPackRegisterProofPresent:
           Boolean(countryPackRegisterProofHash) &&
           countryPackRegisterProofStatus === "MATCHED",
+        compositeRegisterProofHash: proofIdentifier(
+          proofIdentifierDecision,
+          compositeRegisterProofHash,
+        ),
+        compositeRegisterProofStatus,
+        compositeRegisterProofPresent:
+          Boolean(compositeRegisterProofHash) &&
+          compositeRegisterProofStatus === "MATCHED",
         countryPackLineProofHashes: proofIdentifierArray(
           proofIdentifierDecision,
           countryPackLineProofHashes,
@@ -1290,11 +1334,45 @@ export async function getPayrollDeclarationWorkbenchData(
   const missingCountryPackRegisterProofCount = rows.filter(
     (row) => !row.proof.countryPackRegisterProofPresent,
   ).length;
+  const missingCompositeRegisterProofCount = rows.filter(
+    (row) => !row.proof.compositeRegisterProofPresent,
+  ).length;
   const blockedRows = rows.filter((row) =>
     row.blockers.some(
       (blocker) =>
         blocker.severity === "high" || blocker.severity === "critical",
     ),
+  );
+  const returnedAccountingPeriodIds = Array.from(
+    new Set(
+      declarations
+        .map((declaration) =>
+          declaration.payrollRun.payrollPeriod.accountingPeriodId,
+        )
+        .filter((periodId): periodId is string => Boolean(periodId)),
+    ),
+  );
+  const accountingAuditProofPeriodId = returnedAccountingPeriodIds[0] ?? null;
+  const accountingAuditProofCoverageComplete =
+    rows.length === 0 ||
+    (returnedAccountingPeriodIds.length === 1 &&
+      declarations.every((declaration) =>
+        Boolean(declaration.payrollRun.payrollPeriod.accountingPeriodId),
+      ));
+  const accountantPortal = accountingAuditProofPeriodId
+    ? await getAccountantPortalData(
+        {
+          organizationId: parsed.organizationId,
+          periodId: accountingAuditProofPeriodId,
+          limit: Math.min(parsed.limit, 25),
+        },
+        client as DbClient,
+        now,
+      )
+    : null;
+  const accountingAuditProof = payrollRouteAccountingAuditProof(
+    accountantPortal?.payrollAuditProofPack ?? null,
+    accountingAuditProofPeriodId,
   );
 
   return {
@@ -1315,15 +1393,24 @@ export async function getPayrollDeclarationWorkbenchData(
       productionSupportedEvidenceCount,
       missingRegisterProofCount,
       missingCountryPackRegisterProofCount,
+      missingCompositeRegisterProofCount,
       amountInScope: decimalText(amountInScope._sum.amount),
       coverageComplete: rows.length >= totalDeclarations,
     },
+    accountingAuditProof,
     declarations: rows,
     sourceScope: {
       limit: parsed.limit,
       returned: rows.length,
       coverageComplete: rows.length >= totalDeclarations,
       sourceService: "services/payroll/declaration-lifecycle.service.ts",
+      accountingAuditProofAvailable: accountingAuditProof.available,
+      accountingAuditProofGateCount: accountingAuditProof.proofGateCount,
+      accountingAuditProofSourceLinkCount:
+        accountingAuditProof.sourceLinkCount,
+      accountingAuditProofPeriodId: accountingAuditProof.periodId,
+      returnedAccountingPeriodIds,
+      accountingAuditProofCoverageComplete,
     },
   };
 }

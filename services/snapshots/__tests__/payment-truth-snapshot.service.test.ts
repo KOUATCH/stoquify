@@ -1,6 +1,8 @@
 import {
   ExceptionSeverity,
+  MatchStatus,
   PaymentExceptionStatus,
+  PaymentStatus,
   PaymentTransactionState,
   ProviderAccountStatus,
   ReconciliationRunStatus,
@@ -11,6 +13,8 @@ import {
 jest.mock("@/prisma/db", () => ({
   db: {
     providerAccount: { count: jest.fn(), findFirst: jest.fn() },
+    payment: { aggregate: jest.fn() },
+    matchRecord: { count: jest.fn(), aggregate: jest.fn(), findFirst: jest.fn() },
     reconciliationRun: { count: jest.fn(), findFirst: jest.fn() },
     paymentException: { count: jest.fn(), findFirst: jest.fn() },
     suspenseItem: { count: jest.fn(), aggregate: jest.fn(), findFirst: jest.fn() },
@@ -24,6 +28,8 @@ import { getPaymentTruthSnapshot } from "../payment-truth-snapshot.service"
 
 const mockDb = db as unknown as {
   providerAccount: { count: jest.Mock; findFirst: jest.Mock }
+  payment: { aggregate: jest.Mock }
+  matchRecord: { count: jest.Mock; aggregate: jest.Mock; findFirst: jest.Mock }
   reconciliationRun: { count: jest.Mock; findFirst: jest.Mock }
   paymentException: { count: jest.Mock; findFirst: jest.Mock }
   suspenseItem: { count: jest.Mock; aggregate: jest.Mock; findFirst: jest.Mock }
@@ -38,6 +44,9 @@ function amount(value: number | string) {
 
 function setupPaymentTruthMocks(input: {
   activeProviderAccountCount?: number
+  internalCollectedAmount?: number
+  externalMatchedAmount?: number
+  externalMatchedCount?: number
   recentRunCount?: number
   signedRunCount?: number
   readyForSignoffCount?: number
@@ -49,6 +58,9 @@ function setupPaymentTruthMocks(input: {
 }) {
   const values = {
     activeProviderAccountCount: 1,
+    internalCollectedAmount: 980000,
+    externalMatchedAmount: 965000,
+    externalMatchedCount: 5,
     recentRunCount: 1,
     signedRunCount: 1,
     readyForSignoffCount: 0,
@@ -71,6 +83,9 @@ function setupPaymentTruthMocks(input: {
   mockDb.paymentException.count.mockImplementation(async ({ where }: { where: Record<string, unknown> }) =>
     where.severity === ExceptionSeverity.CRITICAL ? values.criticalExceptionCount : values.openExceptionCount,
   )
+  mockDb.payment.aggregate.mockResolvedValue({ _sum: { amount: amount(values.internalCollectedAmount) } })
+  mockDb.matchRecord.count.mockResolvedValue(values.externalMatchedCount)
+  mockDb.matchRecord.aggregate.mockResolvedValue({ _sum: { amountMatched: amount(values.externalMatchedAmount) } })
   mockDb.suspenseItem.count.mockResolvedValue(values.openSuspenseCount)
   mockDb.suspenseItem.aggregate.mockResolvedValue({ _sum: { amount: amount(values.openSuspenseAmount) } })
   mockDb.paymentTransaction.count.mockResolvedValue(values.pendingTransactionCount)
@@ -80,6 +95,7 @@ function setupPaymentTruthMocks(input: {
   mockDb.paymentException.findFirst.mockResolvedValue({ updatedAt: latest })
   mockDb.suspenseItem.findFirst.mockResolvedValue({ updatedAt: latest })
   mockDb.paymentTransaction.findFirst.mockResolvedValue({ updatedAt: latest })
+  mockDb.matchRecord.findFirst.mockResolvedValue({ updatedAt: latest })
 }
 
 describe("payment truth snapshot service", () => {
@@ -105,6 +121,22 @@ describe("payment truth snapshot service", () => {
 
     expect(mockDb.providerAccount.count).toHaveBeenCalledWith(
       expect.objectContaining({ where: expect.objectContaining({ organizationId: "org-1" }) }),
+    )
+    expect(mockDb.payment.aggregate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          organizationId: "org-1",
+          status: { in: expect.arrayContaining([PaymentStatus.PAID]) },
+        }),
+      }),
+    )
+    expect(mockDb.matchRecord.aggregate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          organizationId: "org-1",
+          status: { in: expect.arrayContaining([MatchStatus.AUTO_MATCHED, MatchStatus.APPROVED]) },
+        }),
+      }),
     )
     expect(mockDb.paymentTransaction.count).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -133,6 +165,10 @@ describe("payment truth snapshot service", () => {
     )
     expect(result.status).toBe("blocked")
     expect(result.evidenceGrade).toBe("blocked")
+    expect(result.metrics.internalCollectedAmount).toBe(980000)
+    expect(result.metrics.externalMatchedAmount).toBe(965000)
+    expect(result.metrics.externalMatchedCount).toBe(5)
+    expect(result.metrics.cashVarianceAmount).toBe(15000)
     expect(result.metrics.openSuspenseAmount).toBe(15000)
     expect(result.blockers).toEqual(
       expect.arrayContaining([

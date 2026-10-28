@@ -2,7 +2,9 @@ import "server-only"
 
 import {
   ExceptionSeverity,
+  MatchStatus,
   PaymentExceptionStatus,
+  PaymentStatus,
   PaymentTransactionState,
   ProviderAccountStatus,
   ReconciliationRunStatus,
@@ -45,6 +47,9 @@ const PENDING_PAYMENT_STATES = [
   PaymentTransactionState.DISPUTED,
 ]
 
+const INTERNAL_COLLECTED_PAYMENT_STATUSES = [PaymentStatus.PAID, PaymentStatus.PARTIAL]
+const CONFIRMED_MATCH_STATUSES = [MatchStatus.AUTO_MATCHED, MatchStatus.APPROVED]
+
 export async function getPaymentTruthSnapshot(
   input: SnapshotScopeInput,
 ): Promise<SnapshotResult<PaymentTruthMetrics>> {
@@ -54,6 +59,9 @@ export async function getPaymentTruthSnapshot(
   const [
     providerAccountCount,
     activeProviderAccountCount,
+    internalCollected,
+    externalMatchedCount,
+    externalMatchedAmount,
     recentRunCount,
     readyForSignoffCount,
     signedRunCount,
@@ -67,6 +75,7 @@ export async function getPaymentTruthSnapshot(
     latestException,
     latestSuspense,
     latestTransaction,
+    latestMatch,
   ] = await Promise.all([
     db.providerAccount.count({ where: { organizationId: scope.organizationId, archivedAt: null } }),
     db.providerAccount.count({
@@ -75,6 +84,30 @@ export async function getPaymentTruthSnapshot(
         archivedAt: null,
         status: ProviderAccountStatus.ACTIVE,
       },
+    }),
+    db.payment.aggregate({
+      where: {
+        organizationId: scope.organizationId,
+        deletedAt: null,
+        status: { in: INTERNAL_COLLECTED_PAYMENT_STATUSES },
+        createdAt: periodWhere,
+      },
+      _sum: { amount: true },
+    }),
+    db.matchRecord.count({
+      where: {
+        organizationId: scope.organizationId,
+        status: { in: CONFIRMED_MATCH_STATUSES },
+        createdAt: periodWhere,
+      },
+    }),
+    db.matchRecord.aggregate({
+      where: {
+        organizationId: scope.organizationId,
+        status: { in: CONFIRMED_MATCH_STATUSES },
+        createdAt: periodWhere,
+      },
+      _sum: { amountMatched: true },
     }),
     db.reconciliationRun.count({
       where: {
@@ -157,11 +190,23 @@ export async function getPaymentTruthSnapshot(
       orderBy: { updatedAt: "desc" },
       select: { updatedAt: true },
     }),
+    db.matchRecord.findFirst({
+      where: { organizationId: scope.organizationId },
+      orderBy: { updatedAt: "desc" },
+      select: { updatedAt: true },
+    }),
   ])
+
+  const internalCollectedAmount = toNumber(internalCollected._sum.amount)
+  const externalMatchedAmountValue = toNumber(externalMatchedAmount._sum.amountMatched)
 
   const metrics: PaymentTruthMetrics = {
     providerAccountCount,
     activeProviderAccountCount,
+    internalCollectedAmount,
+    externalMatchedAmount: externalMatchedAmountValue,
+    externalMatchedCount,
+    cashVarianceAmount: internalCollectedAmount - externalMatchedAmountValue,
     recentRunCount,
     readyForSignoffCount,
     signedRunCount,
@@ -249,6 +294,7 @@ export async function getPaymentTruthSnapshot(
       latestException?.updatedAt,
       latestSuspense?.updatedAt,
       latestTransaction?.updatedAt,
+      latestMatch?.updatedAt,
     ]),
   })
 }

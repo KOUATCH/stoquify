@@ -2,7 +2,9 @@ jest.mock("server-only", () => ({}))
 
 import {
   AccountingPeriodStatus,
+  PaymentExceptionStatus,
   ReconciliationRunStatus,
+  SuspenseStatus,
   Prisma,
 } from "@prisma/client"
 import { createHash } from "node:crypto"
@@ -11,6 +13,7 @@ import { db } from "@/prisma/db"
 
 import {
   exportReconciliationCertificate,
+  getReconciliationRunDetail,
   signReconciliationRun,
 } from "../payment-reconciliation-certification.service"
 
@@ -178,6 +181,99 @@ describe("payment reconciliation certification service", () => {
     mockedDb.closeRun.update.mockResolvedValue({ id: "close-run-1" })
     mockedDb.closePackExport.findFirst.mockResolvedValue({ id: "close-pack-export-1", metadata: { mode: "CERTIFIED" } })
     mockedDb.closePackExport.update.mockResolvedValue({ id: "close-pack-export-1" })
+  })
+
+  it("returns run detail proof subjects and certification blockers without mutating the run", async () => {
+    mockedDb.reconciliationRun.findFirst.mockResolvedValue(
+      readyRun({
+        exceptionCount: 1,
+        suspenseAmount: amount(500),
+      }),
+    )
+    mockedDb.matchRecord.findMany.mockResolvedValue([
+      {
+        id: "match-1",
+        status: "AUTO_MATCHED",
+        rule: "EXACT_PROVIDER_REFERENCE",
+        confidence: amount("99.50"),
+        amountMatched: amount(500),
+        currencyCode: "XAF",
+        paymentTransactionId: "payment-1",
+        providerEventId: "provider-event-1",
+        statementLineId: "statement-line-1",
+        ledgerPostingBatchId: "ledger-batch-1",
+      },
+    ])
+    mockedDb.paymentException.findMany.mockResolvedValue([
+      {
+        id: "exception-1",
+        type: "AMOUNT_MISMATCH",
+        severity: "CRITICAL",
+        status: PaymentExceptionStatus.OPEN,
+        sourceType: "PROVIDER_EVENT",
+        sourceId: "provider-event-1",
+        paymentTransactionId: "payment-1",
+        providerEventId: "provider-event-1",
+        statementLineId: null,
+        suspenseItemId: "suspense-1",
+      },
+    ])
+    mockedDb.suspenseItem.findMany.mockResolvedValue([
+      {
+        id: "suspense-1",
+        type: "AMOUNT_MISMATCH",
+        status: SuspenseStatus.POSTED_TO_SUSPENSE,
+        severity: "HIGH",
+        amount: amount(500),
+        currencyCode: "XAF",
+        paymentTransactionId: "payment-1",
+        ledgerPostingBatchId: null,
+      },
+    ])
+
+    const detail = await getReconciliationRunDetail("org-1", "run-1")
+
+    expect(detail.certification).toMatchObject({
+      signoffEligible: false,
+      periodStatus: AccountingPeriodStatus.OPEN,
+    })
+    expect(detail.certification.blockers).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ code: "OPEN_EXCEPTIONS", count: 1 }),
+        expect.objectContaining({ code: "OPEN_SUSPENSE", count: 1 }),
+        expect.objectContaining({ code: "SUSPENSE_LEDGER_BATCH_MISSING", count: 1 }),
+      ]),
+    )
+    expect(detail.matchRecords[0]).toMatchObject({
+      id: "match-1",
+      amountMatched: "500.00",
+      currencyCode: "XAF",
+      evidenceSubjects: [
+        { type: "PAYMENT_TRANSACTION", id: "payment-1" },
+        { type: "PROVIDER_EVENT", id: "provider-event-1" },
+        { type: "STATEMENT_LINE", id: "statement-line-1" },
+        { type: "LEDGER_POSTING_BATCH", id: "ledger-batch-1" },
+      ],
+    })
+    expect(detail.exceptions[0]).toMatchObject({
+      id: "exception-1",
+      unresolved: true,
+      evidenceSubjects: expect.arrayContaining([
+        { type: "PAYMENT_EXCEPTION", id: "exception-1" },
+        { type: "PAYMENT_TRANSACTION", id: "payment-1" },
+        { type: "PROVIDER_EVENT", id: "provider-event-1" },
+        { type: "SUSPENSE_ITEM", id: "suspense-1" },
+      ]),
+    })
+    expect(detail.suspenseItems[0]).toMatchObject({
+      id: "suspense-1",
+      unresolved: true,
+      evidenceSubjects: expect.arrayContaining([
+        { type: "SUSPENSE_ITEM", id: "suspense-1" },
+        { type: "PAYMENT_TRANSACTION", id: "payment-1" },
+      ]),
+    })
+    expect(mockedDb.reconciliationRun.update).not.toHaveBeenCalled()
   })
 
   it("signs a ready run with maker-checker, fresh-auth, evidence, and period controls", async () => {

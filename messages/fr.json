@@ -508,6 +508,25 @@
       "providerAccounts": "Comptes fournisseur",
       "signoffQueue": "File de signature",
       "runFacts": "{matches} rapprochement(s), {exceptions} exception(s), suspense {suspense}",
+      "detail": {
+        "title": "Preuve du run selectionne",
+        "description": "{matches} rapprochement(s), {exceptions} exception(s) non resolue(s), {suspense} element(s) suspense non resolu(s), {subjects} sujet(s) de preuve",
+        "eligible": "Eligible",
+        "blocked": "Bloque",
+        "error": "Preuve du run indisponible.",
+        "unavailable": "Selectionnez un run pour inspecter la preuve.",
+        "matches": "Rapprochements",
+        "exceptions": "Exceptions",
+        "suspense": "Suspense",
+        "proofSubjects": "Sujets preuve",
+        "blockers": "Blocages",
+        "matchedEvidence": "Preuve rapprochee",
+        "unresolvedExceptions": "Exceptions non resolues",
+        "suspenseLinks": "Liens suspense",
+        "subjectCount": "{count} sujet(s) de preuve",
+        "emptyRows": "Aucun",
+        "noBlockers": "Aucun blocage de certification"
+      },
       "statuses": {
         "NO_EVIDENCE": "Aucune preuve",
         "READY_FOR_RUN": "Pret pour run",
@@ -530,6 +549,7 @@
       },
       "actions": {
         "run": "Lancer",
+        "inspect": "Preuve",
         "sign": "Signer",
         "export": "Exporter"
       },
@@ -637,7 +657,7 @@
     "proof": {
       "open": "Ouvrir preuve",
       "loading": "Chargement preuve",
-      "unavailable": "Aucune preuve de transaction paiement n'est liee a cette ligne.",
+      "unavailable": "Aucune piste de preuve prise en charge n'est liee a cette ligne.",
       "error": "La preuve de transaction paiement n'a pas pu etre chargee en securite."
     },
     "metrics": {

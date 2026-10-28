@@ -25,8 +25,8 @@ jest.mock("@/prisma/db", () => ({
     providerAccount: { findFirst: jest.fn() },
     reconciliationRun: { findFirst: jest.fn(), create: jest.fn(), update: jest.fn() },
     paymentTransaction: { findMany: jest.fn() },
-    providerEvent: { findMany: jest.fn() },
-    statementLine: { findMany: jest.fn() },
+    providerEvent: { findMany: jest.fn(), update: jest.fn() },
+    statementLine: { findMany: jest.fn(), update: jest.fn() },
     matchRecord: { create: jest.fn(), findFirst: jest.fn() },
     paymentException: { create: jest.fn() },
     suspenseItem: { create: jest.fn() },
@@ -39,8 +39,8 @@ const mockedDb = db as unknown as {
   providerAccount: { findFirst: jest.Mock }
   reconciliationRun: { findFirst: jest.Mock; create: jest.Mock; update: jest.Mock }
   paymentTransaction: { findMany: jest.Mock }
-  providerEvent: { findMany: jest.Mock }
-  statementLine: { findMany: jest.Mock }
+  providerEvent: { findMany: jest.Mock; update: jest.Mock }
+  statementLine: { findMany: jest.Mock; update: jest.Mock }
   matchRecord: { create: jest.Mock; findFirst: jest.Mock }
   paymentException: { create: jest.Mock }
   suspenseItem: { create: jest.Mock }
@@ -64,6 +64,8 @@ describe("durable payment reconciliation run service", () => {
     mockedDb.reconciliationRun.create.mockResolvedValue({ id: "run-1" })
     mockedDb.reconciliationRun.update.mockResolvedValue({ id: "run-1" })
     mockedDb.matchRecord.create.mockResolvedValue({ id: "match-1" })
+    mockedDb.providerEvent.update.mockResolvedValue({ id: "provider-event-1" })
+    mockedDb.statementLine.update.mockResolvedValue({ id: "statement-line-1" })
     mockedDb.paymentException.create.mockResolvedValue({ id: "exception-1" })
     mockedDb.suspenseItem.create.mockResolvedValue({ id: "suspense-1" })
     mockedDb.paymentReconciliationInboxItem.upsert.mockResolvedValue({ id: "inbox-1" })
@@ -131,6 +133,14 @@ describe("durable payment reconciliation run service", () => {
         }),
       }),
     )
+    expect(mockedDb.providerEvent.update).toHaveBeenCalledWith({
+      where: { id: "provider-event-1" },
+      data: expect.objectContaining({
+        status: ProviderEventStatus.PROCESSED,
+        processedAt: expect.any(Date),
+      }),
+    })
+    expect(mockedDb.statementLine.update).not.toHaveBeenCalled()
     expect(mockedDb.paymentException.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
@@ -246,6 +256,134 @@ describe("durable payment reconciliation run service", () => {
       expect.objectContaining({
         data: expect.objectContaining({
           type: PaymentExceptionType.AMOUNT_MISMATCH,
+        }),
+      }),
+    )
+  })
+
+  it("marks matched statement evidence as consumed after an auto match", async () => {
+    mockedDb.paymentTransaction.findMany.mockResolvedValue([
+      {
+        id: "payment-transaction-1",
+        amount: amount(10000),
+        currencyCode: "XAF",
+        providerTransactionId: "txn-1",
+        providerReference: "ref-1",
+        direction: PaymentDirection.INBOUND,
+        state: PaymentTransactionState.CONFIRMED,
+      },
+    ])
+    mockedDb.providerEvent.findMany.mockResolvedValue([])
+    mockedDb.statementLine.findMany.mockResolvedValue([
+      {
+        id: "statement-line-1",
+        fingerprint: "fp-1",
+        providerTransactionId: "txn-1",
+        providerReference: "ref-1",
+        amount: amount(10000),
+        currencyCode: "XAF",
+        direction: StatementLineDirection.CREDIT,
+        status: StatementLineStatus.UNMATCHED,
+      },
+    ])
+
+    const result = await runPaymentReconciliation({
+      organizationId: "org-1",
+      providerAccountId: "provider-account-1",
+      businessDate: new Date("2026-06-14T09:00:00Z"),
+      correlationId: "corr-statement-match",
+    })
+
+    expect(result).toMatchObject({
+      status: ReconciliationRunStatus.READY_FOR_SIGNOFF,
+      matchCount: 1,
+      exceptionCount: 0,
+      suspenseCount: 0,
+      suspenseAmount: "0.00",
+      correlationId: "corr-statement-match",
+    })
+    expect(mockedDb.matchRecord.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          status: MatchStatus.AUTO_MATCHED,
+          paymentTransactionId: "payment-transaction-1",
+          statementLineId: "statement-line-1",
+        }),
+      }),
+    )
+    expect(mockedDb.statementLine.update).toHaveBeenCalledWith({
+      where: { id: "statement-line-1" },
+      data: { status: StatementLineStatus.MATCHED },
+    })
+    expect(mockedDb.providerEvent.update).not.toHaveBeenCalled()
+    expect(mockedDb.paymentException.create).not.toHaveBeenCalled()
+    expect(mockedDb.suspenseItem.create).not.toHaveBeenCalled()
+  })
+
+  it("creates an amount-mismatch exception for conflicting statement evidence", async () => {
+    mockedDb.paymentTransaction.findMany.mockResolvedValue([
+      {
+        id: "payment-transaction-1",
+        amount: amount(10000),
+        currencyCode: "XAF",
+        providerTransactionId: "txn-1",
+        providerReference: "ref-1",
+        direction: PaymentDirection.INBOUND,
+        state: PaymentTransactionState.CONFIRMED,
+      },
+    ])
+    mockedDb.providerEvent.findMany.mockResolvedValue([])
+    mockedDb.statementLine.findMany.mockResolvedValue([
+      {
+        id: "statement-line-1",
+        fingerprint: "fp-1",
+        providerTransactionId: "txn-1",
+        providerReference: "ref-1",
+        amount: amount(9000),
+        currencyCode: "XAF",
+        direction: StatementLineDirection.CREDIT,
+        status: StatementLineStatus.UNMATCHED,
+      },
+    ])
+
+    const result = await runPaymentReconciliation({
+      organizationId: "org-1",
+      providerAccountId: "provider-account-1",
+      businessDate: new Date("2026-06-14T09:00:00Z"),
+      correlationId: "corr-statement-mismatch",
+    })
+
+    expect(result).toMatchObject({
+      status: ReconciliationRunStatus.NEEDS_REVIEW,
+      matchCount: 0,
+      exceptionCount: 1,
+      suspenseCount: 1,
+      suspenseAmount: "10000.00",
+      correlationId: "corr-statement-mismatch",
+    })
+    expect(mockedDb.matchRecord.create).not.toHaveBeenCalled()
+    expect(mockedDb.statementLine.update).not.toHaveBeenCalled()
+    expect(mockedDb.paymentException.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          type: PaymentExceptionType.AMOUNT_MISMATCH,
+          paymentTransactionId: "payment-transaction-1",
+          statementLineId: "statement-line-1",
+          evidence: expect.objectContaining({
+            transactionAmount: "10000.00",
+            providerAmount: null,
+            statementAmount: "9000.00",
+            mismatchSource: "STATEMENT_LINE",
+            rule: "AMOUNT_MISMATCH",
+          }),
+        }),
+      }),
+    )
+    expect(mockedDb.suspenseItem.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          paymentTransactionId: "payment-transaction-1",
+          amount: amount(10000),
         }),
       }),
     )

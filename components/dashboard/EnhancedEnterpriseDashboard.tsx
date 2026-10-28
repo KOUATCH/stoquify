@@ -547,13 +547,11 @@ export default function EnhancedEnterpriseDashboard({
           </Alert>
         )}
 
-        <WorkspaceSetupPanel onboarding={operatingTruth.onboarding} />
-
-        <StatusStrip
-          title={operatingTruth.status.title}
-          detail={operatingTruth.status.detail}
-          items={operatingTruth.status.items}
-        />
+        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+          {operatingTruth.kpis.map((kpi) => (
+            <KpiTile key={kpi.label} {...kpi} />
+          ))}
+        </section>
 
         <div className="grid gap-5 xl:grid-cols-[1.05fr_0.95fr]">
           <ActionQueue
@@ -571,11 +569,13 @@ export default function EnhancedEnterpriseDashboard({
           />
         </div>
 
-        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-          {operatingTruth.kpis.map((kpi) => (
-            <KpiTile key={kpi.label} {...kpi} />
-          ))}
-        </section>
+        <StatusStrip
+          title={operatingTruth.status.title}
+          detail={operatingTruth.status.detail}
+          items={operatingTruth.status.items}
+        />
+
+        <WorkspaceSetupPanel onboarding={operatingTruth.onboarding} />
 
         <section className={cn(dashboardPanelClass, "p-4")}>
           <div className="flex flex-col gap-1">

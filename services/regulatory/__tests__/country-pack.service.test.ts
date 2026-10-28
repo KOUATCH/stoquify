@@ -95,6 +95,15 @@ function withSupportedCompensationAttendanceRules() {
     socialBase: false,
     employerCharge: true,
   };
+  const deductionRule = {
+    componentCode: "LOAN_RECOVERY",
+    calculationMode: "INPUT_AMOUNT",
+    payrollEffect: "DEDUCTION",
+    taxableBase: false,
+    socialBase: false,
+    employerCharge: false,
+    capAmount: "50000.00",
+  };
   const paidLeaveRule = { calculationMode: "PAID_TIME_RATIO" };
   const unpaidLeaveRule = { calculationMode: "UNPAID_TIME_RATIO" };
   const overtimeRule = {
@@ -125,6 +134,17 @@ function withSupportedCompensationAttendanceRules() {
         effectiveTo: null,
         verifiedOn: "2026-06-28",
         verifiedBy: "Qualified payroll benefits reviewer",
+        verificationStatus: "EXPERT_REVIEWED",
+      },
+    ],
+    deductions: [
+      {
+        value: deductionRule,
+        legalRef: "CM_DGI_CGI_2025",
+        effectiveFrom: "2026-01-01",
+        effectiveTo: null,
+        verifiedOn: "2026-06-28",
+        verifiedBy: "Qualified payroll deduction reviewer",
         verificationStatus: "EXPERT_REVIEWED",
       },
     ],
@@ -216,6 +236,62 @@ function withSupportedCompensationAttendanceRules() {
         reviewStatus: "EXPERT_REVIEWED" as const,
         reviewEvidence: {
           reviewedBy: "Qualified Cameroon payroll tax reviewer",
+          reviewedOn: "2026-06-28",
+          legalRef: "CM_DGI_CGI_2025",
+          sourceEvidenceHash: "sha256:cm-payroll-expert-reviewed-test-fixture",
+        },
+      },
+    },
+    {
+      id: "cm-deduction-loan-recovery-reviewed-2026",
+      countryCode: supported.header.countryCode,
+      parameterPath: "payroll.compensation.deductions",
+      date: "2026-06-28",
+      purpose: "PAYROLL_DEDUCTION_RECOVERY_LOAN",
+      expectedValue: deductionRule,
+      expectedLegalRef: "CM_DGI_CGI_2025",
+      expectedPackVersion: supported.header.packVersion,
+      calculationScenario: {
+        input: {
+          periodStart: "2026-06-01",
+          periodEnd: "2026-06-30",
+          amount: "12000.00",
+          recoveryCaseId: "loan-case-fixture-1",
+          outstandingBalanceAmount: "30000.00",
+          outstandingBalanceProofHash: "sha256:loan-fixture-balance-proof",
+          recoveryCapAmount: "15000.00",
+          recoveryCapProofHash: "sha256:loan-fixture-cap-proof",
+          netPayFloorAmount: "0.00",
+        },
+        expectedOutput: {
+          status: "CALCULATED",
+          applied: true,
+          componentCode: "LOAN_RECOVERY",
+          calculationMode: "INPUT_AMOUNT",
+          payrollEffect: "DEDUCTION",
+          componentAmount: "12000.00",
+          grossAmount: "0.00",
+          taxableBaseAmount: "0.00",
+          socialBaseAmount: "0.00",
+          employeeDeductionAmount: "12000.00",
+          employerChargeAmount: "0.00",
+          netPayableAmount: "-12000.00",
+          payslipLineAmount: "12000.00",
+          registerGrossAmount: "0.00",
+          registerEmployeeDeductionAmount: "12000.00",
+          registerNetPayableAmount: "-12000.00",
+          recoveryPolicyApplied: true,
+          recoveryCaseId: "loan-case-fixture-1",
+          outstandingBalanceAmount: "30000.00",
+          outstandingBalanceProofHash: "sha256:loan-fixture-balance-proof",
+          recoveryCapAmount: "15000.00",
+          recoveryCapProofHash: "sha256:loan-fixture-cap-proof",
+          netPayFloorAmount: "0.00",
+          currency: "XAF",
+        },
+        reviewStatus: "EXPERT_REVIEWED" as const,
+        reviewEvidence: {
+          reviewedBy: "Qualified Cameroon payroll deduction reviewer",
           reviewedOn: "2026-06-28",
           legalRef: "CM_DGI_CGI_2025",
           sourceEvidenceHash: "sha256:cm-payroll-expert-reviewed-test-fixture",
@@ -431,6 +507,31 @@ describe("regulatory country pack foundation", () => {
         expect.objectContaining({
           code: "GOLDEN_FIXTURE_FAILED",
           path: "goldenFixtures.cm-allowance-transport-reviewed-2026.calculationScenario.expectedOutput.registerTaxableBaseAmount",
+          message: expect.stringContaining("payslip/register tie-out"),
+        }),
+      ]),
+    );
+  });
+
+  it("rejects Cameroon deduction recovery production support without recovery policy proof outputs", () => {
+    const supported = withSupportedCompensationAttendanceRules();
+    const deductionFixture = supported.goldenFixtures.find(
+      (fixture) => fixture.id === "cm-deduction-loan-recovery-reviewed-2026",
+    );
+    if (!deductionFixture?.calculationScenario) {
+      throw new Error("Deduction recovery fixture missing from test pack");
+    }
+    delete deductionFixture.calculationScenario.expectedOutput.recoveryCapProofHash;
+    supported.header.hash = computeCountryPackHash(supported);
+
+    const result = validateCountryPackForPublish(supported);
+
+    expect(result.valid).toBe(false);
+    expect(result.issues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          code: "GOLDEN_FIXTURE_FAILED",
+          path: "goldenFixtures.cm-deduction-loan-recovery-reviewed-2026.calculationScenario.expectedOutput.recoveryCapProofHash",
           message: expect.stringContaining("payslip/register tie-out"),
         }),
       ]),

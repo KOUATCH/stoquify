@@ -5,9 +5,11 @@ const { existsSync, readFileSync } = require("fs")
 const { resolve } = require("path")
 const argon2 = require("argon2")
 const {
+  AccountingPeriodStatus,
   AccountingPostingPurpose,
   AccountingSetupStatus,
   AccountingSourceType,
+  FiscalYearStatus,
   LedgerPostingBatchStatus,
   Locale,
   MatchRule,
@@ -131,6 +133,9 @@ const UNPAID_PERIOD_END = new Date("2026-07-31T23:59:59.999Z")
 const UNPAID_PAY_DATE = new Date("2026-07-31T12:00:00.000Z")
 const UNPAID_RUN_NUMBER = "PAY-BROWSER-UNPAID-RUN-2026-07"
 const UNPAID_PAYSLIP_NUMBER = "PAYSLIP-DEMO-2026-07-001"
+const ACCOUNTING_FISCAL_YEAR_ID = `${FIXTURE_PREFIX}_fy_2026`
+const ACCOUNTING_PERIOD_ID = `${FIXTURE_PREFIX}_accounting_period_2026_06`
+const UNPAID_ACCOUNTING_PERIOD_ID = `${FIXTURE_PREFIX}_accounting_period_2026_07`
 const COUNTRY_PACK = {
   countryCode: "CM",
   version: "CM-DEMO-PAYROLL-BROWSER-2026.06",
@@ -247,7 +252,76 @@ async function upsertAccountingSettings(tx, organizationId, now) {
   )
 }
 
+async function seedAccountingPeriods(tx, organizationId) {
+  const fiscalYear = await upsertFirst(
+    tx,
+    "fiscalYear",
+    { organizationId, OR: [{ id: ACCOUNTING_FISCAL_YEAR_ID }, { name: "FY 2026 payroll browser smoke" }] },
+    {
+      id: ACCOUNTING_FISCAL_YEAR_ID,
+      organizationId,
+      name: "FY 2026 payroll browser smoke",
+      startDate: new Date("2026-01-01T00:00:00.000Z"),
+      endDate: new Date("2026-12-31T23:59:59.999Z"),
+      status: FiscalYearStatus.OPEN,
+      closedAt: null,
+      closedById: null,
+      notes: DEMO_ONLY_NOTICE,
+    },
+    {
+      name: "FY 2026 payroll browser smoke",
+      startDate: new Date("2026-01-01T00:00:00.000Z"),
+      endDate: new Date("2026-12-31T23:59:59.999Z"),
+      status: FiscalYearStatus.OPEN,
+      closedAt: null,
+      closedById: null,
+      notes: DEMO_ONLY_NOTICE,
+    },
+  )
+
+  const accountingPeriod = await upsertFirst(
+    tx,
+    "accountingPeriod",
+    { organizationId, OR: [{ id: ACCOUNTING_PERIOD_ID }, { fiscalYearId: fiscalYear.id, periodNumber: 6 }] },
+    {
+      id: ACCOUNTING_PERIOD_ID,
+      organizationId,
+      fiscalYearId: fiscalYear.id,
+      periodNumber: 6,
+      name: "June 2026 payroll browser smoke",
+      startDate: PERIOD_START,
+      endDate: PERIOD_END,
+      status: AccountingPeriodStatus.OPEN,
+      lockedAt: null,
+      closedAt: null,
+      closedById: null,
+    },
+  )
+
+  const unpaidAccountingPeriod = await upsertFirst(
+    tx,
+    "accountingPeriod",
+    { organizationId, OR: [{ id: UNPAID_ACCOUNTING_PERIOD_ID }, { fiscalYearId: fiscalYear.id, periodNumber: 7 }] },
+    {
+      id: UNPAID_ACCOUNTING_PERIOD_ID,
+      organizationId,
+      fiscalYearId: fiscalYear.id,
+      periodNumber: 7,
+      name: "July 2026 payroll browser smoke",
+      startDate: UNPAID_PERIOD_START,
+      endDate: UNPAID_PERIOD_END,
+      status: AccountingPeriodStatus.OPEN,
+      lockedAt: null,
+      closedAt: null,
+      closedById: null,
+    },
+  )
+
+  return { accountingPeriod, unpaidAccountingPeriod }
+}
+
 async function seedPayrollFixtures(tx, organizationId, userId, requesterUserId, now) {
+  const { accountingPeriod, unpaidAccountingPeriod } = await seedAccountingPeriods(tx, organizationId)
   const employee = await upsertFirst(
     tx,
     "payrollEmployee",
@@ -395,6 +469,7 @@ async function seedPayrollFixtures(tx, organizationId, userId, requesterUserId, 
     {
       id: `${FIXTURE_PREFIX}_period`,
       organizationId,
+      accountingPeriodId: accountingPeriod.id,
       name: "June 2026 demo payroll browser period",
       frequency: PayrollFrequency.MONTHLY,
       periodStart: PERIOD_START,
@@ -786,6 +861,7 @@ async function seedPayrollFixtures(tx, organizationId, userId, requesterUserId, 
     {
       id: `${FIXTURE_PREFIX}_ledger_payment_batch`,
       organizationId,
+      periodId: accountingPeriod.id,
       sourceType: AccountingSourceType.PAYROLL_PAYMENT,
       sourceId: paymentBatch.id,
       postingPurpose: AccountingPostingPurpose.PAYROLL_PAYMENT,
@@ -942,6 +1018,7 @@ async function seedPayrollFixtures(tx, organizationId, userId, requesterUserId, 
       organizationId,
       paymentRailId: paymentRail.id,
       providerAccountId: providerAccount.id,
+      accountingPeriodId: accountingPeriod.id,
       businessDate: PAY_DATE,
       periodStart: PERIOD_START,
       periodEnd: PERIOD_END,
@@ -1052,6 +1129,7 @@ async function seedPayrollFixtures(tx, organizationId, userId, requesterUserId, 
     {
       id: `${FIXTURE_PREFIX}_unpaid_period`,
       organizationId,
+      accountingPeriodId: unpaidAccountingPeriod.id,
       name: "July 2026 unpaid release drawer browser period",
       frequency: PayrollFrequency.MONTHLY,
       periodStart: UNPAID_PERIOD_START,
@@ -1331,6 +1409,7 @@ async function seedPayrollFixtures(tx, organizationId, userId, requesterUserId, 
   return {
     employeeId: employee.id,
     contractId: contract.id,
+    accountingPeriodId: accountingPeriod.id,
     periodId: period.id,
     attendanceSnapshotId: attendance.id,
     payrollRunId: run.id,
@@ -1338,6 +1417,7 @@ async function seedPayrollFixtures(tx, organizationId, userId, requesterUserId, 
     payslipId: payslip.id,
     declarationId: declaration.id,
     paymentBatchId: paymentBatch.id,
+    unpaidAccountingPeriodId: unpaidAccountingPeriod.id,
     unpaidPeriodId: unpaidPeriod.id,
     unpaidPayrollRunId: unpaidRun.id,
     unpaidPayrollRunLineId: unpaidRunLine.id,

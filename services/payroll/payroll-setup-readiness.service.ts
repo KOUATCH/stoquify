@@ -205,8 +205,10 @@ export const REQUIRED_PAYROLL_COUNTRY_PACK_PARAMETER_PATHS = [
   "payroll.irpp.incomeTaxRules",
   "payroll.compensation.allowances",
   "payroll.compensation.benefits",
+  "payroll.compensation.deductions",
   "payroll.attendance.leave",
   "payroll.attendance.overtime",
+  "payroll.composite.registerTieOut",
 ] as const;
 
 const PRODUCTION_PAYROLL_COUNTRY_PACK_CAPABILITY_STATUSES = new Set([
@@ -915,6 +917,18 @@ export async function getPayrollSetupReadiness(
         requiredFamilyCount: scenarioCoverage.requiredFamilyCount,
         blockerCodes: scenarioCoverage.blockers.map((blocker) => blocker.code),
         reviewEvidence: scenarioCoverage.reviewEvidence,
+        requiredLifecycleProofFieldCount:
+          scenarioCoverage.requiredLifecycleProofFieldCount,
+        requiredLifecycleProofFields:
+          scenarioCoverage.requiredLifecycleProofFields,
+        coveredLifecycleProofFieldCount:
+          scenarioCoverage.coveredLifecycleProofFieldCount,
+        coveredLifecycleProofFields:
+          scenarioCoverage.coveredLifecycleProofFields,
+        missingLifecycleProofFieldCount:
+          scenarioCoverage.missingLifecycleProofFieldCount,
+        missingLifecycleProofFields:
+          scenarioCoverage.missingLifecycleProofFields,
       });
       const reviewedProofChain = buildPayrollStatutoryReviewedProofChain({
         status: scenarioCoverage.status,
@@ -929,7 +943,7 @@ export async function getPayrollSetupReadiness(
         addIssue(blockers, {
           code: "PAYROLL_STATUTORY_SCENARIO_COVERAGE_INCOMPLETE",
           message:
-            "Full-production payroll requires reviewed executable scenario coverage across statutory, adjustment, correction, allowance, benefit, leave, and overtime families.",
+            "Full-production payroll requires reviewed executable scenario coverage across statutory, adjustment, correction, allowance, benefit, deduction, recovery, leave, and overtime families.",
           evidence: {
             packVersion: countryPackVersion,
             readyFamilyCount: scenarioCoverage.readyFamilyCount,

@@ -45,7 +45,8 @@ export type SnapshotSourceModule =
   | "payroll"
   | "pos"
   | "purchasing"
-  | "sales";
+  | "sales"
+  | "security";
 
 export type SnapshotBlocker = {
   id: string;
@@ -111,6 +112,10 @@ export type NormalizedSnapshotScope = {
 export type PaymentTruthMetrics = {
   providerAccountCount: number;
   activeProviderAccountCount: number;
+  internalCollectedAmount?: number;
+  externalMatchedAmount?: number;
+  externalMatchedCount?: number;
+  cashVarianceAmount?: number;
   recentRunCount: number;
   readyForSignoffCount: number;
   signedRunCount: number;
@@ -198,6 +203,42 @@ export type PayrollFinanceForecastMetrics = {
   blockerCodes: string[];
 };
 
+export const TENANT_OPERATING_COMMAND_CARD_DOMAINS = [
+  "payment",
+  "ap",
+  "close",
+  "stock",
+  "compliance",
+  "payroll",
+  "security",
+] as const;
+
+export type TenantOperatingCommandDomain = (typeof TENANT_OPERATING_COMMAND_CARD_DOMAINS)[number];
+
+export type TenantOperatingCommandBlockerState =
+  | "none"
+  | "unavailable"
+  | "partial"
+  | "blocked";
+
+export type TenantOperatingCommandCard = {
+  id: TenantOperatingCommandDomain;
+  label: string;
+  detail: string;
+  metricLabel: string;
+  value: string | number | null;
+  valueFormat?: "number" | "currency" | "text";
+  scope: "tenant" | "location" | "period" | "tenant_period";
+  uiState: SnapshotUiState;
+  evidenceGrade: EvidenceGrade;
+  freshness: SnapshotFreshness;
+  blockerState: TenantOperatingCommandBlockerState;
+  blockerCount: number;
+  actionRoute: string;
+  proofRoute: string;
+  requiredPermission: string;
+  sourceModules: SnapshotSourceModule[];
+};
 export type TenantOperatingMetrics = {
   activeLocationCount: number;
   completedSalesCount: number;
@@ -217,6 +258,7 @@ export type TenantOperatingMetrics = {
   paymentTruth: PaymentTruthMetrics;
   inventoryCash: InventoryCashMetrics;
   closeReadiness: CloseReadinessMetrics;
+  commandCards?: TenantOperatingCommandCard[];
 };
 
 export type SnapshotBuildRunMetrics = {

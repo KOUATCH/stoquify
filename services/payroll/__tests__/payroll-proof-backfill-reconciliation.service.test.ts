@@ -36,6 +36,38 @@ const mockedGetCountryPack = getCountryPack as jest.Mock;
 const mockedValidatePayrollCountryPackCalculationFixtures =
   validatePayrollCountryPackCalculationFixtures as jest.Mock;
 
+const IRPP_YTD_LIFECYCLE_PROOF_FIELDS = [
+  "yearToDatePolicyHash",
+  "yearToDateAccumulatorHash",
+  "registerProofHash",
+  "payslipProofHash",
+];
+const IRPP_CORRECTION_LIFECYCLE_PROOF_FIELDS = [
+  "yearToDatePolicyHash",
+  "yearToDateAccumulatorHash",
+  "originalRunDocumentHash",
+  "originalRunEvidenceHash",
+  "originalCalculationHash",
+  "correctionBasisHash",
+  "correctionEvidenceHash",
+  "registerProofHash",
+  "payslipProofHash",
+  "ledgerPostingProofHash",
+  "declarationProofHash",
+  "paymentProofHash",
+];
+
+function lifecycleProofOutputFor(fixtureId: string, purpose: string) {
+  const fields = purpose.includes("PAYROLL_IRPP_YTD_CORRECTION_REPLAY")
+    ? IRPP_CORRECTION_LIFECYCLE_PROOF_FIELDS
+    : purpose.includes("PAYROLL_IRPP_YTD_REGULARIZATION")
+      ? IRPP_YTD_LIFECYCLE_PROOF_FIELDS
+      : [];
+
+  return Object.fromEntries(
+    fields.map((field) => [field, `sha256:${fixtureId}-${field}`]),
+  );
+}
 function passedCalculationFixtures() {
   const passedRun = (
     fixtureId: string,
@@ -53,25 +85,89 @@ function passedCalculationFixtures() {
       legalRef: "CM_DGI_CGI_2025",
       sourceEvidenceHash: `sha256:${fixtureId}-review-evidence`,
     },
-    expectedOutput: { status: "CALCULATED" },
-    actualOutput: { status: "CALCULATED" },
+    expectedOutput: {
+      status: "CALCULATED",
+      ...lifecycleProofOutputFor(fixtureId, purpose),
+    },
+    actualOutput: {
+      status: "CALCULATED",
+      ...lifecycleProofOutputFor(fixtureId, purpose),
+    },
   });
 
   return {
     valid: true,
     runs: [
-      passedRun("cm-cnps-pension-reviewed", "payroll.cnps.pensionRatesBps", "PAYROLL"),
-      passedRun("cm-cnps-family-reviewed", "payroll.cnps.familyAllowanceRatesBps", "PAYROLL_CNPS_FAMILY_ALLOWANCE"),
-      passedRun("cm-cnps-risk-reviewed", "payroll.cnps.occupationalRiskRatesBps", "PAYROLL_CNPS_OCCUPATIONAL_RISK"),
-      passedRun("cm-irpp-period-reviewed", "payroll.irpp.incomeTaxRules", "PAYROLL_IRPP_PERIOD_CALCULATION"),
-      passedRun("cm-irpp-ytd-reviewed", "payroll.irpp.incomeTaxRules", "PAYROLL_IRPP_YTD_REGULARIZATION"),
-      passedRun("cm-irpp-adjustments-reviewed", "payroll.irpp.incomeTaxRules", "PAYROLL_IRPP_PERIOD_ADJUSTMENTS"),
-      passedRun("cm-irpp-corrections-reviewed", "payroll.irpp.incomeTaxRules", "PAYROLL_IRPP_YTD_CORRECTION_REPLAY"),
-      passedRun("cm-allowances-reviewed", "payroll.compensation.allowances", "PAYROLL_ALLOWANCE_TAXABLE"),
-      passedRun("cm-benefits-reviewed", "payroll.compensation.benefits", "PAYROLL_BENEFIT_IN_KIND"),
-      passedRun("cm-leave-paid-reviewed", "payroll.attendance.leave", "PAYROLL_LEAVE_PAID"),
-      passedRun("cm-leave-unpaid-reviewed", "payroll.attendance.leave", "PAYROLL_LEAVE_UNPAID"),
-      passedRun("cm-overtime-reviewed", "payroll.attendance.overtime", "PAYROLL_OVERTIME_PREMIUM"),
+      passedRun(
+        "cm-cnps-pension-reviewed",
+        "payroll.cnps.pensionRatesBps",
+        "PAYROLL",
+      ),
+      passedRun(
+        "cm-cnps-family-reviewed",
+        "payroll.cnps.familyAllowanceRatesBps",
+        "PAYROLL_CNPS_FAMILY_ALLOWANCE",
+      ),
+      passedRun(
+        "cm-cnps-risk-reviewed",
+        "payroll.cnps.occupationalRiskRatesBps",
+        "PAYROLL_CNPS_OCCUPATIONAL_RISK",
+      ),
+      passedRun(
+        "cm-irpp-period-reviewed",
+        "payroll.irpp.incomeTaxRules",
+        "PAYROLL_IRPP_PERIOD_CALCULATION",
+      ),
+      passedRun(
+        "cm-irpp-ytd-reviewed",
+        "payroll.irpp.incomeTaxRules",
+        "PAYROLL_IRPP_YTD_REGULARIZATION",
+      ),
+      passedRun(
+        "cm-irpp-adjustments-reviewed",
+        "payroll.irpp.incomeTaxRules",
+        "PAYROLL_IRPP_PERIOD_ADJUSTMENTS",
+      ),
+      passedRun(
+        "cm-irpp-corrections-reviewed",
+        "payroll.irpp.incomeTaxRules",
+        "PAYROLL_IRPP_YTD_CORRECTION_REPLAY",
+      ),
+      passedRun(
+        "cm-allowances-reviewed",
+        "payroll.compensation.allowances",
+        "PAYROLL_ALLOWANCE_TAXABLE",
+      ),
+      passedRun(
+        "cm-benefits-reviewed",
+        "payroll.compensation.benefits",
+        "PAYROLL_BENEFIT_IN_KIND",
+      ),
+      passedRun(
+        "cm-deduction-recovery-reviewed",
+        "payroll.compensation.deductions",
+        "PAYROLL_DEDUCTION_RECOVERY",
+      ),
+      passedRun(
+        "cm-leave-paid-reviewed",
+        "payroll.attendance.leave",
+        "PAYROLL_LEAVE_PAID",
+      ),
+      passedRun(
+        "cm-leave-unpaid-reviewed",
+        "payroll.attendance.leave",
+        "PAYROLL_LEAVE_UNPAID",
+      ),
+      passedRun(
+        "cm-overtime-reviewed",
+        "payroll.attendance.overtime",
+        "PAYROLL_OVERTIME_PREMIUM",
+      ),
+      passedRun(
+        "cm-composite-register-tieout-reviewed",
+        "payroll.composite.registerTieOut",
+        "PAYROLL_COMPOSITE_REGISTER_TIE_OUT",
+      ),
     ],
     issues: [],
   };
@@ -205,8 +301,10 @@ function sourceCertificate(overrides: Record<string, unknown> = {}) {
         paymentBatchMissingProviderAdapterProof: 0,
         paymentBatchMissingSettlementRegisterProof: 0,
         paymentBatchMissingSettlementLifecycleProof: 2,
+        paymentBatchMissingProviderReceiptProof: 0,
+        paymentBatchMissingSettlementReplayProof: 0,
       },
-      plannedJobCount: 6,
+      plannedJobCount: 9,
       requiredSignoffs: [
         "payroll-admin",
         "accounting-controller",
@@ -215,6 +313,42 @@ function sourceCertificate(overrides: Record<string, unknown> = {}) {
       ],
     },
     correctionIntentCount: 2,
+    correctionIntents: [
+      {
+        kind: "PAYROLL_PROOF_BACKFILL_CORRECTION_INTENT",
+        target: "PayrollDeclarationEvidenceAuthorityLifecycleProofBackfill",
+        count: 1,
+        idempotencyKey: "declaration-authority-lifecycle-proof-backfill",
+        correlationId: "sha256:source-correlation",
+        countryCode: "CM",
+        periodStart: "2026-06-01",
+        periodEnd: "2026-06-30",
+        payDate: "2026-06-30",
+        proofBackfillEvidenceRef: "payroll-proof-backfill-dry-run:source",
+        dryRunEvidenceHash: "sha256:source-dry-run",
+        periodLineageHash: "sha256:source-period-lineage-declaration",
+        mutationAllowed: false,
+        reason:
+          "Backfill authority lifecycle proof without mutating immutable payroll facts.",
+      },
+      {
+        kind: "PAYROLL_PROOF_BACKFILL_CORRECTION_INTENT",
+        target: "PayrollPaymentSettlementLifecycleProofBackfill",
+        count: 2,
+        idempotencyKey: "payment-settlement-lifecycle-proof-backfill",
+        correlationId: "sha256:source-correlation",
+        countryCode: "CM",
+        periodStart: "2026-06-01",
+        periodEnd: "2026-06-30",
+        payDate: "2026-06-30",
+        proofBackfillEvidenceRef: "payroll-proof-backfill-dry-run:source",
+        dryRunEvidenceHash: "sha256:source-dry-run",
+        periodLineageHash: "sha256:source-period-lineage-payment",
+        mutationAllowed: false,
+        reason:
+          "Backfill settlement lifecycle proof without mutating immutable payroll facts.",
+      },
+    ],
     blockers: [],
     redaction: {
       rawPersonDataIncluded: false,
@@ -361,6 +495,7 @@ describe("payroll proof backfill reconciliation service", () => {
           "payroll.irpp": "SUPPORTED",
           "payroll.compensation": "SUPPORTED",
           "payroll.attendance": "SUPPORTED",
+          "payroll.composite.registerTieOut": "SUPPORTED",
         },
       },
     });
@@ -421,6 +556,15 @@ describe("payroll proof backfill reconciliation service", () => {
 
     expect(certificate.status).toBe("READY_FOR_CLOSE_RECHECK");
     expect(certificate.sourceCertificate.validated).toBe(true);
+    expect(certificate.sourceCertificate.correctionIntentLineageHashCount).toBe(
+      2,
+    );
+    expect(certificate.sourceCertificate.correctionIntentLineageHashes).toEqual(
+      [
+        "sha256:source-period-lineage-declaration",
+        "sha256:source-period-lineage-payment",
+      ],
+    );
     expect(certificate.sourceCertificate.adapterChaosReleaseGateHash).toBe(
       "sha256:adapter-chaos-gate",
     );
@@ -440,9 +584,9 @@ describe("payroll proof backfill reconciliation service", () => {
         countryCode: "CM",
         packVersion: "CM-2026.1",
         coverageHash: expect.stringMatching(/^sha256:/),
-        executableScenarioCount: 12,
-        readyFamilyCount: 9,
-        requiredFamilyCount: 9,
+        executableScenarioCount: 14,
+        readyFamilyCount: 11,
+        requiredFamilyCount: 11,
         blockerCodes: [],
         requiredReviewTopics: [],
         reviewEvidence: expect.objectContaining({
@@ -505,7 +649,8 @@ describe("payroll proof backfill reconciliation service", () => {
         setupGate: expect.objectContaining({
           statutoryScenarioCoverage: expect.objectContaining({
             status: "READY",
-            coverageHash: certificate.setupGate.statutoryScenarioCoverage.coverageHash,
+            coverageHash:
+              certificate.setupGate.statutoryScenarioCoverage.coverageHash,
             requiredReviewTopics: [],
           }),
         }),
@@ -528,6 +673,29 @@ describe("payroll proof backfill reconciliation service", () => {
     expect(serialized).not.toContain("sha256:payment-destination");
   });
 
+  it("blocks reconciliation when source correction intents lack period lineage", async () => {
+    const client = buildClient();
+    client.auditLog.findFirst.mockResolvedValue(
+      sourceAuditLog(
+        sourceCertificate({ correctionIntentCount: 2, correctionIntents: [] }),
+      ),
+    );
+
+    const certificate = await reconcilePayrollProofBackfillCertificate(
+      baseInput(),
+      client as any,
+    );
+
+    expect(certificate.status).toBe("BLOCKED_BY_SOURCE_CERTIFICATE");
+    expect(certificate.sourceCertificate.validated).toBe(false);
+    expect(certificate.sourceCertificate.correctionIntentLineageHashCount).toBe(
+      0,
+    );
+    expect(certificate.sourceCertificate.validationBlockers).toEqual(
+      expect.arrayContaining(["SOURCE_CORRECTION_INTENTS_MISSING"]),
+    );
+    expect(client.auditLog.create).not.toHaveBeenCalled();
+  });
   it("blocks reconciliation when source certificate hash does not match approval evidence", async () => {
     const client = buildClient();
 
@@ -547,9 +715,7 @@ describe("payroll proof backfill reconciliation service", () => {
   it("blocks close recheck when source certificate is missing adapter chaos gate proof", async () => {
     const client = buildClient();
     client.auditLog.findFirst.mockResolvedValue(
-      sourceAuditLog(
-        sourceCertificate({ adapterChaosReleaseGateHash: null }),
-      ),
+      sourceAuditLog(sourceCertificate({ adapterChaosReleaseGateHash: null })),
     );
 
     const certificate = await reconcilePayrollProofBackfillCertificate(
@@ -564,7 +730,9 @@ describe("payroll proof backfill reconciliation service", () => {
         "SOURCE_ADAPTER_CHAOS_RELEASE_GATE_HASH_MISSING",
       ]),
     );
-    expect(certificate.sourceCertificate.adapterChaosReleaseGateHash).toBeNull();
+    expect(
+      certificate.sourceCertificate.adapterChaosReleaseGateHash,
+    ).toBeNull();
     expect(client.auditLog.create).not.toHaveBeenCalled();
   });
 
@@ -577,7 +745,8 @@ describe("payroll proof backfill reconciliation service", () => {
     client.payrollPaymentBatch.count
       .mockResolvedValueOnce(0)
       .mockResolvedValueOnce(0)
-      .mockResolvedValueOnce(2);
+      .mockResolvedValueOnce(2)
+      .mockResolvedValueOnce(4);
 
     const certificate = await reconcilePayrollProofBackfillCertificate(
       baseInput(),
@@ -585,7 +754,7 @@ describe("payroll proof backfill reconciliation service", () => {
     );
 
     expect(certificate.status).toBe("PROOF_GAPS_REMAIN");
-    expect(certificate.currentProofBackfill.totalBlockingGaps).toBe(3);
+    expect(certificate.currentProofBackfill.totalBlockingGaps).toBe(7);
     expect(certificate.currentProofBackfill.postMigrationProofGapsCleared).toBe(
       false,
     );
@@ -594,6 +763,7 @@ describe("payroll proof backfill reconciliation service", () => {
       expect.arrayContaining([
         "payroll-declaration-authority-lifecycle-proof-missing",
         "payroll-payment-settlement-lifecycle-proof-missing",
+        "payroll-payment-provider-receipt-proof-missing",
       ]),
     );
     expect(client.auditLog.create).not.toHaveBeenCalled();

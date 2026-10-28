@@ -236,6 +236,10 @@ function emptyPaymentTruthMetrics(): PaymentTruthMetrics {
   return {
     providerAccountCount: 0,
     activeProviderAccountCount: 0,
+    internalCollectedAmount: 0,
+    externalMatchedAmount: 0,
+    externalMatchedCount: 0,
+    cashVarianceAmount: 0,
     recentRunCount: 0,
     readyForSignoffCount: 0,
     signedRunCount: 0,

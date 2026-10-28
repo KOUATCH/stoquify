@@ -55,13 +55,24 @@ type PaymentProviderAdapterContractInput = {
   requestedAdapterKey?: string | null;
   requestedStatus?: PayrollPaymentAdapterStatus | string | null;
   providerCredentialProofHash?: string | null;
+  providerCredentialRotationProofHash?: string | null;
+  providerCredentialScopeProofHash?: string | null;
   providerPayloadMappingHash?: string | null;
   providerResponseMappingHash?: string | null;
+  providerReversalMappingHash?: string | null;
   providerAdapterRequestHash?: string | null;
   providerAdapterResponseHash?: string | null;
   providerSettlementReceiptHash?: string | null;
   providerIdempotencyKey?: string | null;
   providerAttempt?: number | null;
+  providerReplayFixtureHash?: string | null;
+  providerDuplicateResponseFixtureHash?: string | null;
+  providerOutageRunbookHash?: string | null;
+  providerRetryPolicyFixtureHash?: string | null;
+  providerDeadLetterTriageRunbookHash?: string | null;
+  providerAuditTrailFixtureHash?: string | null;
+  providerRedactionFixtureHash?: string | null;
+  providerCloseImpactRuleHash?: string | null;
   providerCertificationHarnessHash?: string | null;
 };
 
@@ -262,6 +273,16 @@ function paymentCertificationRequirements(
       present: hasProof(input.providerCredentialProofHash),
     },
     {
+      code: "PROVIDER_CREDENTIAL_ROTATION_REVIEWED",
+      label: "provider credential rotation proof",
+      present: hasProof(input.providerCredentialRotationProofHash),
+    },
+    {
+      code: "PROVIDER_CREDENTIAL_SCOPE_REVIEWED",
+      label: "least privilege provider credential scope proof",
+      present: hasProof(input.providerCredentialScopeProofHash),
+    },
+    {
       code: "PROVIDER_PAYLOAD_MAPPING_REVIEWED",
       label: "reviewed provider payload mapping",
       present: hasProof(input.providerPayloadMappingHash),
@@ -270,6 +291,11 @@ function paymentCertificationRequirements(
       code: "PROVIDER_RESPONSE_MAPPING_REVIEWED",
       label: "reviewed provider response or settlement mapping",
       present: hasProof(input.providerResponseMappingHash),
+    },
+    {
+      code: "PROVIDER_REVERSAL_MAPPING_REVIEWED",
+      label: "reviewed provider reversal mapping",
+      present: hasProof(input.providerReversalMappingHash),
     },
     {
       code: "PROVIDER_REQUEST_HASH_PRESENT",
@@ -290,6 +316,46 @@ function paymentCertificationRequirements(
       code: "PROVIDER_IDEMPOTENCY_KEY_PRESENT",
       label: "provider idempotency key",
       present: hasProof(input.providerIdempotencyKey),
+    },
+    {
+      code: "PROVIDER_IDEMPOTENCY_REPLAY_REVIEWED",
+      label: "provider replay fixture",
+      present: hasProof(input.providerReplayFixtureHash),
+    },
+    {
+      code: "PROVIDER_DUPLICATE_RESPONSE_REVIEWED",
+      label: "duplicate provider response fixture",
+      present: hasProof(input.providerDuplicateResponseFixtureHash),
+    },
+    {
+      code: "PROVIDER_OUTAGE_RUNBOOK_PRESENT",
+      label: "provider outage runbook",
+      present: hasProof(input.providerOutageRunbookHash),
+    },
+    {
+      code: "PROVIDER_RETRY_POLICY_REVIEWED",
+      label: "provider retry policy fixture",
+      present: hasProof(input.providerRetryPolicyFixtureHash),
+    },
+    {
+      code: "PROVIDER_DEAD_LETTER_TRIAGE_REVIEWED",
+      label: "provider dead-letter triage runbook",
+      present: hasProof(input.providerDeadLetterTriageRunbookHash),
+    },
+    {
+      code: "PROVIDER_AUDIT_TRAIL_REVIEWED",
+      label: "provider audit trail fixture",
+      present: hasProof(input.providerAuditTrailFixtureHash),
+    },
+    {
+      code: "PROVIDER_REDACTION_REVIEWED",
+      label: "provider redaction fixture",
+      present: hasProof(input.providerRedactionFixtureHash),
+    },
+    {
+      code: "PROVIDER_CLOSE_IMPACT_REVIEWED",
+      label: "provider close impact rule proof",
+      present: hasProof(input.providerCloseImpactRuleHash),
     },
     {
       code: "PROVIDER_CERTIFICATION_HARNESS_COMPLETE",
@@ -478,13 +544,29 @@ export function resolvePayrollPaymentProviderAdapterContract(
     disbursementFileRequired,
     paymentDisbursementFileHash: input.bankFileHash ?? null,
     providerCredentialProofHash: input.providerCredentialProofHash ?? null,
+    providerCredentialRotationProofHash:
+      input.providerCredentialRotationProofHash ?? null,
+    providerCredentialScopeProofHash:
+      input.providerCredentialScopeProofHash ?? null,
     providerPayloadMappingHash: input.providerPayloadMappingHash ?? null,
     providerResponseMappingHash: input.providerResponseMappingHash ?? null,
+    providerReversalMappingHash: input.providerReversalMappingHash ?? null,
     providerAdapterRequestHash: input.providerAdapterRequestHash ?? null,
     providerAdapterResponseHash: input.providerAdapterResponseHash ?? null,
     providerSettlementReceiptHash: input.providerSettlementReceiptHash ?? null,
     providerIdempotencyKey: input.providerIdempotencyKey ?? null,
     providerAttempt: input.providerAttempt ?? 1,
+    providerReplayFixtureHash: input.providerReplayFixtureHash ?? null,
+    providerDuplicateResponseFixtureHash:
+      input.providerDuplicateResponseFixtureHash ?? null,
+    providerOutageRunbookHash: input.providerOutageRunbookHash ?? null,
+    providerRetryPolicyFixtureHash:
+      input.providerRetryPolicyFixtureHash ?? null,
+    providerDeadLetterTriageRunbookHash:
+      input.providerDeadLetterTriageRunbookHash ?? null,
+    providerAuditTrailFixtureHash: input.providerAuditTrailFixtureHash ?? null,
+    providerRedactionFixtureHash: input.providerRedactionFixtureHash ?? null,
+    providerCloseImpactRuleHash: input.providerCloseImpactRuleHash ?? null,
     providerCertificationHarnessHash:
       input.providerCertificationHarnessHash ?? null,
     providerSettlementProofRequired,
@@ -511,13 +593,29 @@ export function resolvePayrollPaymentProviderAdapterContract(
     paymentProviderAdapterKey,
     paymentDisbursementFileHash: input.bankFileHash ?? null,
     providerCredentialProofHash: input.providerCredentialProofHash ?? null,
+    providerCredentialRotationProofHash:
+      input.providerCredentialRotationProofHash ?? null,
+    providerCredentialScopeProofHash:
+      input.providerCredentialScopeProofHash ?? null,
     providerPayloadMappingHash: input.providerPayloadMappingHash ?? null,
     providerResponseMappingHash: input.providerResponseMappingHash ?? null,
+    providerReversalMappingHash: input.providerReversalMappingHash ?? null,
     providerAdapterRequestHash: input.providerAdapterRequestHash ?? null,
     providerAdapterResponseHash: input.providerAdapterResponseHash ?? null,
     providerSettlementReceiptHash: input.providerSettlementReceiptHash ?? null,
     providerIdempotencyKey: input.providerIdempotencyKey ?? null,
     providerAttempt: input.providerAttempt ?? 1,
+    providerReplayFixtureHash: input.providerReplayFixtureHash ?? null,
+    providerDuplicateResponseFixtureHash:
+      input.providerDuplicateResponseFixtureHash ?? null,
+    providerOutageRunbookHash: input.providerOutageRunbookHash ?? null,
+    providerRetryPolicyFixtureHash:
+      input.providerRetryPolicyFixtureHash ?? null,
+    providerDeadLetterTriageRunbookHash:
+      input.providerDeadLetterTriageRunbookHash ?? null,
+    providerAuditTrailFixtureHash: input.providerAuditTrailFixtureHash ?? null,
+    providerRedactionFixtureHash: input.providerRedactionFixtureHash ?? null,
+    providerCloseImpactRuleHash: input.providerCloseImpactRuleHash ?? null,
     providerSettlementProofRequired,
     productionPaymentAutomationSupported,
     disbursementFileRequired,
