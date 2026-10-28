@@ -34,7 +34,7 @@ export type ImportProviderStatementInput = {
 }
 
 export type ImportProviderStatementResult = {
-  status: "IMPORTED" | "DUPLICATE_FILE" | "DUPLICATE_LINE"
+  status: "IMPORTED" | "DUPLICATE_FILE" | "DUPLICATE_LINE" | "TAMPERED_LINE"
   statementFileId?: string
   importedLineCount: number
   duplicateLineCount: number
@@ -75,6 +75,58 @@ function duplicateFingerprints(lines: Array<{ fingerprint: string }>) {
   }
 
   return duplicates
+}
+
+type PreparedStatementLine = {
+  line: ParsedStatementLine
+  fingerprint: string
+  rawLineHash: string
+}
+
+type ExistingStatementLineEvidence = {
+  id: string
+  fingerprint: string
+  providerTransactionId: string | null
+  providerReference: string | null
+  amount: Prisma.Decimal
+  rawLineHash: string | null
+}
+
+function statementLineConflictFilters(lines: PreparedStatementLine[]) {
+  const providerTransactionIds = Array.from(
+    new Set(lines.map((item) => item.line.providerTransactionId).filter((value): value is string => Boolean(value))),
+  )
+  const providerReferences = Array.from(
+    new Set(lines.map((item) => item.line.providerReference).filter((value): value is string => Boolean(value))),
+  )
+
+  return [
+    ...(providerTransactionIds.length > 0 ? [{ providerTransactionId: { in: providerTransactionIds } }] : []),
+    ...(providerReferences.length > 0 ? [{ providerReference: { in: providerReferences } }] : []),
+  ]
+}
+
+function amountsMatch(left: Prisma.Decimal.Value, right: Prisma.Decimal.Value) {
+  return new Prisma.Decimal(left).equals(new Prisma.Decimal(right))
+}
+
+function findTamperedStatementLine(
+  incomingLines: PreparedStatementLine[],
+  existingLines: ExistingStatementLineEvidence[],
+) {
+  for (const incoming of incomingLines) {
+    const match = existingLines.find(
+      (line) =>
+        (incoming.line.providerTransactionId && line.providerTransactionId === incoming.line.providerTransactionId) ||
+        (incoming.line.providerReference && line.providerReference === incoming.line.providerReference),
+    )
+
+    if (match && !amountsMatch(match.amount, incoming.line.amount)) {
+      return { incoming, existing: match }
+    }
+  }
+
+  return null
 }
 
 export async function importProviderStatement(
@@ -285,6 +337,77 @@ export async function importProviderStatement(
         status: "DUPLICATE_LINE",
         importedLineCount: 0,
         duplicateLineCount: existingLines.length,
+        fileHash,
+        exceptionId: exception.id,
+        correlationId,
+      }
+    }
+
+    const conflictFilters = statementLineConflictFilters(preparedLines)
+    const conflictingLines = conflictFilters.length > 0
+      ? await tx.statementLine.findMany({
+          where: {
+            organizationId: input.organizationId,
+            providerAccountId: providerAccount.id,
+            OR: conflictFilters,
+          },
+          select: {
+            id: true,
+            fingerprint: true,
+            providerTransactionId: true,
+            providerReference: true,
+            amount: true,
+            rawLineHash: true,
+          },
+        })
+      : []
+    const tamperedLine = findTamperedStatementLine(preparedLines, conflictingLines)
+
+    if (tamperedLine) {
+      logger.warn("payment-reconciliation.statement.tampered-line", {
+        organizationId: input.organizationId,
+        providerAccountId: providerAccount.id,
+        existingStatementLineId: tamperedLine.existing.id,
+        fileName: input.fileName,
+        correlationId,
+      })
+
+      const exception = await tx.paymentException.create({
+        data: {
+          organizationId: input.organizationId,
+          providerAccountId: providerAccount.id,
+          type: PaymentExceptionType.TAMPER_SIGNAL,
+          severity: ExceptionSeverity.CRITICAL,
+          status: PaymentExceptionStatus.OPEN,
+          sourceType: "StatementLine",
+          sourceId: tamperedLine.existing.id,
+          evidence: {
+            fileHash,
+            fileName: input.fileName ?? null,
+            existingStatementLineId: tamperedLine.existing.id,
+            existingFingerprint: tamperedLine.existing.fingerprint,
+            incomingFingerprint: tamperedLine.incoming.fingerprint,
+            existingRawLineHash: tamperedLine.existing.rawLineHash,
+            incomingRawLineHash: tamperedLine.incoming.rawLineHash,
+            providerTransactionIdHash: tamperedLine.incoming.line.providerTransactionId
+              ? sha256(tamperedLine.incoming.line.providerTransactionId)
+              : null,
+            providerReferenceHash: tamperedLine.incoming.line.providerReference
+              ? sha256(tamperedLine.incoming.line.providerReference)
+              : null,
+            existingAmount: String(tamperedLine.existing.amount),
+            incomingAmount: String(tamperedLine.incoming.line.amount),
+            correlationId,
+          },
+          correlationId,
+        },
+        select: { id: true },
+      })
+
+      return {
+        status: "TAMPERED_LINE",
+        importedLineCount: 0,
+        duplicateLineCount: 1,
         fileHash,
         exceptionId: exception.id,
         correlationId,

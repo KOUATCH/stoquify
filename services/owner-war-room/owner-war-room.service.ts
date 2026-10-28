@@ -542,6 +542,7 @@ const PROOF_MODULE_BY_SUBJECT: Record<ProofTrailSubjectType, CommercialModuleSlu
   "reconciliation.run": "payment_reconciliation",
   "close.run": "close_assurance",
   "payment.transaction": "payment_reconciliation",
+  "provider.event": "payment_reconciliation",
 }
 
 function buildOwnerMorningBrief({

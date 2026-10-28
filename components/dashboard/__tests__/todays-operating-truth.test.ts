@@ -13,6 +13,7 @@ jest.mock("lucide-react", () => {
 })
 import { buildTodaysOperatingTruthModel } from "@/components/dashboard/todays-operating-truth"
 import type { DashboardData } from "@/actions/dashboard/getDashboardData"
+import type { TenantOperatingCommandCard } from "@/services/snapshots/snapshot-contracts"
 
 function buildDashboard(overrides: Partial<DashboardData> = {}): DashboardData {
   return {
@@ -115,9 +116,17 @@ describe("buildTodaysOperatingTruthModel", () => {
       selectedLocationLabel: "All locations",
     })
 
-    expect(model.brief.title).toBe("Today's Operating Truth")
+    expect(model.brief.title).toBe("Daily Business Confidence Brief")
     expect(model.brief.summary).toContain("Tenant One")
     expect(model.brief.actions?.[0].href).toBe("/en/dashboard/owner-war-room")
+    expect(model.kpis.map((kpi) => kpi.label)).toEqual([
+      "Revenue",
+      "Margin",
+      "Cash collected",
+      "Stock risk",
+      "Open obligations",
+    ])
+    expect(model.status.title).toBe("Trust states")
     expect(model.status.items.map((item) => item.id)).toEqual([
       "pos",
       "stock",
@@ -153,6 +162,153 @@ describe("buildTodaysOperatingTruthModel", () => {
     expect(model.shortcuts.actions.some((action) => action.href === "/fr/dashboard/payroll")).toBe(true)
     expect(model.onboarding.steps.find((step) => step.id === "payroll_setup")?.stateLabel).toBe("Optionnel")
   })
+
+  it("uses command-card contract states for blocked, partial, and unavailable dashboard signals", () => {
+    const freshness = {
+      generatedAt: "2026-06-26T08:00:00.000Z",
+      sourceMaxUpdatedAt: null,
+      maxAgeMinutes: 1440,
+      stale: false,
+      staleReason: null,
+    }
+    const commandCards: TenantOperatingCommandCard[] = [
+      {
+        id: "payment",
+        label: "Payment reconciliation",
+        detail: "Payment proof is blocked.",
+        metricLabel: "Open payment issues",
+        value: 2,
+        valueFormat: "number",
+        scope: "tenant_period",
+        uiState: "blocked",
+        evidenceGrade: "blocked",
+        freshness,
+        blockerState: "blocked",
+        blockerCount: 2,
+        actionRoute: "/dashboard/finance/reconciliation",
+        proofRoute: "/dashboard/finance/reconciliation",
+        requiredPermission: "payments.reconciliation.read",
+        sourceModules: ["payments", "finance"],
+      },
+      {
+        id: "ap",
+        label: "AP exposure",
+        detail: "AP proof is partial.",
+        metricLabel: "Pending purchase orders",
+        value: 4,
+        valueFormat: "number",
+        scope: "tenant_period",
+        uiState: "partial",
+        evidenceGrade: "operational",
+        freshness,
+        blockerState: "partial",
+        blockerCount: 4,
+        actionRoute: "/dashboard/purchases/payables",
+        proofRoute: "/dashboard/purchases/payables",
+        requiredPermission: "finance.payables.read",
+        sourceModules: ["purchasing", "finance"],
+      },
+      {
+        id: "security",
+        label: "Security posture",
+        detail: "Security source is not connected yet.",
+        metricLabel: "Proof signals",
+        value: null,
+        valueFormat: "number",
+        scope: "tenant",
+        uiState: "module_unavailable",
+        evidenceGrade: "raw",
+        freshness,
+        blockerState: "unavailable",
+        blockerCount: 0,
+        actionRoute: "/dashboard/settings/security",
+        proofRoute: "/dashboard/assurance/control-tower",
+        requiredPermission: "PASSWORD_READ",
+        sourceModules: ["dashboard", "security"],
+      },
+    ]
+
+    const model = buildTodaysOperatingTruthModel({
+      dashboard: buildDashboard({ alerts: [], operatingCommandCards: commandCards }),
+      locale: "en",
+      dashboardBasePath: "/en/dashboard",
+      selectedLocationLabel: "All locations",
+    })
+
+    expect(model.brief.state).toMatchObject({ label: "Blocked proof", tone: "danger" })
+    expect(model.brief.proof).toMatchObject({ state: "blocked", sourceCount: 0 })
+    expect(model.status.items.map((item) => item.id)).toEqual(["payment", "ap", "security"])
+    expect(model.status.items.find((item) => item.id === "payment")).toMatchObject({
+      tone: "danger",
+      href: "/en/dashboard/finance/reconciliation",
+      proof: expect.objectContaining({ state: "blocked" }),
+    })
+    expect(model.status.items.find((item) => item.id === "ap")).toMatchObject({
+      tone: "gold",
+      href: "/en/dashboard/purchases/payables",
+      proof: expect.objectContaining({ state: "pending" }),
+    })
+    expect(model.status.items.find((item) => item.id === "security")).toMatchObject({
+      value: "Not available",
+      tone: "muted",
+      href: "/en/dashboard/settings/security",
+      proof: expect.objectContaining({ state: "unavailable" }),
+    })
+  })
+
+  it("renders fresh cash-truth command cards as reconciliation actions with proof links", () => {
+    const freshness = {
+      generatedAt: "2026-06-14T12:10:00.000Z",
+      sourceMaxUpdatedAt: "2026-06-14T12:05:00.000Z",
+      maxAgeMinutes: 1440,
+      stale: false,
+      staleReason: null,
+    }
+    const commandCards: TenantOperatingCommandCard[] = [
+      {
+        id: "payment",
+        label: "Cash truth",
+        detail: "Internal collected 10000.00, external matched 10000.00, variance 0.00, suspense 0.00, issues 0.",
+        metricLabel: "External matched",
+        value: 10000,
+        valueFormat: "currency",
+        scope: "tenant_period",
+        uiState: "fresh",
+        evidenceGrade: "operational",
+        freshness,
+        blockerState: "none",
+        blockerCount: 0,
+        actionRoute: "/dashboard/finance/reconciliation",
+        proofRoute: "/dashboard/finance/reconciliation",
+        requiredPermission: "payments.reconciliation.read",
+        sourceModules: ["payments", "finance"],
+      },
+    ]
+
+    const model = buildTodaysOperatingTruthModel({
+      dashboard: buildDashboard({ alerts: [], pendingActions: [], operatingCommandCards: commandCards }),
+      locale: "en",
+      dashboardBasePath: "/en/dashboard",
+      selectedLocationLabel: "All locations",
+    })
+
+    const paymentAction = model.status.items.find((item) => item.id === "payment")
+
+    expect(paymentAction).toMatchObject({
+      label: "Cash truth",
+      detail: "Internal collected 10000.00, external matched 10000.00, variance 0.00, suspense 0.00, issues 0.",
+      tone: "success",
+      href: "/en/dashboard/finance/reconciliation",
+      source: "tenant period",
+      proof: {
+        state: "operational",
+        source: "/dashboard/finance/reconciliation",
+        sourceCount: 0,
+      },
+    })
+    expect(paymentAction?.value).toEqual(expect.stringContaining("10,000"))
+  })
+
   it("formats dashboard financial totals with XOF in French", () => {
     const dashboard = buildDashboard()
     dashboard.organization.currency = "XOF"

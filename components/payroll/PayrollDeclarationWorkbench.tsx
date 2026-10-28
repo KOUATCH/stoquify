@@ -17,6 +17,7 @@ import {
 import type { PayrollDeclarationWorkbenchResult } from "@/actions/payroll/payroll-control.actions";
 import { localizePath } from "@/i18n/routing";
 import type { Locale } from "@/types/bilingual";
+import PayrollAuditorProofPanel from "./PayrollAuditorProofPanel";
 import {
   HrPayrollTableControls,
   HrPayrollTablePagination,
@@ -215,6 +216,10 @@ function declarationProofSubject(
     status: declaration.status,
     source: "services/payroll/declaration-lifecycle.service.ts",
     href: localizePath("/dashboard/payroll/declarations", locale),
+    requiresFreshAuth: declaration.nextActions.some((action) => action.requiresFreshAuth),
+    stateDescription: declaration.nextActions.some((action) => action.requiresFreshAuth)
+      ? "Declaration proof facts are service-owned; authority workflow writes require fresh authentication."
+      : undefined,
     blockers: declaration.blockers,
     redactions: [
       {
@@ -482,6 +487,14 @@ export default function PayrollDeclarationWorkbench({
           tone="bg-sky-400/12 text-sky-200"
         />
       </section>
+
+      <PayrollAuditorProofPanel
+        proof={data.accountingAuditProof}
+        sourceScope={data.sourceScope}
+        locale={locale}
+        subjectId="payroll-declarations:accounting-audit-proof"
+        label="Payroll declaration auditor proof pack"
+      />
 
       <section className="rounded-lg border border-white/10 bg-white/[0.05]">
         <div className="flex items-center gap-2 border-b border-white/10 px-4 py-3">

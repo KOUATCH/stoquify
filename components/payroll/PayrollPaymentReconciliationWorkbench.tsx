@@ -20,6 +20,7 @@ import {
 import type { PayrollPaymentReconciliationReadModel } from "@/actions/payroll/payroll-payment-reconciliation.actions";
 import { localizePath } from "@/i18n/routing";
 import type { Locale } from "@/types/bilingual";
+import PayrollAuditorProofPanel from "./PayrollAuditorProofPanel";
 import {
   HrPayrollTableControls,
   HrPayrollTablePagination,
@@ -189,6 +190,8 @@ function proofRows(batch: Batch): ProofRow[] {
     ["Component status", batch.proof.componentRegisterProofStatus],
     ["Provider proof", batch.proof.paymentAdapterProofHash],
     ["Adapter contract", batch.proof.paymentProviderAdapterContractHash],
+    ["Receipt proof", batch.proof.latestSettlementProviderReceiptProofHash],
+    ["Receipt source", batch.proof.latestSettlementProviderReceiptProofSource],
     ["Lifecycle proof", batch.proof.latestSettlementLifecycleContractHash],
     ["Lifecycle status", batch.proof.latestSettlementLifecycleStatus],
     ["Close impact", batch.proof.closeImpactSourceCode],
@@ -215,6 +218,10 @@ function paymentProofSubject(
     status: batch.derivedState,
     source: "services/payroll/payment-reconciliation.service.ts",
     href: localizePath("/dashboard/finance/reconciliation", locale),
+    requiresFreshAuth: settlementAllowed(batch),
+    stateDescription: settlementAllowed(batch)
+      ? "Payment proof facts are service-owned; settlement evidence writes require fresh authentication."
+      : undefined,
     rows: [
       { label: payrollUiText("Run", locale), value: batch.runNumber },
       { label: payrollUiText("Period", locale), value: batch.periodName },
@@ -313,6 +320,26 @@ function paymentProofSubject(
       {
         label: payrollUiText("Latest register proof", locale),
         value: batch.proof.latestSettlementSourceRegisterHash,
+      },
+      {
+        label: payrollUiText("Provider receipt proof", locale),
+        value: batch.proof.latestSettlementProviderReceiptProofHash,
+      },
+      {
+        label: payrollUiText("Provider receipt source", locale),
+        value: batch.proof.latestSettlementProviderReceiptProofSource,
+      },
+      {
+        label: payrollUiText("Provider receipt payload hash", locale),
+        value: batch.proof.latestSettlementProviderReceiptProviderPayloadHash,
+      },
+      {
+        label: payrollUiText("Provider receipt statement line hash", locale),
+        value: batch.proof.latestSettlementProviderReceiptStatementLineHash,
+      },
+      {
+        label: payrollUiText("Provider receipt statement file hash", locale),
+        value: batch.proof.latestSettlementProviderReceiptStatementFileHash,
       },
       {
         label: payrollUiText("Settlement lifecycle proof", locale),
@@ -538,6 +565,14 @@ export default function PayrollPaymentReconciliationWorkbench({
           tone="bg-violet-400/12 text-violet-200"
         />
       </div>
+
+      <PayrollAuditorProofPanel
+        proof={data.accountingAuditProof}
+        sourceScope={data.sourceScope}
+        locale={locale}
+        subjectId="payroll-payment-reconciliation:accounting-audit-proof"
+        label="Payroll payment auditor proof pack"
+      />
 
       <div className="rounded-lg border border-white/10 bg-white/[0.05]">
         <div className="flex items-center gap-2 border-b border-white/10 px-4 py-3">

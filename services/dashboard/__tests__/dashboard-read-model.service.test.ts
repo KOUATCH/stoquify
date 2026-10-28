@@ -323,6 +323,31 @@ describe('dashboard read-model service', () => {
         percent: 86,
       },
     })
+    expect(result.operatingCommandCards?.map((card) => card.id)).toEqual([
+      'payment',
+      'ap',
+      'close',
+      'stock',
+      'compliance',
+      'payroll',
+      'security',
+    ])
+    expect(result.operatingCommandCards?.find((card) => card.id === 'payment')).toMatchObject({
+      uiState: 'partial',
+      blockerState: 'partial',
+      actionRoute: '/dashboard/finance/reconciliation',
+      requiredPermission: 'payments.reconciliation.read',
+    })
+    expect(result.operatingCommandCards?.find((card) => card.id === 'ap')).toMatchObject({
+      uiState: 'partial',
+      actionRoute: '/dashboard/purchases/payables',
+      requiredPermission: 'finance.payables.read',
+    })
+    expect(result.operatingCommandCards?.find((card) => card.id === 'security')).toMatchObject({
+      uiState: 'module_unavailable',
+      blockerState: 'unavailable',
+      actionRoute: '/dashboard/settings/security',
+    })
     expect(result.activities[0]).toEqual(expect.objectContaining({
       id: 'inventory-txn-1',
       timestamp: '2026-06-18T10:00:00.000Z',

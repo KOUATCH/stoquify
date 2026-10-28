@@ -1,0 +1,78 @@
+{
+  "checkedAt": "2026-07-05T10:22:08.208Z",
+  "auth": {
+    "storageState": "playwright/.auth/payroll.json",
+    "fixtureSource": "scripts/seed-payroll-e2e-user.js",
+    "fixturePurpose": "authenticated payroll route-level auditor proof drawer validation"
+  },
+  "routes": [
+    {
+      "id": "payroll-runs",
+      "name": "runs",
+      "path": "/en/dashboard/payroll/runs",
+      "drawerTitle": "Payroll auditor proof pack"
+    },
+    {
+      "id": "payroll-payments",
+      "name": "payments",
+      "path": "/en/dashboard/payroll/payments",
+      "drawerTitle": "Payroll payment auditor proof pack"
+    },
+    {
+      "id": "payroll-declarations",
+      "name": "declarations",
+      "path": "/en/dashboard/payroll/declarations",
+      "drawerTitle": "Payroll declaration auditor proof pack"
+    }
+  ],
+  "results": [
+    {
+      "routeId": "payroll-runs",
+      "routeName": "runs",
+      "path": "/en/dashboard/payroll/runs",
+      "screenshot": "what-next/payroll/screenshots/payroll-auditor-proof-drawers/payroll-runs-auditor-proof-drawer.png",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/payroll/runs",
+      "drawerTitle": "Payroll auditor proof pack",
+      "redactionMode": "HASHES_AND_AGGREGATES_ONLY",
+      "accountingEvidenceLabels": [
+        "Accounting period",
+        "Redaction mode",
+        "Aggregate gaps",
+        "Source link hashes"
+      ],
+      "leakedForbiddenMarkers": []
+    },
+    {
+      "routeId": "payroll-payments",
+      "routeName": "payments",
+      "path": "/en/dashboard/payroll/payments",
+      "screenshot": "what-next/payroll/screenshots/payroll-auditor-proof-drawers/payroll-payments-auditor-proof-drawer.png",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/payroll/payments",
+      "drawerTitle": "Payroll payment auditor proof pack",
+      "redactionMode": "HASHES_AND_AGGREGATES_ONLY",
+      "accountingEvidenceLabels": [
+        "Accounting period",
+        "Redaction mode",
+        "Aggregate gaps",
+        "Source link hashes"
+      ],
+      "leakedForbiddenMarkers": []
+    },
+    {
+      "routeId": "payroll-declarations",
+      "routeName": "declarations",
+      "path": "/en/dashboard/payroll/declarations",
+      "screenshot": "what-next/payroll/screenshots/payroll-auditor-proof-drawers/payroll-declarations-auditor-proof-drawer.png",
+      "finalUrl": "http://127.0.0.1:3000/en/dashboard/payroll/declarations",
+      "drawerTitle": "Payroll declaration auditor proof pack",
+      "redactionMode": "HASHES_AND_AGGREGATES_ONLY",
+      "accountingEvidenceLabels": [
+        "Accounting period",
+        "Redaction mode",
+        "Aggregate gaps",
+        "Source link hashes"
+      ],
+      "leakedForbiddenMarkers": []
+    }
+  ]
+}

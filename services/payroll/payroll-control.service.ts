@@ -39,6 +39,10 @@ import { hasAnyRbacPermission } from "@/lib/security/rbac-permissions";
 import { db } from "@/prisma/db";
 import { recordCloseCertificationInvalidationsForSourceInTx } from "@/services/accounting/close-assurance-pack.service";
 import {
+  getAccountantPortalData,
+  type PayrollAuditProofPack,
+} from "@/services/accounting/data-trust.service";
+import {
   createLedgerPostingBatch,
   linkAccountingSource,
 } from "@/services/accounting/posting.service";
@@ -201,8 +205,32 @@ type PayrollCountryPackRegisterProof = {
   legalRefs: string[];
 };
 
+type PayrollCompositeRegisterProof = {
+  proofHash: string;
+  status: PayrollComponentPostingProofStatus;
+  lineCount: number;
+  matchedLineCount: number;
+  missingLineCount: number;
+  mismatchedLineCount: number;
+  componentRegisterProofHash: string;
+  componentRegisterProofStatus: PayrollComponentPostingProofStatus;
+  countryPackRegisterProofHash: string;
+  countryPackRegisterProofStatus: PayrollComponentPostingProofStatus;
+  payrollComponentMappingHash: string;
+  payrollComponentMappingStatus: PayrollComponentReviewStatus;
+  statutoryScenarioCoverageHash: string | null;
+  reviewEvidenceSourceHashes: string[];
+  legalRefs: string[];
+  issues: string[];
+};
+
 type PayrollComponentReviewStatus =
   "REVIEWED" | "BLOCKED_REQUIRES_EXPERT_REVIEW";
+
+type PayrollDeductionRecoveryLedgerMappingStatus =
+  | "MATCHED"
+  | "MISSING"
+  | "NOT_APPLICABLE";
 
 type PayrollComponentMapping = {
   kind: "AQSTOQFLOW_PAYROLL_COMPONENT_MAPPING";
@@ -213,9 +241,17 @@ type PayrollComponentMapping = {
   reviewStatus: PayrollComponentReviewStatus;
   reviewDefault: "BLOCK_UNTIL_REVIEWED_FIXTURES";
   taxableBaseAmount: string;
+  employeeDeductionAmount: string;
   incomeTaxWithholdingAmount: string;
   statutoryPayableAmount: string;
   declarationLiabilityAmount: string;
+  deductionRecoveryAmount: string;
+  deductionRecoveryProofHash: string | null;
+  deductionRecoveryProofHashes: string[];
+  deductionRecoveryLedgerMappingStatus: PayrollDeductionRecoveryLedgerMappingStatus;
+  deductionRecoveryLedgerMappingHash: string | null;
+  deductionRecoveryLedgerMappingKeys: string[];
+  deductionRecoveryClearingRole: "EMPLOYEE_DEDUCTION_RECOVERY_CLEARING";
   incomeTaxCalculationStatus: string | null;
   incomeTaxApplied: boolean;
   incomeTaxWithholdingEnabled: boolean;
@@ -342,6 +378,32 @@ export type PayrollRunWorkbenchInput = z.input<
   typeof payrollRunWorkbenchInputSchema
 >;
 
+type PayrollRunWorkbenchAccountingAuditProof = {
+  available: boolean;
+  status: PayrollAuditProofPack["proofGates"][number]["status"] | "UNAVAILABLE";
+  generatedAt: string | null;
+  scopeHash: string | null;
+  periodId: string | null;
+  trustLevel: PayrollAuditProofPack["certification"]["trustLevel"] | null;
+  verdict: PayrollAuditProofPack["certification"]["verdict"] | null;
+  exportable: boolean;
+  blockerCount: number;
+  criticalBlockerCount: number;
+  highBlockerCount: number;
+  proofGateCount: number;
+  blockedProofGateCount: number;
+  reviewProofGateCount: number;
+  sourceLinkCount: number;
+  sourceTableCount: number;
+  redactionMode: PayrollAuditProofPack["redaction"]["mode"] | "UNAVAILABLE";
+  redactionExcluded: string[];
+  sourceTables: string[];
+  aggregateEvidence: Record<string, number>;
+  proofGates: PayrollAuditProofPack["proofGates"];
+  blockers: PayrollAuditProofPack["blockers"];
+  latestSourceLinks: PayrollAuditProofPack["latestSourceLinks"];
+};
+
 export type PayrollRunWorkbenchData = {
   organizationId: string;
   asOf: string;
@@ -385,6 +447,7 @@ export type PayrollRunWorkbenchData = {
     netPayableInScope: string;
     coverageComplete: boolean;
   };
+  accountingAuditProof: PayrollRunWorkbenchAccountingAuditProof;
   runs: Array<{
     id: string;
     runNumber: string;
@@ -398,6 +461,7 @@ export type PayrollRunWorkbenchData = {
       periodStart: string;
       periodEnd: string;
       payDate: string;
+      accountingPeriodId: string | null;
     };
     amounts: {
       grossAmount: string;
@@ -543,6 +607,12 @@ export type PayrollRunWorkbenchData = {
     returned: number;
     coverageComplete: boolean;
     sourceService: string;
+    accountingAuditProofAvailable: boolean;
+    accountingAuditProofGateCount: number;
+    accountingAuditProofSourceLinkCount: number;
+    accountingAuditProofPeriodId: string | null;
+    returnedAccountingPeriodIds: string[];
+    accountingAuditProofCoverageComplete: boolean;
   };
 };
 
@@ -654,6 +724,7 @@ function emptyStatutoryScenarioReviewEvidence(): PayrollStatutoryScenarioReviewE
     reviewedOn: [],
     legalRefs: [],
     sourceEvidenceHashes: [],
+    coveredReviewTopics: [],
   };
 }
 
@@ -1421,6 +1492,26 @@ type PayrollRubriqueFormulaTrace = {
   capabilityStatus: string;
 };
 
+type PayrollDeductionRecoveryPolicyProof = {
+  kind: "AQSTOQFLOW_PAYROLL_DEDUCTION_RECOVERY_POLICY_PROOF";
+  version: 1;
+  assignmentId: string;
+  rubriqueId: string;
+  code: string;
+  recoveryType: string | null;
+  recoveryCaseId: string;
+  amount: string;
+  outstandingBalanceAmount: string;
+  outstandingBalanceProofHash: string;
+  recoveryCapAmount: string;
+  recoveryCapProofHash: string;
+  netPayFloorAmount: string | null;
+  currency: string;
+  evidenceDocumentHash: string;
+  approvalBusinessEventId: string;
+  recoveryPolicyProofHash: string;
+};
+
 type PayrollRubriqueComponentCalculation = {
   assignmentId: string;
   rubriqueId: string;
@@ -1436,8 +1527,11 @@ type PayrollRubriqueComponentCalculation = {
   employerChargeAmount: Prisma.Decimal;
   netPayableImpactAmount: Prisma.Decimal;
   currency: string;
+  evidenceDocumentHash: string | null;
   evidenceDocumentHashPresent: boolean;
   approvalBusinessEventId: string;
+  deductionRecoveryProofHash: string | null;
+  deductionRecoveryPolicy: PayrollDeductionRecoveryPolicyProof | null;
   formulaTrace: PayrollRubriqueFormulaTrace | null;
 };
 
@@ -1703,6 +1797,16 @@ function payrollRunProofMetadata(metadata: unknown) {
     metadata,
     "payrollComponentMappingStatus",
   );
+  const compositeRegisterProofHash = metadataString(
+    metadata,
+    "compositeRegisterProofHash",
+  );
+  const compositeRegisterProofStatus = metadataString(
+    metadata,
+    "compositeRegisterProofStatus",
+  );
+  const deductionRecoveryProofMetadata =
+    payrollDeductionRecoveryProofMetadata(metadata);
 
   if (
     !componentRegisterProofHash ||
@@ -1717,6 +1821,11 @@ function payrollRunProofMetadata(metadata: unknown) {
       "Payroll payment release requires payroll component mapping proof from the posted run.",
     );
   }
+  if (!compositeRegisterProofHash || compositeRegisterProofStatus !== "MATCHED") {
+    throw new BusinessRuleError(
+      "Payroll payment release requires matched composite register proof from the posted run.",
+    );
+  }
 
   const certifiedInputProof =
     assertPayrollCertifiedInputProofMetadata(metadata);
@@ -1727,6 +1836,9 @@ function payrollRunProofMetadata(metadata: unknown) {
     componentRegisterProofStatus,
     payrollComponentMappingHash,
     payrollComponentMappingStatus,
+    compositeRegisterProofHash,
+    compositeRegisterProofStatus,
+    ...deductionRecoveryProofMetadata,
   };
 }
 
@@ -1752,6 +1864,62 @@ function metadataStringList(value: unknown, key: string) {
           typeof item === "string" && item.trim().length > 0,
       )
     : [];
+}
+
+function payrollDeductionRecoveryProofMetadata(metadata: unknown) {
+  const metadataRecord = asRecord(metadata);
+  const deductionRecoveryProofHash = metadataString(
+    metadataRecord,
+    "deductionRecoveryProofHash",
+  );
+  const deductionRecoveryProofHashes = metadataStringList(
+    metadataRecord,
+    "deductionRecoveryProofHashes",
+  ).sort();
+  const deductionRecoveryAmount = metadataString(
+    metadataRecord,
+    "deductionRecoveryAmount",
+  );
+  const deductionRecoveryLedgerMappingHash = metadataString(
+    metadataRecord,
+    "deductionRecoveryLedgerMappingHash",
+  );
+  const deductionRecoveryLedgerMappingStatus = metadataString(
+    metadataRecord,
+    "deductionRecoveryLedgerMappingStatus",
+  );
+  const deductionRecoveryLedgerMappingKeys = metadataStringList(
+    metadataRecord,
+    "deductionRecoveryLedgerMappingKeys",
+  ).sort();
+  const deductionRecoveryClearingRole = metadataString(
+    metadataRecord,
+    "deductionRecoveryClearingRole",
+  );
+
+  if (
+    !deductionRecoveryProofHash &&
+    deductionRecoveryProofHashes.length === 0 &&
+    !deductionRecoveryAmount &&
+    !deductionRecoveryLedgerMappingHash &&
+    !deductionRecoveryLedgerMappingStatus &&
+    deductionRecoveryLedgerMappingKeys.length === 0 &&
+    !deductionRecoveryClearingRole
+  ) {
+    return {};
+  }
+
+  return {
+    deductionRecoveryProofHash: deductionRecoveryProofHash ?? null,
+    deductionRecoveryProofHashes,
+    deductionRecoveryAmount: deductionRecoveryAmount ?? null,
+    deductionRecoveryLedgerMappingHash:
+      deductionRecoveryLedgerMappingHash ?? null,
+    deductionRecoveryLedgerMappingStatus:
+      deductionRecoveryLedgerMappingStatus ?? null,
+    deductionRecoveryLedgerMappingKeys,
+    deductionRecoveryClearingRole: deductionRecoveryClearingRole ?? null,
+  };
 }
 
 function payrollYearToDateProofMetadata(metadata: unknown) {
@@ -1795,6 +1963,14 @@ function payrollPaymentAdapterProofMetadata(input: {
       requestedMetadata,
       "providerCredentialProofHash",
     ),
+    providerCredentialRotationProofHash: metadataString(
+      requestedMetadata,
+      "providerCredentialRotationProofHash",
+    ),
+    providerCredentialScopeProofHash: metadataString(
+      requestedMetadata,
+      "providerCredentialScopeProofHash",
+    ),
     providerPayloadMappingHash: metadataString(
       requestedMetadata,
       "providerPayloadMappingHash",
@@ -1802,6 +1978,10 @@ function payrollPaymentAdapterProofMetadata(input: {
     providerResponseMappingHash: metadataString(
       requestedMetadata,
       "providerResponseMappingHash",
+    ),
+    providerReversalMappingHash: metadataString(
+      requestedMetadata,
+      "providerReversalMappingHash",
     ),
     providerAdapterRequestHash: metadataString(
       requestedMetadata,
@@ -1822,6 +2002,38 @@ function payrollPaymentAdapterProofMetadata(input: {
     providerIdempotencyKey: metadataString(
       requestedMetadata,
       "providerIdempotencyKey",
+    ),
+    providerReplayFixtureHash: metadataString(
+      requestedMetadata,
+      "providerReplayFixtureHash",
+    ),
+    providerDuplicateResponseFixtureHash: metadataString(
+      requestedMetadata,
+      "providerDuplicateResponseFixtureHash",
+    ),
+    providerOutageRunbookHash: metadataString(
+      requestedMetadata,
+      "providerOutageRunbookHash",
+    ),
+    providerRetryPolicyFixtureHash: metadataString(
+      requestedMetadata,
+      "providerRetryPolicyFixtureHash",
+    ),
+    providerDeadLetterTriageRunbookHash: metadataString(
+      requestedMetadata,
+      "providerDeadLetterTriageRunbookHash",
+    ),
+    providerAuditTrailFixtureHash: metadataString(
+      requestedMetadata,
+      "providerAuditTrailFixtureHash",
+    ),
+    providerRedactionFixtureHash: metadataString(
+      requestedMetadata,
+      "providerRedactionFixtureHash",
+    ),
+    providerCloseImpactRuleHash: metadataString(
+      requestedMetadata,
+      "providerCloseImpactRuleHash",
     ),
     providerAttempt:
       typeof requestedMetadata.providerAttempt === "number"
@@ -1861,8 +2073,13 @@ function payrollPaymentAdapterProofMetadata(input: {
     disbursementFileRequired: adapterContract.disbursementFileRequired,
     paymentDisbursementFileHash: adapterContract.paymentDisbursementFileHash,
     providerCredentialProofHash: adapterContract.providerCredentialProofHash,
+    providerCredentialRotationProofHash:
+      adapterContract.providerCredentialRotationProofHash,
+    providerCredentialScopeProofHash:
+      adapterContract.providerCredentialScopeProofHash,
     providerPayloadMappingHash: adapterContract.providerPayloadMappingHash,
     providerResponseMappingHash: adapterContract.providerResponseMappingHash,
+    providerReversalMappingHash: adapterContract.providerReversalMappingHash,
     providerAdapterRequestHash: adapterContract.providerAdapterRequestHash,
     providerAdapterResponseHash: adapterContract.providerAdapterResponseHash,
     providerSettlementReceiptHash:
@@ -1871,6 +2088,17 @@ function payrollPaymentAdapterProofMetadata(input: {
       adapterContract.providerCertificationHarnessHash,
     providerIdempotencyKey: adapterContract.providerIdempotencyKey,
     providerAttempt: adapterContract.providerAttempt,
+    providerReplayFixtureHash: adapterContract.providerReplayFixtureHash,
+    providerDuplicateResponseFixtureHash:
+      adapterContract.providerDuplicateResponseFixtureHash,
+    providerOutageRunbookHash: adapterContract.providerOutageRunbookHash,
+    providerRetryPolicyFixtureHash:
+      adapterContract.providerRetryPolicyFixtureHash,
+    providerDeadLetterTriageRunbookHash:
+      adapterContract.providerDeadLetterTriageRunbookHash,
+    providerAuditTrailFixtureHash: adapterContract.providerAuditTrailFixtureHash,
+    providerRedactionFixtureHash: adapterContract.providerRedactionFixtureHash,
+    providerCloseImpactRuleHash: adapterContract.providerCloseImpactRuleHash,
     providerSettlementProofRequired:
       adapterContract.providerSettlementProofRequired,
     productionPaymentAutomationSupported:
@@ -2911,6 +3139,97 @@ function buildPayrollCountryPackRegisterProof(input: {
   };
 }
 
+function buildPayrollCompositeRegisterProof(input: {
+  payrollRunId: string;
+  runNumber: string;
+  componentRegisterProof: PayrollComponentPostingProof;
+  countryPackRegisterProof: PayrollCountryPackRegisterProof;
+  payrollComponentMapping: PayrollComponentMapping;
+}): PayrollCompositeRegisterProof {
+  const childStatuses = [
+    input.componentRegisterProof.status,
+    input.countryPackRegisterProof.status,
+  ];
+  const status: PayrollComponentPostingProofStatus = childStatuses.includes(
+    "MISSING",
+  )
+    ? "MISSING"
+    : childStatuses.includes("MISMATCH")
+      ? "MISMATCH"
+      : "MATCHED";
+  const lineCount = Math.max(
+    input.componentRegisterProof.lineCount,
+    input.countryPackRegisterProof.lineCount,
+  );
+  const matchedLineCount = Math.min(
+    input.componentRegisterProof.matchedLineCount,
+    input.countryPackRegisterProof.matchedLineCount,
+  );
+  const missingLineCount = Math.max(
+    input.componentRegisterProof.missingLineCount,
+    input.countryPackRegisterProof.missingLineCount,
+  );
+  const mismatchedLineCount = Math.max(
+    input.componentRegisterProof.mismatchedLineCount,
+    input.countryPackRegisterProof.mismatchedLineCount,
+  );
+  const issues = [
+    ...input.componentRegisterProof.issues.map((issue) => `component:${issue}`),
+    ...input.countryPackRegisterProof.issues.map(
+      (issue) => `countryPack:${issue}`,
+    ),
+  ].sort();
+  const reviewEvidenceSourceHashes = [
+    ...input.countryPackRegisterProof.reviewEvidenceSourceHashes,
+  ].sort();
+  const legalRefs = [...input.countryPackRegisterProof.legalRefs].sort();
+  const payload = {
+    kind: "AQSTOQFLOW_PAYROLL_COMPOSITE_REGISTER_PROOF" as const,
+    version: 1 as const,
+    payrollRunId: input.payrollRunId,
+    runNumber: input.runNumber,
+    status,
+    lineCount,
+    matchedLineCount,
+    missingLineCount,
+    mismatchedLineCount,
+    componentRegisterProofHash: input.componentRegisterProof.proofHash,
+    componentRegisterProofStatus: input.componentRegisterProof.status,
+    countryPackRegisterProofHash: input.countryPackRegisterProof.proofHash,
+    countryPackRegisterProofStatus: input.countryPackRegisterProof.status,
+    payrollComponentMappingHash:
+      input.payrollComponentMapping.componentMappingHash,
+    payrollComponentMappingStatus: input.payrollComponentMapping.reviewStatus,
+    statutoryScenarioCoverageHash:
+      input.countryPackRegisterProof.statutoryScenarioCoverageHash,
+    reviewEvidenceSourceHashes,
+    legalRefs,
+    issues,
+  };
+
+  return {
+    ...payload,
+    proofHash: prefixedHash(payload),
+  };
+}
+
+function payrollCompositeRegisterProofMetadata(
+  compositeRegisterProof: PayrollCompositeRegisterProof,
+) {
+  return {
+    compositeRegisterProofHash: compositeRegisterProof.proofHash,
+    compositeRegisterProofStatus: compositeRegisterProof.status,
+    compositeRegisterProofLineCount: compositeRegisterProof.lineCount,
+    compositeRegisterProofMatchedLineCount:
+      compositeRegisterProof.matchedLineCount,
+    compositeRegisterProofMissingLineCount:
+      compositeRegisterProof.missingLineCount,
+    compositeRegisterProofMismatchedLineCount:
+      compositeRegisterProof.mismatchedLineCount,
+    compositeRegisterProofIssues: compositeRegisterProof.issues,
+  };
+}
+
 function totalComponentAmount(
   lines: PayrollComponentPostingLine[],
   key: PayrollComponentProofAmountKey,
@@ -2923,6 +3242,41 @@ function totalComponentAmount(
       );
     }, new Prisma.Decimal(0))
     .toDecimalPlaces(2);
+}
+
+function totalSnapshotAmount(
+  lines: PayrollComponentPostingLine[],
+  key: string,
+) {
+  return lines
+    .reduce((total, line) => {
+      const snapshot = componentSnapshotRecord(line.calculationSnapshot);
+      return total.plus(decimalFromUnknown(snapshot?.[key]) ?? new Prisma.Decimal(0));
+    }, new Prisma.Decimal(0))
+    .toDecimalPlaces(2);
+}
+
+function deductionRecoveryProofHashesForLines(
+  lines: PayrollComponentPostingLine[],
+) {
+  const hashes = new Set<string>();
+
+  for (const line of lines) {
+    const snapshot = componentSnapshotRecord(line.calculationSnapshot);
+    const proofHash = componentSnapshotString(
+      snapshot,
+      "deductionRecoveryProofHash",
+    );
+    if (proofHash) hashes.add(proofHash);
+    for (const hash of metadataStringList(
+      snapshot,
+      "deductionRecoveryProofHashes",
+    )) {
+      hashes.add(hash);
+    }
+  }
+
+  return Array.from(hashes).sort();
 }
 
 function incomeTaxCalculationStatusForLines(
@@ -2955,6 +3309,7 @@ function buildPayrollComponentMapping(input: {
   currency: string;
   lines: PayrollComponentPostingLine[];
   componentProof: PayrollComponentPostingProof;
+  metadata?: unknown;
 }): PayrollComponentMapping {
   const employeePension = totalComponentAmount(
     input.lines,
@@ -2976,6 +3331,62 @@ function buildPayrollComponentMapping(input: {
     input.lines,
     "incomeTaxWithholdingAmount",
   );
+  const employeeDeduction = totalComponentAmount(
+    input.lines,
+    "employeeDeductionAmount",
+  );
+  const lineDeductionRecoveryAmount = totalSnapshotAmount(
+    input.lines,
+    "deductionRecoveryAmount",
+  );
+  const metadataDeductionRecoveryAmount = decimalFromUnknown(
+    metadataString(input.metadata, "deductionRecoveryAmount") ??
+      asRecord(input.metadata).deductionRecoveryAmount,
+  );
+  const deductionRecoveryAmount =
+    lineDeductionRecoveryAmount.eq(0) && metadataDeductionRecoveryAmount
+      ? metadataDeductionRecoveryAmount.toDecimalPlaces(2)
+      : lineDeductionRecoveryAmount;
+  const deductionRecoveryProofHashes = Array.from(
+    new Set([
+      ...deductionRecoveryProofHashesForLines(input.lines),
+      ...metadataStringList(input.metadata, "deductionRecoveryProofHashes"),
+      metadataString(input.metadata, "deductionRecoveryProofHash"),
+    ].filter((hash): hash is string => Boolean(hash))),
+  ).sort();
+  const deductionRecoverySourceProofHash = deductionRecoveryProofHashes.length
+    ? prefixedHash({
+        kind: "AQSTOQFLOW_PAYROLL_DEDUCTION_RECOVERY_LEDGER_SOURCE_PROOF",
+        version: 1,
+        payrollRunId: input.payrollRunId,
+        runNumber: input.runNumber,
+        deductionRecoveryProofHashes,
+      })
+    : null;
+  const deductionRecoveryLedgerMappingStatus: PayrollDeductionRecoveryLedgerMappingStatus =
+    deductionRecoveryAmount.eq(0)
+      ? "NOT_APPLICABLE"
+      : deductionRecoverySourceProofHash
+        ? "MATCHED"
+        : "MISSING";
+  const deductionRecoveryLedgerMappingKeys = deductionRecoveryAmount.gt(0)
+    ? ["PAYROLL_WITHHOLDING_PAYABLE"]
+    : [];
+  const deductionRecoveryLedgerMappingHash = deductionRecoveryAmount.gt(0)
+    ? prefixedHash({
+        kind: "AQSTOQFLOW_PAYROLL_DEDUCTION_RECOVERY_LEDGER_MAPPING_PROOF",
+        version: 1,
+        payrollRunId: input.payrollRunId,
+        runNumber: input.runNumber,
+        status: deductionRecoveryLedgerMappingStatus,
+        deductionRecoveryAmount: deductionRecoveryAmount.toFixed(2),
+        deductionRecoverySourceProofHash,
+        deductionRecoveryProofHashes,
+        amountSource: "EMPLOYEE_DEDUCTION_AMOUNT",
+        ledgerMappingKeys: deductionRecoveryLedgerMappingKeys,
+        clearingRole: "EMPLOYEE_DEDUCTION_RECOVERY_CLEARING",
+      })
+    : null;
   const statutoryPayable = employeePension
     .plus(incomeTaxWithholding)
     .plus(employerPension)
@@ -2989,7 +3400,8 @@ function buildPayrollComponentMapping(input: {
   const incomeTaxApplied = incomeTaxAppliedForLines(input.lines);
   const reviewStatus: PayrollComponentReviewStatus =
     input.componentProof.blockedStatutoryComponentCount > 0 ||
-    incomeTaxCalculationStatus?.includes("BLOCKED")
+    incomeTaxCalculationStatus?.includes("BLOCKED") ||
+    deductionRecoveryLedgerMappingStatus === "MISSING"
       ? "BLOCKED_REQUIRES_EXPERT_REVIEW"
       : "REVIEWED";
   const payload = {
@@ -3004,9 +3416,17 @@ function buildPayrollComponentMapping(input: {
       input.lines,
       "taxableBaseAmount",
     ).toFixed(2),
+    employeeDeductionAmount: employeeDeduction.toFixed(2),
     incomeTaxWithholdingAmount: incomeTaxWithholding.toFixed(2),
     statutoryPayableAmount: statutoryPayable.toFixed(2),
     declarationLiabilityAmount: declarationLiability.toFixed(2),
+    deductionRecoveryAmount: deductionRecoveryAmount.toFixed(2),
+    deductionRecoveryProofHash: deductionRecoverySourceProofHash,
+    deductionRecoveryProofHashes,
+    deductionRecoveryLedgerMappingStatus,
+    deductionRecoveryLedgerMappingHash,
+    deductionRecoveryLedgerMappingKeys,
+    deductionRecoveryClearingRole: "EMPLOYEE_DEDUCTION_RECOVERY_CLEARING" as const,
     incomeTaxCalculationStatus,
     incomeTaxApplied,
     incomeTaxWithholdingEnabled:
@@ -3031,6 +3451,24 @@ function payrollComponentMappingLineMetadata(input: {
   const components = normalizedMappingKey
     ? (PAYROLL_LEDGER_COMPONENTS_BY_MAPPING_KEY[normalizedMappingKey] ?? [])
     : [];
+  const deductionRecoveryLineMetadata =
+    normalizedMappingKey === "PAYROLL_WITHHOLDING_PAYABLE"
+      ? {
+          deductionRecoveryAmount: input.componentMapping.deductionRecoveryAmount,
+          deductionRecoveryProofHash:
+            input.componentMapping.deductionRecoveryProofHash,
+          deductionRecoveryProofHashes:
+            input.componentMapping.deductionRecoveryProofHashes,
+          deductionRecoveryLedgerMappingStatus:
+            input.componentMapping.deductionRecoveryLedgerMappingStatus,
+          deductionRecoveryLedgerMappingHash:
+            input.componentMapping.deductionRecoveryLedgerMappingHash,
+          deductionRecoveryLedgerMappingKeys:
+            input.componentMapping.deductionRecoveryLedgerMappingKeys,
+          deductionRecoveryClearingRole:
+            input.componentMapping.deductionRecoveryClearingRole,
+        }
+      : {};
   return {
     payrollComponentMappingHash: input.componentMapping.componentMappingHash,
     payrollComponentMappingStatus: input.componentMapping.reviewStatus,
@@ -3045,6 +3483,7 @@ function payrollComponentMappingLineMetadata(input: {
     statutoryPayableAmount: input.componentMapping.statutoryPayableAmount,
     declarationLiabilityAmount:
       input.componentMapping.declarationLiabilityAmount,
+    ...deductionRecoveryLineMetadata,
     payrollComponentMappingLineHash: prefixedHash({
       kind: "AQSTOQFLOW_PAYROLL_COMPONENT_LEDGER_LINE_MAPPING",
       version: 1,
@@ -3052,6 +3491,10 @@ function payrollComponentMappingLineMetadata(input: {
       mappingKey: normalizedMappingKey,
       amountSource: input.amountSource,
       components,
+      deductionRecoveryLedgerMappingHash:
+        normalizedMappingKey === "PAYROLL_WITHHOLDING_PAYABLE"
+          ? input.componentMapping.deductionRecoveryLedgerMappingHash
+          : null,
     }),
   };
 }
@@ -3668,6 +4111,136 @@ function calculatePayrollRubriqueAmount(input: {
   }
 }
 
+function deductionRecoveryPolicyDeclared(metadata: Record<string, unknown>) {
+  return (
+    metadata.recoveryPolicyRequired === true ||
+    metadata.deductionRecoveryPolicyRequired === true ||
+    Boolean(metadataString(metadata, "recoveryCaseId")) ||
+    Boolean(metadataString(metadata, "deductionRecoveryCaseId")) ||
+    Boolean(metadataString(metadata, "employeeBalanceCaseId")) ||
+    typeof metadata.outstandingBalanceAmount !== "undefined" ||
+    typeof metadata.recoveryOutstandingBalanceAmount !== "undefined" ||
+    typeof metadata.deductionRecoveryOutstandingBalanceAmount !== "undefined" ||
+    typeof metadata.recoveryCapAmount !== "undefined" ||
+    typeof metadata.deductionRecoveryCapAmount !== "undefined" ||
+    Boolean(metadataString(metadata, "outstandingBalanceProofHash")) ||
+    Boolean(metadataString(metadata, "recoveryCapProofHash"))
+  );
+}
+
+function calculateDeductionRecoveryPolicyProof(input: {
+  assignment: PayrollCalculationRubriqueAssignment;
+  amount: Prisma.Decimal;
+  currency: string;
+  evidenceDocumentHash: string | null;
+  approvalBusinessEventId: string;
+}): PayrollDeductionRecoveryPolicyProof | null {
+  const metadata = asRecord(input.assignment.metadata);
+  if (!deductionRecoveryPolicyDeclared(metadata)) return null;
+
+  const rubrique = input.assignment.rubrique;
+  if (!input.evidenceDocumentHash) {
+    throw new BusinessRuleError(
+      `Payroll deduction/recovery rubrique ${rubrique.code} requires evidence document proof before calculation.`,
+    );
+  }
+
+  const recoveryCaseId =
+    metadataString(metadata, "recoveryCaseId") ??
+    metadataString(metadata, "deductionRecoveryCaseId") ??
+    metadataString(metadata, "employeeBalanceCaseId");
+  if (!recoveryCaseId) {
+    throw new BusinessRuleError(
+      `Payroll deduction/recovery rubrique ${rubrique.code} requires recovery case linkage when recovery policy metadata is present.`,
+    );
+  }
+
+  const outstandingBalanceProofHash =
+    metadataString(metadata, "outstandingBalanceProofHash") ??
+    metadataString(metadata, "recoveryBalanceProofHash") ??
+    metadataString(metadata, "deductionRecoveryBalanceProofHash");
+  if (!outstandingBalanceProofHash) {
+    throw new BusinessRuleError(
+      `Payroll deduction/recovery rubrique ${rubrique.code} requires outstanding balance proof hash when recovery policy metadata is present.`,
+    );
+  }
+
+  const outstandingBalanceAmount =
+    decimalFromUnknown(metadata.outstandingBalanceAmount) ??
+    decimalFromUnknown(metadata.recoveryOutstandingBalanceAmount) ??
+    decimalFromUnknown(metadata.deductionRecoveryOutstandingBalanceAmount);
+  if (!outstandingBalanceAmount || outstandingBalanceAmount.lt(0)) {
+    throw new BusinessRuleError(
+      `Payroll deduction/recovery rubrique ${rubrique.code} requires a non-negative outstanding balance amount when recovery policy metadata is present.`,
+    );
+  }
+
+  const recoveryCapAmount =
+    decimalFromUnknown(metadata.recoveryCapAmount) ??
+    decimalFromUnknown(metadata.deductionRecoveryCapAmount);
+  if (!recoveryCapAmount || recoveryCapAmount.lt(0)) {
+    throw new BusinessRuleError(
+      `Payroll deduction/recovery rubrique ${rubrique.code} requires an approved recovery cap amount when recovery policy metadata is present.`,
+    );
+  }
+
+  const recoveryCapProofHash =
+    metadataString(metadata, "recoveryCapProofHash") ??
+    metadataString(metadata, "deductionRecoveryCapProofHash");
+  if (!recoveryCapProofHash) {
+    throw new BusinessRuleError(
+      `Payroll deduction/recovery rubrique ${rubrique.code} requires approved recovery cap proof hash when recovery policy metadata is present.`,
+    );
+  }
+
+  const netPayFloorAmount =
+    decimalFromUnknown(metadata.netPayFloorAmount) ??
+    decimalFromUnknown(metadata.recoveryNetPayFloorAmount);
+  if (netPayFloorAmount && netPayFloorAmount.lt(0)) {
+    throw new BusinessRuleError(
+      `Payroll deduction/recovery rubrique ${rubrique.code} requires a non-negative recovery net-pay floor.`,
+    );
+  }
+
+  if (input.amount.gt(outstandingBalanceAmount)) {
+    throw new BusinessRuleError(
+      `Payroll deduction/recovery rubrique ${rubrique.code} recovery amount exceeds outstanding balance proof.`,
+    );
+  }
+  if (input.amount.gt(recoveryCapAmount)) {
+    throw new BusinessRuleError(
+      `Payroll deduction/recovery rubrique ${rubrique.code} recovery amount exceeds approved recovery cap.`,
+    );
+  }
+
+  const payload = {
+    kind: "AQSTOQFLOW_PAYROLL_DEDUCTION_RECOVERY_POLICY_PROOF" as const,
+    version: 1 as const,
+    assignmentId: input.assignment.id,
+    rubriqueId: rubrique.id,
+    code: rubrique.code,
+    recoveryType:
+      metadataString(metadata, "recoveryPolicyType") ??
+      metadataString(metadata, "deductionRecoveryType"),
+    recoveryCaseId,
+    amount: input.amount.toFixed(2),
+    outstandingBalanceAmount: outstandingBalanceAmount.toFixed(2),
+    outstandingBalanceProofHash,
+    recoveryCapAmount: recoveryCapAmount.toFixed(2),
+    recoveryCapProofHash,
+    netPayFloorAmount: netPayFloorAmount
+      ? netPayFloorAmount.toFixed(2)
+      : null,
+    currency: input.currency,
+    evidenceDocumentHash: input.evidenceDocumentHash,
+    approvalBusinessEventId: input.approvalBusinessEventId,
+  };
+
+  return {
+    ...payload,
+    recoveryPolicyProofHash: prefixedHash(payload),
+  };
+}
 function calculatePayrollRubriqueComponents(input: {
   assignments: PayrollCalculationRubriqueAssignment[];
   rateBaseAmount: Prisma.Decimal;
@@ -3681,12 +4254,12 @@ function calculatePayrollRubriqueComponents(input: {
       const rubrique = assignment.rubrique;
       const approvalBusinessEventId =
         assignment.approvalBusinessEventId?.trim();
+      const evidenceDocumentHash = assignment.evidenceDocumentHash?.trim() ?? null;
       if (!approvalBusinessEventId) {
         throw new BusinessRuleError(
           `Payroll rubrique ${rubrique.code} requires approval history before calculation.`,
         );
       }
-      const evidenceDocumentHash = assignment.evidenceDocumentHash?.trim();
       if (!evidenceDocumentHash) {
         throw new BusinessRuleError(
           `Payroll rubrique ${rubrique.code} requires evidence before calculation.`,
@@ -3732,6 +4305,37 @@ function calculatePayrollRubriqueComponents(input: {
           : rubrique.kind === PayrollRubriqueKind.DEDUCTION
             ? amount.times(-1).toDecimalPlaces(2)
             : zero;
+      const deductionRecoveryPolicy =
+        rubrique.kind === PayrollRubriqueKind.DEDUCTION
+          ? calculateDeductionRecoveryPolicyProof({
+              assignment,
+              amount,
+              currency: input.currency,
+              evidenceDocumentHash,
+              approvalBusinessEventId,
+            })
+          : null;
+      const deductionRecoveryProofHash =
+        rubrique.kind === PayrollRubriqueKind.DEDUCTION
+          ? prefixedHash({
+              kind: "AQSTOQFLOW_PAYROLL_DEDUCTION_RECOVERY_ASSIGNMENT_PROOF",
+              version: 1,
+              assignmentId: assignment.id,
+              rubriqueId: rubrique.id,
+              code: rubrique.code,
+              valueType: rubrique.valueType,
+              amount: amount.toFixed(2),
+              employeeDeductionAmount: employeeDeductionAmount.toFixed(2),
+              netPayableImpactAmount: netPayableImpactAmount.toFixed(2),
+              currency: input.currency,
+              effectiveFrom: isoDate(assignment.effectiveFrom),
+              effectiveTo: isoDate(assignment.effectiveTo),
+              evidenceDocumentHash,
+              approvalBusinessEventId,
+              deductionRecoveryPolicy,
+              formulaTrace: formulaCalculation.formulaTrace,
+            })
+          : null;
 
       return {
         assignmentId: assignment.id,
@@ -3748,8 +4352,11 @@ function calculatePayrollRubriqueComponents(input: {
         employerChargeAmount,
         netPayableImpactAmount,
         currency: input.currency,
-        evidenceDocumentHashPresent: true,
+        evidenceDocumentHash,
+        evidenceDocumentHashPresent: Boolean(evidenceDocumentHash),
         approvalBusinessEventId,
+        deductionRecoveryProofHash,
+        deductionRecoveryPolicy,
         formulaTrace: formulaCalculation.formulaTrace,
       };
     });
@@ -4399,8 +5006,6 @@ async function createPayrollLedgerPosting(
             ...correctionMetadata,
             componentRegisterProofHash,
             componentRegisterProofStatus,
-            payrollComponentMappingHash,
-            payrollComponentMappingStatus,
             ...(payrollComponentMapping
               ? payrollComponentMappingLineMetadata({
                   mappingKey: line.mappingKey,
@@ -4801,6 +5406,14 @@ async function createPayrollPaymentLedgerPosting(
     input.metadata,
     "payrollComponentMappingStatus",
   );
+  const compositeRegisterProofHash = metadataString(
+    input.metadata,
+    "compositeRegisterProofHash",
+  );
+  const compositeRegisterProofStatus = metadataString(
+    input.metadata,
+    "compositeRegisterProofStatus",
+  );
   const paymentAdapterProofHash = metadataString(
     input.metadata,
     "paymentAdapterProofHash",
@@ -4875,6 +5488,8 @@ async function createPayrollPaymentLedgerPosting(
             payrollPaymentBatchId: input.payrollPaymentBatchId,
             componentRegisterProofHash,
             componentRegisterProofStatus,
+            compositeRegisterProofHash,
+            compositeRegisterProofStatus,
             payrollComponentMappingHash,
             payrollComponentMappingStatus,
             paymentAdapterProofHash,
@@ -4930,6 +5545,8 @@ async function createPayrollPaymentLedgerPosting(
         documentHash: input.documentHash,
         componentRegisterProofHash,
         componentRegisterProofStatus,
+        compositeRegisterProofHash,
+        compositeRegisterProofStatus,
         payrollComponentMappingHash,
         payrollComponentMappingStatus,
         paymentAdapterProofHash,
@@ -5996,6 +6613,27 @@ export async function calculatePayrollRun(
             ),
           }
         : currentAmounts;
+      if (!originalRun && effectiveAmounts.netPayableAmount.lt(0)) {
+        throw new BusinessRuleError(
+          `Employee ${employee.displayName} has negative net payable; ordinary payroll runs require approved recovery caps or the correction employee balance workflow.`,
+        );
+      }
+      const deductionRecoveryNetPayFloorAmount =
+        rubriqueCalculation.components.reduce((floor, component) => {
+          const amount = decimalFromUnknown(
+            component.deductionRecoveryPolicy?.netPayFloorAmount,
+          );
+          return amount && amount.gt(floor) ? amount : floor;
+        }, new Prisma.Decimal(0));
+      if (
+        !originalRun &&
+        deductionRecoveryNetPayFloorAmount.gt(0) &&
+        effectiveAmounts.netPayableAmount.lt(deductionRecoveryNetPayFloorAmount)
+      ) {
+        throw new BusinessRuleError(
+          `Employee ${employee.displayName} net payable falls below the approved recovery floor.`,
+        );
+      }
       const yearToDateProof = buildPayrollYearToDateAccumulatorProof({
         policy: countryPack.yearToDatePolicy,
         employeeId: employee.id,
@@ -6111,11 +6749,32 @@ export async function calculatePayrollRun(
           employerChargeAmount: component.employerChargeAmount.toFixed(2),
           netPayableImpactAmount: component.netPayableImpactAmount.toFixed(2),
           currency: component.currency,
+          evidenceDocumentHash: component.evidenceDocumentHash,
           evidenceDocumentHashPresent: component.evidenceDocumentHashPresent,
           approvalBusinessEventId: component.approvalBusinessEventId,
+          deductionRecoveryProofHash: component.deductionRecoveryProofHash,
+          deductionRecoveryPolicy: component.deductionRecoveryPolicy,
           formulaTrace: component.formulaTrace,
         }),
       );
+      const deductionRecoveryProofHashes = rubriqueCalculation.components
+        .map((component) => component.deductionRecoveryProofHash)
+        .filter((hash): hash is string => Boolean(hash))
+        .sort();
+      const deductionRecoveryProofHash = deductionRecoveryProofHashes.length
+        ? prefixedHash({
+            kind: "AQSTOQFLOW_PAYROLL_DEDUCTION_RECOVERY_LINE_PROOF",
+            version: 1,
+            employeeId: employee.id,
+            contractId: contract.id,
+            payrollPeriodId: period.id,
+            componentProofHashes: deductionRecoveryProofHashes,
+            deductionRecoveryAmount:
+              effectiveAmounts.payrollRubriqueEmployeeDeductionAmount.toFixed(2),
+            currency,
+            correctionRun: Boolean(originalRun),
+          })
+        : null;
       const ruleProvenance = {
         countryCode: countryPack.countryCode,
         pensionRates: countryPack.pensionRates,
@@ -6183,6 +6842,10 @@ export async function calculatePayrollRun(
         payrollRubriqueEmployerChargeAmount:
           effectiveAmounts.payrollRubriqueEmployerChargeAmount.toFixed(2),
         payrollRubriqueComponents,
+        deductionRecoveryProofHash,
+        deductionRecoveryProofHashes,
+        deductionRecoveryAmount:
+              effectiveAmounts.payrollRubriqueEmployeeDeductionAmount.toFixed(2),
         grossAmount: effectiveAmounts.grossAmount.toFixed(2),
         taxableBaseAmount: effectiveAmounts.taxableBaseAmount.toFixed(2),
         socialBaseAmount: effectiveAmounts.socialBaseAmount.toFixed(2),
@@ -6279,6 +6942,42 @@ export async function calculatePayrollRun(
     const netPayableAmount = grossAmount
       .minus(employeeDeductionAmount)
       .toDecimalPlaces(2);
+    if (!originalRun && netPayableAmount.lt(0)) {
+      throw new BusinessRuleError(
+        "Ordinary payroll runs cannot produce negative net payable; use a correction and employee balance workflow for recoveries that exceed current earnings.",
+      );
+    }
+    const deductionRecoveryProofHashes = runLines
+      .map((line) =>
+        metadataString(line.calculationSnapshot, "deductionRecoveryProofHash"),
+      )
+      .filter((hash): hash is string => Boolean(hash))
+      .sort();
+    const deductionRecoveryAmount = runLines
+      .reduce(
+        (total, line) =>
+          total.plus(
+            componentSnapshotDecimal(
+              componentSnapshotRecord(line.calculationSnapshot),
+              "payrollRubriqueEmployeeDeductionAmount",
+            ) ?? new Prisma.Decimal(0),
+          ),
+        new Prisma.Decimal(0),
+      )
+      .toDecimalPlaces(2);
+    const deductionRecoveryProofHash = deductionRecoveryProofHashes.length
+      ? prefixedHash({
+          kind: "AQSTOQFLOW_PAYROLL_DEDUCTION_RECOVERY_RUN_PROOF",
+          version: 1,
+          payrollPeriodId: period.id,
+          runType: parsed.runType,
+          componentProofHashes: deductionRecoveryProofHashes,
+          deductionRecoveryAmount: deductionRecoveryAmount.toFixed(2),
+          netPayableAmount: netPayableAmount.toFixed(2),
+          currency: normalizeCurrency(runLines[0]?.currency),
+          correctionRun: Boolean(originalRun),
+        })
+      : null;
     const runNumber = await nextPayrollRunNumber(
       tx,
       parsed.organizationId,
@@ -6356,6 +7055,9 @@ export async function calculatePayrollRun(
       roundingPolicyHash: roundingPolicy.roundingPolicyHash,
       yearToDatePolicyHash: countryPack.yearToDatePolicyHash,
       yearToDateAccumulatorHashes,
+      deductionRecoveryProofHash,
+      deductionRecoveryProofHashes,
+      deductionRecoveryAmount: deductionRecoveryAmount.toFixed(2),
       payrollInputReadinessHash: inputReadinessVerdict.verdictHash,
       hrisPayrollReadinessHash: inputReadinessVerdict.hrisPayrollReadinessHash,
       payrollEngineInputSnapshotHash,
@@ -6397,6 +7099,9 @@ export async function calculatePayrollRun(
           yearToDatePolicy: countryPack.yearToDatePolicy,
           yearToDatePolicyHash: countryPack.yearToDatePolicyHash,
           yearToDateAccumulatorHashes,
+          deductionRecoveryProofHash,
+          deductionRecoveryProofHashes,
+          deductionRecoveryAmount: deductionRecoveryAmount.toFixed(2),
           payrollInputReadiness: inputReadinessVerdict,
           payrollInputReadinessHash: inputReadinessVerdict.verdictHash,
           hrisPayrollReadinessHash:
@@ -6468,6 +7173,9 @@ export async function calculatePayrollRun(
           yearToDatePolicy: countryPack.yearToDatePolicy,
           yearToDatePolicyHash: countryPack.yearToDatePolicyHash,
           yearToDateAccumulatorHashes,
+          deductionRecoveryProofHash,
+          deductionRecoveryProofHashes,
+          deductionRecoveryAmount: deductionRecoveryAmount.toFixed(2),
           payrollInputReadiness: inputReadinessVerdict,
           payrollInputReadinessHash: inputReadinessVerdict.verdictHash,
           hrisPayrollReadinessHash:
@@ -7910,12 +8618,10 @@ export async function approveAndPostPayrollRun(
     );
     const legalProvenance = legalProvenanceFromMetadata(run.metadata);
     const legalProvenanceHash = prefixedHash(legalProvenance);
-    const roundingPolicyMetadata = payrollRoundingPolicyProofMetadata(
-      run.metadata,
-    );
-    const yearToDateProofMetadata = payrollYearToDateProofMetadata(
-      run.metadata,
-    );
+    const roundingPolicyMetadata = payrollRoundingPolicyProofMetadata(run.metadata);
+    const yearToDateProofMetadata = payrollYearToDateProofMetadata(run.metadata);
+    const deductionRecoveryProofMetadata =
+      payrollDeductionRecoveryProofMetadata(run.metadata);
     const documentHash =
       parsed.documentHash ??
       run.documentHash ??
@@ -7933,13 +8639,56 @@ export async function approveAndPostPayrollRun(
         "Payroll posting requires matched statutory component register proof.",
       );
     }
+    const countryPackRegisterProof = buildPayrollCountryPackRegisterProof({
+      payrollRunId: run.id,
+      runNumber: run.runNumber,
+      countryCode: run.countryCode,
+      countryPackVersion: run.countryPackVersion,
+      countryPackSchemaVersion: run.countryPackSchemaVersion,
+      countryPackResolutionHash: run.countryPackResolutionHash,
+      countryPackCapabilityStatus: run.countryPackCapabilityStatus,
+      metadata: run.metadata,
+      lines: run.lines,
+    });
+    if (countryPackRegisterProof.status !== "MATCHED") {
+      throw new BusinessRuleError(
+        "Payroll posting requires matched country-pack register proof.",
+      );
+    }
     const payrollComponentMapping = buildPayrollComponentMapping({
       payrollRunId: run.id,
       runNumber: run.runNumber,
       currency: run.currency,
       lines: run.lines,
       componentProof: componentRegisterProof,
+      metadata: run.metadata,
     });
+    const countryPackRegisterProofMetadata = {
+      countryPackRegisterProofHash: countryPackRegisterProof.proofHash,
+      countryPackRegisterProofStatus: countryPackRegisterProof.status,
+      countryPackRegisterProofLineCount: countryPackRegisterProof.lineCount,
+      countryPackRegisterProofMatchedLineCount:
+        countryPackRegisterProof.matchedLineCount,
+      countryPackRegisterProofMissingLineCount:
+        countryPackRegisterProof.missingLineCount,
+      countryPackRegisterProofMismatchedLineCount:
+        countryPackRegisterProof.mismatchedLineCount,
+      countryPackLineProofHashes: countryPackRegisterProof.lineProofHashes,
+      statutoryScenarioCoverageHash:
+        countryPackRegisterProof.statutoryScenarioCoverageHash,
+      countryPackReviewEvidenceSourceHashes:
+        countryPackRegisterProof.reviewEvidenceSourceHashes,
+      countryPackLegalRefs: countryPackRegisterProof.legalRefs,
+    };
+    const compositeRegisterProof = buildPayrollCompositeRegisterProof({
+      payrollRunId: run.id,
+      runNumber: run.runNumber,
+      componentRegisterProof,
+      countryPackRegisterProof,
+      payrollComponentMapping,
+    });
+    const compositeRegisterProofMetadata =
+      payrollCompositeRegisterProofMetadata(compositeRegisterProof);
     const componentRegisterProofMetadata = {
       componentRegisterProofHash: componentRegisterProof.proofHash,
       componentRegisterProofStatus: componentRegisterProof.status,
@@ -7952,9 +8701,20 @@ export async function approveAndPostPayrollRun(
         componentRegisterProof.mismatchedLineCount,
       blockedStatutoryComponentCount:
         componentRegisterProof.blockedStatutoryComponentCount,
+      ...countryPackRegisterProofMetadata,
+      ...deductionRecoveryProofMetadata,
       payrollComponentMappingHash: payrollComponentMapping.componentMappingHash,
       payrollComponentMappingStatus: payrollComponentMapping.reviewStatus,
+      deductionRecoveryLedgerMappingHash:
+        payrollComponentMapping.deductionRecoveryLedgerMappingHash,
+      deductionRecoveryLedgerMappingStatus:
+        payrollComponentMapping.deductionRecoveryLedgerMappingStatus,
+      deductionRecoveryLedgerMappingKeys:
+        payrollComponentMapping.deductionRecoveryLedgerMappingKeys,
+      deductionRecoveryClearingRole:
+        payrollComponentMapping.deductionRecoveryClearingRole,
       payrollComponentMapping,
+      ...compositeRegisterProofMetadata,
     };
 
     const postingResult = await createPayrollLedgerPosting(tx, {
@@ -8471,6 +9231,22 @@ export async function requestPayrollPaymentBatch(
       parsed.organizationId,
       paymentDate,
     );
+    const destinationHashes = allocationPlans
+      .map((allocation) => allocation.payslip.employee.paymentDestinationHash)
+      .filter((hash): hash is string => Boolean(hash))
+      .sort();
+    const paymentDestinationProofMetadata = {
+      paymentDestinationProofHash: prefixedHash({
+        kind: "AQSTOQFLOW_PAYROLL_PAYMENT_DESTINATION_PROOF",
+        version: 1,
+        payrollRunId: run.id,
+        batchNumber,
+        allocationCount: allocationPlans.length,
+        destinationHashes,
+      }),
+      paymentDestinationProofCount: destinationHashes.length,
+      paymentDestinationProofPolicy: "APPROVED_DESTINATION_HASHES_ONLY",
+    };
     const evidencePayload = {
       payrollRunId: run.id,
       batchNumber,
@@ -8485,13 +9261,12 @@ export async function requestPayrollPaymentBatch(
       ...correctionMetadata,
       ...runProofMetadata,
       ...paymentAdapterMetadata,
+      ...paymentDestinationProofMetadata,
     };
     const documentHash = parsed.documentHash ?? prefixedHash(evidencePayload);
     const evidenceHash = prefixedHash({
       ...evidencePayload,
-      destinationHashes: allocationPlans
-        .map((allocation) => allocation.payslip.employee.paymentDestinationHash)
-        .sort(),
+      destinationHashes,
     });
 
     const paymentBatch = await tx.payrollPaymentBatch.create({
@@ -8522,6 +9297,7 @@ export async function requestPayrollPaymentBatch(
           ...correctionMetadata,
           ...runProofMetadata,
           ...paymentAdapterMetadata,
+          ...paymentDestinationProofMetadata,
           requestedMetadata: parsed.metadata ?? null,
         }),
         allocations: {
@@ -9177,6 +9953,8 @@ export async function releasePayrollPaymentBatch(
               blockerCode: postingResult.blockerCode ?? null,
               componentRegisterProofHash:
                 runProofMetadata.componentRegisterProofHash,
+              compositeRegisterProofHash:
+                runProofMetadata.compositeRegisterProofHash,
               payrollComponentMappingHash:
                 runProofMetadata.payrollComponentMappingHash,
               paymentAdapterProofHash:
@@ -9200,6 +9978,8 @@ export async function releasePayrollPaymentBatch(
               reconciliationStatus: reconciliationResult.reconciliationStatus,
               componentRegisterProofHash:
                 runProofMetadata.componentRegisterProofHash,
+              compositeRegisterProofHash:
+                runProofMetadata.compositeRegisterProofHash,
               payrollComponentMappingHash:
                 runProofMetadata.payrollComponentMappingHash,
               paymentAdapterProofHash:
@@ -9354,12 +10134,10 @@ export async function preparePayrollDeclarations(
     assertPayrollProductionAdmission(run);
     const legalProvenance = legalProvenanceFromMetadata(run.metadata);
     const legalProvenanceHash = prefixedHash(legalProvenance);
-    const roundingPolicyMetadata = payrollRoundingPolicyProofMetadata(
-      run.metadata,
-    );
-    const yearToDateProofMetadata = payrollYearToDateProofMetadata(
-      run.metadata,
-    );
+    const roundingPolicyMetadata = payrollRoundingPolicyProofMetadata(run.metadata);
+    const yearToDateProofMetadata = payrollYearToDateProofMetadata(run.metadata);
+    const deductionRecoveryProofMetadata =
+      payrollDeductionRecoveryProofMetadata(run.metadata);
     const certifiedInputProofMetadata =
       assertPayrollCertifiedInputProofMetadata(run.metadata);
     const componentRegisterProof = buildPayrollComponentPostingProof({
@@ -9411,7 +10189,17 @@ export async function preparePayrollDeclarations(
       currency: run.currency,
       lines: run.lines,
       componentProof: componentRegisterProof,
+      metadata: run.metadata,
     });
+    const compositeRegisterProof = buildPayrollCompositeRegisterProof({
+      payrollRunId: run.id,
+      runNumber: run.runNumber,
+      componentRegisterProof,
+      countryPackRegisterProof,
+      payrollComponentMapping,
+    });
+    const compositeRegisterProofMetadata =
+      payrollCompositeRegisterProofMetadata(compositeRegisterProof);
     const correctionMetadata = payrollRunCorrectionMetadata(run);
     const signedDeclarationLiabilityAmount = new Prisma.Decimal(
       payrollComponentMapping.declarationLiabilityAmount,
@@ -9535,6 +10323,8 @@ export async function preparePayrollDeclarations(
         ...declarationCorrectionWorkflow.metadata,
         componentRegisterProofHash: componentRegisterProof.proofHash,
         ...countryPackRegisterProofMetadata,
+        ...compositeRegisterProofMetadata,
+        ...deductionRecoveryProofMetadata,
         payrollComponentMappingHash:
           payrollComponentMapping.componentMappingHash,
         payrollComponentMappingStatus: payrollComponentMapping.reviewStatus,
@@ -9577,7 +10367,9 @@ export async function preparePayrollDeclarations(
             declarationResolutionHash: declaration.resolutionHash,
             declarationResolutionError,
             componentRegisterProofHash: componentRegisterProof.proofHash,
-            ...countryPackRegisterProofMetadata,
+          ...countryPackRegisterProofMetadata,
+          ...compositeRegisterProofMetadata,
+          ...deductionRecoveryProofMetadata,
             payrollComponentMappingHash:
               payrollComponentMapping.componentMappingHash,
             payrollComponentMappingStatus: payrollComponentMapping.reviewStatus,
@@ -9627,6 +10419,8 @@ export async function preparePayrollDeclarations(
           ...certifiedInputProofMetadata,
           componentRegisterProofHash: componentRegisterProof.proofHash,
           ...countryPackRegisterProofMetadata,
+          ...compositeRegisterProofMetadata,
+          ...deductionRecoveryProofMetadata,
           payrollComponentMappingHash:
             payrollComponentMapping.componentMappingHash,
           payrollComponentMappingStatus: payrollComponentMapping.reviewStatus,
@@ -9715,6 +10509,8 @@ export async function preparePayrollDeclarations(
           ...certifiedInputProofMetadata,
           componentRegisterProofHash: componentRegisterProof.proofHash,
           ...countryPackRegisterProofMetadata,
+          ...compositeRegisterProofMetadata,
+          ...deductionRecoveryProofMetadata,
           payrollComponentMappingHash:
             payrollComponentMapping.componentMappingHash,
           payrollComponentMappingStatus: payrollComponentMapping.reviewStatus,
@@ -9753,6 +10549,84 @@ function redactionPayload(decision: RedactionDecision) {
   };
 }
 
+function payrollRunAccountingAuditProof(
+  pack: PayrollAuditProofPack | null,
+  periodId: string | null,
+): PayrollRunWorkbenchAccountingAuditProof {
+  if (!pack) {
+    return {
+      available: false,
+      status: "UNAVAILABLE",
+      generatedAt: null,
+      scopeHash: null,
+      periodId,
+      trustLevel: null,
+      verdict: null,
+      exportable: false,
+      blockerCount: 0,
+      criticalBlockerCount: 0,
+      highBlockerCount: 0,
+      proofGateCount: 0,
+      blockedProofGateCount: 0,
+      reviewProofGateCount: 0,
+      sourceLinkCount: 0,
+      sourceTableCount: 0,
+      redactionMode: "UNAVAILABLE",
+      redactionExcluded: [],
+      sourceTables: [],
+      aggregateEvidence: {},
+      proofGates: [],
+      blockers: [],
+      latestSourceLinks: [],
+    };
+  }
+
+  const blockedProofGateCount = pack.proofGates.filter(
+    (gate) => gate.status === "BLOCKED",
+  ).length;
+  const reviewProofGateCount = pack.proofGates.filter(
+    (gate) => gate.status === "REVIEW",
+  ).length;
+
+  return {
+    available: true,
+    status:
+      blockedProofGateCount > 0
+        ? "BLOCKED"
+        : reviewProofGateCount > 0
+          ? "REVIEW"
+          : "PASS",
+    generatedAt: pack.generatedAt,
+    scopeHash: pack.scopeHash,
+    periodId,
+    trustLevel: pack.certification.trustLevel,
+    verdict: pack.certification.verdict,
+    exportable: pack.certification.exportable,
+    blockerCount: pack.certification.blockerCount,
+    criticalBlockerCount: pack.certification.criticalBlockerCount,
+    highBlockerCount: pack.certification.highBlockerCount,
+    proofGateCount: pack.proofGates.length,
+    blockedProofGateCount,
+    reviewProofGateCount,
+    sourceLinkCount: pack.latestSourceLinks.length,
+    sourceTableCount: pack.sourceTables.length,
+    redactionMode: pack.redaction.mode,
+    redactionExcluded: [...pack.redaction.excluded],
+    sourceTables: [...pack.sourceTables],
+    aggregateEvidence: { ...pack.aggregateEvidence },
+    proofGates: pack.proofGates.map((gate) => ({
+      gate: gate.gate,
+      status: gate.status,
+      blockerCount: gate.blockerCount,
+      blockerIds: [...gate.blockerIds],
+      evidence: [...gate.evidence],
+    })),
+    blockers: pack.blockers.map((blocker) => ({ ...blocker })),
+    latestSourceLinks: pack.latestSourceLinks.map((link) => ({ ...link })),
+  };
+}
+
+
 async function writePayrollRunWorkbenchReadAudit(
   client: DbClient,
   input: {
@@ -9761,6 +10635,13 @@ async function writePayrollRunWorkbenchReadAudit(
     amountDecision: RedactionDecision;
     correctionProofDecision: RedactionDecision;
     returnedRunCount: number;
+    accountingAuditProof: {
+      available: boolean;
+      status: PayrollRunWorkbenchAccountingAuditProof["status"];
+      periodId: string | null;
+      proofGateCount: number;
+      sourceLinkCount: number;
+    };
   },
 ) {
   return client.auditLog.create({
@@ -9774,6 +10655,7 @@ async function writePayrollRunWorkbenchReadAudit(
         amountAccess: redactionPayload(input.amountDecision),
         correctionProofAccess: redactionPayload(input.correctionProofDecision),
         returnedRecordCounts: { runs: input.returnedRunCount },
+        accountingAuditProof: input.accountingAuditProof,
       }),
     },
   });
@@ -9973,10 +10855,35 @@ function payrollRunBlockers(input: {
   ];
   const lockedStatus = lockedStatuses.includes(input.run.status);
   const correctionMetadata = asRecord(asRecord(input.run.metadata).correction);
-  const correctionEvidenceHash =
-    metadataString(input.run.metadata, "correctionEvidenceHash") ??
-    metadataString(correctionMetadata, "correctionEvidenceHash");
-
+  const runYearToDateAccumulatorHashes = metadataStringList(
+    input.run.metadata,
+    "yearToDateAccumulatorHashes",
+  );
+  const correctionYearToDateAccumulatorHashes =
+    runYearToDateAccumulatorHashes.length > 0
+      ? runYearToDateAccumulatorHashes
+      : metadataStringList(correctionMetadata, "yearToDateAccumulatorHashes");
+  const correctionCloseProof = {
+    originalRunId:
+      input.run.originalRunId ?? metadataString(correctionMetadata, "originalRunId"),
+    originalRunDocumentHash:
+      metadataString(input.run.metadata, "originalRunDocumentHash") ??
+      metadataString(correctionMetadata, "originalRunDocumentHash"),
+    originalRunEvidenceHash:
+      metadataString(input.run.metadata, "originalRunEvidenceHash") ??
+      metadataString(correctionMetadata, "originalRunEvidenceHash"),
+    originalCalculationHash:
+      metadataString(input.run.metadata, "originalCalculationHash") ??
+      metadataString(correctionMetadata, "originalCalculationHash"),
+    correctionEvidenceHash:
+      metadataString(input.run.metadata, "correctionEvidenceHash") ??
+      metadataString(correctionMetadata, "correctionEvidenceHash"),
+    yearToDatePolicyHash:
+      metadataString(input.run.metadata, "yearToDatePolicyHash") ??
+      metadataString(correctionMetadata, "yearToDatePolicyHash"),
+    yearToDateAccumulatorHashes: correctionYearToDateAccumulatorHashes,
+  };
+  const correctionEvidenceHash = correctionCloseProof.correctionEvidenceHash;
   if (lockedStatus && !payrollCertifiedInputProofFromMetadata(input.run.metadata)) {
     blockers.push({
       id: "PAYROLL_RUN_CERTIFIED_INPUT_PROOF_MISSING",
@@ -10082,6 +10989,27 @@ function payrollRunBlockers(input: {
       nextAction:
         "Recalculate or repair the correction run through the payroll service before close certification.",
     });
+  }
+
+  if (lockedStatus && input.run.runType === PayrollRunType.CORRECTION) {
+    const missingCorrectionCloseProof = Object.entries(correctionCloseProof)
+      .filter(([key, value]) =>
+        key === "yearToDateAccumulatorHashes"
+          ? !Array.isArray(value) || value.length === 0
+          : !value,
+      )
+      .map(([key]) => key);
+
+    if (missingCorrectionCloseProof.length > 0) {
+      blockers.push({
+        id: "PAYROLL_CORRECTION_CLOSE_PROOF_BUNDLE_MISSING",
+        severity: "critical",
+        title: "Correction close proof bundle is incomplete",
+        detail: `Locked correction runs require original-run proof, correction evidence, and year-to-date accumulator proof before close can trust the register. Missing: ${missingCorrectionCloseProof.join(", ")}.`,
+        nextAction:
+          "Recalculate or repair the correction run evidence bundle through the payroll service before close certification.",
+      });
+    }
   }
 
   if (lockedStatus && input.run._count.payslips === 0) {
@@ -10272,6 +11200,7 @@ export async function getPayrollRunWorkbenchData(
             periodStart: true,
             periodEnd: true,
             payDate: true,
+            accountingPeriodId: true,
           },
         },
         originalRun: {
@@ -10484,6 +11413,34 @@ export async function getPayrollRunWorkbenchData(
     ledgerByRun.set(batch.sourceId, entries);
   }
 
+  const returnedAccountingPeriodIds = Array.from(
+    new Set(
+      runs
+        .map((run) => run.payrollPeriod.accountingPeriodId)
+        .filter((periodId): periodId is string => Boolean(periodId)),
+    ),
+  );
+  const accountingAuditProofPeriodId = returnedAccountingPeriodIds[0] ?? null;
+  const accountingAuditProofCoverageComplete =
+    runs.length === 0 ||
+    (returnedAccountingPeriodIds.length === 1 &&
+      runs.every((run) => run.payrollPeriod.accountingPeriodId));
+  const accountantPortal = accountingAuditProofPeriodId
+    ? await getAccountantPortalData(
+        {
+          organizationId: parsed.organizationId,
+          periodId: accountingAuditProofPeriodId,
+          limit: Math.min(parsed.limit, 25),
+        },
+        client,
+        now,
+      )
+    : null;
+  const accountingAuditProof = payrollRunAccountingAuditProof(
+    accountantPortal?.payrollAuditProofPack ?? null,
+    accountingAuditProofPeriodId,
+  );
+
   const paymentRequesterCandidates = paymentRequesterUsers.map((user) => {
     const displayName =
       user.name ||
@@ -10551,6 +11508,7 @@ export async function getPayrollRunWorkbenchData(
         periodStart: run.payrollPeriod.periodStart.toISOString(),
         periodEnd: run.payrollPeriod.periodEnd.toISOString(),
         payDate: run.payrollPeriod.payDate.toISOString(),
+        accountingPeriodId: run.payrollPeriod.accountingPeriodId,
       },
       amounts: {
         grossAmount: payrollAmountForReadModel(run.grossAmount, amountDecision),
@@ -10735,6 +11693,13 @@ export async function getPayrollRunWorkbenchData(
     amountDecision,
     correctionProofDecision,
     returnedRunCount: rows.length,
+    accountingAuditProof: {
+      available: accountingAuditProof.available,
+      status: accountingAuditProof.status,
+      periodId: accountingAuditProof.periodId,
+      proofGateCount: accountingAuditProof.proofGateCount,
+      sourceLinkCount: accountingAuditProof.sourceLinkCount,
+    },
   });
 
   const accountingBlockedRuns = rows.filter((row) =>
@@ -10785,12 +11750,19 @@ export async function getPayrollRunWorkbenchData(
       ),
       coverageComplete: rows.length >= totalRuns,
     },
+    accountingAuditProof,
     runs: rows,
     sourceScope: {
       limit: parsed.limit,
       returned: rows.length,
       coverageComplete: rows.length >= totalRuns,
       sourceService: "services/payroll/payroll-control.service.ts",
+      accountingAuditProofAvailable: accountingAuditProof.available,
+      accountingAuditProofGateCount: accountingAuditProof.proofGateCount,
+      accountingAuditProofSourceLinkCount: accountingAuditProof.sourceLinkCount,
+      accountingAuditProofPeriodId: accountingAuditProof.periodId,
+      returnedAccountingPeriodIds,
+      accountingAuditProofCoverageComplete,
     },
   };
 }
