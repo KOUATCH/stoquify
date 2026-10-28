@@ -12,6 +12,7 @@ import { ReactNode, useEffect, useState } from "react";
 import { authCopy, getAuthLocale } from "./auth-copy";
 import { publicAuthCopy } from "./public-auth-copy";
 import { PublicWorkspaceGuide } from "./public-workspace-guide";
+import styles from "./auth-entry-motion.module.css";
 
 interface AuthLayoutProps {
   children: ReactNode;
@@ -51,7 +52,7 @@ export default function AuthLayout({ children, variant = "login", className }: A
           </Button>
         </div>
       </header>
-      <div className={cn("mx-auto w-full px-4 pb-10 pt-4 sm:pt-8", variant === "register" ? "max-w-2xl" : "max-w-lg", hasWorkspaceGuide && "grid items-start gap-8 lg:max-w-6xl lg:grid-cols-[minmax(0,1.12fr)_minmax(0,1fr)] lg:gap-12 lg:px-8")}>
+      <div className={cn("mx-auto w-full px-4 pb-10 pt-4 sm:pt-8", variant === "register" ? "max-w-2xl" : "max-w-lg", hasWorkspaceGuide && "grid items-start gap-8 lg:max-w-6xl lg:grid-cols-[minmax(0,1.12fr)_minmax(0,1fr)] lg:gap-12 lg:px-8", hasWorkspaceGuide && styles.entry)}>
         <div className="min-w-0">
           {children}
           {variant === "register" && (
