@@ -103,6 +103,29 @@ jest.mock("next-intl", () => ({
       "manualMatch.notifications.approvedTitle": "Manual match approved",
       "manualMatch.notifications.approvedMessage": "The approval record was created.",
       "certification.statuses.NEEDS_REVIEW": "Needs review",
+      "certification.statuses.READY_FOR_SIGNOFF": "Ready for sign-off",
+      "certification.signoffQueue": "Sign-off queue",
+      "certification.emptyRuns": "No durable reconciliation runs have been created yet.",
+      "certification.runFacts": "{matches} match(es), {exceptions} exception(s), suspense {suspense}",
+      "certification.actions.inspect": "Proof",
+      "certification.actions.sign": "Sign",
+      "certification.detail.title": "Selected run proof",
+      "certification.detail.description": "{matches} match(es), {exceptions} unresolved exception(s), {suspense} unresolved suspense item(s), {subjects} proof subject(s)",
+      "certification.detail.eligible": "Eligible",
+      "certification.detail.blocked": "Blocked",
+      "certification.detail.error": "Run proof unavailable.",
+      "certification.detail.unavailable": "Select a run to inspect proof.",
+      "certification.detail.matches": "Matches",
+      "certification.detail.exceptions": "Exceptions",
+      "certification.detail.suspense": "Suspense",
+      "certification.detail.proofSubjects": "Proof subjects",
+      "certification.detail.blockers": "Blockers",
+      "certification.detail.matchedEvidence": "Matched evidence",
+      "certification.detail.unresolvedExceptions": "Unresolved exceptions",
+      "certification.detail.suspenseLinks": "Suspense links",
+      "certification.detail.subjectCount": "{count} proof subject(s)",
+      "certification.detail.emptyRows": "None",
+      "certification.detail.noBlockers": "No certification blocker",
       "filters.location": "Location",
       "filters.allLocations": "All locations",
       "filters.period": "Period",
@@ -114,7 +137,7 @@ jest.mock("next-intl", () => ({
       "sections.suspenseDescription": "Rows that need payment transaction proof.",
       "proof.open": "Open proof",
       "proof.loading": "Loading proof",
-      "proof.unavailable": "No payment transaction proof is linked to this row.",
+      "proof.unavailable": "No supported proof trail is linked to this row.",
       "proof.error": "Payment transaction proof could not be loaded safely.",
       "table.failure": "Failure",
       "table.rail": "Rail",
@@ -182,6 +205,7 @@ jest.mock("@/hooks/payments/usePaymentReconciliationDashboard", () => ({
   useImportProviderStatement: jest.fn(),
   useManualMatchWorkflow: jest.fn(),
   usePaymentReconciliationDashboard: jest.fn(),
+  useReconciliationRunDetail: jest.fn(),
   useResolveSuspenseItem: jest.fn(),
   useRunPaymentReconciliation: jest.fn(),
   useSignReconciliationRun: jest.fn(),
@@ -194,17 +218,19 @@ import {
   useImportProviderStatement,
   useManualMatchWorkflow,
   usePaymentReconciliationDashboard,
+  useReconciliationRunDetail,
   useResolveSuspenseItem,
   useRunPaymentReconciliation,
   useSignReconciliationRun,
 } from "@/hooks/payments/usePaymentReconciliationDashboard"
-import type { PaymentReconciliationDashboardData } from "@/actions/payments/reconciliation.actions"
+import type { PaymentReconciliationDashboardData, ReconciliationRunDetail } from "@/actions/payments/reconciliation.actions"
 import type { ProofTrailResult } from "@/services/evidence/evidence-contracts"
 import PaymentReconciliationWorkbench, { PaymentTrustBanner } from "../PaymentReconciliationWorkbench"
 
 const mockGetProofTrailAction = getProofTrailAction as jest.Mock
 const mockUsePaymentReconciliationWorkbench = usePaymentReconciliationWorkbench as jest.Mock
 const mockUsePaymentReconciliationDashboard = usePaymentReconciliationDashboard as jest.Mock
+const mockUseReconciliationRunDetail = useReconciliationRunDetail as jest.Mock
 const mockUseRunPaymentReconciliation = useRunPaymentReconciliation as jest.Mock
 const mockUseSignReconciliationRun = useSignReconciliationRun as jest.Mock
 const mockUseExportReconciliationCertificate = useExportReconciliationCertificate as jest.Mock
@@ -252,6 +278,26 @@ const dashboard: PaymentReconciliationDashboardData = {
     suspensePostingGatewayOnly: true,
   },
 } as const
+
+function dashboardWithRuns(overrides: Partial<PaymentReconciliationDashboardData> = {}): PaymentReconciliationDashboardData {
+  return {
+    ...dashboard,
+    recentRuns: [
+      {
+        id: "run-1",
+        providerAccountId: "provider-account-1",
+        businessDate: "2026-06-23T00:00:00.000Z",
+        status: "READY_FOR_SIGNOFF",
+        matchCount: 1,
+        exceptionCount: 1,
+        suspenseAmount: 5000,
+        signedAt: null,
+        certificateHash: null,
+      },
+    ],
+    ...overrides,
+  }
+}
 
 function mutationMock() {
   return { isPending: false, mutateAsync: jest.fn() }
@@ -318,6 +364,126 @@ function workbenchData(overrides: Record<string, unknown> = {}) {
   }
 }
 
+function runDetail(overrides: Partial<ReconciliationRunDetail> = {}): ReconciliationRunDetail {
+  return {
+    source: {
+      mode: "DURABLE_EVIDENCE_KERNEL",
+      asOf: "2026-06-23T09:45:00.000Z",
+      organizationScoped: true,
+      certificationStatus: "READY_FOR_SIGNOFF",
+    },
+    run: {
+      id: "run-1",
+      providerAccountId: "provider-account-1",
+      paymentRailId: "rail-1",
+      businessDate: "2026-06-23T00:00:00.000Z",
+      periodStart: "2026-06-23T00:00:00.000Z",
+      periodEnd: "2026-06-24T00:00:00.000Z",
+      status: "READY_FOR_SIGNOFF",
+      runById: "runner-1",
+      signedById: null,
+      signedAt: null,
+      certificateHash: null,
+      totals: {
+        internalAmount: "5000.00",
+        externalAmount: "5000.00",
+        matchedAmount: "5000.00",
+        suspenseAmount: "0.00",
+        matchCount: 1,
+        exceptionCount: 1,
+      },
+    },
+    providerAccount: {
+      id: "provider-account-1",
+      displayName: "MTN settlement",
+      providerCode: "MTN",
+      currencyCode: "XAF",
+      railName: "Mobile money",
+      railType: "MOBILE_MONEY",
+    },
+    evidence: {
+      providerEventCount: 1,
+      statementLineCount: 1,
+      matchRecordCount: 1,
+      openExceptionCount: 1,
+      openSuspenseCount: 1,
+    },
+    certification: {
+      signoffEligible: false,
+      periodStatus: "OPEN",
+      blockers: [
+        {
+          code: "OPEN_EXCEPTIONS",
+          severity: "HIGH",
+          message: "Open reconciliation exceptions must be resolved before sign-off.",
+          count: 1,
+          evidenceSubjects: [
+            { type: "PAYMENT_EXCEPTION", id: "exception-1" },
+            { type: "PAYMENT_TRANSACTION", id: "payment-1" },
+          ],
+        },
+      ],
+    },
+    matchRecords: [
+      {
+        id: "match-1",
+        status: "AUTO_MATCHED",
+        rule: "EXACT_PROVIDER_REFERENCE",
+        confidence: "99.50",
+        amountMatched: "5000.00",
+        currencyCode: "XAF",
+        paymentTransactionId: "payment-1",
+        providerEventId: "provider-event-1",
+        statementLineId: "statement-line-1",
+        ledgerPostingBatchId: "ledger-batch-1",
+        evidenceSubjects: [
+          { type: "PAYMENT_TRANSACTION", id: "payment-1" },
+          { type: "PROVIDER_EVENT", id: "provider-event-1" },
+          { type: "STATEMENT_LINE", id: "statement-line-1" },
+          { type: "LEDGER_POSTING_BATCH", id: "ledger-batch-1" },
+        ],
+      },
+    ],
+    exceptions: [
+      {
+        id: "exception-1",
+        type: "AMOUNT_MISMATCH",
+        severity: "CRITICAL",
+        status: "OPEN",
+        sourceType: "PROVIDER_EVENT",
+        sourceId: "provider-event-1",
+        paymentTransactionId: "payment-1",
+        providerEventId: "provider-event-1",
+        statementLineId: null,
+        suspenseItemId: "suspense-1",
+        unresolved: true,
+        evidenceSubjects: [
+          { type: "PAYMENT_EXCEPTION", id: "exception-1" },
+          { type: "PAYMENT_TRANSACTION", id: "payment-1" },
+        ],
+      },
+    ],
+    suspenseItems: [
+      {
+        id: "suspense-1",
+        type: "AMOUNT_MISMATCH",
+        status: "POSTED_TO_SUSPENSE",
+        severity: "HIGH",
+        amount: "5000.00",
+        currencyCode: "XAF",
+        paymentTransactionId: "payment-1",
+        ledgerPostingBatchId: null,
+        unresolved: true,
+        evidenceSubjects: [
+          { type: "SUSPENSE_ITEM", id: "suspense-1" },
+          { type: "PAYMENT_TRANSACTION", id: "payment-1" },
+        ],
+      },
+    ],
+    ...overrides,
+  }
+}
+
 function proofTrail(overrides: Partial<ProofTrailResult> = {}): ProofTrailResult {
   return {
     organizationId: "org-1",
@@ -371,7 +537,11 @@ function proofTrail(overrides: Partial<ProofTrailResult> = {}): ProofTrailResult
   }
 }
 
-function setupWorkbench(data = workbenchData(), durableDashboard?: PaymentReconciliationDashboardData) {
+function setupWorkbench(
+  data = workbenchData(),
+  durableDashboard: PaymentReconciliationDashboardData | undefined = undefined,
+  detail: ReconciliationRunDetail | undefined = undefined,
+) {
   const importStatement = mutationMock()
   const manualMatch = { propose: mutationMock(), approve: mutationMock() }
   manualMatch.propose.mutateAsync.mockResolvedValue({ matchId: "saved-proposal", alreadyApplied: false })
@@ -384,6 +554,7 @@ function setupWorkbench(data = workbenchData(), durableDashboard?: PaymentReconc
     refetch: jest.fn(),
   })
   mockUsePaymentReconciliationDashboard.mockReturnValue({ data: durableDashboard, isLoading: false, error: null, refetch: jest.fn() })
+  mockUseReconciliationRunDetail.mockReturnValue({ data: detail, isLoading: false, isFetching: false, error: null })
   mockUseImportProviderStatement.mockReturnValue(importStatement)
   mockUseManualMatchWorkflow.mockReturnValue(manualMatch)
   mockUseRunPaymentReconciliation.mockReturnValue(mutationMock())
@@ -551,6 +722,108 @@ describe("PaymentTrustBanner", () => {
   })
 })
 
+describe("PaymentReconciliationWorkbench run detail proof summary", () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
+  it("renders the selected run blocker and proof subject summary from the read detail", () => {
+    setupWorkbench(workbenchData(), dashboardWithRuns(), runDetail())
+
+    expect(mockUseReconciliationRunDetail).toHaveBeenCalledWith("run-1")
+    expect(screen.getByText("Selected run proof")).toBeInTheDocument()
+    expect(screen.getByText("1 match(es), 1 unresolved exception(s), 1 unresolved suspense item(s), 8 proof subject(s)")).toBeInTheDocument()
+    expect(screen.getByText("OPEN_EXCEPTIONS / 1")).toBeInTheDocument()
+    expect(screen.getByText("EXACT_PROVIDER_REFERENCE")).toBeInTheDocument()
+    expect(screen.getAllByText("AMOUNT_MISMATCH")).toHaveLength(2)
+    expect(screen.getByText("POSTED_TO_SUSPENSE")).toBeInTheDocument()
+  })
+
+  it("opens proof from a selected run matched evidence subject", async () => {
+    mockGetProofTrailAction.mockResolvedValue({ success: true, data: proofTrail(), error: null, status: 200 })
+
+    setupWorkbench(workbenchData(), dashboardWithRuns(), runDetail())
+
+    const matchedEvidence = screen.getByText("Matched evidence").parentElement
+    if (!matchedEvidence) throw new Error("Matched evidence section not found")
+
+    fireEvent.click(within(matchedEvidence).getByRole("button", { name: "Open proof" }))
+
+    await waitFor(() => {
+      expect(mockGetProofTrailAction).toHaveBeenCalledWith({
+        subjectType: "payment.transaction",
+        subjectId: "payment-1",
+      })
+    })
+    expect(await screen.findByText("Payment transaction pt-1")).toBeInTheDocument()
+  })
+
+  it("opens provider event proof from a selected run provider-only exception", async () => {
+    mockGetProofTrailAction.mockResolvedValue({
+      success: true,
+      data: proofTrail({
+        subjectType: "provider.event",
+        subjectId: "provider-event-1",
+        nodes: [
+          {
+            id: "provider-event",
+            nodeType: "provider.event",
+            nodeId: "provider-event-1",
+            label: "Provider event callback",
+            moduleSlug: "payments",
+            evidenceGrade: "reconciled",
+            sourceTable: "provider_events",
+            available: true,
+            redacted: false,
+          },
+        ],
+      }),
+      error: null,
+      status: 200,
+    })
+
+    setupWorkbench(
+      workbenchData(),
+      dashboardWithRuns(),
+      runDetail({
+        exceptions: [
+          {
+            id: "exception-provider-event",
+            type: "MISSING_INTERNAL_PAYMENT",
+            severity: "HIGH",
+            status: "OPEN",
+            sourceType: "PROVIDER_EVENT",
+            sourceId: "provider-event-1",
+            paymentTransactionId: null,
+            providerEventId: "provider-event-1",
+            statementLineId: null,
+            suspenseItemId: null,
+            unresolved: true,
+            evidenceSubjects: [
+              { type: "PAYMENT_EXCEPTION", id: "exception-provider-event" },
+              { type: "PROVIDER_EVENT", id: "provider-event-1" },
+            ],
+          },
+        ],
+        suspenseItems: [],
+      }),
+    )
+
+    const exceptionEvidence = screen.getByText("Unresolved exceptions").parentElement
+    if (!exceptionEvidence) throw new Error("Unresolved exceptions section not found")
+
+    fireEvent.click(within(exceptionEvidence).getByRole("button", { name: "Open proof" }))
+
+    await waitFor(() => {
+      expect(mockGetProofTrailAction).toHaveBeenCalledWith({
+        subjectType: "provider.event",
+        subjectId: "provider-event-1",
+      })
+    })
+    expect(await screen.findByText("Provider event callback")).toBeInTheDocument()
+  })
+})
+
 describe("PaymentReconciliationWorkbench proof launcher", () => {
   beforeEach(() => {
     jest.clearAllMocks()
@@ -604,7 +877,7 @@ describe("PaymentReconciliationWorkbench proof launcher", () => {
 
     const button = within(rowForPayment("PAY-2")).getByRole("button", { name: "Open proof" })
     expect(button).toBeDisabled()
-    expect(button).toHaveAttribute("title", "No payment transaction proof is linked to this row.")
+    expect(button).toHaveAttribute("title", "No supported proof trail is linked to this row.")
     expect(mockGetProofTrailAction).not.toHaveBeenCalled()
   })
 

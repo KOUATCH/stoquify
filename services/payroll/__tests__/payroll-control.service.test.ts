@@ -3,6 +3,8 @@ import {
   AccountingSourceType,
   JournalType,
   LedgerPostingBatchStatus,
+  PayrollDeclarationStatus,
+  PayrollPaymentBatchStatus,
   PayrollAttendanceSnapshotStatus,
   PayrollEmployeeStatus,
   PayrollPeriodStatus,
@@ -73,6 +75,7 @@ import {
   approveAndPostPayrollRun,
   calculatePayrollRun,
   createPayrollPeriod,
+  getPayrollRunWorkbenchData,
   freezeAttendanceSnapshot,
   preparePayrollDeclarations,
 } from "../payroll-control.service";
@@ -748,6 +751,12 @@ const payrollYearToDateMetadata = {
   yearToDateAccumulatorHashes: ["sha256:ytd-accumulator"],
 };
 
+const payrollDeductionRecoveryMetadata = {
+  deductionRecoveryProofHash: "sha256:deduction-recovery-run-proof",
+  deductionRecoveryProofHashes: ["sha256:deduction-recovery-line-proof"],
+  deductionRecoveryAmount: "5000.00",
+};
+
 const payrollStatutoryScenarioCoverageMetadata = {
   status: "READY",
   countryCode: "CM",
@@ -1073,6 +1082,68 @@ function mappedPayrollAccounts() {
   }));
 }
 
+function mockRecoveryPolicyCalculationTx(
+  tx: ReturnType<typeof buildTx>,
+  options: {
+    amount?: string;
+    baseSalary?: string;
+    metadata?: Record<string, unknown>;
+  },
+) {
+  tx.organization.findFirst.mockResolvedValue({
+    country: "CM",
+    accountingSettings: {
+      countryPack: null,
+      taxRegime: null,
+      roundingMode: "HALF_UP",
+      roundingScale: 2,
+      payrollCnpsFamilyAllowanceSector: "GENERAL",
+      payrollCnpsOccupationalRiskGroup: "A",
+    },
+  });
+  tx.payrollRun.findFirst.mockResolvedValue(null);
+  tx.payrollPeriod.findFirst.mockResolvedValue(payrollPeriod);
+  tx.payrollRun.count.mockResolvedValue(0);
+  tx.payrollEmployee.findMany.mockResolvedValue(hrisReadyEmployees([
+    {
+      id: "employee-1",
+      displayName: "Ada Payroll",
+      paymentDestinationHash: "dest-hash",
+      contracts: [
+        {
+          id: "contract-1",
+          baseSalary: new Prisma.Decimal(options.baseSalary ?? "100000.00"),
+          currency: "XAF",
+        },
+      ],
+      attendanceSnapshots: [calculationAttendance()],
+      rubriqueAssignments: [
+        {
+          id: "assign-recovery-policy",
+          amount: new Prisma.Decimal(options.amount ?? "5000.00"),
+          rateBps: null,
+          quantity: null,
+          currency: "XAF",
+          approvalBusinessEventId: "approval-recovery-policy",
+          evidenceDocumentHash: "recovery-policy-proof-hash",
+          metadata: options.metadata,
+          rubrique: {
+            id: "rubrique-recovery-policy",
+            code: "RECOVERY",
+            label: "Recovery deduction",
+            payslipLabel: "Recovery deduction",
+            kind: "DEDUCTION",
+            valueType: "FIXED_AMOUNT",
+            status: "ACTIVE",
+            taxableBase: false,
+            socialBase: false,
+            employerCharge: false,
+          },
+        },
+      ],
+    },
+  ]));
+}
 describe("payroll control service", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -2577,6 +2648,16 @@ describe("payroll control service", () => {
               currency: "XAF",
               approvalBusinessEventId: "approval-loan",
               evidenceDocumentHash: "loan-proof-hash",
+            metadata: {
+              recoveryPolicyRequired: true,
+              recoveryPolicyType: "LOAN",
+              recoveryCaseId: "loan-case-1",
+              outstandingBalanceAmount: "25000.00",
+              outstandingBalanceProofHash: "sha256:loan-balance-proof",
+              recoveryCapAmount: "5000.00",
+              recoveryCapProofHash: "sha256:loan-cap-proof",
+              netPayFloorAmount: "20000.00",
+            },
               rubrique: {
                 id: "rubrique-loan",
                 code: "LOAN",
@@ -2663,6 +2744,11 @@ describe("payroll control service", () => {
                   payrollRubriqueSocialBaseAmount: "10000.00",
                   payrollRubriqueEmployeeDeductionAmount: "5000.00",
                   payrollRubriqueEmployerChargeAmount: "5375.00",
+                  deductionRecoveryAmount: "5000.00",
+                  deductionRecoveryProofHash: expect.stringMatching(/^sha256:/),
+                  deductionRecoveryProofHashes: expect.arrayContaining([
+                    expect.stringMatching(/^sha256:/),
+                  ]),
                   grossAmount: "117500.00",
                   taxableBaseAmount: "117500.00",
                   socialBaseAmount: "117500.00",
@@ -2683,6 +2769,25 @@ describe("payroll control service", () => {
                       code: "LOAN",
                       amount: "5000.00",
                       employeeDeductionAmount: "5000.00",
+                      evidenceDocumentHash: "loan-proof-hash",
+                      evidenceDocumentHashPresent: true,
+                      approvalBusinessEventId: "approval-loan",
+                      deductionRecoveryProofHash:
+                        expect.stringMatching(/^sha256:/),
+                      deductionRecoveryPolicy: expect.objectContaining({
+                        kind:
+                          "AQSTOQFLOW_PAYROLL_DEDUCTION_RECOVERY_POLICY_PROOF",
+                        recoveryType: "LOAN",
+                        recoveryCaseId: "loan-case-1",
+                        outstandingBalanceAmount: "25000.00",
+                        outstandingBalanceProofHash:
+                          "sha256:loan-balance-proof",
+                        recoveryCapAmount: "5000.00",
+                        recoveryCapProofHash: "sha256:loan-cap-proof",
+                        netPayFloorAmount: "20000.00",
+                        recoveryPolicyProofHash:
+                          expect.stringMatching(/^sha256:/),
+                      }),
                     }),
                     expect.objectContaining({
                       code: "HEALTH",
@@ -2992,6 +3097,240 @@ describe("payroll control service", () => {
         runDate: "2026-06-30",
       }),
     ).rejects.toThrow("HRIS_PAYROLL_COMPENSATION_APPROVAL_PROOF_MISSING");
+
+    expect(tx.payrollRun.create).not.toHaveBeenCalled();
+    expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled();
+  });
+
+  it("blocks deduction/recovery rubriques without evidence proof", async () => {
+    const tx = buildTx();
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
+    tx.organization.findFirst.mockResolvedValue({
+      country: "CM",
+      accountingSettings: {
+        countryPack: null,
+        taxRegime: null,
+        roundingMode: "HALF_UP",
+        roundingScale: 2,
+        payrollCnpsFamilyAllowanceSector: "GENERAL",
+        payrollCnpsOccupationalRiskGroup: "A",
+      },
+    });
+    tx.payrollRun.findFirst.mockResolvedValue(null);
+    tx.payrollPeriod.findFirst.mockResolvedValue(payrollPeriod);
+    tx.payrollRun.count.mockResolvedValue(0);
+    tx.payrollEmployee.findMany.mockResolvedValue(hrisReadyEmployees([
+      {
+        id: "employee-1",
+        displayName: "Ada Payroll",
+        paymentDestinationHash: "dest-hash",
+        contracts: [
+          {
+            id: "contract-1",
+            baseSalary: new Prisma.Decimal("100000.00"),
+            currency: "XAF",
+          },
+        ],
+        attendanceSnapshots: [calculationAttendance()],
+        rubriqueAssignments: [
+          {
+            id: "assign-loan-missing-evidence",
+            amount: new Prisma.Decimal("10000.00"),
+            rateBps: null,
+            quantity: null,
+            currency: "XAF",
+            approvalBusinessEventId: "approval-loan",
+            evidenceDocumentHash: null,
+            rubrique: {
+              id: "rubrique-loan",
+              code: "LOAN",
+              label: "Loan deduction",
+              payslipLabel: "Loan repayment",
+              kind: "DEDUCTION",
+              valueType: "FIXED_AMOUNT",
+              status: "ACTIVE",
+              taxableBase: false,
+              socialBase: false,
+              employerCharge: false,
+            },
+          },
+        ],
+      },
+    ]));
+
+    await expect(
+      calculatePayrollRun({
+        organizationId: "org-1",
+        payrollPeriodId: "period-1",
+        preparedById: "preparer-1",
+        idempotencyKey: "calc-key-deduction-missing-evidence",
+        runDate: "2026-06-30",
+      }),
+    ).rejects.toThrow(
+      "HRIS_PAYROLL_COMPENSATION_APPROVAL_PROOF_MISSING",
+    );
+
+    expect(tx.payrollRun.create).not.toHaveBeenCalled();
+    expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled();
+  });
+
+  it("blocks recovery policy deductions without outstanding balance proof", async () => {
+    const tx = buildTx();
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
+    mockRecoveryPolicyCalculationTx(tx, {
+      metadata: {
+        recoveryPolicyRequired: true,
+        recoveryCaseId: "advance-case-1",
+        outstandingBalanceAmount: "25000.00",
+        recoveryCapAmount: "5000.00",
+        recoveryCapProofHash: "sha256:advance-cap-proof",
+      },
+    });
+
+    await expect(
+      calculatePayrollRun({
+        organizationId: "org-1",
+        payrollPeriodId: "period-1",
+        preparedById: "preparer-1",
+        idempotencyKey: "calc-key-recovery-missing-balance-proof",
+        runDate: "2026-06-30",
+      }),
+    ).rejects.toThrow(
+      "Payroll deduction/recovery rubrique RECOVERY requires outstanding balance proof hash when recovery policy metadata is present.",
+    );
+
+    expect(tx.payrollRun.create).not.toHaveBeenCalled();
+    expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled();
+  });
+
+  it("blocks recovery policy deductions above the approved cap", async () => {
+    const tx = buildTx();
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
+    mockRecoveryPolicyCalculationTx(tx, {
+      metadata: {
+        recoveryPolicyRequired: true,
+        recoveryCaseId: "advance-case-1",
+        outstandingBalanceAmount: "25000.00",
+        outstandingBalanceProofHash: "sha256:advance-balance-proof",
+        recoveryCapAmount: "4000.00",
+        recoveryCapProofHash: "sha256:advance-cap-proof",
+      },
+    });
+
+    await expect(
+      calculatePayrollRun({
+        organizationId: "org-1",
+        payrollPeriodId: "period-1",
+        preparedById: "preparer-1",
+        idempotencyKey: "calc-key-recovery-cap-breach",
+        runDate: "2026-06-30",
+      }),
+    ).rejects.toThrow(
+      "Payroll deduction/recovery rubrique RECOVERY recovery amount exceeds approved recovery cap.",
+    );
+
+    expect(tx.payrollRun.create).not.toHaveBeenCalled();
+    expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled();
+  });
+
+  it("blocks recovery policy deductions that breach the approved net-pay floor", async () => {
+    const tx = buildTx();
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
+    mockRecoveryPolicyCalculationTx(tx, {
+      metadata: {
+        recoveryPolicyRequired: true,
+        recoveryCaseId: "loan-floor-case-1",
+        outstandingBalanceAmount: "25000.00",
+        outstandingBalanceProofHash: "sha256:loan-floor-balance-proof",
+        recoveryCapAmount: "5000.00",
+        recoveryCapProofHash: "sha256:loan-floor-cap-proof",
+        netPayFloorAmount: "95000.00",
+      },
+    });
+
+    await expect(
+      calculatePayrollRun({
+        organizationId: "org-1",
+        payrollPeriodId: "period-1",
+        preparedById: "preparer-1",
+        idempotencyKey: "calc-key-recovery-floor-breach",
+        runDate: "2026-06-30",
+      }),
+    ).rejects.toThrow(
+      "Employee Ada Payroll net payable falls below the approved recovery floor.",
+    );
+
+    expect(tx.payrollRun.create).not.toHaveBeenCalled();
+    expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled();
+  });
+
+  it("blocks ordinary payroll runs that would create negative net payable", async () => {
+    const tx = buildTx();
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
+    tx.organization.findFirst.mockResolvedValue({
+      country: "CM",
+      accountingSettings: {
+        countryPack: null,
+        taxRegime: null,
+        roundingMode: "HALF_UP",
+        roundingScale: 2,
+        payrollCnpsFamilyAllowanceSector: "GENERAL",
+        payrollCnpsOccupationalRiskGroup: "A",
+      },
+    });
+    tx.payrollRun.findFirst.mockResolvedValue(null);
+    tx.payrollPeriod.findFirst.mockResolvedValue(payrollPeriod);
+    tx.payrollRun.count.mockResolvedValue(0);
+    tx.payrollEmployee.findMany.mockResolvedValue(hrisReadyEmployees([
+      {
+        id: "employee-1",
+        displayName: "Ada Payroll",
+        paymentDestinationHash: "dest-hash",
+        contracts: [
+          {
+            id: "contract-1",
+            baseSalary: new Prisma.Decimal("100000.00"),
+            currency: "XAF",
+          },
+        ],
+        attendanceSnapshots: [calculationAttendance()],
+        rubriqueAssignments: [
+          {
+            id: "assign-recovery-over-net",
+            amount: new Prisma.Decimal("120000.00"),
+            rateBps: null,
+            quantity: null,
+            currency: "XAF",
+            approvalBusinessEventId: "approval-recovery",
+            evidenceDocumentHash: "recovery-proof-hash",
+            rubrique: {
+              id: "rubrique-recovery",
+              code: "RECOVERY",
+              label: "Recovery deduction",
+              payslipLabel: "Recovery deduction",
+              kind: "DEDUCTION",
+              valueType: "FIXED_AMOUNT",
+              status: "ACTIVE",
+              taxableBase: false,
+              socialBase: false,
+              employerCharge: false,
+            },
+          },
+        ],
+      },
+    ]));
+
+    await expect(
+      calculatePayrollRun({
+        organizationId: "org-1",
+        payrollPeriodId: "period-1",
+        preparedById: "preparer-1",
+        idempotencyKey: "calc-key-negative-net-recovery",
+        runDate: "2026-06-30",
+      }),
+    ).rejects.toThrow(
+      "Employee Ada Payroll has negative net payable; ordinary payroll runs require approved recovery caps or the correction employee balance workflow.",
+    );
 
     expect(tx.payrollRun.create).not.toHaveBeenCalled();
     expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled();
@@ -3316,7 +3655,18 @@ describe("payroll control service", () => {
   it("approves, posts, emits payslips, and queues payroll outbox messages in one orchestration", async () => {
     const tx = buildTx();
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
-    tx.payrollRun.findFirst.mockResolvedValue(payrollRunFixture());
+    tx.payrollRun.findFirst.mockResolvedValue(
+      payrollRunFixture(PayrollRunStatus.CALCULATED, {
+        countryPackStatus: { legalProvenance: cnpsLegalProvenance },
+        roundingPolicy: payrollRoundingPolicy,
+        roundingPolicyHash: payrollRoundingPolicy.roundingPolicyHash,
+        statutoryScenarioCoverage: payrollStatutoryScenarioCoverageMetadata,
+        statutoryScenarioCoverageHash:
+          payrollStatutoryScenarioCoverageMetadata.coverageHash,
+        ...payrollYearToDateMetadata,
+        ...payrollDeductionRecoveryMetadata,
+      }),
+    );
     tx.journal.findFirst.mockResolvedValue({
       id: "journal-payroll",
       code: "PAY",
@@ -3377,10 +3727,24 @@ describe("payroll control service", () => {
           blockedStatutoryComponentCount: 1,
           payrollComponentMappingHash: expect.stringMatching(/^sha256:/),
           payrollComponentMappingStatus: "BLOCKED_REQUIRES_EXPERT_REVIEW",
+          deductionRecoveryProofHash: "sha256:deduction-recovery-run-proof",
+          deductionRecoveryProofHashes: expect.arrayContaining(["sha256:deduction-recovery-line-proof"]),
+          deductionRecoveryAmount: "5000.00",
+          deductionRecoveryLedgerMappingHash: expect.stringMatching(/^sha256:/),
+          deductionRecoveryLedgerMappingStatus: "MATCHED",
+          deductionRecoveryLedgerMappingKeys: ["PAYROLL_WITHHOLDING_PAYABLE"],
+          deductionRecoveryClearingRole: "EMPLOYEE_DEDUCTION_RECOVERY_CLEARING",
           payrollComponentMapping: expect.objectContaining({
             taxableBaseAmount: "100000.00",
             incomeTaxWithholdingAmount: "0.00",
             declarationLiabilityAmount: "17150.00",
+            deductionRecoveryAmount: "5000.00",
+            deductionRecoveryProofHash: expect.stringMatching(/^sha256:/),
+            deductionRecoveryProofHashes: expect.arrayContaining(["sha256:deduction-recovery-line-proof"]),
+            deductionRecoveryLedgerMappingHash: expect.stringMatching(/^sha256:/),
+            deductionRecoveryLedgerMappingStatus: "MATCHED",
+            deductionRecoveryLedgerMappingKeys: ["PAYROLL_WITHHOLDING_PAYABLE"],
+            deductionRecoveryClearingRole: "EMPLOYEE_DEDUCTION_RECOVERY_CLEARING",
             incomeTaxWithholdingEnabled: false,
           }),
         }),
@@ -3421,6 +3785,15 @@ describe("payroll control service", () => {
                     "taxableBaseAmount",
                   ]),
                   incomeTaxWithholdingAmount: "0.00",
+                  deductionRecoveryAmount: "5000.00",
+                  deductionRecoveryLedgerMappingHash:
+                    expect.stringMatching(/^sha256:/),
+                  deductionRecoveryLedgerMappingStatus: "MATCHED",
+                  deductionRecoveryLedgerMappingKeys: [
+                    "PAYROLL_WITHHOLDING_PAYABLE",
+                  ],
+                  deductionRecoveryClearingRole:
+                    "EMPLOYEE_DEDUCTION_RECOVERY_CLEARING",
                   incomeTaxWithholdingEnabled: false,
                 }),
               }),
@@ -3480,6 +3853,13 @@ describe("payroll control service", () => {
             taxableBaseAmount: "100000.00",
             incomeTaxWithholdingAmount: "0.00",
             declarationLiabilityAmount: "17150.00",
+            deductionRecoveryAmount: "5000.00",
+            deductionRecoveryProofHash: expect.stringMatching(/^sha256:/),
+            deductionRecoveryProofHashes: expect.arrayContaining(["sha256:deduction-recovery-line-proof"]),
+            deductionRecoveryLedgerMappingHash: expect.stringMatching(/^sha256:/),
+            deductionRecoveryLedgerMappingStatus: "MATCHED",
+            deductionRecoveryLedgerMappingKeys: ["PAYROLL_WITHHOLDING_PAYABLE"],
+            deductionRecoveryClearingRole: "EMPLOYEE_DEDUCTION_RECOVERY_CLEARING",
             incomeTaxWithholdingEnabled: false,
           }),
         }),
@@ -3689,7 +4069,20 @@ describe("payroll control service", () => {
     const tx = buildTx();
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx));
     tx.payrollRun.findFirst.mockResolvedValue({
-      ...payrollRunFixture(PayrollRunStatus.POSTED),
+      ...payrollRunFixture(PayrollRunStatus.POSTED, {
+        hrisPayrollReadinessHash: "sha256:hris-payroll-readiness",
+        payrollInputReadinessHash: "sha256:payroll-input-readiness",
+        payrollEngineInputHashes: ["sha256:payroll-engine-input-employee-1"],
+        payrollEngineInputSnapshotHash: "sha256:payroll-engine-input-snapshot",
+        countryPackStatus: { legalProvenance: cnpsLegalProvenance },
+        roundingPolicy: payrollRoundingPolicy,
+        roundingPolicyHash: payrollRoundingPolicy.roundingPolicyHash,
+        statutoryScenarioCoverage: payrollStatutoryScenarioCoverageMetadata,
+        statutoryScenarioCoverageHash:
+          payrollStatutoryScenarioCoverageMetadata.coverageHash,
+        ...payrollYearToDateMetadata,
+        ...payrollDeductionRecoveryMetadata,
+      }),
       declarations: [],
     });
     tx.payrollDeclaration.findFirst.mockResolvedValue(null);
@@ -3733,6 +4126,9 @@ describe("payroll control service", () => {
             }),
             yearToDatePolicyHash: "sha256:ytd-policy",
             yearToDateAccumulatorHashes: ["sha256:ytd-accumulator"],
+            deductionRecoveryProofHash: "sha256:deduction-recovery-run-proof",
+            deductionRecoveryProofHashes: expect.arrayContaining(["sha256:deduction-recovery-line-proof"]),
+            deductionRecoveryAmount: "5000.00",
             hrisPayrollReadinessHash: "sha256:hris-payroll-readiness",
             payrollInputReadinessHash: "sha256:payroll-input-readiness",
             payrollEngineInputHashes: [
@@ -3763,6 +4159,9 @@ describe("payroll control service", () => {
               payrollComponentMappingStatus: "BLOCKED_REQUIRES_EXPERT_REVIEW",
               yearToDatePolicyHash: "sha256:ytd-policy",
               yearToDateAccumulatorHashes: ["sha256:ytd-accumulator"],
+              deductionRecoveryProofHash: "sha256:deduction-recovery-run-proof",
+              deductionRecoveryProofHashes: expect.arrayContaining(["sha256:deduction-recovery-line-proof"]),
+              deductionRecoveryAmount: "5000.00",
               hrisPayrollReadinessHash: "sha256:hris-payroll-readiness",
               payrollInputReadinessHash: "sha256:payroll-input-readiness",
               payrollEngineInputHashes: [
@@ -3789,6 +4188,9 @@ describe("payroll control service", () => {
           incomeTaxWithholdingEnabled: false,
           yearToDatePolicyHash: "sha256:ytd-policy",
           yearToDateAccumulatorHashes: ["sha256:ytd-accumulator"],
+          deductionRecoveryProofHash: "sha256:deduction-recovery-run-proof",
+          deductionRecoveryProofHashes: expect.arrayContaining(["sha256:deduction-recovery-line-proof"]),
+          deductionRecoveryAmount: "5000.00",
           hrisPayrollReadinessHash: "sha256:hris-payroll-readiness",
           payrollInputReadinessHash: "sha256:payroll-input-readiness",
           payrollEngineInputHashes: ["sha256:payroll-engine-input-employee-1"],
@@ -4137,6 +4539,165 @@ describe("payroll control service", () => {
     expect(mockedGetActivePostingRule).not.toHaveBeenCalled();
     expect(tx.journalEntry.create).not.toHaveBeenCalled();
     expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled();
+  });
+
+  it("blocks locked correction close readiness when YTD accumulator proof is missing", async () => {
+    const baseCorrectionRun = payrollCorrectionRunFixture();
+    const baseMetadata = baseCorrectionRun.metadata as Record<string, unknown>;
+    const lockedCorrectionRun = {
+      ...baseCorrectionRun,
+      status: PayrollRunStatus.POSTED,
+      version: 2,
+      evidenceHash: "sha256:correction-run-evidence",
+      ledgerPostingBatchId: "batch-correction-1",
+      journalEntryId: "journal-entry-correction-1",
+      accountingSourceLinkId: "source-link-correction-1",
+      postedBusinessEventId: "event-correction-1",
+      reviewedById: "reviewer-1",
+      approvedById: "approver-1",
+      emittedById: "emitter-1",
+      postedById: "approver-1",
+      approvedAt: new Date("2026-07-31T00:00:00.000Z"),
+      emittedAt: new Date("2026-07-31T00:05:00.000Z"),
+      postedAt: new Date("2026-07-31T00:10:00.000Z"),
+      payrollPeriod: {
+        ...baseCorrectionRun.payrollPeriod,
+        accountingPeriodId: null,
+      },
+      originalRun: {
+        id: "original-run-1",
+        runNumber: "PAY-20260531-0001",
+        status: PayrollRunStatus.POSTED,
+        documentHash: "sha256:original-run",
+        evidenceHash: "sha256:original-evidence",
+        calculationHash: "sha256:original-calc",
+      },
+      metadata: {
+        ...baseMetadata,
+        yearToDateAccumulatorHashes: [],
+      },
+      _count: {
+        lines: 1,
+        payslips: 1,
+        declarations: 1,
+        paymentBatches: 1,
+        employeeBalanceCases: 0,
+        correctiveRuns: 0,
+      },
+      declarations: [
+        {
+          id: "declaration-correction-1",
+          authority: "CNPS",
+          declarationType: "SOCIAL_CONTRIBUTION",
+          status: PayrollDeclarationStatus.PREPARED,
+          amount: new Prisma.Decimal("-1715.00"),
+          currency: "XAF",
+          dueDate: new Date("2026-08-15T00:00:00.000Z"),
+          payloadHash: "sha256:declaration-payload",
+          evidenceItems: [
+            {
+              evidenceHash: "sha256:declaration-evidence",
+              sourceRegisterHash: "sha256:correction-run",
+              automationCapabilityStatus: "MANUAL_EVIDENCE_ONLY",
+              productionSubmissionSupported: false,
+            },
+          ],
+        },
+      ],
+      paymentBatches: [
+        {
+          id: "payment-correction-1",
+          batchNumber: "PAYB-20260731-0001",
+          status: PayrollPaymentBatchStatus.SETTLED,
+          method: "BANK_TRANSFER",
+          amount: new Prisma.Decimal("-9580.00"),
+          currency: "XAF",
+          paymentDate: new Date("2026-07-31T00:00:00.000Z"),
+          ledgerPostingBatchId: "payment-ledger-batch-1",
+          postedBusinessEventId: "payment-event-1",
+          evidenceHash: "sha256:payment-evidence",
+          paymentTransactionId: "payment-transaction-1",
+          paymentExceptionId: null,
+          reconciliationStatus: "MATCHED",
+          metadata: {
+            latestSettlementSourceRegisterHash: "sha256:correction-run",
+          },
+        },
+      ],
+      payslips: [
+        {
+          id: "payslip-correction-1",
+          payslipNumber: "PS-20260731-0001",
+          employeeId: "employee-1",
+          status: "EMITTED",
+          netPayableAmount: new Prisma.Decimal("-9580.00"),
+          currency: "XAF",
+          employee: {
+            employeeNumber: "EMP-001",
+            displayName: "Ada Payroll",
+            paymentDestinationHash: "sha256:payment-destination",
+          },
+        },
+      ],
+      employeeBalanceCases: [],
+    };
+    const client = {
+      payrollRun: {
+        findMany: jest.fn().mockResolvedValue([lockedCorrectionRun]),
+        count: jest.fn().mockResolvedValue(1),
+        aggregate: jest.fn().mockResolvedValue({
+          _sum: { netPayableAmount: new Prisma.Decimal("-9580.00") },
+        }),
+      },
+      ledgerPostingBatch: {
+        findMany: jest.fn().mockResolvedValue([
+          {
+            id: "batch-correction-1",
+            sourceId: "correction-run-1",
+            postingPurpose: AccountingPostingPurpose.PAYROLL_RUN,
+            status: LedgerPostingBatchStatus.POSTED,
+            errorMessage: null,
+            postedAt: new Date("2026-07-31T00:10:00.000Z"),
+            createdAt: new Date("2026-07-31T00:09:00.000Z"),
+          },
+        ]),
+      },
+      user: { findMany: jest.fn().mockResolvedValue([]) },
+      auditLog: { create: jest.fn().mockResolvedValue({ id: "audit-1" }) },
+    } as any;
+
+    const result = await getPayrollRunWorkbenchData(
+      {
+        organizationId: "org-1",
+        actorId: "payroll-controller-1",
+        actorPermissions: ["payroll.runs.read", "payroll.amounts.read"],
+        now: "2026-07-31T00:20:00.000Z",
+      },
+      client,
+    );
+
+    const blockerIds = result.runs[0].blockers.map((blocker) => blocker.id);
+    const correctionProofBlocker = result.runs[0].blockers.find(
+      (blocker) => blocker.id === "PAYROLL_CORRECTION_CLOSE_PROOF_BUNDLE_MISSING",
+    );
+
+    expect(blockerIds).toContain(
+      "PAYROLL_CORRECTION_CLOSE_PROOF_BUNDLE_MISSING",
+    );
+    expect(correctionProofBlocker?.detail).toContain(
+      "yearToDateAccumulatorHashes",
+    );
+    expect(blockerIds).not.toContain("PAYROLL_RUN_ACCOUNTING_PROOF_MISSING");
+    expect(blockerIds).not.toContain("PAYROLL_RUN_DECLARATIONS_MISSING");
+    expect(blockerIds).not.toContain("PAYROLL_RUN_PAYMENT_PROOF_MISSING");
+    expect(client.auditLog.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          action: "PAYROLL_RUN_WORKBENCH_READ",
+          organizationId: "org-1",
+        }),
+      }),
+    );
   });
 
   it("does not emit payroll events or payslips when journal creation fails", async () => {

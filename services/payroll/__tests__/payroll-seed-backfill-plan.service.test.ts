@@ -3,24 +3,25 @@ import {
   ChartAccountType,
   PayrollContractStatus,
   PayrollEmployeeStatus,
-} from "@prisma/client"
+} from "@prisma/client";
 
 jest.mock("../../../prisma/db", () => ({
   db: {},
-}))
+}));
 
 jest.mock("../../regulatory/country-packs/resolve", () => ({
   resolveRegulatoryParameter: jest.fn(),
-}))
+}));
 
-import { DEFAULT_PAYROLL_POSTING_RULES } from "../../accounting/default-posting-rules"
-import { resolveRegulatoryParameter } from "../../regulatory/country-packs/resolve"
+import { DEFAULT_PAYROLL_POSTING_RULES } from "../../accounting/default-posting-rules";
+import { resolveRegulatoryParameter } from "../../regulatory/country-packs/resolve";
 import {
   formatPayrollSeedBackfillDryRunReport,
   generatePayrollSeedBackfillDryRunPlan,
-} from "../payroll-seed-backfill-plan.service"
+} from "../payroll-seed-backfill-plan.service";
 
-const mockedResolveRegulatoryParameter = resolveRegulatoryParameter as jest.Mock
+const mockedResolveRegulatoryParameter =
+  resolveRegulatoryParameter as jest.Mock;
 
 function supportedCountryPack(path: string) {
   return {
@@ -38,7 +39,7 @@ function supportedCountryPack(path: string) {
     layer: "country",
     capabilityStatus: "SUPPORTED",
     resolutionHash: `hash-${path}`,
-  }
+  };
 }
 
 function account(
@@ -54,7 +55,7 @@ function account(
     type,
     normalBalance,
     _count: { children: 0 },
-  }
+  };
 }
 
 function payrollMappingAccounts() {
@@ -88,7 +89,7 @@ function payrollMappingAccounts() {
     account("CASH_ON_HAND"),
     account("MOBILE_MONEY_CLEARING"),
     account("CHEQUE_CLEARING"),
-  ]
+  ];
 }
 
 function payrollPostingRules() {
@@ -109,7 +110,7 @@ function payrollPostingRules() {
       accountId: null,
       account: null,
     })),
-  }))
+  }));
 }
 
 function buildClient() {
@@ -202,19 +203,19 @@ function buildClient() {
     payrollPaymentBatch: {
       count: jest.fn().mockResolvedValue(0),
     },
-  }
+  };
 }
 
 describe("payroll seed/backfill dry-run plan service", () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    jest.clearAllMocks();
     mockedResolveRegulatoryParameter.mockImplementation((path: string) =>
       supportedCountryPack(path),
-    )
-  })
+    );
+  });
 
   it("refuses mutation mode before any database read is attempted", async () => {
-    const client = buildClient()
+    const client = buildClient();
 
     await expect(
       generatePayrollSeedBackfillDryRunPlan(
@@ -230,17 +231,17 @@ describe("payroll seed/backfill dry-run plan service", () => {
         },
         client as any,
       ),
-    ).rejects.toThrow("mutation mode is intentionally unavailable")
+    ).rejects.toThrow("mutation mode is intentionally unavailable");
 
-    expect(client.organization.findFirst).not.toHaveBeenCalled()
-    expect(client.payrollPeriod.findFirst).not.toHaveBeenCalled()
-    expect(client.payrollRun.count).not.toHaveBeenCalled()
-    expect(client.payrollDeclarationEvidence.count).not.toHaveBeenCalled()
-    expect(client.payrollPaymentBatch.count).not.toHaveBeenCalled()
-  })
+    expect(client.organization.findFirst).not.toHaveBeenCalled();
+    expect(client.payrollPeriod.findFirst).not.toHaveBeenCalled();
+    expect(client.payrollRun.count).not.toHaveBeenCalled();
+    expect(client.payrollDeclarationEvidence.count).not.toHaveBeenCalled();
+    expect(client.payrollPaymentBatch.count).not.toHaveBeenCalled();
+  });
 
   it("produces a redacted dry-run report with idempotent planned writes and no person/payment details", async () => {
-    const client = buildClient()
+    const client = buildClient();
 
     const plan = await generatePayrollSeedBackfillDryRunPlan(
       {
@@ -254,10 +255,10 @@ describe("payroll seed/backfill dry-run plan service", () => {
         employeeSourceMode: "users",
       },
       client as any,
-    )
-    const report = formatPayrollSeedBackfillDryRunReport(plan)
+    );
+    const report = formatPayrollSeedBackfillDryRunReport(plan);
 
-    expect(plan.mutationModeAvailable).toBe(false)
+    expect(plan.mutationModeAvailable).toBe(false);
     expect(plan.proofBackfill).toMatchObject({
       dryRunOnly: true,
       mutationModeAvailable: false,
@@ -272,8 +273,10 @@ describe("payroll seed/backfill dry-run plan service", () => {
         paymentBatchMissingProviderAdapterProof: 0,
         paymentBatchMissingSettlementRegisterProof: 0,
         paymentBatchMissingSettlementLifecycleProof: 0,
+        paymentBatchMissingProviderReceiptProof: 0,
+        paymentBatchMissingSettlementReplayProof: 0,
       },
-    })
+    });
     expect(plan.plannedWrites).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -292,29 +295,31 @@ describe("payroll seed/backfill dry-run plan service", () => {
           count: 0,
         }),
       ]),
-    )
-    expect(report).toContain("Mutation mode available: no")
-    expect(report).toContain("Historical Proof Backfill Dry Run")
-    expect(report).toContain("Total blocking proof gaps: 0")
-    expect(report).toContain("PayrollEmployee")
-    expect(report).not.toContain("org-1")
-    expect(report).not.toContain("payroll-admin-1")
-    expect(report).not.toContain("one@example.test")
-    expect(report).not.toContain("One User")
-    expect(report).not.toContain("sha256:payment-destination")
-  })
+    );
+    expect(report).toContain("Mutation mode available: no");
+    expect(report).toContain("Historical Proof Backfill Dry Run");
+    expect(report).toContain("Total blocking proof gaps: 0");
+    expect(report).toContain("PayrollEmployee");
+    expect(report).not.toContain("org-1");
+    expect(report).not.toContain("payroll-admin-1");
+    expect(report).not.toContain("one@example.test");
+    expect(report).not.toContain("One User");
+    expect(report).not.toContain("sha256:payment-destination");
+  });
 
   it("blocks production certification when historical proof-contract gaps need backfill", async () => {
-    const client = buildClient()
-    client.payrollRun.count.mockResolvedValueOnce(7)
+    const client = buildClient();
+    client.payrollRun.count.mockResolvedValueOnce(7);
     client.payrollDeclarationEvidence.count
       .mockResolvedValueOnce(1)
       .mockResolvedValueOnce(2)
-      .mockResolvedValueOnce(3)
+      .mockResolvedValueOnce(3);
     client.payrollPaymentBatch.count
       .mockResolvedValueOnce(4)
       .mockResolvedValueOnce(5)
       .mockResolvedValueOnce(6)
+      .mockResolvedValueOnce(7)
+      .mockResolvedValueOnce(8);
 
     const plan = await generatePayrollSeedBackfillDryRunPlan(
       {
@@ -328,25 +333,27 @@ describe("payroll seed/backfill dry-run plan service", () => {
         employeeSourceMode: "users",
       },
       client as any,
-    )
-    const report = formatPayrollSeedBackfillDryRunReport(plan)
+    );
+    const report = formatPayrollSeedBackfillDryRunReport(plan);
 
-    expect(plan.status).toBe("BLOCKED")
-    expect(plan.proofBackfill.status).toBe("BLOCKED")
-    expect(plan.proofBackfill.totalBlockingGaps).toBe(28)
+    expect(plan.status).toBe("BLOCKED");
+    expect(plan.proofBackfill.status).toBe("BLOCKED");
+    expect(plan.proofBackfill.totalBlockingGaps).toBe(43);
     expect(plan.blockers).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
           code: "PAYROLL_PROOF_BACKFILL_REQUIRED",
           evidence: expect.objectContaining({
-            totalBlockingGaps: 28,
+            totalBlockingGaps: 43,
             payrollRunStatutoryCoverageGaps: 7,
             declarationLifecycleProofGaps: 3,
             paymentSettlementLifecycleProofGaps: 6,
+            paymentProviderReceiptProofGaps: 7,
+            paymentSettlementReplayProofGaps: 8,
           }),
         }),
       ]),
-    )
+    );
     expect(plan.plannedWrites).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -364,13 +371,23 @@ describe("payroll seed/backfill dry-run plan service", () => {
           operation: "blocked",
           count: 6,
         }),
+        expect.objectContaining({
+          target: "PayrollPaymentProviderReceiptProofBackfill",
+          operation: "blocked",
+          count: 7,
+        }),
+        expect.objectContaining({
+          target: "PayrollPaymentSettlementReplayProofBackfill",
+          operation: "blocked",
+          count: 8,
+        }),
       ]),
-    )
-    expect(client.payrollRun.count).toHaveBeenCalledTimes(1)
-    expect(client.payrollDeclarationEvidence.count).toHaveBeenCalledTimes(3)
-    expect(client.payrollPaymentBatch.count).toHaveBeenCalledTimes(3)
+    );
+    expect(client.payrollRun.count).toHaveBeenCalledTimes(1);
+    expect(client.payrollDeclarationEvidence.count).toHaveBeenCalledTimes(3);
+    expect(client.payrollPaymentBatch.count).toHaveBeenCalledTimes(5);
     const declarationRegisterProofGapQuery =
-      client.payrollDeclarationEvidence.count.mock.calls[0][0]
+      client.payrollDeclarationEvidence.count.mock.calls[0][0];
     expect(declarationRegisterProofGapQuery).toEqual(
       expect.objectContaining({
         where: expect.objectContaining({
@@ -388,9 +405,9 @@ describe("payroll seed/backfill dry-run plan service", () => {
           }),
         }),
       }),
-    )
+    );
     const declarationAuthorityAdapterProofGapQuery =
-      client.payrollDeclarationEvidence.count.mock.calls[1][0]
+      client.payrollDeclarationEvidence.count.mock.calls[1][0];
     expect(declarationAuthorityAdapterProofGapQuery).toEqual(
       expect.objectContaining({
         where: expect.objectContaining({
@@ -411,9 +428,9 @@ describe("payroll seed/backfill dry-run plan service", () => {
           }),
         }),
       }),
-    )
+    );
     const declarationAuthorityLifecycleProofGapQuery =
-      client.payrollDeclarationEvidence.count.mock.calls[2][0]
+      client.payrollDeclarationEvidence.count.mock.calls[2][0];
     expect(declarationAuthorityLifecycleProofGapQuery).toEqual(
       expect.objectContaining({
         where: expect.objectContaining({
@@ -434,9 +451,9 @@ describe("payroll seed/backfill dry-run plan service", () => {
           }),
         }),
       }),
-    )
+    );
     const paymentProviderProofGapQuery =
-      client.payrollPaymentBatch.count.mock.calls[0][0]
+      client.payrollPaymentBatch.count.mock.calls[0][0];
     expect(paymentProviderProofGapQuery).toEqual(
       expect.objectContaining({
         where: expect.objectContaining({
@@ -449,50 +466,76 @@ describe("payroll seed/backfill dry-run plan service", () => {
           }),
         }),
       }),
-    )
+    );
     const paymentSettlementRegisterProofGapQuery =
-      client.payrollPaymentBatch.count.mock.calls[1][0]
+      client.payrollPaymentBatch.count.mock.calls[1][0];
     expect(paymentSettlementRegisterProofGapQuery).toEqual(
       expect.objectContaining({
         where: expect.objectContaining({
           organizationId: "org-1",
           NOT: expect.objectContaining({
             metadata: expect.objectContaining({
-              path: [
-                "proofBackfill",
-                "coversPaymentSettlementRegisterProof",
-              ],
+              path: ["proofBackfill", "coversPaymentSettlementRegisterProof"],
               equals: true,
             }),
           }),
         }),
       }),
-    )
+    );
     const paymentSettlementLifecycleProofGapQuery =
-      client.payrollPaymentBatch.count.mock.calls[2][0]
+      client.payrollPaymentBatch.count.mock.calls[2][0];
     expect(paymentSettlementLifecycleProofGapQuery).toEqual(
       expect.objectContaining({
         where: expect.objectContaining({
           organizationId: "org-1",
           NOT: expect.objectContaining({
             metadata: expect.objectContaining({
-              path: [
-                "proofBackfill",
-                "coversPaymentSettlementLifecycleProof",
-              ],
+              path: ["proofBackfill", "coversPaymentSettlementLifecycleProof"],
               equals: true,
             }),
           }),
         }),
       }),
-    )
-    expect(report).toContain("PAYROLL_PROOF_BACKFILL_REQUIRED")
-    expect(report).toContain("Post-Migration Reconciliation")
-    expect(report).toContain("payrollRunMissingStatutoryScenarioCoverage | 7")
-    expect(report).toContain("paymentBatchMissingSettlementLifecycleProof | 6")
-    expect(report).not.toContain("org-1")
-    expect(report).not.toContain("payroll-admin-1")
-    expect(report).not.toContain("one@example.test")
-    expect(report).not.toContain("sha256:payment-destination")
-  })
-})
+    );
+    const paymentProviderReceiptProofGapQuery =
+      client.payrollPaymentBatch.count.mock.calls[3][0];
+    expect(paymentProviderReceiptProofGapQuery).toEqual(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          organizationId: "org-1",
+          NOT: expect.objectContaining({
+            metadata: expect.objectContaining({
+              path: ["proofBackfill", "coversPaymentProviderReceiptProof"],
+              equals: true,
+            }),
+          }),
+        }),
+      }),
+    );
+    const paymentSettlementReplayProofGapQuery =
+      client.payrollPaymentBatch.count.mock.calls[4][0];
+    expect(paymentSettlementReplayProofGapQuery).toEqual(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          organizationId: "org-1",
+          NOT: expect.objectContaining({
+            metadata: expect.objectContaining({
+              path: ["proofBackfill", "coversPaymentSettlementReplayProof"],
+              equals: true,
+            }),
+          }),
+        }),
+      }),
+    );
+    expect(report).toContain("PAYROLL_PROOF_BACKFILL_REQUIRED");
+    expect(report).toContain("Post-Migration Reconciliation");
+    expect(report).toContain("payrollRunMissingStatutoryScenarioCoverage | 7");
+    expect(report).toContain("paymentBatchMissingSettlementLifecycleProof | 6");
+    expect(report).toContain("paymentBatchMissingProviderReceiptProof | 7");
+    expect(report).toContain("paymentBatchMissingSettlementReplayProof | 8");
+    expect(report).not.toContain("org-1");
+    expect(report).not.toContain("payroll-admin-1");
+    expect(report).not.toContain("one@example.test");
+    expect(report).not.toContain("sha256:payment-destination");
+  });
+});

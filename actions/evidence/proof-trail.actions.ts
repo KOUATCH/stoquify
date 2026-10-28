@@ -104,6 +104,23 @@ const getPaymentTransactionProofTrail = protect<unknown, ProofTrailResult>(
   },
 )
 
+
+const getProviderEventProofTrail = protect<unknown, ProofTrailResult>(
+  {
+    permission: SUBJECT_PERMISSION_MAP["provider.event"],
+    auditResource: "EvidenceProofTrail",
+    auditAllowed: true,
+  },
+  async (input, ctx) => {
+    const parsed = subjectOnlyInputSchema.parse(asRecord(input))
+    return getProofTrail({
+      organizationId: ctx.orgId,
+      subjectType: "provider.event",
+      subjectId: parsed.subjectId,
+      actorId: ctx.userId,
+    })
+  },
+)
 export async function getProofTrailAction(input: unknown) {
   const parsed = proofTrailInputSchema.parse(asRecord(input))
   const subjectType = requireSubjectType(parsed.subjectType)
@@ -117,6 +134,8 @@ export async function getProofTrailAction(input: unknown) {
       return getCloseRunProofTrail({ subjectId: parsed.subjectId })
     case "payment.transaction":
       return getPaymentTransactionProofTrail({ subjectId: parsed.subjectId })
+    case "provider.event":
+      return getProviderEventProofTrail({ subjectId: parsed.subjectId })
   }
 }
 
@@ -133,4 +152,7 @@ export async function getCloseRunProofTrailAction(input: unknown) {
 }
 export async function getPaymentTransactionProofTrailAction(input: unknown) {
   return getPaymentTransactionProofTrail(input)
+}
+export async function getProviderEventProofTrailAction(input: unknown) {
+  return getProviderEventProofTrail(input)
 }

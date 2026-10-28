@@ -63,6 +63,22 @@ describe("proof trail actions", () => {
       actorId: "user-session",
     })
   })
+
+  it("dispatches provider event proof through tenant-scoped RBAC context", async () => {
+    const result = await getProofTrailAction({
+      organizationId: "attacker-org",
+      subjectType: "provider.event",
+      subjectId: "provider-event-1",
+    })
+
+    expect(result.success).toBe(true)
+    expect(mockGetProofTrail).toHaveBeenCalledWith({
+      organizationId: "org-session",
+      subjectType: "provider.event",
+      subjectId: "provider-event-1",
+      actorId: "user-session",
+    })
+  })
   it("registers subject-specific permissions on protected wrappers", () => {
     const store = globalThis as typeof globalThis & { __evidenceProtectOptions?: Array<Record<string, unknown>> }
     expect(store.__evidenceProtectOptions).toEqual(

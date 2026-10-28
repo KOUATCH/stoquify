@@ -158,6 +158,24 @@ function buildTx() {
   };
 }
 
+function prefixedHash(value: unknown) {
+  return `sha256:${hashBusinessPayload(value)}`;
+}
+
+const PAYROLL_STATUTORY_SCENARIO_COVERAGE_HASH =
+  "sha256:statutory-scenario-coverage";
+const PAYROLL_COUNTRY_PACK_PROVENANCE = {
+  countryCode: "CM",
+  packVersion: "CM-2026.1",
+  schemaVersion: "country-pack.v1",
+  capabilityStatus: "SUPPORTED",
+  resolutionHash: "sha256:country-pack",
+  statutoryScenarioCoverageHash: PAYROLL_STATUTORY_SCENARIO_COVERAGE_HASH,
+  statutoryScenarioCoverageStatus: "READY",
+  roundingPolicyHash: "sha256:rounding-policy",
+  yearToDatePolicyHash: "sha256:ytd-policy",
+};
+
 const PAYROLL_STATUTORY_SCENARIO_COVERAGE_METADATA = {
   status: "READY",
   countryCode: "CM",
@@ -189,6 +207,8 @@ const PAYROLL_PAYMENT_RUN_PROOF_METADATA = {
   componentRegisterProofStatus: "MATCHED",
   payrollComponentMappingHash: "sha256:component-mapping",
   payrollComponentMappingStatus: "BLOCKED_REQUIRES_EXPERT_REVIEW",
+  compositeRegisterProofHash: "sha256:composite-register-proof",
+  compositeRegisterProofStatus: "MATCHED",
 };
 
 const PAYROLL_RUN_PROOF_METADATA = {
@@ -200,18 +220,33 @@ const PAYROLL_RUN_PROOF_METADATA = {
   yearToDatePolicyHash: PAYROLL_YEAR_TO_DATE_POLICY_HASH,
 };
 
+const POSTED_PAYROLL_RUN_METADATA = {
+  ...PAYROLL_RUN_PROOF_METADATA,
+};
+
 const CERTIFIED_PAYMENT_ADAPTER_REQUEST_METADATA = {
   requestedPaymentAdapterStatus: "SUPPORTED_CERTIFIED",
   paymentProviderAdapterKey: "BANK_TRANSFER_PROVIDER_API",
   providerCredentialProofHash: "sha256:provider-credential-proof",
+  providerCredentialRotationProofHash: "sha256:provider-credential-rotation",
+  providerCredentialScopeProofHash: "sha256:provider-credential-scope",
   providerPayloadMappingHash: "sha256:provider-payload-mapping",
   providerResponseMappingHash: "sha256:provider-response-mapping",
+  providerReversalMappingHash: "sha256:provider-reversal-mapping",
   providerAdapterRequestHash: "sha256:provider-request",
   providerAdapterResponseHash: "sha256:provider-response",
   providerSettlementReceiptHash: "sha256:provider-settlement-receipt",
   providerCertificationHarnessHash: "sha256:provider-harness",
   providerIdempotencyKey: "provider-idempotency-key-1",
   providerAttempt: 2,
+  providerReplayFixtureHash: "sha256:provider-replay",
+  providerDuplicateResponseFixtureHash: "sha256:provider-duplicate-response",
+  providerOutageRunbookHash: "sha256:provider-outage-runbook",
+  providerRetryPolicyFixtureHash: "sha256:provider-retry-policy",
+  providerDeadLetterTriageRunbookHash: "sha256:provider-dead-letter-runbook",
+  providerAuditTrailFixtureHash: "sha256:provider-audit-trail",
+  providerRedactionFixtureHash: "sha256:provider-redaction-fixture",
+  providerCloseImpactRuleHash: "sha256:provider-close-impact",
   adapterChaosReleaseGateHash: "sha256:adapter-chaos-gate",
 };
 
@@ -220,14 +255,25 @@ const PAYMENT_ADAPTER_PROOF_METADATA = {
   paymentProviderAdapterKey: "BANK_TRANSFER_PROVIDER_API",
   paymentDisbursementFileHash: "sha256:bank-file",
   providerCredentialProofHash: "sha256:provider-credential-proof",
+  providerCredentialRotationProofHash: "sha256:provider-credential-rotation",
+  providerCredentialScopeProofHash: "sha256:provider-credential-scope",
   providerPayloadMappingHash: "sha256:provider-payload-mapping",
   providerResponseMappingHash: "sha256:provider-response-mapping",
+  providerReversalMappingHash: "sha256:provider-reversal-mapping",
   providerAdapterRequestHash: "sha256:provider-request",
   providerAdapterResponseHash: "sha256:provider-response",
   providerSettlementReceiptHash: "sha256:provider-settlement-receipt",
   providerCertificationHarnessHash: "sha256:provider-harness",
   providerIdempotencyKey: "provider-idempotency-key-1",
   providerAttempt: 2,
+  providerReplayFixtureHash: "sha256:provider-replay",
+  providerDuplicateResponseFixtureHash: "sha256:provider-duplicate-response",
+  providerOutageRunbookHash: "sha256:provider-outage-runbook",
+  providerRetryPolicyFixtureHash: "sha256:provider-retry-policy",
+  providerDeadLetterTriageRunbookHash: "sha256:provider-dead-letter-runbook",
+  providerAuditTrailFixtureHash: "sha256:provider-audit-trail",
+  providerRedactionFixtureHash: "sha256:provider-redaction-fixture",
+  providerCloseImpactRuleHash: "sha256:provider-close-impact",
   adapterChaosReleaseGateHash: "sha256:adapter-chaos-gate",
   providerSettlementProofRequired: true,
   productionPaymentAutomationSupported: true,
@@ -262,7 +308,7 @@ function countryPackProvenanceFixture() {
 
 function postedPayrollRun(
   paymentDestinationHash = "employee-destination-hash",
-  metadata: Record<string, unknown> | null = PAYROLL_RUN_PROOF_METADATA,
+  metadata: Record<string, unknown> | null = POSTED_PAYROLL_RUN_METADATA,
 ) {
   return {
     id: "run-1",
@@ -331,6 +377,8 @@ function postedPayrollRun(
           incomeTaxCalculationStatus: "BLOCKED_REQUIRES_EXPERT_REVIEW",
           incomeTaxApplied: false,
           currency: "XAF",
+          countryPackProvenance: PAYROLL_COUNTRY_PACK_PROVENANCE,
+          countryPackProvenanceHash: prefixedHash(PAYROLL_COUNTRY_PACK_PROVENANCE),
         },
       },
     ],
@@ -377,7 +425,7 @@ function postedNegativeCorrectionPayrollRun() {
     netPayableAmount: new Prisma.Decimal("-9580.00"),
     documentHash: "sha256:correction-run",
     metadata: {
-      ...PAYROLL_RUN_PROOF_METADATA,
+      ...POSTED_PAYROLL_RUN_METADATA,
       correction: {
         originalRunId: "original-run-1",
         originalRunNumber: "PAY-20260531-0001",
@@ -1092,6 +1140,8 @@ describe("payroll completion service", () => {
         componentRegisterProofStatus: "MATCHED",
         payrollComponentMappingHash: "sha256:component-mapping",
         payrollComponentMappingStatus: "BLOCKED_REQUIRES_EXPERT_REVIEW",
+        compositeRegisterProofHash: "sha256:composite-register-proof",
+        compositeRegisterProofStatus: "MATCHED",
         }),
       ),
     );

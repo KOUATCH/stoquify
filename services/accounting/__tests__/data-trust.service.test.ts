@@ -266,6 +266,45 @@ describe("accountant data trust service", () => {
     expect(result.certificate.verdict).toBe("CERTIFIED");
     expect(result.exportReadiness.canExportCertifiedPack).toBe(true);
     expect(result.summary.sourceLinkCoveragePct).toBe(100);
+    expect(result.payrollAuditProofPack).toEqual(
+      expect.objectContaining({
+        kind: "AQSTOQFLOW_PAYROLL_AUDITOR_PROOF_PACK_READ_MODEL",
+        organizationScoped: true,
+        redaction: expect.objectContaining({
+          mode: "HASHES_AND_AGGREGATES_ONLY",
+        }),
+        certification: expect.objectContaining({
+          trustLevel: "T4",
+          verdict: "CERTIFIED",
+          exportable: true,
+          blockerCount: 0,
+        }),
+        sourceTables: expect.arrayContaining([
+          "payroll_runs",
+          "payroll_run_lines",
+          "payroll_payment_batches",
+          "payroll_declaration_evidence",
+          "accounting_source_links",
+        ]),
+        proofGates: expect.arrayContaining([
+          expect.objectContaining({
+            gate: "payroll.accounting.component-proof",
+            status: "PASS",
+            blockerCount: 0,
+          }),
+          expect.objectContaining({
+            gate: "payroll.payment.proof",
+            status: "PASS",
+            blockerCount: 0,
+          }),
+          expect.objectContaining({
+            gate: "payroll.declarations.proof",
+            status: "PASS",
+            blockerCount: 0,
+          }),
+        ]),
+      }),
+    );
     expect(result.figures.activityDebit).toMatchObject({
       available: true,
       amount: "120000.00",
@@ -476,6 +515,18 @@ describe("accountant data trust service", () => {
     expect(result.contentHash).toMatch(/^sha256:/);
     expect(result.content).toContain("AQSTOQFLOW_ACCOUNTANT_TRUST_PACK");
     expect(JSON.parse(result.content).payableBalances).toMatchObject({ version: 1, organizationId: "org-1", evidenceHash: "payable-hash" });
+    const payload = JSON.parse(result.content);
+    expect(payload.payrollAuditProofPack).toEqual(
+      expect.objectContaining({
+        kind: "AQSTOQFLOW_PAYROLL_AUDITOR_PROOF_PACK_READ_MODEL",
+        redaction: expect.objectContaining({
+          mode: "HASHES_AND_AGGREGATES_ONLY",
+        }),
+      }),
+    );
+    expect(result.content).not.toContain("employeeNumber");
+    expect(result.content).not.toContain("bankAccount");
+    expect(result.content).not.toContain("mobileMoney");
     expect(mockDb.auditLog.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
@@ -559,10 +610,13 @@ describe("accountant data trust service", () => {
       .mockReset()
       .mockResolvedValueOnce(1)
       .mockResolvedValueOnce(1)
+      .mockResolvedValueOnce(1)
       .mockResolvedValueOnce(0)
       .mockResolvedValueOnce(0);
     mockDb.payrollPaymentBatch.count
       .mockReset()
+      .mockResolvedValueOnce(0)
+      .mockResolvedValueOnce(0)
       .mockResolvedValueOnce(0)
       .mockResolvedValueOnce(0)
       .mockResolvedValueOnce(0)
@@ -600,6 +654,11 @@ describe("accountant data trust service", () => {
           id: "payroll-posted-runs-component-proof-missing",
           severity: "critical",
           gate: "payroll.accounting.component-proof",
+        }),
+        expect.objectContaining({
+          id: "payroll-posted-runs-composite-proof-missing",
+          severity: "critical",
+          gate: "payroll.accounting.composite-proof",
         }),
         expect.objectContaining({
           id: "payroll-ledger-source-link-missing",
@@ -663,6 +722,86 @@ describe("accountant data trust service", () => {
       ]),
     );
   });
+  it("blocks certified trust packs when deduction recovery ledger mapping proof is missing", async () => {
+    seedCleanTrustData();
+    mockDb.payrollRunLine.findMany
+      .mockReset()
+      .mockResolvedValueOnce([
+        {
+          payrollRunId: "run-1",
+          calculationSnapshot: {
+            deductionRecoveryAmount: "5000.00",
+            deductionRecoveryProofHash: "sha256:deduction-recovery-line-proof",
+          },
+          payrollRun: {
+            metadata: {
+              componentRegisterProofHash: "sha256:component-register-proof",
+              componentRegisterProofStatus: "MATCHED",
+              compositeRegisterProofHash: "sha256:composite-register-proof",
+              compositeRegisterProofStatus: "MATCHED",
+              deductionRecoveryAmount: "5000.00",
+              deductionRecoveryProofHash: "sha256:deduction-recovery-run-proof",
+            },
+          },
+        },
+      ])
+      .mockResolvedValueOnce([]);
+
+    const result = await getAccountantPortalData(
+      { organizationId: "org-1" },
+      db,
+      now,
+    );
+
+    expect(result.certificate.level).toBe("T0");
+    expect(result.exportReadiness.canExportCertifiedPack).toBe(false);
+    expect(result.blockers).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: "payroll-deduction-recovery-ledger-mapping-missing",
+          severity: "critical",
+          gate: "payroll.accounting.deduction-recovery-ledger-mapping",
+        }),
+      ]),
+    );
+    expect(result.moduleEvidence).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          module: "payroll",
+          status: "blocked",
+          facts: expect.arrayContaining([
+            { label: "Deduction/recovery ledger mapping gaps", value: 1 },
+          ]),
+        }),
+      ]),
+    );
+    expect(result.payrollAuditProofPack.certification).toEqual(
+      expect.objectContaining({
+        trustLevel: "T0",
+        exportable: false,
+        criticalBlockerCount: 1,
+      }),
+    );
+    expect(result.payrollAuditProofPack.proofGates).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          gate: "payroll.accounting.component-proof",
+          status: "BLOCKED",
+          blockerIds: expect.arrayContaining([
+            "payroll-deduction-recovery-ledger-mapping-missing",
+          ]),
+        }),
+      ]),
+    );
+    expect(result.payrollAuditProofPack.blockers).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: "payroll-deduction-recovery-ledger-mapping-missing",
+          gate: "payroll.accounting.deduction-recovery-ledger-mapping",
+        }),
+      ]),
+    );
+  });
 
   it("blocks certified trust packs when declaration country-pack register proof is missing", async () => {
     seedCleanTrustData();
@@ -670,6 +809,7 @@ describe("accountant data trust service", () => {
       .mockReset()
       .mockResolvedValueOnce(0)
       .mockResolvedValueOnce(1)
+      .mockResolvedValueOnce(0)
       .mockResolvedValueOnce(0)
       .mockResolvedValueOnce(0)
       .mockResolvedValueOnce(0);
@@ -721,10 +861,13 @@ describe("accountant data trust service", () => {
       .mockResolvedValueOnce(1)
       .mockResolvedValueOnce(1)
       .mockResolvedValueOnce(1)
+      .mockResolvedValueOnce(1)
+      .mockResolvedValueOnce(1)
       .mockResolvedValueOnce(0);
     mockDb.payrollRun.count
       .mockReset()
       .mockResolvedValueOnce(0)
+      .mockResolvedValueOnce(1)
       .mockResolvedValueOnce(1)
       .mockResolvedValueOnce(1)
       .mockResolvedValueOnce(1);
@@ -740,7 +883,7 @@ describe("accountant data trust service", () => {
     expect(result.certificate.level).toBe("T0");
     expect(result.exportReadiness.canExportCertifiedPack).toBe(false);
     expect(mockDb.payrollRun.count).toHaveBeenNthCalledWith(
-      3,
+      4,
       expect.objectContaining({
         where: expect.objectContaining({
           organizationId: "org-1",
@@ -764,7 +907,7 @@ describe("accountant data trust service", () => {
     );
     expect(result.certificate.evidence).toEqual(
       expect.arrayContaining([
-        "payroll register tie-out, payslip proof, payment settlement register/component/provider-adapter proof, declaration lifecycle register/country-pack/lifecycle-contract proof, and authority-adapter proof scan",
+        "payroll register tie-out, payslip proof, payment settlement register/component/composite/provider-adapter/provider-receipt proof, declaration lifecycle register/country-pack/composite/lifecycle-contract proof, and authority-adapter proof scan",
       ]),
     );
     expect(result.blockers).toEqual(
@@ -779,6 +922,10 @@ describe("accountant data trust service", () => {
         }),
         expect.objectContaining({
           id: "payroll-declaration-country-pack-register-proof-missing",
+          severity: "high",
+        }),
+        expect.objectContaining({
+          id: "payroll-declaration-composite-register-proof-missing",
           severity: "high",
         }),
         expect.objectContaining({
@@ -810,7 +957,15 @@ describe("accountant data trust service", () => {
           severity: "high",
         }),
         expect.objectContaining({
+          id: "payroll-payment-settlement-composite-proof-missing",
+          severity: "high",
+        }),
+        expect.objectContaining({
           id: "payroll-payment-provider-adapter-proof-missing",
+          severity: "high",
+        }),
+        expect.objectContaining({
+          id: "payroll-payment-provider-receipt-proof-missing",
           severity: "high",
         }),
         expect.objectContaining({
@@ -819,6 +974,10 @@ describe("accountant data trust service", () => {
         }),
         expect.objectContaining({
           id: "payroll-posted-runs-component-proof-missing",
+          severity: "critical",
+        }),
+        expect.objectContaining({
+          id: "payroll-posted-runs-composite-proof-missing",
           severity: "critical",
         }),
         expect.objectContaining({
@@ -849,15 +1008,19 @@ describe("accountant data trust service", () => {
             { label: "Declaration evidence gaps", value: 1 },
             { label: "Declaration register proof gaps", value: 1 },
             { label: "Declaration country-pack register proof gaps", value: 1 },
+            { label: "Declaration composite register proof gaps", value: 1 },
             { label: "Declaration adapter proof gaps", value: 1 },
             { label: "Declaration lifecycle proof gaps", value: 1 },
             { label: "Declaration amendments", value: 1 },
             { label: "Payment reconciliation evidence gaps", value: 1 },
             { label: "Payment register proof gaps", value: 1 },
             { label: "Payment component proof gaps", value: 1 },
+            { label: "Payment composite proof gaps", value: 1 },
             { label: "Payment adapter proof gaps", value: 1 },
+            { label: "Payment provider receipt proof gaps", value: 1 },
             { label: "Payment allocation gaps", value: 1 },
             { label: "Posted run component proof gaps", value: 1 },
+            { label: "Posted run composite proof gaps", value: 1 },
             { label: "Posted run certified input proof gaps", value: 1 },
             { label: "Run lines missing payslips", value: 2 },
             { label: "Payslips missing proof hashes", value: 1 },

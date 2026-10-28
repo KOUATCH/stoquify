@@ -38,6 +38,7 @@ export type PayrollCalculationFixtureReviewEvidence = {
   reviewedOn: string;
   legalRef: string;
   sourceEvidenceHash: string;
+  coveredReviewTopics: string[];
 } | null;
 
 export type PayrollCalculationFixtureRun = {
@@ -67,8 +68,12 @@ const COMPENSATION_ALLOWANCES_PARAMETER_PATH =
   "payroll.compensation.allowances";
 const COMPENSATION_BENEFITS_PARAMETER_PATH =
   "payroll.compensation.benefits";
+const COMPENSATION_DEDUCTIONS_PARAMETER_PATH =
+  "payroll.compensation.deductions";
 const ATTENDANCE_LEAVE_PARAMETER_PATH = "payroll.attendance.leave";
 const ATTENDANCE_OVERTIME_PARAMETER_PATH = "payroll.attendance.overtime";
+const COMPOSITE_REGISTER_TIE_OUT_PARAMETER_PATH =
+  "payroll.composite.registerTieOut";
 const SUPPORTED_PARAMETER_PATHS = new Set([
   IRPP_INCOME_TAX_PARAMETER_PATH,
   CNPS_PENSION_PARAMETER_PATH,
@@ -76,8 +81,10 @@ const SUPPORTED_PARAMETER_PATHS = new Set([
   CNPS_OCCUPATIONAL_RISK_PARAMETER_PATH,
   COMPENSATION_ALLOWANCES_PARAMETER_PATH,
   COMPENSATION_BENEFITS_PARAMETER_PATH,
+  COMPENSATION_DEDUCTIONS_PARAMETER_PATH,
   ATTENDANCE_LEAVE_PARAMETER_PATH,
   ATTENDANCE_OVERTIME_PARAMETER_PATH,
+  COMPOSITE_REGISTER_TIE_OUT_PARAMETER_PATH,
 ]);
 
 const SUPPORTED_OUTPUT_FIELDS = new Set([
@@ -138,9 +145,113 @@ const SUPPORTED_OUTPUT_FIELDS = new Set([
   "registerLeaveDeductionAmount",
   "registerOvertimeBaseAmount",
   "registerOvertimePremiumAmount",
+  "statutoryLiabilityAmount",
+  "registerStatutoryLiabilityAmount",
+  "recoveryPolicyApplied",
+  "recoveryCaseId",
+  "outstandingBalanceAmount",
+  "outstandingBalanceProofHash",
+  "recoveryCapAmount",
+  "recoveryCapProofHash",
+  "netPayFloorAmount",
+  "yearToDatePolicyHash",
+  "yearToDateAccumulatorHash",
+  "originalRunDocumentHash",
+  "originalRunEvidenceHash",
+  "originalCalculationHash",
+  "correctionBasisHash",
+  "correctionEvidenceHash",
+  "registerProofHash",
+  "payslipProofHash",
+  "ledgerPostingProofHash",
+  "declarationProofHash",
+  "paymentProofHash",
 ]);
 
+const PROOF_HASH_OUTPUT_FIELDS = [
+  "yearToDatePolicyHash",
+  "yearToDateAccumulatorHash",
+  "originalRunDocumentHash",
+  "originalRunEvidenceHash",
+  "originalCalculationHash",
+  "correctionBasisHash",
+  "correctionEvidenceHash",
+  "registerProofHash",
+  "payslipProofHash",
+  "ledgerPostingProofHash",
+  "declarationProofHash",
+  "paymentProofHash",
+] as const;
+
+const REQUIRED_COMPOSITE_INPUT_FIELDS = [
+  "baseGrossAmount",
+  "taxableAllowanceAmount",
+  "overtimePremiumAmount",
+  "leaveDeductionAmount",
+  "employeePensionContributionAmount",
+  "incomeTaxWithholdingAmount",
+  "employerPensionContributionAmount",
+  "familyAllowanceContributionAmount",
+  "occupationalRiskContributionAmount",
+  "benefitEmployerChargeAmount",
+] as const;
+
 const REQUIRED_COMPONENT_OUTPUT_REQUIREMENTS = [
+  {
+    parameterPath: COMPOSITE_REGISTER_TIE_OUT_PARAMETER_PATH,
+    purposeMatcher: "PAYROLL_COMPOSITE_REGISTER_TIE_OUT",
+    label: "composite statutory register tie-out",
+    fields: [
+      "grossAmount",
+      "taxableBaseAmount",
+      "socialBaseAmount",
+      "employeeDeductionAmount",
+      "employerChargeAmount",
+      "netPayableAmount",
+      "incomeTaxWithholdingAmount",
+      "employeePensionContributionAmount",
+      "employerPensionContributionAmount",
+      "familyAllowanceContributionAmount",
+      "occupationalRiskContributionAmount",
+      "registerGrossAmount",
+      "registerTaxableBaseAmount",
+      "registerSocialBaseAmount",
+      "registerEmployeeDeductionAmount",
+      "registerEmployerChargeAmount",
+      "registerNetPayableAmount",
+      "registerStatutoryLiabilityAmount",
+    ],
+  },
+  {
+    parameterPath: IRPP_INCOME_TAX_PARAMETER_PATH,
+    purposeMatcher: "PAYROLL_IRPP_YTD_REGULARIZATION",
+    label: "IRPP YTD regularization proof",
+    fields: [
+      "yearToDatePolicyHash",
+      "yearToDateAccumulatorHash",
+      "registerProofHash",
+      "payslipProofHash",
+    ],
+  },
+  {
+    parameterPath: IRPP_INCOME_TAX_PARAMETER_PATH,
+    purposeMatcher: "PAYROLL_IRPP_YTD_CORRECTION_REPLAY",
+    label: "IRPP YTD correction replay proof",
+    fields: [
+      "yearToDatePolicyHash",
+      "yearToDateAccumulatorHash",
+      "originalRunDocumentHash",
+      "originalRunEvidenceHash",
+      "originalCalculationHash",
+      "correctionBasisHash",
+      "correctionEvidenceHash",
+      "registerProofHash",
+      "payslipProofHash",
+      "ledgerPostingProofHash",
+      "declarationProofHash",
+      "paymentProofHash",
+    ],
+  },
   {
     parameterPath: COMPENSATION_ALLOWANCES_PARAMETER_PATH,
     purposeMatcher: "PAYROLL_ALLOWANCE_TAXABLE",
@@ -163,6 +274,25 @@ const REQUIRED_COMPONENT_OUTPUT_REQUIREMENTS = [
       "payslipLineAmount",
       "registerEmployerChargeAmount",
       "registerNetPayableAmount",
+    ],
+  },
+  {
+    parameterPath: COMPENSATION_DEDUCTIONS_PARAMETER_PATH,
+    purposeMatcher: "PAYROLL_DEDUCTION_RECOVERY",
+    label: "deduction or recovery",
+    fields: [
+      "componentAmount",
+      "employeeDeductionAmount",
+      "payslipLineAmount",
+      "registerEmployeeDeductionAmount",
+      "registerNetPayableAmount",
+      "recoveryPolicyApplied",
+      "recoveryCaseId",
+      "outstandingBalanceAmount",
+      "outstandingBalanceProofHash",
+      "recoveryCapAmount",
+      "recoveryCapProofHash",
+      "netPayFloorAmount",
     ],
   },
   {
@@ -274,6 +404,47 @@ function requiredDecimalInput(
   }
 
   return decimal;
+}
+
+function requiredStringInput(
+  fixture: GoldenFixture,
+  input: Record<string, unknown>,
+  key: string,
+  issues: PayrollCalculationFixtureIssue[],
+) {
+  const value = input[key];
+  if (typeof value === "string" && value.trim()) return value.trim();
+
+  issues.push(
+    issue(
+      fixture,
+      "SCENARIO_INPUT_INVALID",
+      `goldenFixtures.${fixture.id}.calculationScenario.input.${key}`,
+      `${key} is required for this payroll calculation scenario.`,
+    ),
+  );
+  return null;
+}
+
+function requiredProofHashInput(
+  fixture: GoldenFixture,
+  input: Record<string, unknown>,
+  key: string,
+  issues: PayrollCalculationFixtureIssue[],
+) {
+  const value = requiredStringInput(fixture, input, key, issues);
+  if (!value) return null;
+  if (value.startsWith("sha256:")) return value;
+
+  issues.push(
+    issue(
+      fixture,
+      "SCENARIO_INPUT_INVALID",
+      `goldenFixtures.${fixture.id}.calculationScenario.input.${key}`,
+      `${key} must be a sha256 proof hash.`,
+    ),
+  );
+  return null;
 }
 
 function requiredBps(
@@ -486,8 +657,10 @@ function requiresPayrollPeriodScope(parameterPath: string) {
   return (
     parameterPath === COMPENSATION_ALLOWANCES_PARAMETER_PATH ||
     parameterPath === COMPENSATION_BENEFITS_PARAMETER_PATH ||
+    parameterPath === COMPENSATION_DEDUCTIONS_PARAMETER_PATH ||
     parameterPath === ATTENDANCE_LEAVE_PARAMETER_PATH ||
-    parameterPath === ATTENDANCE_OVERTIME_PARAMETER_PATH
+    parameterPath === ATTENDANCE_OVERTIME_PARAMETER_PATH ||
+    parameterPath === COMPOSITE_REGISTER_TIE_OUT_PARAMETER_PATH
   );
 }
 
@@ -645,6 +818,25 @@ function actualTaxOutputFor(
     taxAmountAdjustmentAmount: result.trace.taxAmountAdjustmentAmount,
     currency: result.currency,
   };
+}
+
+function proofHashOutputFor(
+  fixture: GoldenFixture,
+  input: Record<string, unknown>,
+  issues: PayrollCalculationFixtureIssue[],
+) {
+  const expectedOutput = fixture.calculationScenario?.expectedOutput;
+  if (!expectedOutput || !isRecord(expectedOutput)) return {};
+
+  return PROOF_HASH_OUTPUT_FIELDS.reduce<Record<string, string>>(
+    (output, field) => {
+      if (expectedOutput[field] === undefined) return output;
+      const value = requiredProofHashInput(fixture, input, field, issues);
+      if (value) output[field] = value;
+      return output;
+    },
+    {},
+  );
 }
 
 function actualCnpsPensionOutputFor(
@@ -840,6 +1032,77 @@ function actualCompensationComponentOutputFor(
     typeof rule.componentCode === "string" && rule.componentCode.trim()
       ? rule.componentCode.trim().toUpperCase()
       : fixture.id;
+  const isDeductionRecoveryScenario =
+    fixture.parameterPath === COMPENSATION_DEDUCTIONS_PARAMETER_PATH &&
+    purposeMatches(fixture.purpose, "PAYROLL_DEDUCTION_RECOVERY") &&
+    payrollEffect === "DEDUCTION";
+  const recoveryCaseId = isDeductionRecoveryScenario
+    ? requiredStringInput(fixture, input, "recoveryCaseId", issues)
+    : null;
+  const outstandingBalanceAmount = isDeductionRecoveryScenario
+    ? requiredDecimalInput(fixture, input, "outstandingBalanceAmount", issues)
+    : null;
+  const outstandingBalanceProofHash = isDeductionRecoveryScenario
+    ? requiredProofHashInput(fixture, input, "outstandingBalanceProofHash", issues)
+    : null;
+  const recoveryCapAmount = isDeductionRecoveryScenario
+    ? requiredDecimalInput(fixture, input, "recoveryCapAmount", issues)
+    : null;
+  const recoveryCapProofHash = isDeductionRecoveryScenario
+    ? requiredProofHashInput(fixture, input, "recoveryCapProofHash", issues)
+    : null;
+  const netPayFloorAmount = isDeductionRecoveryScenario
+    ? requiredDecimalInput(fixture, input, "netPayFloorAmount", issues)
+    : null;
+
+  if (isDeductionRecoveryScenario) {
+    if (
+      !recoveryCaseId ||
+      !outstandingBalanceAmount ||
+      !outstandingBalanceProofHash ||
+      !recoveryCapAmount ||
+      !recoveryCapProofHash ||
+      !netPayFloorAmount
+    ) {
+      return null;
+    }
+
+    if (componentAmount.gt(outstandingBalanceAmount)) {
+      issues.push(
+        issue(
+          fixture,
+          "SCENARIO_INPUT_INVALID",
+          `goldenFixtures.${fixture.id}.calculationScenario.input.amount`,
+          "Deduction/recovery component amount cannot exceed outstanding balance proof.",
+        ),
+      );
+      return null;
+    }
+
+    if (componentAmount.gt(recoveryCapAmount)) {
+      issues.push(
+        issue(
+          fixture,
+          "SCENARIO_INPUT_INVALID",
+          `goldenFixtures.${fixture.id}.calculationScenario.input.amount`,
+          "Deduction/recovery component amount cannot exceed approved recovery cap.",
+        ),
+      );
+      return null;
+    }
+  }
+
+  const recoveryPolicyOutput: Record<string, string | boolean> = isDeductionRecoveryScenario
+    ? {
+        recoveryPolicyApplied: true,
+        recoveryCaseId: recoveryCaseId!,
+        outstandingBalanceAmount: decimalOutput(outstandingBalanceAmount!),
+        outstandingBalanceProofHash: outstandingBalanceProofHash!,
+        recoveryCapAmount: decimalOutput(recoveryCapAmount!),
+        recoveryCapProofHash: recoveryCapProofHash!,
+        netPayFloorAmount: decimalOutput(netPayFloorAmount!),
+      }
+    : {};
 
   return {
     status: "CALCULATED",
@@ -865,6 +1128,7 @@ function actualCompensationComponentOutputFor(
     registerEmployeeDeductionAmount: decimalOutput(employeeDeductionAmount),
     registerEmployerChargeAmount: decimalOutput(employerChargeAmount),
     registerNetPayableAmount: decimalOutput(netPayableAmount),
+    ...recoveryPolicyOutput,
     currency,
   };
 }
@@ -1011,6 +1275,96 @@ function actualOvertimeOutputFor(
     currency,
   };
 }
+function actualCompositeRegisterTieOutOutputFor(
+  fixture: GoldenFixture,
+  rule: Record<string, unknown>,
+  issues: PayrollCalculationFixtureIssue[],
+  currency: string,
+) {
+  const input = scenarioInput(fixture, issues);
+  if (!input) return null;
+
+  const mode = requiredRuleMode(
+    fixture,
+    rule,
+    ["COMPOSITE_REGISTER_TIE_OUT"],
+    issues,
+  );
+  if (!mode) return null;
+
+  const beforeIssueCount = issues.length;
+  const values = REQUIRED_COMPOSITE_INPUT_FIELDS.reduce<
+    Partial<Record<(typeof REQUIRED_COMPOSITE_INPUT_FIELDS)[number], Prisma.Decimal>>
+  >((acc, key) => {
+    const value = requiredDecimalInput(fixture, input, key, issues);
+    if (value) acc[key] = value;
+    return acc;
+  }, {});
+  if (issues.length > beforeIssueCount) return null;
+
+  const baseGrossAmount = values.baseGrossAmount!;
+  const taxableAllowanceAmount = values.taxableAllowanceAmount!;
+  const overtimePremiumAmount = values.overtimePremiumAmount!;
+  const leaveDeductionAmount = values.leaveDeductionAmount!;
+  const employeePensionContributionAmount = values.employeePensionContributionAmount!;
+  const incomeTaxWithholdingAmount = values.incomeTaxWithholdingAmount!;
+  const employerPensionContributionAmount = values.employerPensionContributionAmount!;
+  const familyAllowanceContributionAmount = values.familyAllowanceContributionAmount!;
+  const occupationalRiskContributionAmount = values.occupationalRiskContributionAmount!;
+  const benefitEmployerChargeAmount = values.benefitEmployerChargeAmount!;
+
+  const grossAmount = baseGrossAmount
+    .plus(taxableAllowanceAmount)
+    .plus(overtimePremiumAmount)
+    .minus(leaveDeductionAmount)
+    .toDecimalPlaces(2);
+  const taxableBaseAmount = grossAmount;
+  const socialBaseAmount = grossAmount;
+  const employeeDeductionAmount = employeePensionContributionAmount
+    .plus(incomeTaxWithholdingAmount)
+    .toDecimalPlaces(2);
+  const statutoryEmployerChargeAmount = employerPensionContributionAmount
+    .plus(familyAllowanceContributionAmount)
+    .plus(occupationalRiskContributionAmount)
+    .toDecimalPlaces(2);
+  const employerChargeAmount = statutoryEmployerChargeAmount
+    .plus(benefitEmployerChargeAmount)
+    .toDecimalPlaces(2);
+  const statutoryLiabilityAmount = employeeDeductionAmount
+    .plus(statutoryEmployerChargeAmount)
+    .toDecimalPlaces(2);
+  const netPayableAmount = grossAmount
+    .minus(employeeDeductionAmount)
+    .toDecimalPlaces(2);
+
+  return {
+    status: "CALCULATED",
+    applied: true,
+    calculationMode: mode,
+    grossAmount: decimalOutput(grossAmount),
+    taxableBaseAmount: decimalOutput(taxableBaseAmount),
+    socialBaseAmount: decimalOutput(socialBaseAmount),
+    employeePensionContributionAmount: decimalOutput(employeePensionContributionAmount),
+    incomeTaxWithholdingAmount: decimalOutput(incomeTaxWithholdingAmount),
+    employeeDeductionAmount: decimalOutput(employeeDeductionAmount),
+    employerPensionContributionAmount: decimalOutput(employerPensionContributionAmount),
+    familyAllowanceContributionAmount: decimalOutput(familyAllowanceContributionAmount),
+    occupationalRiskContributionAmount: decimalOutput(occupationalRiskContributionAmount),
+    employerChargeAmount: decimalOutput(employerChargeAmount),
+    statutoryLiabilityAmount: decimalOutput(statutoryLiabilityAmount),
+    netPayableAmount: decimalOutput(netPayableAmount),
+    registerGrossAmount: decimalOutput(grossAmount),
+    registerTaxableBaseAmount: decimalOutput(taxableBaseAmount),
+    registerSocialBaseAmount: decimalOutput(socialBaseAmount),
+    registerEmployeeDeductionAmount: decimalOutput(employeeDeductionAmount),
+    registerEmployerChargeAmount: decimalOutput(employerChargeAmount),
+    registerNetPayableAmount: decimalOutput(netPayableAmount),
+    registerLeaveDeductionAmount: decimalOutput(leaveDeductionAmount),
+    registerOvertimePremiumAmount: decimalOutput(overtimePremiumAmount),
+    registerStatutoryLiabilityAmount: decimalOutput(statutoryLiabilityAmount),
+    currency,
+  };
+}
 function compareOutputs(
   fixture: GoldenFixture,
   actualOutput: Record<string, string | boolean>,
@@ -1068,12 +1422,17 @@ function actualOutputFor(
   if (fixture.parameterPath === IRPP_INCOME_TAX_PARAMETER_PATH) {
     const evaluationInput = toTaxEvaluationInput(fixture, issues);
     if (!evaluationInput) return null;
+    const input = scenarioInput(fixture, issues);
+    if (!input) return null;
     const result = evaluatePayrollTaxRule(selectedValue as PayrollTaxRule, {
       ...evaluationInput,
       capabilityStatus,
       currency: evaluationInput.currency ?? pack.header.currencyCode,
     });
-    return actualTaxOutputFor(result);
+    return {
+      ...actualTaxOutputFor(result),
+      ...proofHashOutputFor(fixture, input, issues),
+    };
   }
 
   if (fixture.parameterPath === CNPS_PENSION_PARAMETER_PATH) {
@@ -1105,7 +1464,8 @@ function actualOutputFor(
 
   if (
     fixture.parameterPath === COMPENSATION_ALLOWANCES_PARAMETER_PATH ||
-    fixture.parameterPath === COMPENSATION_BENEFITS_PARAMETER_PATH
+    fixture.parameterPath === COMPENSATION_BENEFITS_PARAMETER_PATH ||
+    fixture.parameterPath === COMPENSATION_DEDUCTIONS_PARAMETER_PATH
   ) {
     return actualCompensationComponentOutputFor(
       fixture,
@@ -1133,7 +1493,27 @@ function actualOutputFor(
     );
   }
 
+  if (fixture.parameterPath === COMPOSITE_REGISTER_TIE_OUT_PARAMETER_PATH) {
+    return actualCompositeRegisterTieOutOutputFor(
+      fixture,
+      selectedValue,
+      issues,
+      pack.header.currencyCode,
+    );
+  }
+
   return null;
+}
+
+function stringArray(value: unknown) {
+  return Array.isArray(value)
+    ? value
+        .filter(
+          (item): item is string =>
+            typeof item === "string" && item.trim().length > 0,
+        )
+        .map((item) => item.trim())
+    : [];
 }
 
 function runFixture(
@@ -1151,6 +1531,7 @@ function runFixture(
         reviewedOn: String(evidence.reviewedOn ?? ""),
         legalRef: String(evidence.legalRef ?? ""),
         sourceEvidenceHash: String(evidence.sourceEvidenceHash ?? ""),
+        coveredReviewTopics: stringArray(evidence.coveredReviewTopics),
       }
     : null;
   const runBase = {

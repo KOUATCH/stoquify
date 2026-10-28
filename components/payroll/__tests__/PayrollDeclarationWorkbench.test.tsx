@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import {
   PayrollDeclarationEvidenceTransition,
   PayrollDeclarationStatus,
@@ -88,8 +88,75 @@ function workbenchData(): PayrollDeclarationWorkbenchResult {
       automationBlockedEvidenceCount: 1,
       productionSupportedEvidenceCount: 0,
       missingRegisterProofCount: 0,
+      missingCountryPackRegisterProofCount: 0,
+      missingCompositeRegisterProofCount: 0,
       amountInScope: "17150.00",
       coverageComplete: true,
+    },
+    accountingAuditProof: {
+      available: true,
+      status: "BLOCKED",
+      generatedAt: "2026-06-30T10:00:00.000Z",
+      scopeHash: "sha256:audit-scope",
+      periodId: "acct-period-1",
+      trustLevel: "T2",
+      verdict: "PARTIAL",
+      exportable: false,
+      blockerCount: 1,
+      criticalBlockerCount: 1,
+      highBlockerCount: 0,
+      proofGateCount: 2,
+      blockedProofGateCount: 1,
+      reviewProofGateCount: 0,
+      sourceLinkCount: 1,
+      sourceTableCount: 3,
+      redactionMode: "HASHES_AND_AGGREGATES_ONLY",
+      redactionExcluded: ["employee identifiers", "authority payloads"],
+      sourceTables: [
+        "payroll_declarations",
+        "payroll_declaration_evidence",
+        "accounting_source_links",
+      ],
+      aggregateEvidence: {
+        declarationRegisterProofGaps: 1,
+        declarationsMissingLedger: 0,
+      },
+      proofGates: [
+        {
+          gate: "payroll.declarations.proof",
+          status: "BLOCKED",
+          blockerCount: 1,
+          blockerIds: ["payroll-declaration-register-proof-missing"],
+          evidence: ["payroll declaration source register hash"],
+        },
+        {
+          gate: "payroll.accounting.source-link",
+          status: "PASS",
+          blockerCount: 0,
+          blockerIds: [],
+          evidence: ["accounting source link hashes"],
+        },
+      ],
+      blockers: [
+        {
+          id: "payroll-declaration-register-proof-missing",
+          severity: "critical",
+          gate: "payroll.declarations.proof",
+          title: "Declaration register proof missing",
+        },
+      ],
+      latestSourceLinks: [
+        {
+          sourceLinkHash: "sha256:source-link-proof",
+          sourceType: "PAYROLL_DECLARATION",
+          sourceNumber: "CNPS-REF-1",
+          sourceRefHash: "sha256:declaration-ref",
+          journalEntryNumber: "JE-2026-06",
+          postingBatchId: "ledger-1",
+          postingStatus: "POSTED",
+          createdAt: "2026-06-30T09:20:00.000Z",
+        },
+      ],
     },
     declarations: [
       {
@@ -125,6 +192,7 @@ function workbenchData(): PayrollDeclarationWorkbenchResult {
             id: "period-1",
             name: "June 2026",
             status: PayrollPeriodStatus.OPEN,
+            accountingPeriodId: "acct-period-1",
             periodStart: "2026-06-01T00:00:00.000Z",
             periodEnd: "2026-06-30T23:59:59.999Z",
             payDate: "2026-07-05T00:00:00.000Z",
@@ -133,6 +201,18 @@ function workbenchData(): PayrollDeclarationWorkbenchResult {
         proof: {
           payloadHash: "sha256:payload",
           countryPackResolutionHash: "sha256:country-pack",
+          countryPackRegisterProofHash: "sha256:country-pack-register-proof",
+          countryPackRegisterProofStatus: "MATCHED",
+          countryPackRegisterProofPresent: true,
+          compositeRegisterProofHash: "sha256:composite-register-proof",
+          compositeRegisterProofStatus: "MATCHED",
+          compositeRegisterProofPresent: true,
+          countryPackLineProofHashes: ["sha256:country-pack-line-proof"],
+          statutoryScenarioCoverageHash: "sha256:statutory-scenario-coverage",
+          countryPackReviewEvidenceSourceHashes: [
+            "sha256:cm-irpp-period-reviewed-review-evidence",
+          ],
+          countryPackLegalRefs: ["CM_DGI_CGI_2025"],
           latestEvidenceId: "evidence-1",
           latestEvidenceHash: "sha256:evidence",
           latestTransition: PayrollDeclarationEvidenceTransition.SUBMIT,
@@ -212,6 +292,12 @@ function workbenchData(): PayrollDeclarationWorkbenchResult {
       returned: 1,
       coverageComplete: true,
       sourceService: "services/payroll/declaration-lifecycle.service.ts",
+      accountingAuditProofAvailable: true,
+      accountingAuditProofGateCount: 2,
+      accountingAuditProofSourceLinkCount: 1,
+      accountingAuditProofPeriodId: "acct-period-1",
+      returnedAccountingPeriodIds: ["acct-period-1"],
+      accountingAuditProofCoverageComplete: true,
     },
   };
 }
@@ -256,6 +342,31 @@ describe("PayrollDeclarationWorkbench", () => {
         "/en/dashboard/payroll/payments",
       ]),
     );
+  });
+
+  it("renders route-level accounting auditor proof drawer", () => {
+    render(<PayrollDeclarationWorkbench data={workbenchData()} locale="en" />);
+
+    expect(screen.getByText("Auditor proof")).toBeInTheDocument();
+    expect(screen.getByText("acct-period-1")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Auditor proof drawer" }));
+
+    const dialog = screen.getByRole("dialog");
+    expect(
+      within(dialog).getByText("Payroll declaration auditor proof pack"),
+    ).toBeInTheDocument();
+    expect(within(dialog).getByText("sha256:audit-scope")).toBeInTheDocument();
+    expect(
+      within(dialog).getByText(/payroll\.declarations\.proof:BLOCKED/),
+    ).toBeInTheDocument();
+    expect(
+      within(dialog).getByText("sha256:source-link-proof"),
+    ).toBeInTheDocument();
+    expect(
+      within(dialog).getByText("declarationRegisterProofGaps:1"),
+    ).toBeInTheDocument();
+    expect(within(dialog).queryByText("raw authority payload")).not.toBeInTheDocument();
+    expect(within(dialog).queryByText("EMP-001")).not.toBeInTheDocument();
   });
 
   it("renders service-redacted declaration proof identifiers", () => {

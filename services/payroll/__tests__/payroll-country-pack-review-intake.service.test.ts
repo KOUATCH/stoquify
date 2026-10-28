@@ -93,6 +93,7 @@ function supportedIrppPack() {
         reviewedOn: "2026-06-28",
         legalRef: "CM_DGI_CGI_2025",
         sourceEvidenceHash: "sha256:cm-payroll-expert-reviewed-test-fixture",
+        coveredReviewTopics: REQUIRED_IRPP_REVIEW_TOPICS,
       },
     },
   };

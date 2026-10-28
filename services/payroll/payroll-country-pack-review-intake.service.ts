@@ -61,6 +61,7 @@ export type PayrollCountryPackReviewFixtureEvidence = {
   reviewedOn: string;
   legalRef: string;
   sourceEvidenceHash: string;
+  coveredReviewTopics: string[];
   expectedOutputHash: string;
   actualOutputHash: string | null;
   proposedPackHash: string;
@@ -79,6 +80,10 @@ export type PayrollCountryPackReviewIntakeFamily = {
   failedScenarioCount: number;
   fixtureIds: string[];
   baseRequiredReviewTopics: string[];
+  proposedRequiredReviewTopics: string[];
+  requiredReviewTopics: string[];
+  proposedCoveredReviewTopics: string[];
+  proposedMissingReviewTopics: string[];
   coveredReviewTopics: string[];
   missingReviewTopics: string[];
   invalidReviewTopics: string[];
@@ -218,6 +223,7 @@ function buildFixtureEvidence(input: {
     reviewedOn: reviewEvidence.reviewedOn,
     legalRef: reviewEvidence.legalRef,
     sourceEvidenceHash: reviewEvidence.sourceEvidenceHash,
+    coveredReviewTopics: uniqueSorted(reviewEvidence.coveredReviewTopics),
     expectedOutputHash: computeResolutionHash(run.expectedOutput),
     actualOutputHash: run.actualOutput
       ? computeResolutionHash(run.actualOutput)
@@ -317,6 +323,19 @@ export function buildPayrollCountryPackReviewIntakeCertificate(
     const baseRequiredReviewTopics = uniqueSorted(
       baseFamily?.requiredReviewTopics ?? [],
     );
+    const proposedRequiredReviewTopics = uniqueSorted(
+      proposedFamily?.requiredReviewTopics ?? [],
+    );
+    const requiredReviewTopics = uniqueSorted([
+      ...baseRequiredReviewTopics,
+      ...proposedRequiredReviewTopics,
+    ]);
+    const proposedCoveredReviewTopics = uniqueSorted(
+      proposedFamily?.coveredReviewTopics ?? [],
+    );
+    const proposedMissingReviewTopics = uniqueSorted(
+      proposedFamily?.missingReviewTopics ?? [],
+    );
     const coveredReviewTopics: string[] = [];
     const missingReviewTopics: string[] = [];
     const invalidReviewTopics: string[] = [];
@@ -344,7 +363,7 @@ export function buildPayrollCountryPackReviewIntakeCertificate(
       ),
     );
 
-    baseRequiredReviewTopics.forEach((topic) => {
+    requiredReviewTopics.forEach((topic) => {
       const topicEvidence = reviewEvidenceByTopic.get(topic) ?? [];
       if (!topicEvidence.length) {
         missingReviewTopics.push(topic);
@@ -458,6 +477,10 @@ export function buildPayrollCountryPackReviewIntakeCertificate(
       failedScenarioCount: proposedFamily?.failedScenarioCount ?? 0,
       fixtureIds: proposedFamily?.fixtureIds ?? [],
       baseRequiredReviewTopics,
+      proposedRequiredReviewTopics,
+      requiredReviewTopics,
+      proposedCoveredReviewTopics,
+      proposedMissingReviewTopics,
       coveredReviewTopics: uniqueSorted(coveredReviewTopics),
       missingReviewTopics: uniqueSorted(missingReviewTopics),
       invalidReviewTopics: uniqueSorted(invalidReviewTopics),

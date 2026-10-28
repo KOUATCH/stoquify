@@ -224,7 +224,10 @@ const payrollCalculationScenarioReviewEvidenceSchema = z.object({
   reviewedBy: z.string().min(1),
   reviewedOn: isoDateSchema,
   legalRef: z.string().min(1),
-  sourceEvidenceHash: z.string().regex(/^sha256:[A-Za-z0-9_.:-]+$/),
+  sourceEvidenceHash: z
+    .string()
+    .regex(/^sha256:[A-Za-z0-9_.:-]+$/),
+  coveredReviewTopics: z.array(z.string().min(1)).optional(),
   notes: z.string().optional(),
 });
 

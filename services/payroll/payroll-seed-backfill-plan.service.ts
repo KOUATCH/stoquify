@@ -1,13 +1,13 @@
-import { createHash } from "crypto"
+import { createHash } from "crypto";
 import {
   PayrollDeclarationEvidenceTransition,
   PayrollPaymentBatchStatus,
   PayrollRunStatus,
   Prisma,
-} from "@prisma/client"
+} from "@prisma/client";
 
-import { db } from "../../prisma/db"
-import { BusinessRuleError } from "../_shared/action-errors"
+import { db } from "../../prisma/db";
+import { BusinessRuleError } from "../_shared/action-errors";
 import {
   getPayrollSetupReadiness,
   redactPayrollSetupRef,
@@ -15,83 +15,85 @@ import {
   type PayrollSetupReadinessInput,
   type PayrollSetupReadinessIssue,
   type PayrollSetupReadinessResult,
-} from "./payroll-setup-readiness.service"
+} from "./payroll-setup-readiness.service";
 
-type DbClient = typeof db | Prisma.TransactionClient
+type DbClient = typeof db | Prisma.TransactionClient;
 
 export type PayrollSeedBackfillDryRunInput = PayrollSetupReadinessInput & {
-  dryRun?: boolean
-}
+  dryRun?: boolean;
+};
 
 export type PayrollDryRunPlannedWrite = {
-  target: string
-  operation: "create" | "upsert" | "reuse" | "blocked"
-  count: number
-  idempotencyKey: string
-  reason: string
-}
+  target: string;
+  operation: "create" | "upsert" | "reuse" | "blocked";
+  count: number;
+  idempotencyKey: string;
+  reason: string;
+};
 
 export type PayrollProofBackfillGapCounts = {
-  payrollRunMissingStatutoryScenarioCoverage: number
-  declarationEvidenceMissingSourceRegisterHash: number
-  declarationEvidenceMissingAuthorityAdapterProof: number
-  declarationEvidenceMissingAuthorityLifecycleProof: number
-  paymentBatchMissingProviderAdapterProof: number
-  paymentBatchMissingSettlementRegisterProof: number
-  paymentBatchMissingSettlementLifecycleProof: number
-}
+  payrollRunMissingStatutoryScenarioCoverage: number;
+  declarationEvidenceMissingSourceRegisterHash: number;
+  declarationEvidenceMissingAuthorityAdapterProof: number;
+  declarationEvidenceMissingAuthorityLifecycleProof: number;
+  paymentBatchMissingProviderAdapterProof: number;
+  paymentBatchMissingSettlementRegisterProof: number;
+  paymentBatchMissingSettlementLifecycleProof: number;
+  paymentBatchMissingProviderReceiptProof: number;
+  paymentBatchMissingSettlementReplayProof: number;
+};
 
 export type PayrollProofBackfillDryRun = {
-  dryRunOnly: true
-  mutationModeAvailable: false
-  status: "READY" | "BLOCKED"
-  scanScope: "tenant-history"
-  evidenceRef: string
-  totalBlockingGaps: number
-  gapCounts: PayrollProofBackfillGapCounts
-  plannedJobs: PayrollDryRunPlannedWrite[]
-  requiredSignoffs: string[]
-  rollbackStrategy: string[]
-  postMigrationReconciliation: string[]
-}
+  dryRunOnly: true;
+  mutationModeAvailable: false;
+  status: "READY" | "BLOCKED";
+  scanScope: "tenant-history";
+  evidenceRef: string;
+  totalBlockingGaps: number;
+  gapCounts: PayrollProofBackfillGapCounts;
+  plannedJobs: PayrollDryRunPlannedWrite[];
+  requiredSignoffs: string[];
+  rollbackStrategy: string[];
+  postMigrationReconciliation: string[];
+};
 
 export type PayrollSeedBackfillDryRunPlan = {
-  dryRunOnly: true
-  mutationModeAvailable: false
-  status: "READY" | "BLOCKED"
-  generatedAt: string
-  organizationRef: string
-  actorRef: string | null
+  dryRunOnly: true;
+  mutationModeAvailable: false;
+  status: "READY" | "BLOCKED";
+  generatedAt: string;
+  organizationRef: string;
+  actorRef: string | null;
   input: {
-    countryCode: string | null
-    periodStart: string
-    periodEnd: string
-    payDate: string
-    employeeSourceMode: PayrollEmployeeSourceMode
-    maxRows: number
-  }
-  readiness: PayrollSetupReadinessResult
-  proofBackfill: PayrollProofBackfillDryRun
-  plannedWrites: PayrollDryRunPlannedWrite[]
-  blockers: PayrollSetupReadinessIssue[]
-  warnings: PayrollSetupReadinessIssue[]
+    countryCode: string | null;
+    periodStart: string;
+    periodEnd: string;
+    payDate: string;
+    employeeSourceMode: PayrollEmployeeSourceMode;
+    maxRows: number;
+  };
+  readiness: PayrollSetupReadinessResult;
+  proofBackfill: PayrollProofBackfillDryRun;
+  plannedWrites: PayrollDryRunPlannedWrite[];
+  blockers: PayrollSetupReadinessIssue[];
+  warnings: PayrollSetupReadinessIssue[];
   redaction: {
-    policy: "payroll-seed-backfill-dry-run-redaction"
-    rawPersonDataIncluded: false
-    rawPaymentDestinationIncluded: false
-    rawSalaryIncluded: false
-  }
-}
+    policy: "payroll-seed-backfill-dry-run-redaction";
+    rawPersonDataIncluded: false;
+    rawPaymentDestinationIncluded: false;
+    rawSalaryIncluded: false;
+  };
+};
 
 function normalizeDate(value: Date | string) {
   const parsed =
-    value instanceof Date ? value : new Date(`${value}T00:00:00.000Z`)
+    value instanceof Date ? value : new Date(`${value}T00:00:00.000Z`);
   if (Number.isNaN(parsed.getTime())) {
     throw new BusinessRuleError(
       "Payroll seed/backfill dry-run received an invalid date.",
-    )
+    );
   }
-  return parsed
+  return parsed;
 }
 
 function stableKey(
@@ -101,14 +103,14 @@ function stableKey(
   return `${kind}:${createHash("sha256")
     .update(parts.map((part) => part ?? "").join("|"))
     .digest("hex")
-    .slice(0, 16)}`
+    .slice(0, 16)}`;
 }
 
 function assertDryRunOnly(input: PayrollSeedBackfillDryRunInput) {
   if (input.dryRun === false) {
     throw new BusinessRuleError(
       "Payroll seed/backfill mutation mode is intentionally unavailable in this rollout slice.",
-    )
+    );
   }
 }
 
@@ -120,24 +122,24 @@ const CLOSE_IMPACTING_DECLARATION_TRANSITIONS = [
   PayrollDeclarationEvidenceTransition.MARK_PAID,
   PayrollDeclarationEvidenceTransition.RECONCILE,
   PayrollDeclarationEvidenceTransition.AMEND,
-] as const
+] as const;
 
 const PAYROLL_REGISTER_PROOF_RUN_STATUSES = [
   PayrollRunStatus.POSTED,
   PayrollRunStatus.PAID,
   PayrollRunStatus.ARCHIVED,
-] as const
+] as const;
 
 const PAYMENT_ADAPTER_PROOF_STATUSES = [
   PayrollPaymentBatchStatus.RELEASED,
   PayrollPaymentBatchStatus.PARTIALLY_SETTLED,
   PayrollPaymentBatchStatus.SETTLED,
-] as const
+] as const;
 
 const PAYMENT_SETTLEMENT_PROOF_STATUSES = [
   PayrollPaymentBatchStatus.PARTIALLY_SETTLED,
   PayrollPaymentBatchStatus.SETTLED,
-] as const
+] as const;
 
 function declarationRegisterProofBackfillCoverageWhere(organizationId: string) {
   return {
@@ -148,7 +150,7 @@ function declarationRegisterProofBackfillCoverageWhere(organizationId: string) {
       path: ["proofBackfill", "coversDeclarationRegisterProof"],
       equals: true,
     },
-  }
+  };
 }
 
 function declarationAuthorityAdapterProofBackfillCoverageWhere(
@@ -161,7 +163,7 @@ function declarationAuthorityAdapterProofBackfillCoverageWhere(
       path: ["proofBackfill", "coversDeclarationAuthorityAdapterProof"],
       equals: true,
     },
-  }
+  };
 }
 
 function declarationAuthorityLifecycleProofBackfillCoverageWhere(
@@ -174,7 +176,7 @@ function declarationAuthorityLifecycleProofBackfillCoverageWhere(
       path: ["proofBackfill", "coversDeclarationAuthorityLifecycleProof"],
       equals: true,
     },
-  }
+  };
 }
 
 function declarationEvidenceMissingSourceRegisterHashWhere(
@@ -189,7 +191,7 @@ function declarationEvidenceMissingSourceRegisterHashWhere(
         none: declarationRegisterProofBackfillCoverageWhere(organizationId),
       },
     },
-  }
+  };
 }
 
 function declarationEvidenceMissingAuthorityAdapterProofWhere(
@@ -222,7 +224,7 @@ function declarationEvidenceMissingAuthorityAdapterProofWhere(
         ),
       },
     },
-  }
+  };
 }
 
 function declarationEvidenceMissingAuthorityLifecycleProofWhere(
@@ -264,7 +266,7 @@ function declarationEvidenceMissingAuthorityLifecycleProofWhere(
         ),
       },
     },
-  }
+  };
 }
 
 function paymentProviderAdapterProofBackfillCoverageWhere() {
@@ -273,7 +275,7 @@ function paymentProviderAdapterProofBackfillCoverageWhere() {
       path: ["proofBackfill", "coversPaymentProviderAdapterProof"],
       equals: true,
     },
-  }
+  };
 }
 
 function paymentSettlementRegisterProofBackfillCoverageWhere() {
@@ -282,7 +284,7 @@ function paymentSettlementRegisterProofBackfillCoverageWhere() {
       path: ["proofBackfill", "coversPaymentSettlementRegisterProof"],
       equals: true,
     },
-  }
+  };
 }
 
 function paymentSettlementLifecycleProofBackfillCoverageWhere() {
@@ -291,7 +293,25 @@ function paymentSettlementLifecycleProofBackfillCoverageWhere() {
       path: ["proofBackfill", "coversPaymentSettlementLifecycleProof"],
       equals: true,
     },
-  }
+  };
+}
+
+function paymentSettlementReplayProofBackfillCoverageWhere() {
+  return {
+    metadata: {
+      path: ["proofBackfill", "coversPaymentSettlementReplayProof"],
+      equals: true,
+    },
+  };
+}
+
+function paymentProviderReceiptProofBackfillCoverageWhere() {
+  return {
+    metadata: {
+      path: ["proofBackfill", "coversPaymentProviderReceiptProof"],
+      equals: true,
+    },
+  };
 }
 
 function paymentBatchMissingProviderAdapterProofWhere(organizationId: string) {
@@ -321,7 +341,7 @@ function paymentBatchMissingProviderAdapterProofWhere(organizationId: string) {
       },
     ],
     NOT: paymentProviderAdapterProofBackfillCoverageWhere(),
-  }
+  };
 }
 
 function paymentBatchMissingSettlementRegisterProofWhere(
@@ -346,7 +366,7 @@ function paymentBatchMissingSettlementRegisterProofWhere(
       },
     ],
     NOT: paymentSettlementRegisterProofBackfillCoverageWhere(),
-  }
+  };
 }
 
 function paymentBatchMissingSettlementLifecycleProofWhere(
@@ -380,10 +400,68 @@ function paymentBatchMissingSettlementLifecycleProofWhere(
       },
     ],
     NOT: paymentSettlementLifecycleProofBackfillCoverageWhere(),
-  }
+  };
+}
+
+function paymentBatchMissingProviderReceiptProofWhere(organizationId: string) {
+  return {
+    organizationId,
+    status: { in: [...PAYMENT_SETTLEMENT_PROOF_STATUSES] },
+    OR: [
+      { metadata: { equals: Prisma.AnyNull } },
+      {
+        metadata: {
+          path: ["latestSettlementProviderReceiptProofHash"],
+          equals: Prisma.AnyNull,
+        },
+      },
+      {
+        metadata: {
+          path: ["latestSettlementProviderReceiptProofHash"],
+          equals: "",
+        },
+      },
+      {
+        metadata: {
+          path: ["latestSettlementProviderReceiptProofSource"],
+          equals: Prisma.AnyNull,
+        },
+      },
+      {
+        metadata: {
+          path: ["latestSettlementProviderReceiptProofSource"],
+          equals: "",
+        },
+      },
+    ],
+    NOT: paymentProviderReceiptProofBackfillCoverageWhere(),
+  };
+}
+
+function paymentBatchMissingSettlementReplayProofWhere(organizationId: string) {
+  return {
+    organizationId,
+    status: { in: [...PAYMENT_SETTLEMENT_PROOF_STATUSES] },
+    OR: [
+      { metadata: { equals: Prisma.AnyNull } },
+      {
+        metadata: {
+          path: ["latestSettlementReplayProofHash"],
+          equals: Prisma.AnyNull,
+        },
+      },
+      {
+        metadata: {
+          path: ["latestSettlementReplayProofHash"],
+          equals: "",
+        },
+      },
+    ],
+    NOT: paymentSettlementReplayProofBackfillCoverageWhere(),
+  };
 }
 function countTotalGaps(counts: PayrollProofBackfillGapCounts) {
-  return Object.values(counts).reduce((total, count) => total + count, 0)
+  return Object.values(counts).reduce((total, count) => total + count, 0);
 }
 
 function plannedProofJob(
@@ -399,7 +477,7 @@ function plannedProofJob(
     count,
     idempotencyKey,
     reason: count > 0 ? missingReason : cleanReason,
-  }
+  };
 }
 
 async function scanPayrollProofBackfill(
@@ -415,6 +493,8 @@ async function scanPayrollProofBackfill(
     paymentBatchMissingProviderAdapterProof,
     paymentBatchMissingSettlementRegisterProof,
     paymentBatchMissingSettlementLifecycleProof,
+    paymentBatchMissingProviderReceiptProof,
+    paymentBatchMissingSettlementReplayProof,
   ] = await Promise.all([
     client.payrollRun.count({
       where: {
@@ -436,7 +516,12 @@ async function scanPayrollProofBackfill(
               equals: Prisma.AnyNull,
             },
           },
-          { metadata: { path: ["statutoryScenarioCoverage", "status"], equals: "" } },
+          {
+            metadata: {
+              path: ["statutoryScenarioCoverage", "status"],
+              equals: "",
+            },
+          },
           {
             metadata: {
               path: [
@@ -466,9 +551,7 @@ async function scanPayrollProofBackfill(
       ),
     }),
     client.payrollPaymentBatch.count({
-      where: paymentBatchMissingProviderAdapterProofWhere(
-        input.organizationId,
-      ),
+      where: paymentBatchMissingProviderAdapterProofWhere(input.organizationId),
     }),
     client.payrollPaymentBatch.count({
       where: paymentBatchMissingSettlementRegisterProofWhere(
@@ -480,7 +563,15 @@ async function scanPayrollProofBackfill(
         input.organizationId,
       ),
     }),
-  ])
+    client.payrollPaymentBatch.count({
+      where: paymentBatchMissingProviderReceiptProofWhere(input.organizationId),
+    }),
+    client.payrollPaymentBatch.count({
+      where: paymentBatchMissingSettlementReplayProofWhere(
+        input.organizationId,
+      ),
+    }),
+  ]);
 
   const gapCounts: PayrollProofBackfillGapCounts = {
     payrollRunMissingStatutoryScenarioCoverage,
@@ -490,12 +581,14 @@ async function scanPayrollProofBackfill(
     paymentBatchMissingProviderAdapterProof,
     paymentBatchMissingSettlementRegisterProof,
     paymentBatchMissingSettlementLifecycleProof,
-  }
-  const totalBlockingGaps = countTotalGaps(gapCounts)
+    paymentBatchMissingProviderReceiptProof,
+    paymentBatchMissingSettlementReplayProof,
+  };
+  const totalBlockingGaps = countTotalGaps(gapCounts);
   const evidenceRef = stableKey("payroll-proof-backfill-dry-run", [
     readiness.organizationRef,
     "tenant-history",
-  ])
+  ]);
 
   const plannedJobs = [
     plannedProofJob(
@@ -568,7 +661,27 @@ async function scanPayrollProofBackfill(
       "Settlement lifecycle proof is missing; requires deterministic provider settlement lifecycle contract derivation and signoff.",
       "Payment settlement lifecycle proof is already present for settled batches.",
     ),
-  ]
+    plannedProofJob(
+      "PayrollPaymentProviderReceiptProofBackfill",
+      paymentBatchMissingProviderReceiptProof,
+      stableKey("payroll-payment-provider-receipt-proof-backfill", [
+        readiness.organizationRef,
+        "tenant-history",
+      ]),
+      "Provider receipt proof is missing; requires provider receipt or statement evidence before close certification.",
+      "Payment provider receipt proof is already present for settled batches.",
+    ),
+    plannedProofJob(
+      "PayrollPaymentSettlementReplayProofBackfill",
+      paymentBatchMissingSettlementReplayProof,
+      stableKey("payroll-payment-settlement-replay-proof-backfill", [
+        readiness.organizationRef,
+        "tenant-history",
+      ]),
+      "Settlement replay proof is missing; requires exact provider idempotency replay envelope certification before duplicate callbacks can be treated as safe.",
+      "Payment settlement replay proof is already present for settled batches.",
+    ),
+  ];
 
   return {
     dryRunOnly: true,
@@ -597,21 +710,25 @@ async function scanPayrollProofBackfill(
       "Data-trust declaration/payment proof gap facts return zero for the tenant before signoff.",
       "Accounting close blockers and payroll immutability runtime checks remain green after backfill.",
     ],
-  }
+  };
 }
 
 export async function generatePayrollSeedBackfillDryRunPlan(
   input: PayrollSeedBackfillDryRunInput,
   client: DbClient = db,
 ): Promise<PayrollSeedBackfillDryRunPlan> {
-  assertDryRunOnly(input)
+  assertDryRunOnly(input);
 
-  const readiness = await getPayrollSetupReadiness(input, client)
-  const periodStart = normalizeDate(input.periodStart)
-  const periodEnd = normalizeDate(input.periodEnd)
+  const readiness = await getPayrollSetupReadiness(input, client);
+  const periodStart = normalizeDate(input.periodStart);
+  const periodEnd = normalizeDate(input.periodEnd);
 
-  const plannedWrites: PayrollDryRunPlannedWrite[] = []
-  const proofBackfill = await scanPayrollProofBackfill(input, readiness, client)
+  const plannedWrites: PayrollDryRunPlannedWrite[] = [];
+  const proofBackfill = await scanPayrollProofBackfill(
+    input,
+    readiness,
+    client,
+  );
   const existingPeriod = readiness.checks.tenant.organizationExists
     ? await client.payrollPeriod.findFirst({
         where: {
@@ -621,7 +738,7 @@ export async function generatePayrollSeedBackfillDryRunPlan(
         },
         select: { id: true, status: true },
       })
-    : null
+    : null;
 
   plannedWrites.push({
     target: "PayrollPeriod",
@@ -635,7 +752,7 @@ export async function generatePayrollSeedBackfillDryRunPlan(
     reason: existingPeriod
       ? "Existing tenant payroll period matches the requested date range."
       : "Would create one tenant payroll period using the existing organization-period unique key.",
-  })
+  });
 
   plannedWrites.push({
     target: "PayrollEmployee",
@@ -651,7 +768,7 @@ export async function generatePayrollSeedBackfillDryRunPlan(
       readiness.input.employeeSourceMode === "users"
         ? "Would upsert payroll employee shells from active tenant users with deterministic employee numbers."
         : "No employee writes are planned because this source adapter is not implemented.",
-  })
+  });
 
   plannedWrites.push({
     target: "PayrollContract",
@@ -663,7 +780,7 @@ export async function generatePayrollSeedBackfillDryRunPlan(
     ]),
     reason:
       "Contracts require approved salary and signed document-hash evidence; this dry-run does not fabricate them.",
-  })
+  });
 
   plannedWrites.push({
     target: "PayrollPaymentDestination",
@@ -674,7 +791,7 @@ export async function generatePayrollSeedBackfillDryRunPlan(
     ]),
     reason:
       "Payment destinations require approved hashes/evidence only; raw destination details are never planned here.",
-  })
+  });
 
   plannedWrites.push({
     target: "PayrollAttendanceSnapshot",
@@ -687,12 +804,12 @@ export async function generatePayrollSeedBackfillDryRunPlan(
     ]),
     reason:
       "Attendance snapshots require source hashes and a freeze plan before payroll calculation.",
-  })
+  });
 
-  plannedWrites.push(...proofBackfill.plannedJobs)
+  plannedWrites.push(...proofBackfill.plannedJobs);
 
   const reviewedProofChain =
-    readiness.checks.countryPack.calculationFixtures.reviewedProofChain
+    readiness.checks.countryPack.calculationFixtures.reviewedProofChain;
   const proofBackfillBlockers: PayrollSetupReadinessIssue[] =
     proofBackfill.totalBlockingGaps > 0
       ? [
@@ -712,6 +829,11 @@ export async function generatePayrollSeedBackfillDryRunPlan(
               paymentSettlementLifecycleProofGaps:
                 proofBackfill.gapCounts
                   .paymentBatchMissingSettlementLifecycleProof,
+              paymentProviderReceiptProofGaps:
+                proofBackfill.gapCounts.paymentBatchMissingProviderReceiptProof,
+              paymentSettlementReplayProofGaps:
+                proofBackfill.gapCounts
+                  .paymentBatchMissingSettlementReplayProof,
               reviewedProofChainStatus: reviewedProofChain?.status ?? null,
               reviewedProofChainCoverageHash:
                 reviewedProofChain?.coverageHash ?? null,
@@ -720,8 +842,8 @@ export async function generatePayrollSeedBackfillDryRunPlan(
             },
           },
         ]
-      : []
-  const blockers = [...readiness.blockers, ...proofBackfillBlockers]
+      : [];
+  const blockers = [...readiness.blockers, ...proofBackfillBlockers];
 
   return {
     dryRunOnly: true,
@@ -742,7 +864,7 @@ export async function generatePayrollSeedBackfillDryRunPlan(
       rawPaymentDestinationIncluded: false,
       rawSalaryIncluded: false,
     },
-  }
+  };
 }
 
 function formatIssue(issue: PayrollSetupReadinessIssue) {
@@ -750,8 +872,8 @@ function formatIssue(issue: PayrollSetupReadinessIssue) {
     ? ` (${Object.entries(issue.evidence)
         .map(([key, value]) => `${key}: ${value}`)
         .join(", ")})`
-    : ""
-  return `- [${issue.severity}] ${issue.code}: ${issue.message}${evidence}`
+    : "";
+  return `- [${issue.severity}] ${issue.code}: ${issue.message}${evidence}`;
 }
 
 export function formatPayrollSeedBackfillDryRunReport(
@@ -762,25 +884,25 @@ export function formatPayrollSeedBackfillDryRunReport(
       (item) =>
         `| ${item.target} | ${item.operation} | ${item.count} | ${item.idempotencyKey} | ${item.reason} |`,
     )
-    .join("\n")
+    .join("\n");
   const blockers = plan.blockers.length
     ? plan.blockers.map(formatIssue).join("\n")
-    : "- None."
+    : "- None.";
   const warnings = plan.warnings.length
     ? plan.warnings.map(formatIssue).join("\n")
-    : "- None."
+    : "- None.";
   const proofGaps = Object.entries(plan.proofBackfill.gapCounts)
     .map(([key, value]) => `| ${key} | ${value} |`)
-    .join("\n")
+    .join("\n");
   const signoffs = plan.proofBackfill.requiredSignoffs
     .map((item) => `- ${item}`)
-    .join("\n")
+    .join("\n");
   const rollback = plan.proofBackfill.rollbackStrategy
     .map((item) => `- ${item}`)
-    .join("\n")
+    .join("\n");
   const reconciliation = plan.proofBackfill.postMigrationReconciliation
     .map((item) => `- ${item}`)
-    .join("\n")
+    .join("\n");
 
   return `# Payroll Seed/Backfill Dry-Run Plan
 
@@ -854,5 +976,5 @@ ${warnings}
 - Raw person data included: ${plan.redaction.rawPersonDataIncluded}
 - Raw salary included: ${plan.redaction.rawSalaryIncluded}
 - Raw payment destination included: ${plan.redaction.rawPaymentDestinationIncluded}
-`
+`;
 }

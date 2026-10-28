@@ -7,6 +7,7 @@ import {
   LedgerPostingBatchStatus,
   PaymentExceptionStatus,
   PaymentTransactionState,
+  ProviderEventStatus,
   ReconciliationRunStatus,
   SuspenseStatus,
   Prisma,
@@ -26,6 +27,7 @@ jest.mock("@/prisma/db", () => ({
     paymentTransaction: { findFirst: jest.fn() },
     matchRecord: { groupBy: jest.fn() },
     $transaction: jest.fn(), closeRun: { findFirst: jest.fn(), findMany: jest.fn() },
+    providerEvent: { findFirst: jest.fn() },
     auditLog: { create: jest.fn() },
   },
 }))
@@ -47,6 +49,7 @@ const mockDb = db as unknown as {
   paymentTransaction: { findFirst: jest.Mock }
   matchRecord: { groupBy: jest.Mock }
   $transaction: jest.Mock; closeRun: { findFirst: jest.Mock; findMany: jest.Mock }
+  providerEvent: { findFirst: jest.Mock }
   auditLog: { create: jest.Mock }
 }
 
@@ -166,6 +169,51 @@ function reconciledPaymentTransaction(overrides: Record<string, unknown> = {}) {
       },
     ],
     suspenseItems: [],
+    paymentExceptions: [],
+    ...overrides,
+  }
+}
+
+function verifiedProviderEvent(overrides: Record<string, unknown> = {}) {
+  return {
+    id: "provider-event-1",
+    providerEventId: "evt-1",
+    providerTransactionId: "provider-tx-1",
+    providerReference: "provider-ref-1",
+    eventType: "mobile_money.payment.confirmed",
+    status: ProviderEventStatus.VERIFIED,
+    direction: "INBOUND",
+    amount: amount(150000),
+    feeAmount: amount(1500),
+    currencyCode: "XAF",
+    occurredAt: new Date("2026-06-15T08:00:00.000Z"),
+    receivedAt: new Date("2026-06-15T08:01:00.000Z"),
+    processedAt: new Date("2026-06-15T08:02:00.000Z"),
+    rawPayloadHash: "sha256:payload",
+    headersHash: "sha256:headers",
+    signatureHash: "sha256:signature",
+    signatureValid: true,
+    providerCustomerReferenceMasked: "********1234",
+    providerAccount: {
+      id: "provider-account-1",
+      providerCode: "MOMO",
+      displayName: "Provider Main",
+      status: "ACTIVE",
+      paymentRail: { id: "rail-1", code: "MOMO", name: "Mobile Money" },
+    },
+    matchRecords: [
+      {
+        id: "match-1",
+        status: "AUTO_MATCHED",
+        confidence: amount(100),
+        amountMatched: amount(150000),
+        currencyCode: "XAF",
+        paymentTransactionId: "pt-1",
+        statementLineId: "statement-line-1",
+        reconciliationRunId: "recon-1",
+        ledgerPostingBatchId: null,
+      },
+    ],
     paymentExceptions: [],
     ...overrides,
   }
@@ -458,6 +506,79 @@ describe("proof trail service", () => {
         "payment-transaction-disputed-or-suspense",
         "payment-transaction-open-exceptions",
         "payment-transaction-open-suspense",
+      ]),
+    )
+  })
+
+  it("returns reconciled provider event proof with redacted provider references", async () => {
+    mockDb.providerEvent.findFirst.mockResolvedValue(verifiedProviderEvent())
+
+    const result = await getProofTrail({
+      organizationId: "org-1",
+      subjectType: "provider.event",
+      subjectId: "provider-event-1",
+      actorId: "user-1",
+    })
+
+    expect(mockDb.providerEvent.findFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "provider-event-1", organizationId: "org-1" },
+      }),
+    )
+    expect(result.evidenceGrade).toBe("reconciled")
+    expect(result.redactions).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: "provider-event-account-internal-id" }),
+        expect.objectContaining({ id: "provider-event-reference" }),
+      ]),
+    )
+    expect(result.nodes).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: "provider-event", nodeType: "provider.event" }),
+        expect.objectContaining({ id: "provider-payload-hash", nodeId: "sha256:payload", redacted: false }),
+        expect.objectContaining({ id: "provider-reference", nodeId: "redacted", redacted: true }),
+      ]),
+    )
+    expect(result.edges).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ fromNodeId: "provider-payload-hash", toNodeId: "provider-event", edgeType: "source" }),
+        expect.objectContaining({ edgeType: "matches", toNodeId: "provider-event" }),
+      ]),
+    )
+    expect(result.audit.accessLogged).toBe(true)
+  })
+
+  it("blocks provider event proof when signature or event status is not trusted", async () => {
+    mockDb.providerEvent.findFirst.mockResolvedValue(
+      verifiedProviderEvent({
+        status: ProviderEventStatus.TAMPERED,
+        signatureValid: false,
+        matchRecords: [],
+        paymentExceptions: [
+          {
+            id: "exception-1",
+            status: PaymentExceptionStatus.OPEN,
+            severity: "HIGH",
+            type: "TAMPER_SIGNAL",
+            resolutionNotes: null,
+            suspenseItemId: null,
+          },
+        ],
+      }),
+    )
+
+    const result = await getProofTrail({
+      organizationId: "org-1",
+      subjectType: "provider.event",
+      subjectId: "provider-event-1",
+    })
+
+    expect(result.evidenceGrade).toBe("blocked")
+    expect(result.blockers.map((entry) => entry.id)).toEqual(
+      expect.arrayContaining([
+        "provider-event-blocked-status",
+        "provider-event-signature-unverified",
+        "provider-event-open-exceptions",
       ]),
     )
   })

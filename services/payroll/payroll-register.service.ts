@@ -237,6 +237,35 @@ export type PayrollRegisterLedgerTieOut = {
   source: string
 }
 
+export type PayrollRegisterCompositeRegisterProof = {
+  status: PayrollRegisterTieOutStatus
+  proofHash: string
+  checkedLineCount: number
+  matchedComponentLineCount: number
+  matchedCountryPackLineCount: number
+  componentEvidenceHashCount: number
+  countryPackProofHashCount: number
+  paymentEvidenceHashCount: number
+  declarationPayloadHashCount: number
+  sourceLinkCount: number
+  statutoryScenarioCoverageHash: string | null
+  statutoryReviewEvidenceSourceHashCount: number
+  componentMappingHash: string
+  statuses: {
+    runLines: PayrollRegisterTieOutStatus
+    payslips: PayrollRegisterTieOutStatus
+    payments: PayrollRegisterTieOutStatus
+    declarations: PayrollRegisterTieOutStatus
+    components: PayrollRegisterTieOutStatus
+    countryPack: PayrollRegisterTieOutStatus
+    componentMapping: PayrollRegisterTieOutStatus
+    ledger: PayrollRegisterTieOutStatus
+    close: PayrollRegisterTieOutStatus
+  }
+  issues: string[]
+  source: string
+}
+
 export type PayrollRegisterComponentTotals = PayrollRegisterComponentAmounts & {
   missingComponentProofCount: number
   mismatchedComponentProofCount: number
@@ -347,6 +376,7 @@ export type PayrollRegisterReadModel = {
       findingCount: number
       source: string
     }
+    compositeRegister: PayrollRegisterCompositeRegisterProof
   }
   declarations: Array<{
     id: string
@@ -1693,6 +1723,134 @@ function countStatus(expected: number, actual: number): PayrollRegisterTieOutSta
   return expected === actual ? "MATCHED" : actual === 0 ? "MISSING" : "MISMATCH"
 }
 
+function aggregateTieOutStatus(statuses: PayrollRegisterTieOutStatus[]): PayrollRegisterTieOutStatus {
+  if (statuses.includes("MISSING")) return "MISSING"
+  if (statuses.includes("MISMATCH")) return "MISMATCH"
+  if (statuses.includes("PENDING")) return "PENDING"
+  return "MATCHED"
+}
+
+function countryPackAggregateStatus(proofs: PayrollRegisterCountryPackProof[]): PayrollRegisterTieOutStatus {
+  return aggregateTieOutStatus(proofs.map((proof) => proof.status))
+}
+
+function compositeRegisterProofForReadModel(input: {
+  run: PayrollRegisterRunRecord
+  sourceLinks: AccountingSourceLinkRecord[]
+  componentProofs: PayrollRegisterLineComponentProof[]
+  countryPackProofs: PayrollRegisterCountryPackProof[]
+  statutoryScenarioCoverage: PayrollRegisterStatutoryScenarioCoverageProof
+  runLines: PayrollRegisterAmountCheck
+  payslips: PayrollRegisterAmountCheck & PayrollRegisterCountCheck
+  payments: PayrollRegisterAmountCheck
+  declarations: PayrollRegisterAmountCheck
+  components: PayrollRegisterComponentTieOut
+  componentMapping: PayrollRegisterComponentMappingTieOut
+  ledger: PayrollRegisterLedgerTieOut
+  close: PayrollRegisterReadModel["tieOut"]["close"]
+}): PayrollRegisterCompositeRegisterProof {
+  const countryPackStatus = countryPackAggregateStatus(input.countryPackProofs)
+  const statuses = {
+    runLines: input.runLines.status,
+    payslips: input.payslips.status,
+    payments: input.payments.status,
+    declarations: input.declarations.status,
+    components: input.components.status,
+    countryPack: countryPackStatus,
+    componentMapping: input.componentMapping.status,
+    ledger: input.ledger.status,
+    close: input.close.status,
+  }
+  const componentEvidenceHashes = sortedUniqueStrings(
+    input.componentProofs.map((proof) => proof.componentEvidenceHash),
+  )
+  const countryPackProofHashes = sortedUniqueStrings(
+    input.countryPackProofs
+      .map((proof) => proof.provenanceHash ?? proof.computedHash)
+      .filter((hash): hash is string => Boolean(hash)),
+  )
+  const paymentEvidenceHashes = sortedUniqueStrings(
+    input.run.paymentBatches
+      .map((batch) => batch.evidenceHash)
+      .filter((hash): hash is string => Boolean(hash)),
+  )
+  const declarationPayloadHashes = sortedUniqueStrings(
+    input.run.declarations
+      .map((declaration) => declaration.payloadHash)
+      .filter((hash): hash is string => Boolean(hash)),
+  )
+  const sourceLinkIds = sortedUniqueStrings(input.sourceLinks.map((link) => link.id))
+  const statusIssues = Object.entries(statuses)
+    .filter(([, status]) => status !== "MATCHED")
+    .map(([name, status]) => `${name}:${status}`)
+  const issues = [
+    ...statusIssues,
+    ...(componentEvidenceHashes.length !== input.componentProofs.length
+      ? ["componentEvidenceHash:MISSING"]
+      : []),
+    ...(countryPackProofHashes.length !== input.countryPackProofs.length
+      ? ["countryPackProofHash:MISSING"]
+      : []),
+    ...(!input.statutoryScenarioCoverage.coverageHash
+      ? ["statutoryScenarioCoverageHash:MISSING"]
+      : []),
+    ...(input.statutoryScenarioCoverage.sourceEvidenceHashes.length === 0
+      ? ["statutoryReviewEvidenceSourceHashes:MISSING"]
+      : []),
+  ].sort()
+  const status = issues.length > statusIssues.length
+    ? "MISSING"
+    : aggregateTieOutStatus(Object.values(statuses))
+  const payload = {
+    kind: "AQSTOQFLOW_PAYROLL_COMPOSITE_REGISTER_TIE_OUT_PROOF" as const,
+    version: 1 as const,
+    payrollRunId: input.run.id,
+    runNumber: input.run.runNumber,
+    calculationHash: input.run.calculationHash,
+    attendanceSnapshotHash: input.run.attendanceSnapshotHash,
+    documentHash: input.run.documentHash,
+    evidenceHash: input.run.evidenceHash,
+    componentEvidenceHashes,
+    countryPackProofHashes,
+    componentMappingHash: input.componentMapping.componentMappingHash,
+    statutoryScenarioCoverageHash:
+      input.statutoryScenarioCoverage.coverageHash,
+    statutoryScenarioReviewEvidenceSourceHashes: sortedUniqueStrings(
+      input.statutoryScenarioCoverage.sourceEvidenceHashes,
+    ),
+    paymentEvidenceHashes,
+    declarationPayloadHashes,
+    sourceLinkIds,
+    statuses,
+    issues,
+  }
+
+  return {
+    status,
+    proofHash: `sha256:${hashBusinessPayload(payload)}`,
+    checkedLineCount: input.componentProofs.length,
+    matchedComponentLineCount: input.componentProofs.filter(
+      (proof) => proof.status === "MATCHED",
+    ).length,
+    matchedCountryPackLineCount: input.countryPackProofs.filter(
+      (proof) => proof.status === "MATCHED",
+    ).length,
+    componentEvidenceHashCount: componentEvidenceHashes.length,
+    countryPackProofHashCount: countryPackProofHashes.length,
+    paymentEvidenceHashCount: paymentEvidenceHashes.length,
+    declarationPayloadHashCount: declarationPayloadHashes.length,
+    sourceLinkCount: sourceLinkIds.length,
+    statutoryScenarioCoverageHash: input.statutoryScenarioCoverage.coverageHash,
+    statutoryReviewEvidenceSourceHashCount:
+      input.statutoryScenarioCoverage.sourceEvidenceHashes.length,
+    componentMappingHash: input.componentMapping.componentMappingHash,
+    statuses,
+    issues,
+    source:
+      "payroll-register.composite-proof(component,country-pack,ledger,declaration,payment,close)",
+  }
+}
+
 function registerHash(input: {
   run: PayrollRegisterRunRecord
   sourceLinks: AccountingSourceLinkRecord[]
@@ -1702,6 +1860,7 @@ function registerHash(input: {
   componentMappingHash: string
   statutoryScenarioCoverageHash: string | null
   statutoryScenarioReviewEvidenceSourceHashes: string[]
+  compositeRegisterProofHash: string
 }) {
   return `sha256:${hashBusinessPayload({
     kind: "AQSTOQFLOW_PAYROLL_REGISTER_TIE_OUT",
@@ -1725,6 +1884,7 @@ function registerHash(input: {
     componentMappingHash: input.componentMappingHash,
     statutoryScenarioCoverageHash: input.statutoryScenarioCoverageHash,
     statutoryScenarioReviewEvidenceSourceHashes: sortedUniqueStrings(input.statutoryScenarioReviewEvidenceSourceHashes),
+    compositeRegisterProofHash: input.compositeRegisterProofHash,
     correctionProof: payrollRegisterCorrectionProofFromRun(input.run),
     componentProofStatuses: input.componentProofs.map((proof) => ({
       runLineId: proof.runLineId,
@@ -1988,6 +2148,7 @@ function buildBlockers(input: {
   componentMappingStatus: PayrollRegisterComponentMappingTieOut
   ledgerStatus: PayrollRegisterLedgerTieOut
   statutoryScenarioCoverage: PayrollRegisterStatutoryScenarioCoverageProof
+  compositeRegisterProof: PayrollRegisterCompositeRegisterProof
 }) {
   const blockers: PayrollRegisterBlocker[] = []
 
@@ -2051,6 +2212,19 @@ function buildBlockers(input: {
       severity: "high",
       message: "Payroll register statutory scenario review evidence is blocked or incomplete.",
       source: "payroll_runs.metadata.statutoryScenarioCoverage",
+      sourceId: input.run.id,
+    })
+  }
+
+  if (input.compositeRegisterProof.status !== "MATCHED") {
+    blockers.push({
+      code: input.compositeRegisterProof.status === "MISSING"
+        ? "PAYROLL_REGISTER_COMPOSITE_PROOF_MISSING"
+        : "PAYROLL_REGISTER_COMPOSITE_PROOF_MISMATCH",
+      severity: "high",
+      message:
+        "Payroll register composite proof does not tie component, country-pack, ledger, declaration, payment, and close evidence together.",
+      source: input.compositeRegisterProof.source,
       sourceId: input.run.id,
     })
   }
@@ -2266,6 +2440,56 @@ async function buildReadModel(
   }
   const allocatedAmount = sumDecimals(run.paymentBatches.filter(hasCurrentAllocations).flatMap((batch) => batch.allocations.map((allocation) => allocation.amount)))
   const declaredAmount = sumDecimals(run.declarations.map((declaration) => declaration.amount))
+  const runLinesTieOut = amountCheck({
+    expected: run.netPayableAmount,
+    actual: runLineTotals.net,
+    currency: run.currency,
+    decision: amountDecision,
+    source: "payroll_runs/payroll_run_lines",
+  })
+  const payslipsTieOut = {
+    ...amountCheck({
+      expected: run.netPayableAmount,
+      actual: payslipTotals.net,
+      currency: run.currency,
+      decision: amountDecision,
+      source: "payroll_run_lines/payroll_payslips",
+    }),
+    expectedCount: run._count.lines,
+    actualCount: run._count.payslips,
+    status: compareDecimals(run.netPayableAmount, payslipTotals.net) === "MATCHED"
+      ? countStatus(run._count.lines, run._count.payslips)
+      : "MISMATCH",
+  }
+  const paymentsTieOut = amountCheck({
+    expected: run.netPayableAmount,
+    actual: allocatedAmount,
+    currency: run.currency,
+    decision: amountDecision,
+    source: "payroll_payment_batches/payroll_payment_allocations",
+  })
+  const declarationsTieOut = amountCheck({
+    expected: run.employeeDeductionAmount.plus(run.employerChargeAmount),
+    actual: declaredAmount,
+    currency: run.currency,
+    decision: amountDecision,
+    source: "payroll_declarations",
+  })
+  const compositeRegisterProof = compositeRegisterProofForReadModel({
+    run,
+    sourceLinks,
+    componentProofs,
+    countryPackProofs,
+    statutoryScenarioCoverage,
+    runLines: runLinesTieOut,
+    payslips: payslipsTieOut,
+    payments: paymentsTieOut,
+    declarations: declarationsTieOut,
+    components: componentTieOut,
+    componentMapping: componentMappingTieOut,
+    ledger: ledgerTieOut,
+    close: closeTieOut,
+  })
   const hash = registerHash({
     run,
     sourceLinks,
@@ -2275,6 +2499,7 @@ async function buildReadModel(
     componentMappingHash: componentMappingTieOut.componentMappingHash,
     statutoryScenarioCoverageHash: statutoryScenarioCoverage.coverageHash,
     statutoryScenarioReviewEvidenceSourceHashes: statutoryScenarioCoverage.sourceEvidenceHashes,
+    compositeRegisterProofHash: compositeRegisterProof.proofHash,
   })
   const blockers = buildBlockers({
     run,
@@ -2284,6 +2509,7 @@ async function buildReadModel(
     componentMappingStatus: componentMappingTieOut,
     ledgerStatus: ledgerTieOut,
     statutoryScenarioCoverage,
+    compositeRegisterProof,
   })
 
   await auditRegisterRead(client, {
@@ -2345,45 +2571,15 @@ async function buildReadModel(
       componentTotals,
     },
     tieOut: {
-      runLines: amountCheck({
-        expected: run.netPayableAmount,
-        actual: runLineTotals.net,
-        currency: run.currency,
-        decision: amountDecision,
-        source: "payroll_runs/payroll_run_lines",
-      }),
-      payslips: {
-        ...amountCheck({
-          expected: run.netPayableAmount,
-          actual: payslipTotals.net,
-          currency: run.currency,
-          decision: amountDecision,
-          source: "payroll_run_lines/payroll_payslips",
-        }),
-        expectedCount: run._count.lines,
-        actualCount: run._count.payslips,
-        status: compareDecimals(run.netPayableAmount, payslipTotals.net) === "MATCHED"
-          ? countStatus(run._count.lines, run._count.payslips)
-          : "MISMATCH",
-      },
-      payments: amountCheck({
-        expected: run.netPayableAmount,
-        actual: allocatedAmount,
-        currency: run.currency,
-        decision: amountDecision,
-        source: "payroll_payment_batches/payroll_payment_allocations",
-      }),
-      declarations: amountCheck({
-        expected: run.employeeDeductionAmount.plus(run.employerChargeAmount),
-        actual: declaredAmount,
-        currency: run.currency,
-        decision: amountDecision,
-        source: "payroll_declarations",
-      }),
+      runLines: runLinesTieOut,
+      payslips: payslipsTieOut,
+      payments: paymentsTieOut,
+      declarations: declarationsTieOut,
       components: componentTieOut,
       componentMapping: componentMappingTieOut,
       ledger: ledgerTieOut,
       close: closeTieOut,
+      compositeRegister: compositeRegisterProof,
     },
     declarations: run.declarations.map((declaration) => ({
       id: declaration.id,

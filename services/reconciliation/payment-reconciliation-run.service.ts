@@ -374,6 +374,7 @@ export async function reconcileUnallocatedSourcesInTx(tx: Prisma.TransactionClie
           statementDirection: line?.direction ?? null,
           providerEventIds: events.map(candidate => candidate.id),
           statementLineIds: lines.map(candidate => candidate.id),
+          mismatchSource: mismatchReasons.includes("PROVIDER_EVENT_AMOUNT") ? "PROVIDER_EVENT" : mismatchReasons.includes("STATEMENT_LINE_AMOUNT") ? "STATEMENT_LINE" : null,
           mismatchReasons,
           rule: "EXTERNAL_EVIDENCE_MISMATCH",
         },
@@ -418,6 +419,8 @@ export async function reconcileUnallocatedSourcesInTx(tx: Prisma.TransactionClie
         },
       })
 
+      if (event) await tx.providerEvent.update({ where: { id: event.id }, data: { status: ProviderEventStatus.PROCESSED, processedAt: now } })
+      if (line) await tx.statementLine.update({ where: { id: line.id }, data: { status: StatementLineStatus.MATCHED } })
       matchCount += 1
       matchedTransactionIds.add(transaction.id)
       if (event) matchedEventIds.add(event.id)

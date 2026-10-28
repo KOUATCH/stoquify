@@ -3,6 +3,7 @@ import {
   JournalEntryStatus,
   LedgerPostingBatchStatus,
   PaymentTransactionState,
+  ProviderEventStatus,
   ReconciliationRunStatus,
 } from "@prisma/client"
 
@@ -87,6 +88,27 @@ export function computeCloseRunEvidenceGrade(input: {
   }
 
   return { grade: "raw", reason: "Close run exists but is not ready for certification." }
+}
+
+export function computeProviderEventEvidenceGrade(input: {
+  status: ProviderEventStatus
+  signatureValid: boolean
+  matchRecordCount: number
+  blockers: ProofTrailBlocker[]
+}): EvidenceGradeDecision {
+  if (hasBlockingProofTrailBlocker(input.blockers)) {
+    return { grade: "blocked", reason: "Provider event has unresolved proof blockers." }
+  }
+
+  if (input.matchRecordCount > 0 && (input.status === ProviderEventStatus.VERIFIED || input.status === ProviderEventStatus.PROCESSED)) {
+    return { grade: "reconciled", reason: "Provider event is verified and linked to reconciliation evidence." }
+  }
+
+  if (input.signatureValid && (input.status === ProviderEventStatus.VERIFIED || input.status === ProviderEventStatus.PROCESSED)) {
+    return { grade: "operational", reason: "Provider event signature is verified but reconciliation proof is incomplete." }
+  }
+
+  return { grade: "raw", reason: "Provider event exists but has not reached verified reconciliation proof." }
 }
 export function computePaymentTransactionEvidenceGrade(input: {
   state: PaymentTransactionState

@@ -57,6 +57,8 @@ export class RegulatoryPackError extends BusinessRuleError {
 
 const CAMEROON_COUNTRY_CODE = "CM";
 const CAMEROON_IRPP_INCOME_TAX_PARAMETER_PATH = "payroll.irpp.incomeTaxRules";
+const CAMEROON_COMPOSITE_REGISTER_TIE_OUT_PARAMETER_PATH =
+  "payroll.composite.registerTieOut";
 const PRODUCTION_CAPABILITY_STATUSES = new Set([
   "SUPPORTED",
   "SUPPORTED_CERTIFIED",
@@ -160,6 +162,45 @@ const REQUIRED_CAMEROON_PAYROLL_GOLDEN_FIXTURE_PATHS = [
   "payroll.cnps.employerRules",
 ];
 
+const REQUIRED_CAMEROON_COMPOSITE_REGISTER_TIE_OUT_FIELDS = {
+  purpose: "PAYROLL_COMPOSITE_REGISTER_TIE_OUT",
+  label: "composite statutory register tie-out",
+  requiredInputFields: [
+    "periodStart",
+    "periodEnd",
+    "baseGrossAmount",
+    "taxableAllowanceAmount",
+    "overtimePremiumAmount",
+    "leaveDeductionAmount",
+    "employeePensionContributionAmount",
+    "incomeTaxWithholdingAmount",
+    "employerPensionContributionAmount",
+    "familyAllowanceContributionAmount",
+    "occupationalRiskContributionAmount",
+    "benefitEmployerChargeAmount",
+  ],
+  requiredOutputFields: [
+    "grossAmount",
+    "taxableBaseAmount",
+    "socialBaseAmount",
+    "employeeDeductionAmount",
+    "employerChargeAmount",
+    "netPayableAmount",
+    "incomeTaxWithholdingAmount",
+    "employeePensionContributionAmount",
+    "employerPensionContributionAmount",
+    "familyAllowanceContributionAmount",
+    "occupationalRiskContributionAmount",
+    "registerGrossAmount",
+    "registerTaxableBaseAmount",
+    "registerSocialBaseAmount",
+    "registerEmployeeDeductionAmount",
+    "registerEmployerChargeAmount",
+    "registerNetPayableAmount",
+    "registerStatutoryLiabilityAmount",
+  ],
+} as const;
+
 const REQUIRED_CAMEROON_PAYROLL_COMPONENT_PRODUCTION_FIXTURES = [
   {
     capabilityPath: "payroll.compensation.allowances",
@@ -187,6 +228,36 @@ const REQUIRED_CAMEROON_PAYROLL_COMPONENT_PRODUCTION_FIXTURES = [
       "payslipLineAmount",
       "registerEmployerChargeAmount",
       "registerNetPayableAmount",
+    ],
+  },
+  {
+    capabilityPath: "payroll.compensation.deductions",
+    parameterPath: "payroll.compensation.deductions",
+    purposeMatcher: "PAYROLL_DEDUCTION_RECOVERY",
+    label: "deduction or recovery",
+    requiredInputFields: [
+      "periodStart",
+      "periodEnd",
+      "recoveryCaseId",
+      "outstandingBalanceAmount",
+      "outstandingBalanceProofHash",
+      "recoveryCapAmount",
+      "recoveryCapProofHash",
+      "netPayFloorAmount",
+    ],
+    requiredOutputFields: [
+      "componentAmount",
+      "employeeDeductionAmount",
+      "payslipLineAmount",
+      "registerEmployeeDeductionAmount",
+      "registerNetPayableAmount",
+      "recoveryPolicyApplied",
+      "recoveryCaseId",
+      "outstandingBalanceAmount",
+      "outstandingBalanceProofHash",
+      "recoveryCapAmount",
+      "recoveryCapProofHash",
+      "netPayFloorAmount",
     ],
   },
   {
@@ -635,6 +706,91 @@ function validateCameroonPayrollComponentProductionReadiness(
   });
 }
 
+function validateCameroonCompositeRegisterTieOutFields(
+  fixture: CountryPack["goldenFixtures"][number],
+  issues: RegulatoryPackIssue[],
+) {
+  if (!fixture.calculationScenario) {
+    issues.push({
+      code: "GOLDEN_FIXTURE_FAILED",
+      severity: "error",
+      path: `goldenFixtures.${fixture.id}.calculationScenario`,
+      message: `Cameroon payroll ${REQUIRED_CAMEROON_COMPOSITE_REGISTER_TIE_OUT_FIELDS.label} fixture "${fixture.id}" must include reviewed calculation inputs and expected outputs.`,
+    });
+    return;
+  }
+
+  const input = fixture.calculationScenario.input;
+  REQUIRED_CAMEROON_COMPOSITE_REGISTER_TIE_OUT_FIELDS.requiredInputFields.forEach((field) => {
+    if (input[field] !== undefined) return;
+    issues.push({
+      code: "GOLDEN_FIXTURE_FAILED",
+      severity: "error",
+      path: `goldenFixtures.${fixture.id}.calculationScenario.input.${field}`,
+      message: `Cameroon payroll ${REQUIRED_CAMEROON_COMPOSITE_REGISTER_TIE_OUT_FIELDS.label} fixture "${fixture.id}" must include ${field} for reviewed period tie-out replay.`,
+    });
+  });
+
+  const expectedOutput = fixture.calculationScenario.expectedOutput;
+  REQUIRED_CAMEROON_COMPOSITE_REGISTER_TIE_OUT_FIELDS.requiredOutputFields.forEach((field) => {
+    if (expectedOutput[field] !== undefined) return;
+    issues.push({
+      code: "GOLDEN_FIXTURE_FAILED",
+      severity: "error",
+      path: `goldenFixtures.${fixture.id}.calculationScenario.expectedOutput.${field}`,
+      message: `Cameroon payroll ${REQUIRED_CAMEROON_COMPOSITE_REGISTER_TIE_OUT_FIELDS.label} fixture "${fixture.id}" must pin register/payslip/statutory output ${field}.`,
+    });
+  });
+}
+
+function validateCameroonCompositeRegisterTieOutReadiness(
+  pack: CountryPack,
+  issues: RegulatoryPackIssue[],
+) {
+  if (pack.header.countryCode !== CAMEROON_COUNTRY_CODE) return;
+
+  const capabilityStatus = getCapabilityStatusForPath(
+    pack,
+    CAMEROON_COMPOSITE_REGISTER_TIE_OUT_PARAMETER_PATH,
+  );
+  if (
+    !capabilityStatus ||
+    !PRODUCTION_CAPABILITY_STATUSES.has(capabilityStatus)
+  ) {
+    return;
+  }
+
+  if (!getParameterEnvelopeArray(pack, CAMEROON_COMPOSITE_REGISTER_TIE_OUT_PARAMETER_PATH)) {
+    issues.push({
+      code: "REQUIRED_PARAMETER_MISSING",
+      severity: "error",
+      path: CAMEROON_COMPOSITE_REGISTER_TIE_OUT_PARAMETER_PATH,
+      message:
+        "Cameroon payroll composite production support requires an effective-dated register tie-out country-pack parameter.",
+    });
+  }
+
+  const fixture = pack.goldenFixtures.find(
+    (entry) =>
+      entry.countryCode === pack.header.countryCode &&
+      entry.expectedPackVersion === pack.header.packVersion &&
+      entry.parameterPath === CAMEROON_COMPOSITE_REGISTER_TIE_OUT_PARAMETER_PATH &&
+      entry.purpose === REQUIRED_CAMEROON_COMPOSITE_REGISTER_TIE_OUT_FIELDS.purpose,
+  );
+
+  if (!fixture) {
+    issues.push({
+      code: "GOLDEN_FIXTURE_FAILED",
+      severity: "error",
+      path: "goldenFixtures",
+      message: `Cameroon payroll composite production support requires reviewed register tie-out fixture purpose "${REQUIRED_CAMEROON_COMPOSITE_REGISTER_TIE_OUT_FIELDS.purpose}" pinned to pack ${pack.header.packVersion}.`,
+    });
+    return;
+  }
+
+  validateCameroonCompositeRegisterTieOutFields(fixture, issues);
+}
+
 function validateCameroonIrppFixtureFields(
   fixture: CountryPack["goldenFixtures"][number],
   requirement: (typeof REQUIRED_CAMEROON_IRPP_PRODUCTION_FIXTURE_REQUIREMENTS)[number],
@@ -840,6 +996,7 @@ export function validateCountryPack(
   validateGoldenFixtures(pack, issues);
   validateRequiredGoldenFixtureCoverage(pack, issues);
   validateCameroonPayrollComponentProductionReadiness(pack, issues);
+  validateCameroonCompositeRegisterTieOutReadiness(pack, issues);
   validateCameroonIrppProductionReadiness(pack, issues);
 
   const valid = issues.every((issue) => issue.severity !== "error");

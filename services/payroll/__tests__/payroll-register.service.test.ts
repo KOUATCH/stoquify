@@ -671,6 +671,33 @@ describe("payroll register service", () => {
       closeRunId: "close-run-1",
       evidenceCount: 3,
     }))
+    expect(result.tieOut.compositeRegister).toEqual(expect.objectContaining({
+      status: "MATCHED",
+      proofHash: expect.stringMatching(/^sha256:/),
+      checkedLineCount: 1,
+      matchedComponentLineCount: 1,
+      matchedCountryPackLineCount: 1,
+      componentEvidenceHashCount: 1,
+      countryPackProofHashCount: 1,
+      paymentEvidenceHashCount: 1,
+      declarationPayloadHashCount: 1,
+      sourceLinkCount: 2,
+      statutoryScenarioCoverageHash: "sha256:statutory-scenario-coverage",
+      statutoryReviewEvidenceSourceHashCount: 1,
+      componentMappingHash: componentMappingFixture().componentMappingHash,
+      issues: [],
+      statuses: expect.objectContaining({
+        runLines: "MATCHED",
+        payslips: "MATCHED",
+        payments: "MATCHED",
+        declarations: "MATCHED",
+        components: "MATCHED",
+        countryPack: "MATCHED",
+        componentMapping: "MATCHED",
+        ledger: "MATCHED",
+        close: "MATCHED",
+      }),
+    }))
     expect(result.rows[0]).toEqual(expect.objectContaining({
       payslipId: "payslip-1",
       components: expect.objectContaining({
@@ -781,10 +808,16 @@ describe("payroll register service", () => {
       missingLineCount: 1,
       matchedLineCount: 0,
     }))
+    expect(result.tieOut.compositeRegister).toEqual(expect.objectContaining({
+      status: "MISSING",
+      matchedComponentLineCount: 0,
+      issues: expect.arrayContaining(["components:MISSING"]),
+    }))
     expect(result.rows[0].componentProof.issues).toEqual(expect.arrayContaining([
       "missing:payrollRubriqueComponents",
     ]))
     expect(result.blockers.map((blocker) => blocker.code)).toContain("PAYROLL_REGISTER_COMPONENT_PROOF_MISSING")
+    expect(result.blockers.map((blocker) => blocker.code)).toContain("PAYROLL_REGISTER_COMPOSITE_PROOF_MISSING")
   })
   it("redacts salary amounts while preserving server-owned tie-out status", async () => {
     const client = buildClient()

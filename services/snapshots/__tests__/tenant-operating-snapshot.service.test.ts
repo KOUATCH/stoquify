@@ -234,6 +234,174 @@ describe("tenant operating snapshot service", () => {
     )
   })
 
+  it("emits command-card readiness contract states for blocked, partial, and unavailable domains", async () => {
+    setupChildSnapshots()
+    setupTenantData()
+    mockPaymentTruth.mockResolvedValue({
+      status: "blocked",
+      uiState: "blocked",
+      evidenceGrade: "blocked",
+      metrics: {
+        providerAccountCount: 1,
+        activeProviderAccountCount: 1,
+        internalCollectedAmount: 980000,
+        externalMatchedAmount: 935000,
+        externalMatchedCount: 6,
+        cashVarianceAmount: 45000,
+        recentRunCount: 1,
+        readyForSignoffCount: 0,
+        signedRunCount: 0,
+        openExceptionCount: 2,
+        criticalExceptionCount: 1,
+        openSuspenseCount: 1,
+        openSuspenseAmount: 45000,
+        pendingTransactionCount: 3,
+      },
+      blockers: [
+        {
+          id: "payment-reconciliation-blocked",
+          severity: "critical",
+          gate: "payment_truth",
+          title: "Payment reconciliation is blocked",
+          detail: "Provider exceptions need owner review.",
+          sourceTables: ["payment_reconciliation_exceptions"],
+          nextAction: "Open reconciliation workbench.",
+        },
+      ],
+      redactions: [],
+      freshness: { sourceMaxUpdatedAt: new Date("2026-06-21T09:30:00.000Z") },
+      sourceHash: "sha256:payment-truth-blocked",
+    })
+    mockInventoryCash.mockResolvedValue({
+      status: "partial",
+      uiState: "partial",
+      evidenceGrade: "operational",
+      metrics: {
+        trackedItemCount: 3,
+        inventoryLevelCount: 3,
+        quantityOnHand: 12,
+        quantityAvailable: 10,
+        quantityReserved: 1,
+        quantityInTransit: 0,
+        quantityOnOrder: 2,
+        inventoryValue: 5000,
+        zeroStockLevelCount: 1,
+        negativeStockLevelCount: 0,
+        periodTransactionCount: 4,
+        periodAdjustmentCount: 0,
+        periodTransferCount: 0,
+      },
+      blockers: [],
+      redactions: [],
+      freshness: { sourceMaxUpdatedAt: new Date("2026-06-21T09:15:00.000Z") },
+      sourceHash: "sha256:inventory-cash-partial",
+    })
+
+    const result = await getTenantOperatingSnapshot({
+      organizationId: "org-1",
+      periodStart: "2026-06-01",
+      periodEnd: "2026-06-30",
+      now: "2026-06-21T10:00:00.000Z",
+    })
+
+    expect(result.metrics.commandCards?.map((card) => card.id)).toEqual([
+      "payment",
+      "ap",
+      "close",
+      "stock",
+      "compliance",
+      "payroll",
+      "security",
+    ])
+    expect(result.metrics.commandCards?.find((card) => card.id === "payment")).toMatchObject({
+      label: "Cash truth",
+      metricLabel: "External matched",
+      value: 935000,
+      valueFormat: "currency",
+      uiState: "blocked",
+      blockerState: "blocked",
+      blockerCount: 1,
+      actionRoute: "/dashboard/finance/reconciliation",
+      requiredPermission: "payments.reconciliation.read",
+    })
+    expect(result.metrics.commandCards?.find((card) => card.id === "payment")?.detail).toContain("suspense 45000.00")
+    expect(result.metrics.commandCards?.find((card) => card.id === "ap")).toMatchObject({
+      uiState: "partial",
+      blockerState: "partial",
+      actionRoute: "/dashboard/purchases/payables",
+      requiredPermission: "finance.payables.read",
+    })
+    expect(result.metrics.commandCards?.find((card) => card.id === "security")).toMatchObject({
+      uiState: "module_unavailable",
+      blockerState: "unavailable",
+      actionRoute: "/dashboard/settings/security",
+      proofRoute: "/dashboard/assurance/control-tower",
+    })
+  })
+
+  it("exposes fresh cash-truth proof on the tenant payment command card", async () => {
+    setupChildSnapshots()
+    setupTenantData()
+    mockPaymentTruth.mockResolvedValue({
+      status: "fresh",
+      uiState: "fresh",
+      evidenceGrade: "operational",
+      metrics: {
+        providerAccountCount: 1,
+        activeProviderAccountCount: 1,
+        internalCollectedAmount: 10000,
+        externalMatchedAmount: 10000,
+        externalMatchedCount: 1,
+        cashVarianceAmount: 0,
+        recentRunCount: 1,
+        readyForSignoffCount: 1,
+        signedRunCount: 0,
+        openExceptionCount: 0,
+        criticalExceptionCount: 0,
+        openSuspenseCount: 0,
+        openSuspenseAmount: 0,
+        pendingTransactionCount: 0,
+      },
+      blockers: [],
+      redactions: [],
+      freshness: { sourceMaxUpdatedAt: new Date("2026-06-14T12:05:00.000Z") },
+      sourceHash: "sha256:payment-truth-pilot-proof-chain",
+    })
+
+    const result = await getTenantOperatingSnapshot({
+      organizationId: "org-1",
+      periodStart: "2026-06-01",
+      periodEnd: "2026-06-30",
+      now: "2026-06-14T12:10:00.000Z",
+    })
+
+    const paymentCard = result.metrics.commandCards?.find((card) => card.id === "payment")
+
+    expect(paymentCard).toMatchObject({
+      label: "Cash truth",
+      metricLabel: "External matched",
+      value: 10000,
+      valueFormat: "currency",
+      scope: "tenant_period",
+      uiState: "fresh",
+      evidenceGrade: "operational",
+      blockerState: "none",
+      blockerCount: 0,
+      actionRoute: "/dashboard/finance/reconciliation",
+      proofRoute: "/dashboard/finance/reconciliation",
+      requiredPermission: "payments.reconciliation.read",
+      sourceModules: ["payments", "finance"],
+      freshness: {
+        sourceMaxUpdatedAt: "2026-06-14T12:05:00.000Z",
+        stale: false,
+      },
+    })
+    expect(paymentCard?.detail).toContain("Internal collected 10000.00")
+    expect(paymentCard?.detail).toContain("external matched 10000.00")
+    expect(paymentCard?.detail).toContain("variance 0.00")
+    expect(paymentCard?.detail).toContain("suspense 0.00")
+  })
+
   it("exposes employee balance recovery metrics and blocks tenant truth while active cases remain", async () => {
     setupChildSnapshots()
     setupTenantData()

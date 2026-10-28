@@ -882,6 +882,39 @@ function receiptHashForOutcome(
   return "receiptHash" in outcome ? (outcome.receiptHash ?? null) : null;
 }
 
+function authorityReferenceForOutcome(
+  outcome: z.output<
+    typeof processPayrollAuthorityAdapterExecutionInputSchema
+  >["outcome"],
+) {
+  return "authorityReference" in outcome
+    ? (outcome.authorityReference ?? null)
+    : null;
+}
+
+function terminalOutcomeRequiresReceipt(
+  outcome: z.output<
+    typeof processPayrollAuthorityAdapterExecutionInputSchema
+  >["outcome"],
+) {
+  return ["accepted", "payment_due", "amendment_required"].includes(
+    outcome.status,
+  );
+}
+
+function assertTerminalOutcomeProof(
+  outcome: z.output<
+    typeof processPayrollAuthorityAdapterExecutionInputSchema
+  >["outcome"],
+) {
+  if (!terminalOutcomeRequiresReceipt(outcome)) return;
+  if (receiptHashForOutcome(outcome)) return;
+
+  throw new BusinessRuleError(
+    "Payroll authority adapter terminal outcome requires live authority receipt proof before it can update declaration readiness.",
+  );
+}
+
 function duplicateTerminalOutcomeMatches(
   execution: PayrollAuthorityAdapterExecutionRecord,
   outcome: z.output<
@@ -891,10 +924,16 @@ function duplicateTerminalOutcomeMatches(
   const expectedStatus = terminalStatusForOutcome(outcome);
   const responseHash = responseHashForOutcome(outcome);
   const receiptHash = receiptHashForOutcome(outcome);
+  const authorityReference = authorityReferenceForOutcome(outcome);
   if (!expectedStatus || !responseHash) return false;
   if (execution.status !== expectedStatus) return false;
   if (execution.responseHash !== responseHash) return false;
-  if (receiptHash && execution.receiptHash !== receiptHash) return false;
+  if (execution.authorityReference !== authorityReference) return false;
+  if (terminalOutcomeRequiresReceipt(outcome)) {
+    if (!receiptHash || execution.receiptHash !== receiptHash) return false;
+  } else if (receiptHash && execution.receiptHash !== receiptHash) {
+    return false;
+  }
   return true;
 }
 
@@ -1031,6 +1070,7 @@ export async function processPayrollAuthorityAdapterExecution(
 ) {
   const parsed =
     processPayrollAuthorityAdapterExecutionInputSchema.parse(input);
+  assertTerminalOutcomeProof(parsed.outcome);
   const now = parseDate(parsed.now, new Date());
 
   return inTransaction(client, async (tx) => {

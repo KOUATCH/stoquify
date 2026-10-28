@@ -90,6 +90,7 @@
 
 .landing-root {
   background:
+    radial-gradient(circle at 72% 2%, rgba(85, 215, 255, 0.2), transparent 30rem),
     linear-gradient(180deg, var(--color-canvas), var(--color-surface-deep) 34rem, var(--color-surface-soft) 100rem);
 }
 
@@ -189,8 +190,8 @@
 /* The fine grid that lives under hero + connected-workflow */
 .landing-grid-bg {
   background-image:
-    linear-gradient(to right, rgba(210, 221, 216, 0.055) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(210, 221, 216, 0.055) 1px, transparent 1px);
+    linear-gradient(to right, rgba(143, 223, 255, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(143, 223, 255, 0.07) 1px, transparent 1px);
   background-size: 64px 64px;
   mask-image: linear-gradient(180deg, black, transparent 92%);
   -webkit-mask-image: linear-gradient(180deg, black, transparent 92%);
@@ -198,8 +199,8 @@
 
 .landing-root .surface-grid {
   background-image:
-    linear-gradient(to right, rgba(238, 247, 242, 0.052) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(238, 247, 242, 0.052) 1px, transparent 1px);
+    linear-gradient(to right, rgba(143, 223, 255, 0.055) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(143, 223, 255, 0.055) 1px, transparent 1px);
   background-size: 48px 48px;
 }
 

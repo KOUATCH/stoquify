@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import {
   AccountingPostingPurpose,
   LedgerPostingBatchStatus,
@@ -155,6 +155,83 @@ function workbenchData(): PayrollRunWorkbenchResult {
       netPayableInScope: "95800.00",
       coverageComplete: true,
     },
+    accountingAuditProof: {
+      available: true,
+      status: "BLOCKED",
+      generatedAt: "2026-06-30T10:00:00.000Z",
+      scopeHash: "sha256:audit-scope",
+      periodId: "acct-period-1",
+      trustLevel: "T2",
+      verdict: "PARTIAL",
+      exportable: false,
+      blockerCount: 1,
+      criticalBlockerCount: 1,
+      highBlockerCount: 0,
+      proofGateCount: 3,
+      blockedProofGateCount: 1,
+      reviewProofGateCount: 1,
+      sourceLinkCount: 1,
+      sourceTableCount: 3,
+      redactionMode: "HASHES_AND_AGGREGATES_ONLY",
+      redactionExcluded: [
+        "employee identifiers",
+        "bank and mobile-money details",
+        "raw salary rows",
+      ],
+      sourceTables: [
+        "payroll_runs",
+        "payroll_payment_batches",
+        "accounting_source_links",
+      ],
+      aggregateEvidence: {
+        declarationRegisterProofGaps: 1,
+        paymentRegisterProofGaps: 1,
+        paymentsMissingLedger: 0,
+      },
+      proofGates: [
+        {
+          gate: "payroll.declarations.proof",
+          status: "BLOCKED",
+          blockerCount: 1,
+          blockerIds: ["payroll-declaration-register-proof-missing"],
+          evidence: ["payroll declaration evidence source register hash"],
+        },
+        {
+          gate: "payroll.payment.proof",
+          status: "REVIEW",
+          blockerCount: 1,
+          blockerIds: ["payroll-payment-register-proof-missing"],
+          evidence: ["payroll payment settlement source register hash"],
+        },
+        {
+          gate: "payroll.accounting.source-link",
+          status: "PASS",
+          blockerCount: 0,
+          blockerIds: [],
+          evidence: ["accounting source link hashes"],
+        },
+      ],
+      blockers: [
+        {
+          id: "payroll-declaration-register-proof-missing",
+          severity: "critical",
+          gate: "payroll.declarations.proof",
+          title: "Declaration register proof missing",
+        },
+      ],
+      latestSourceLinks: [
+        {
+          sourceLinkHash: "sha256:source-link-proof",
+          sourceType: "PAYROLL_RUN",
+          sourceNumber: null,
+          sourceRefHash: "sha256:run-ref",
+          journalEntryNumber: "JE-2026-06",
+          postingBatchId: "ledger-batch-1",
+          postingStatus: "POSTED",
+          createdAt: "2026-06-30T09:20:00.000Z",
+        },
+      ],
+    },
     runs: [
       {
         id: "run-1",
@@ -169,6 +246,7 @@ function workbenchData(): PayrollRunWorkbenchResult {
           periodStart: "2026-06-01T00:00:00.000Z",
           periodEnd: "2026-06-30T23:59:59.999Z",
           payDate: "2026-07-05T00:00:00.000Z",
+          accountingPeriodId: "acct-period-1",
         },
         amounts: {
           grossAmount: "120000.00",
@@ -354,6 +432,12 @@ function workbenchData(): PayrollRunWorkbenchResult {
       returned: 1,
       coverageComplete: true,
       sourceService: "services/payroll/payroll-control.service.ts",
+      accountingAuditProofAvailable: true,
+      accountingAuditProofGateCount: 3,
+      accountingAuditProofSourceLinkCount: 1,
+      accountingAuditProofPeriodId: "acct-period-1",
+      returnedAccountingPeriodIds: ["acct-period-1"],
+      accountingAuditProofCoverageComplete: true,
     },
   };
 }
@@ -458,6 +542,31 @@ describe("PayrollRunWorkbench", () => {
         "/en/dashboard/accounting/close",
       ]),
     );
+  });
+
+  it("renders accountant auditor proof drawer with redacted hash evidence", () => {
+    render(<PayrollRunWorkbench data={workbenchData()} locale="en" />);
+
+    expect(
+      screen.getByRole("heading", { name: "Auditor proof" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("acct-period-1")).toBeInTheDocument();
+    expect(screen.getByText("1 blocked / 1 review / 3 total")).toBeInTheDocument();
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Auditor proof drawer" }),
+    );
+
+    const dialog = screen.getByRole("dialog");
+    const drawer = within(dialog);
+    expect(drawer.getByText("Payroll auditor proof pack")).toBeInTheDocument();
+    expect(drawer.getAllByText("HASHES_AND_AGGREGATES_ONLY").length).toBeGreaterThanOrEqual(2);
+    expect(drawer.getByText("sha256:source-link-proof")).toBeInTheDocument();
+    expect(drawer.getByText("payroll.declarations.proof:BLOCKED, payroll.payment.proof:REVIEW, payroll.accounting.source-link:PASS")).toBeInTheDocument();
+    expect(drawer.getByText("declarationRegisterProofGaps:1, paymentRegisterProofGaps:1")).toBeInTheDocument();
+    expect(drawer.getByText("employee identifiers, bank and mobile-money details, raw salary rows")).toBeInTheDocument();
+    expect(drawer.queryByText("EMP-001")).not.toBeInTheDocument();
+    expect(drawer.queryByText("Ada Payroll")).not.toBeInTheDocument();
   });
 
   it("renders correction proof identifier redaction when service denies proof access", () => {
