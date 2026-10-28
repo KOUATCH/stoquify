@@ -660,6 +660,19 @@
     height: 2.25rem;
   }
 
+  .dashboard-landing-theme .dashboard-table-pagination {
+    min-height: 3.5rem;
+    border-top: 1px solid var(--dash-border-subtle);
+    background: color-mix(in srgb, var(--dash-surface) 58%, transparent);
+    padding: 0.75rem;
+    color: var(--dash-text-soft);
+  }
+
+  .dashboard-landing-theme .dashboard-table-pagination .dashboard-control {
+    min-height: 2rem;
+    height: 2rem;
+  }
+
   .enterprise-floating-surface {
     --floating-text: #f7faf8;
     --floating-muted: #a9b8b2;
@@ -1949,5 +1962,4 @@
     left: 100%;
   }
 }
-
 

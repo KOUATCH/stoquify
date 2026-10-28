@@ -51,13 +51,46 @@ export const GoodsReceiptItemSchema = z.object({
   expiryDate: z.string().optional(),
 })
 
+export const GoodsReceiptInspectionOutcomeSchema = z.enum(["PASSED", "FAILED", "INCOMPLETE"])
+
+export const GoodsReceiptInspectionResolutionDecisionSchema = z.enum(["ACCEPT", "REJECT"])
+
 export const ReceiveItemsSchema = z.object({
   purchaseOrderId: z.string().min(1),
   organizationId: z.string().min(1),
   receivedById: z.string().min(1),
+  idempotencyKey: z.string()
+    .trim()
+    .min(8, "Receipt idempotency key is required")
+    .max(191)
+    .regex(/^[A-Za-z0-9][A-Za-z0-9._:-]*$/, "Receipt idempotency key has an invalid format"),
   locationId: z.string().optional(),
   notes: z.string().optional(),
+  inspectionOutcome: GoodsReceiptInspectionOutcomeSchema,
+  inspectionReason: z.string().trim().max(2000).optional(),
+  inspectionEvidenceNotes: z.string().trim().max(4000).optional(),
   items: z.array(GoodsReceiptItemSchema).min(1, "At least one item must be received"),
+}).superRefine((value, context) => {
+  if (value.inspectionOutcome !== "PASSED" && !value.inspectionReason) {
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["inspectionReason"],
+      message: "A reason is required when the inspection failed or is incomplete",
+    })
+  }
+})
+
+export const ResolveGoodsReceiptInspectionSchema = z.object({
+  goodsReceiptId: z.string().min(1),
+  organizationId: z.string().min(1),
+  resolvedById: z.string().min(1),
+  decision: GoodsReceiptInspectionResolutionDecisionSchema,
+  reason: z.string().trim().min(1, "A resolution reason is required").max(2000),
+  idempotencyKey: z.string()
+    .trim()
+    .min(8, "Resolution idempotency key is required")
+    .max(191)
+    .regex(/^[A-Za-z0-9][A-Za-z0-9._:-]*$/, "Resolution idempotency key has an invalid format"),
 })
 
 export const BulkStatusUpdateSchema = z.object({
@@ -91,9 +124,12 @@ export const POAnalyticsSchema = z.object({
 export type CreatePurchaseOrderInput = z.infer<typeof CreatePurchaseOrderSchema>
 export type UpdatePurchaseOrderInput = z.infer<typeof UpdatePurchaseOrderSchema>
 export type ReceiveItemsInput = z.infer<typeof ReceiveItemsSchema>
+export type ResolveGoodsReceiptInspectionInput = z.infer<typeof ResolveGoodsReceiptInspectionSchema>
 export type BulkStatusUpdateInput = z.infer<typeof BulkStatusUpdateSchema>
 export type ClonePurchaseOrderInput = z.infer<typeof ClonePurchaseOrderSchema>
 export type POAnalyticsInput = z.infer<typeof POAnalyticsSchema>
 export type PurchaseOrderStatus = z.infer<typeof PurchaseOrderStatusEnum>
 export type OrderLineInput = z.infer<typeof OrderLineSchema>
 export type GoodsReceiptItemInput = z.infer<typeof GoodsReceiptItemSchema>
+export type GoodsReceiptInspectionOutcome = z.infer<typeof GoodsReceiptInspectionOutcomeSchema>
+export type GoodsReceiptInspectionResolutionDecision = z.infer<typeof GoodsReceiptInspectionResolutionDecisionSchema>

@@ -5,10 +5,13 @@ import {
   PayrollPaymentBatchStatus,
   PayrollPeriodStatus,
   PayrollRunStatus,
+  PayrollRunTransitionEvidenceStatus,
+  PayrollRunTransitionOrigin,
   Prisma,
 } from "@prisma/client"
 
 import { ForbiddenError } from "@/services/_shared/action-errors"
+import { getAccountantPortalData } from "@/services/accounting/data-trust.service"
 import { getPayrollAdapterOperationsReadModel } from "../adapter-operations-read-model.service"
 import { getPayrollEmployeeSourceData } from "../employee.service"
 import { getPaymentEvidenceReadiness } from "../payment-evidence.service"
@@ -16,6 +19,10 @@ import { getPayrollEmployeeBalanceWorkbenchData } from "../payroll-employee-bala
 import { getPayrollWorkbenchData } from "../payroll-control.service"
 import { buildPayrollFinalReleaseReadinessPack } from "../payroll-final-release-readiness.service"
 import { getPayrollCommandReadModel } from "../command-read-model.service"
+
+jest.mock("@/services/accounting/data-trust.service", () => ({
+  getAccountantPortalData: jest.fn(),
+}))
 
 jest.mock("../adapter-operations-read-model.service", () => ({
   getPayrollAdapterOperationsReadModel: jest.fn(),
@@ -41,6 +48,7 @@ jest.mock("../payroll-final-release-readiness.service", () => ({
   buildPayrollFinalReleaseReadinessPack: jest.fn(),
 }))
 
+const mockGetAccountantPortalData = getAccountantPortalData as jest.Mock
 const mockGetPayrollAdapterOperationsReadModel = getPayrollAdapterOperationsReadModel as jest.Mock
 const mockGetPayrollEmployeeSourceData = getPayrollEmployeeSourceData as jest.Mock
 const mockGetPaymentEvidenceReadiness = getPaymentEvidenceReadiness as jest.Mock
@@ -52,7 +60,20 @@ const asOf = new Date("2026-06-26T08:00:00.000Z")
 const periodStart = new Date("2026-06-01T00:00:00.000Z")
 const periodEnd = new Date("2026-06-30T23:59:59.000Z")
 const updatedAt = new Date("2026-06-26T07:00:00.000Z")
+const originalTrustSpineWriteSwitch = process.env.PAYROLL_TRUST_SPINE_WRITES_ENABLED
 
+function verifiedTransition(toStatus: PayrollRunStatus, fromVersion: number) {
+  return {
+    toStatus,
+    fromVersion,
+    toVersion: fromVersion + 1,
+    actorId: "actor-" + toStatus.toLowerCase(),
+    transitionedAt: new Date("2026-06-26T07:00:00.000Z"),
+    businessEventId: "event-" + toStatus.toLowerCase(),
+    origin: PayrollRunTransitionOrigin.RUNTIME,
+    evidenceStatus: PayrollRunTransitionEvidenceStatus.VERIFIED,
+  }
+}
 function workbenchData() {
   return {
     organizationId: "org-1",
@@ -191,6 +212,54 @@ function employeeBalanceWorkbenchData() {
   }
 }
 
+function accountantPortalData(payrollAuditProofPackOverrides: Record<string, unknown> = {}) {
+  return {
+    payrollAuditProofPack: {
+      kind: "AQSTOQFLOW_PAYROLL_AUDITOR_PROOF_PACK_READ_MODEL",
+      version: 1,
+      generatedAt: "2026-06-26T07:56:00.000Z",
+      scopeHash: "sha256:accountant-scope",
+      organizationScoped: true,
+      redaction: {
+        mode: "HASHES_AND_AGGREGATES_ONLY",
+        excluded: ["employee names", "employee identifiers", "bank and mobile-money details", "raw salary rows", "raw authority/provider payloads"],
+      },
+      certification: {
+        trustLevel: "T4",
+        verdict: "CERTIFIED",
+        exportable: true,
+        blockerCount: 0,
+        criticalBlockerCount: 0,
+        highBlockerCount: 0,
+      },
+      sourceTables: ["payroll_runs", "payroll_run_lines", "accounting_source_links"],
+      aggregateEvidence: {
+        deductionRecoveryLedgerMappingGaps: 0,
+        paymentRegisterProofGaps: 0,
+        declarationRegisterProofGaps: 0,
+      },
+      proofGates: [
+        { gate: "payroll.accounting.posting", status: "PASS", blockerCount: 0, blockerIds: [], evidence: ["ledger posting proof"] },
+        { gate: "payroll.payment.proof", status: "PASS", blockerCount: 0, blockerIds: [], evidence: ["payment proof"] },
+      ],
+      blockers: [],
+      latestSourceLinks: [
+        {
+          sourceLinkHash: "sha256:source-link",
+          sourceType: "PAYROLL_RUN",
+          sourceNumber: "PR-2026-06",
+          sourceRefHash: "sha256:source-ref",
+          journalEntryNumber: "JE-1",
+          postingBatchId: "batch-1",
+          postingStatus: "POSTED",
+          createdAt: "2026-06-26T07:45:00.000Z",
+        },
+      ],
+      ...payrollAuditProofPackOverrides,
+    },
+  }
+}
+
 function finalReleasePack(overrides: Record<string, unknown> = {}) {
   return {
     kind: "AQSTOQFLOW_PAYROLL_FINAL_RELEASE_READINESS_PACK",
@@ -212,12 +281,16 @@ function finalReleasePack(overrides: Record<string, unknown> = {}) {
           setupGateStatus: "READY",
           statutoryScenarioCoverageStatus: "BLOCKED",
           statutoryScenarioCoverageHashPresent: true,
-          statutoryScenarioFamilies: "8/9",
+          statutoryScenarioFamilies: "9/10",
           statutoryScenarioBlockerCount: 1,
           missingReviewEvidenceCount: 1,
           sourceEvidenceHashCount: 1,
           requiredReviewTopicCount: 2,
           requiredReviewTopics: "taxableSalaryBase, bracketsAndRates",
+          requiredStatutoryReadyFamilies:
+            "DEDUCTIONS_RECOVERIES, COMPOSITE_REGISTER_TIE_OUT",
+          requiredStatutoryReadyFamiliesPresent: false,
+          missingRequiredStatutoryReadyFamilies: "DEDUCTIONS_RECOVERIES",
         },
       },
       {
@@ -247,6 +320,24 @@ function finalReleasePack(overrides: Record<string, unknown> = {}) {
         source: "what-next/payroll/payroll-immutability-runtime-check.json",
         summary: {},
       },
+      {
+        key: "browser_validation",
+        label: "Authenticated browser and accessibility validation",
+        status: "PASS",
+        blockerCodes: [],
+        evidenceHash: "sha256:browser-validation",
+        source: "what-next/payroll/AQSTOQFLOW_PAYROLL_PROMPT_19_BROWSER_SMOKE_WARMUP_2026-07-02.json",
+        summary: {
+          routeSmokeOk: true,
+          routeCount: 11,
+          expectedRouteCount: 11,
+          checkCount: 12,
+          surfaceCount: 12,
+          safeErrorCount: 0,
+          seriousViolationCount: 0,
+          mobileOverflowCount: 0,
+        },
+      },
     ],
     blockers: [
       {
@@ -268,6 +359,18 @@ function finalReleasePack(overrides: Record<string, unknown> = {}) {
         targetFamilies: ["IRPP_PERIOD"],
         freshAuthSatisfied: true,
         approvalEvidenceHashPresent: true,
+      },
+      browserValidation: {
+        checkedAt: "2026-07-02T04:30:00.000Z",
+        routeSmokeCheckedAt: "2026-07-02T04:22:09.000Z",
+        routeSmokeOk: true,
+        routeCount: 11,
+        expectedRouteCount: 11,
+        checkCount: 12,
+        surfaceCount: 12,
+        safeErrorCount: 0,
+        seriousViolationCount: 0,
+        mobileOverflowCount: 0,
       },
     },
     releaseGateRequirements: [
@@ -335,6 +438,8 @@ function buildClient(
           id: "run-1",
           runNumber: "PR-2026-06",
           status: PayrollRunStatus.CALCULATED,
+          version: 1,
+          transitions: [],
           documentHash: "sha256:run-doc",
           evidenceHash: "sha256:run-evidence",
           calculationHash: "sha256:calc",
@@ -419,11 +524,13 @@ function buildClient(
 }
 
 beforeEach(() => {
+  process.env.PAYROLL_TRUST_SPINE_WRITES_ENABLED = "true"
   jest.clearAllMocks()
   mockGetPayrollWorkbenchData.mockResolvedValue(workbenchData())
   mockGetPayrollEmployeeBalanceWorkbenchData.mockResolvedValue(employeeBalanceWorkbenchData())
   mockGetPayrollAdapterOperationsReadModel.mockResolvedValue(adapterOperationsData())
   mockBuildPayrollFinalReleaseReadinessPack.mockResolvedValue(finalReleasePack())
+  mockGetAccountantPortalData.mockResolvedValue(accountantPortalData())
   mockGetPayrollEmployeeSourceData.mockResolvedValue({
     organizationId: "org-1",
     asOf: "2026-06-26T07:20:00.000Z",
@@ -447,6 +554,13 @@ beforeEach(() => {
   })
 })
 
+afterAll(() => {
+  if (originalTrustSpineWriteSwitch === undefined) {
+    delete process.env.PAYROLL_TRUST_SPINE_WRITES_ENABLED
+  } else {
+    process.env.PAYROLL_TRUST_SPINE_WRITES_ENABLED = originalTrustSpineWriteSwitch
+  }
+})
 describe("payroll command read model service", () => {
   it("composes trusted command data with blockers, role scope, redaction, evidence, and audit", async () => {
     const client = buildClient()
@@ -484,6 +598,12 @@ describe("payroll command read model service", () => {
       asOf,
       limit: 25,
     }), client)
+    expect(mockGetAccountantPortalData).toHaveBeenCalledWith({
+      organizationId: "org-1",
+      periodId: "acct-period-1",
+      limit: 25,
+    }, client, asOf)
+
     expect(mockBuildPayrollFinalReleaseReadinessPack).toHaveBeenCalledWith(expect.objectContaining({
       organizationId: "org-1",
       payrollRunId: "run-1",
@@ -585,6 +705,29 @@ describe("payroll command read model service", () => {
       source: "payroll.final_release_readiness",
       blockerCodes: ["FINAL_STATUTORY_SCENARIO_COVERAGE_NOT_READY"],
     }))
+    expect(result.evidence.accountingAuditProof).toEqual(expect.objectContaining({
+      available: true,
+      status: "PASS",
+      trustLevel: "T4",
+      verdict: "CERTIFIED",
+      proofGateCount: 2,
+      blockedProofGateCount: 0,
+      sourceLinkCount: 1,
+      redactionMode: "HASHES_AND_AGGREGATES_ONLY",
+    }))
+    expect(result.readiness.accountingAuditProof).toEqual(expect.objectContaining({
+      state: "READY",
+      source: "accounting.payroll_auditor_proof",
+      blockerCodes: [],
+    }))
+    expect(result.trustedCounts.payrollAuditProofGates).toBe(2)
+    expect(result.trustedCounts.payrollAuditSourceLinks).toBe(1)
+    expect(result.sourceScope).toEqual(expect.objectContaining({
+      accountingAuditProofAvailable: true,
+      accountingAuditProofGateCount: 2,
+      accountingAuditProofSourceLinkCount: 1,
+    }))
+
     expect(result.evidence.finalRelease).toEqual(expect.objectContaining({
       decision: "NOT_READY",
       packHash: "sha256:final-release-pack",
@@ -593,11 +736,15 @@ describe("payroll command read model service", () => {
       statutorySetup: expect.objectContaining({
         status: "BLOCKED",
         evidenceHash: "sha256:statutory-scenario-coverage",
-        families: "8/9",
+        families: "9/10",
         missingReviewEvidenceCount: 1,
         sourceEvidenceHashCount: 1,
         requiredReviewTopicCount: 2,
         requiredReviewTopics: "taxableSalaryBase, bracketsAndRates",
+        requiredReadyFamilies:
+          "DEDUCTIONS_RECOVERIES, COMPOSITE_REGISTER_TIE_OUT",
+        requiredReadyFamiliesPresent: false,
+        missingRequiredReadyFamilies: "DEDUCTIONS_RECOVERIES",
       }),
       countryPackReviewIntake: expect.objectContaining({
         status: "APPROVED",
@@ -609,6 +756,18 @@ describe("payroll command read model service", () => {
         targetFamilies: ["IRPP_PERIOD"],
         freshAuthSatisfied: true,
         approvalEvidenceHashPresent: true,
+      }),
+      browserValidation: expect.objectContaining({
+        gateStatus: "PASS",
+        evidenceHash: "sha256:browser-validation",
+        routeSmokeOk: true,
+        routeCount: 11,
+        expectedRouteCount: 11,
+        checkCount: 12,
+        surfaceCount: 12,
+        safeErrorCount: 0,
+        seriousViolationCount: 0,
+        mobileOverflowCount: 0,
       }),
     }))
     expect(result.adapterOperations.summary).toEqual(expect.objectContaining({
@@ -752,6 +911,77 @@ describe("payroll command read model service", () => {
     }))
   })
 
+  it("routes blocked payroll auditor proof gates to the accountant portal", async () => {
+    mockGetAccountantPortalData.mockResolvedValueOnce(accountantPortalData({
+      certification: {
+        trustLevel: "T0",
+        verdict: "BLOCKED",
+        exportable: false,
+        blockerCount: 1,
+        criticalBlockerCount: 1,
+        highBlockerCount: 0,
+      },
+      aggregateEvidence: { deductionRecoveryLedgerMappingGaps: 1 },
+      proofGates: [
+        {
+          gate: "payroll.accounting.component-proof",
+          status: "BLOCKED",
+          blockerCount: 1,
+          blockerIds: ["payroll-deduction-recovery-ledger-mapping-missing"],
+          evidence: ["deduction/recovery ledger mapping proof"],
+        },
+      ],
+      blockers: [
+        {
+          id: "payroll-deduction-recovery-ledger-mapping-missing",
+          severity: "critical",
+          gate: "payroll.accounting.deduction-recovery-ledger-mapping",
+          title: "Posted payroll runs lack deduction/recovery ledger mapping",
+        },
+      ],
+      latestSourceLinks: [],
+    }))
+
+    const result = await getPayrollCommandReadModel({
+      organizationId: "org-1",
+      actorId: "command-reader-1",
+      actorPermissions: ["payroll.command.read", "accounting.audit.read"],
+      limit: 25,
+      asOf,
+    }, buildClient() as never)
+
+    expect(result.evidence.accountingAuditProof).toEqual(expect.objectContaining({
+      status: "BLOCKED",
+      trustLevel: "T0",
+      exportable: false,
+      proofGateCount: 1,
+      blockedProofGateCount: 1,
+      sourceLinkCount: 0,
+    }))
+    expect(result.readiness.accountingAuditProof).toEqual(expect.objectContaining({
+      state: "BLOCKED",
+      blockerCodes: ["payroll-deduction-recovery-ledger-mapping-missing"],
+    }))
+    expect(result.blockers).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        code: "PAYROLL_ACCOUNTING_AUDITOR_PROOF_BLOCKED",
+        domain: "close",
+        severity: "critical",
+      }),
+    ]))
+    expect(result.nextActions).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        id: "review-payroll-auditor-proof-pack",
+        href: "/dashboard/accounting/accountant-portal",
+        allowed: true,
+        requiredPermission: "accounting.audit.read",
+        blockedBy: ["payroll-deduction-recovery-ledger-mapping-missing"],
+      }),
+    ]))
+    expect(JSON.stringify(result)).not.toContain("employeeNumber")
+    expect(JSON.stringify(result)).not.toContain("bankAccount")
+  })
+
   it("surfaces a persisted certified pilot-cycle certificate as release-review ready", async () => {
     mockBuildPayrollFinalReleaseReadinessPack.mockResolvedValueOnce(finalReleasePack({
       decision: "READY_FOR_FULL_PRODUCTION_APPROVAL",
@@ -835,6 +1065,114 @@ describe("payroll command read model service", () => {
     expect(result.blockers.map((blocker) => blocker.code)).not.toContain("PAYROLL_FINAL_RELEASE_READINESS_BLOCKED")
   })
 
+  it("publishes the next legal Trust Spine stage with server-derived controls", async () => {
+    const client = buildClient()
+
+    const result = await getPayrollCommandReadModel({
+      organizationId: "org-1",
+      actorId: "reviewer-1",
+      actorPermissions: ["payroll.command.read", "payroll.runs.review"],
+      limit: 25,
+      asOf,
+    }, client as never)
+
+    expect(result.readiness.payrollRun).toEqual(expect.objectContaining({
+      state: "ACTION_REQUIRED",
+      source: "payroll.run_lifecycle",
+    }))
+    expect(result.nextActions).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        id: "payroll-run-review",
+        href: "/dashboard/payroll/runs",
+        allowed: true,
+        blockedBy: [],
+        requiredPermission: "payroll.runs.review",
+        requiresFreshAuth: true,
+        requiresSeparateApprover: true,
+      }),
+    ]))
+    expect(result.evidence.latestRun?.lifecycle).toEqual(expect.objectContaining({
+      status: PayrollRunStatus.CALCULATED,
+      version: 1,
+      transitionEvidence: "NOT_APPLICABLE",
+      nextAction: expect.objectContaining({ id: "review" }),
+    }))
+  })
+
+  it("blocks lifecycle advancement when required transition proof is missing", async () => {
+    const client = buildClient()
+    const [baseRun] = await client.payrollRun.findMany()
+    client.payrollRun.findMany.mockResolvedValueOnce([
+      {
+        ...baseRun,
+        status: PayrollRunStatus.APPROVED,
+        version: 3,
+        transitions: [verifiedTransition(PayrollRunStatus.REVIEWED, 1)],
+      },
+    ])
+
+    const result = await getPayrollCommandReadModel({
+      organizationId: "org-1",
+      actorId: "emitter-1",
+      actorPermissions: ["payroll.command.read", "payroll.payslips.emit"],
+      limit: 25,
+      asOf,
+    }, client as never)
+
+    expect(result.blockers).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        code: "PAYROLL_TRANSITION_PROOF_MISSING",
+        domain: "payroll",
+        severity: "critical",
+      }),
+    ]))
+    expect(result.readiness.payrollRun.state).toBe("BLOCKED")
+    expect(result.nextActions).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        id: "payroll-run-emit",
+        allowed: false,
+        blockedBy: ["PAYROLL_TRANSITION_PROOF_MISSING"],
+      }),
+    ]))
+    expect(result.evidence.latestRun?.lifecycle.transitionEvidence).toBe("MISSING_POST_CUTOVER")
+    expect(JSON.stringify(result.evidence.latestRun?.lifecycle)).not.toContain("actor-reviewed")
+  })
+
+  it("marks a posted run ready only when all transition stages are verified", async () => {
+    const client = buildClient()
+    const [baseRun] = await client.payrollRun.findMany()
+    client.payrollRun.findMany.mockResolvedValueOnce([
+      {
+        ...baseRun,
+        status: PayrollRunStatus.POSTED,
+        version: 5,
+        transitions: [
+          verifiedTransition(PayrollRunStatus.REVIEWED, 1),
+          verifiedTransition(PayrollRunStatus.APPROVED, 2),
+          verifiedTransition(PayrollRunStatus.EMITTED, 3),
+          verifiedTransition(PayrollRunStatus.POSTED, 4),
+        ],
+      },
+    ])
+
+    const result = await getPayrollCommandReadModel({
+      organizationId: "org-1",
+      actorId: "command-reader-1",
+      actorPermissions: ["payroll.command.read"],
+      limit: 25,
+      asOf,
+    }, client as never)
+
+    expect(result.readiness.payrollRun.state).toBe("READY")
+    expect(result.evidence.latestRun?.lifecycle).toEqual(expect.objectContaining({
+      transitionEvidence: "VERIFIED",
+      complete: true,
+      nextAction: null,
+    }))
+    expect(result.nextActions.map((action) => action.id)).not.toEqual(
+      expect.arrayContaining(["payroll-run-review", "payroll-run-approve", "payroll-run-emit", "payroll-run-post"]),
+    )
+  })
   it("marks next-action availability from actor permissions", async () => {
     const result = await getPayrollCommandReadModel({
       organizationId: "org-1",

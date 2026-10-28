@@ -1,0 +1,188 @@
+{
+  "schemaVersion": 1,
+  "workPackage": "WP-00",
+  "status": "SOURCE_ALIGNED_EXTERNAL_INPUT_REQUIRED",
+  "sourceSearchResult": "No non-fixture real owner identity, acceptance, statutory approval, or Cameroon pilot-scope approval was found in the repository on 2026-08-22.",
+  "identityRule": "Only real value-free directory:// or identity:// references and separately resolvable approval/evidence references may be recorded. Test, sample, placeholder, inferred, or role-only values are invalid.",
+  "bindings": [
+    {
+      "role": "PROGRAM_CONTROLLER",
+      "canonicalTargets": [
+        "docs/production-readiness/stoquify-production-unblocking/evidence/WP-00/owner-acceptance-register.json#/owners/role=PROGRAM_CONTROLLER"
+      ],
+      "coverage": "PROGRAM_CONTROL_ONLY",
+      "note": "No existing release gate owns a dedicated program-controller field."
+    },
+    {
+      "role": "EXECUTIVE_SPONSOR",
+      "canonicalTargets": [
+        "docs/production-readiness/stoquify-production-unblocking/evidence/WP-00/owner-acceptance-register.json#/owners/role=EXECUTIVE_SPONSOR",
+        "docs/production-readiness/stoquify-production-unblocking/evidence/WP-00/owner-acceptance-register.json#/pilotScopeDecision"
+      ],
+      "coverage": "PROGRAM_CONTROL_ONLY",
+      "note": "The repository has no pre-existing gate-consumed pilot country/capability steering-decision field."
+    },
+    {
+      "role": "PRODUCT_OWNER",
+      "canonicalTargets": [
+        "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_EXTERNAL_INPUTS_2026-07-25.json#/approvers/product",
+        "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_OPERATIONAL_RELEASE_EVIDENCE_2026-07-25.json#/approvals/product",
+        "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_PILOT_EXIT_REGISTER_2026-07-25.json#/approvals/product"
+      ],
+      "coverage": "GATE_CONSUMED"
+    },
+    {
+      "role": "ENGINEERING_RELEASE_MANAGER",
+      "canonicalTargets": [
+        "docs/blockers/enterprise-release-external-evidence-intake-2026-07-27.json#/operations/releaseManagerDirectoryId",
+        "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_PILOT_EXIT_REGISTER_2026-07-25.json#/approvals/release"
+      ],
+      "coverage": "GATE_CONSUMED"
+    },
+    {
+      "role": "SECURITY_AUTHORITY",
+      "canonicalTargets": [
+        "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_EXTERNAL_INPUTS_2026-07-25.json#/approvers/security",
+        "docs/blockers/enterprise-release-external-evidence-intake-2026-07-27.json#/credentialRotation/securityAuthorityDirectoryId",
+        "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_PILOT_EXIT_REGISTER_2026-07-25.json#/approvals/security"
+      ],
+      "coverage": "GATE_CONSUMED"
+    },
+    {
+      "role": "MANAGED_SECRETS_OWNER",
+      "canonicalTargets": [
+        "docs/blockers/enterprise-release-external-evidence-intake-2026-07-27.json#/managedSecrets/owner"
+      ],
+      "coverage": "GATE_CONSUMED"
+    },
+    {
+      "role": "DATABASE_MIGRATION_OWNER",
+      "canonicalTargets": [
+        "docs/blockers/enterprise-release-external-evidence-intake-2026-07-27.json#/database/owner"
+      ],
+      "coverage": "GATE_CONSUMED"
+    },
+    {
+      "role": "SRE_OBSERVABILITY_OWNER",
+      "canonicalTargets": [
+        "docs/blockers/enterprise-release-external-evidence-intake-2026-07-27.json#/operations/owner",
+        "docs/blockers/enterprise-release-external-evidence-intake-2026-07-27.json#/operations/operationalOwnerRosterReference"
+      ],
+      "coverage": "GATE_CONSUMED"
+    },
+    {
+      "role": "ROLLOUT_OWNER",
+      "canonicalTargets": [
+        "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_EXTERNAL_INPUTS_2026-07-25.json#/owners/role=ROLLOUT",
+        "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_OPERATIONAL_RELEASE_EVIDENCE_2026-07-25.json#/owners/role=ROLLOUT"
+      ],
+      "coverage": "GATE_CONSUMED"
+    },
+    {
+      "role": "ROLLBACK_OWNER",
+      "canonicalTargets": [
+        "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_EXTERNAL_INPUTS_2026-07-25.json#/owners/role=ROLLBACK",
+        "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_OPERATIONAL_RELEASE_EVIDENCE_2026-07-25.json#/owners/role=ROLLBACK"
+      ],
+      "coverage": "GATE_CONSUMED"
+    },
+    {
+      "role": "SUPPORT_OWNER",
+      "canonicalTargets": [
+        "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_EXTERNAL_INPUTS_2026-07-25.json#/owners/role=SUPPORT",
+        "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_OPERATIONAL_RELEASE_EVIDENCE_2026-07-25.json#/owners/role=SUPPORT"
+      ],
+      "coverage": "GATE_CONSUMED"
+    },
+    {
+      "role": "PILOT_OWNER",
+      "canonicalTargets": [
+        "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_EXTERNAL_INPUTS_2026-07-25.json#/owners/role=PILOT",
+        "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_OPERATIONAL_RELEASE_EVIDENCE_2026-07-25.json#/owners/role=PILOT"
+      ],
+      "coverage": "GATE_CONSUMED"
+    },
+    {
+      "role": "SECURITY_INCIDENT_OWNER",
+      "canonicalTargets": [
+        "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_EXTERNAL_INPUTS_2026-07-25.json#/owners/role=SECURITY_INCIDENT",
+        "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_OPERATIONAL_RELEASE_EVIDENCE_2026-07-25.json#/owners/role=SECURITY_INCIDENT"
+      ],
+      "coverage": "GATE_CONSUMED"
+    },
+    {
+      "role": "ON_CALL_OWNER",
+      "canonicalTargets": [
+        "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_EXTERNAL_INPUTS_2026-07-25.json#/owners/role=ON_CALL_BACKUP",
+        "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_OPERATIONAL_RELEASE_EVIDENCE_2026-07-25.json#/owners/role=ON_CALL_BACKUP"
+      ],
+      "coverage": "GATE_CONSUMED",
+      "note": "The existing canonical role code is ON_CALL_BACKUP."
+    },
+    {
+      "role": "STATUTORY_COUNTRY_PACK_OWNER",
+      "canonicalTargets": [
+        "docs/blockers/enterprise-release-external-evidence-intake-2026-07-27.json#/statutory/owner"
+      ],
+      "coverage": "GATE_CONSUMED"
+    },
+    {
+      "role": "QUALIFIED_CAMEROON_REVIEWER",
+      "canonicalTargets": [
+        "docs/blockers/enterprise-release-external-evidence-intake-2026-07-27.json#/statutory/reviewerDirectoryId",
+        "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_EXTERNAL_INPUTS_2026-07-25.json#/statutoryApproval/reviewerDirectoryId",
+        "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/review-package/review-decision.return.template.json#/reviewer"
+      ],
+      "coverage": "GATE_CONSUMED_AND_SIGNED_RETURN_REQUIRED"
+    },
+    {
+      "role": "INDEPENDENT_STATUTORY_CHECKER",
+      "canonicalTargets": [
+        "docs/blockers/enterprise-release-external-evidence-intake-2026-07-27.json#/statutory/checkerDirectoryId",
+        "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/review-package/maker-checker-approval.template.json#/checker"
+      ],
+      "coverage": "GATE_CONSUMED_AND_SIGNED_RETURN_REQUIRED",
+      "note": "Reviewer and checker must be different natural persons."
+    },
+    {
+      "role": "CAMEROON_DGI_PROVIDER_OWNER",
+      "canonicalTargets": [
+        "docs/production-readiness/stoquify-production-unblocking/evidence/WP-00/owner-acceptance-register.json#/owners/role=CAMEROON_DGI_PROVIDER_OWNER"
+      ],
+      "coverage": "MISSING_GATE_CONSUMED_FIELD",
+      "requiredClosure": "WP3 must bind the provider owner to the official-contract and external-sandbox conformance evidence."
+    },
+    {
+      "role": "ACCESSIBILITY_LOCALIZATION_REVIEWER",
+      "canonicalTargets": [
+        "docs/production-readiness/stoquify-production-unblocking/evidence/WP-00/owner-acceptance-register.json#/owners/role=ACCESSIBILITY_LOCALIZATION_REVIEWER"
+      ],
+      "coverage": "MISSING_GATE_CONSUMED_FIELD",
+      "requiredClosure": "WP8 must create an attributable EN/FR accessibility and localization review decision bound to browser evidence."
+    },
+    {
+      "role": "INDEPENDENT_FINAL_RELEASE_REVIEWER",
+      "canonicalTargets": [
+        "docs/production-readiness/stoquify-production-unblocking/evidence/WP-00/owner-acceptance-register.json#/owners/role=INDEPENDENT_FINAL_RELEASE_REVIEWER"
+      ],
+      "coverage": "MISSING_DEDICATED_INDEPENDENCE_FIELD",
+      "requiredClosure": "WP12 must bind an independent reviewer decision to the exact frozen candidate and 34-check Phase 3 evidence."
+    }
+  ],
+  "pilotScopeBinding": {
+    "programDecisionTarget": "docs/production-readiness/stoquify-production-unblocking/evidence/WP-00/owner-acceptance-register.json#/pilotScopeDecision",
+    "laterActivationTargets": [
+      "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_EXTERNAL_INPUTS_2026-07-25.json#/pilot",
+      "docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_PILOT_EXIT_REGISTER_2026-07-25.json#/pilot"
+    ],
+    "coverage": "G0_PROGRAM_DECISION_NOT_YET_CONSUMED_BY_EXISTING_RELEASE_GATE",
+    "rule": "G0 approval authorizes WP1 and external evidence collection only. It does not authorize pilot activation or production submission."
+  },
+  "safety": {
+    "authoritativeInputFilesMutated": false,
+    "identitiesInferred": false,
+    "approvalsInferred": false,
+    "pilotActivationAuthorized": false,
+    "productionAuthorized": false
+  }
+}

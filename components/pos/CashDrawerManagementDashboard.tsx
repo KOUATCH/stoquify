@@ -38,6 +38,7 @@ import {
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { TableDateRangePicker } from "@/components/DataTableComponents/TableDateRangePicker"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
@@ -330,18 +331,12 @@ export default function CashDrawerManagementDashboard() {
             </div>
 
             {period === "custom" ? (
-              <div className="grid grid-cols-2 gap-2 sm:col-span-2 lg:col-span-1">
-                <Input
-                  type="date"
-                  value={customRange.start}
-                  onChange={(event) => setCustomRange((current) => ({ ...current, start: event.target.value }))}
-                  className={dashboardControlClass}
-                />
-                <Input
-                  type="date"
-                  value={customRange.end}
-                  onChange={(event) => setCustomRange((current) => ({ ...current, end: event.target.value }))}
-                  className={dashboardControlClass}
+              <div className="sm:col-span-2 lg:col-span-1">
+                <TableDateRangePicker
+                  value={{ from: customRange.start, to: customRange.end }}
+                  onChange={(range) => setCustomRange({ start: range.from ?? "", end: range.to ?? "" })}
+                  locale={locale === "fr" ? "fr" : "en"}
+                  triggerClassName="h-10"
                 />
               </div>
             ) : (
@@ -1015,7 +1010,7 @@ function SessionTable({
 
   return (
     <div className="space-y-3">
-      <div className="flex flex-wrap gap-2">
+      <div className="dashboard-table-toolbar flex flex-wrap gap-2 xl:flex-nowrap">
         <div className="relative min-w-[220px] flex-1">
           <Search className="text-input-icon pointer-events-none absolute left-3 top-3 h-4 w-4 text-[var(--dash-text-soft)]" />
           <Input
@@ -1177,7 +1172,7 @@ function SessionTable({
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
 
-      <div className="flex flex-wrap items-center justify-between gap-2">
+      <div className="dashboard-table-pagination flex flex-wrap items-center justify-between gap-2">
         <span className="text-xs text-[var(--dash-text-soft)]">
           {t("tableControls.showing", { start: visibleStart, end: visibleEnd, total: filteredAndSortedSessions.length })}
         </span>

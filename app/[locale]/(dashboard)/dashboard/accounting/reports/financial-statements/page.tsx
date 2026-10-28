@@ -122,7 +122,7 @@ function StatementLines({
         </div>
       </summary>
       <div className="max-h-[28rem] overflow-auto border-t border-[var(--dash-border-subtle)]">
-        <table className="w-full min-w-[640px] text-sm">
+        <table className="dashboard-table-base w-full min-w-[640px] text-sm">
           <caption className="sr-only">{title} account detail</caption>
           <thead className="sticky top-0 z-10 bg-[var(--dash-surface)] text-left text-[0.68rem] uppercase tracking-[0.12em] text-[var(--dash-text-faint)]">
             <tr>

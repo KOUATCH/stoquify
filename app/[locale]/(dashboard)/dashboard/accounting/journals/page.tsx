@@ -125,7 +125,7 @@ async function AccountingJournalsPageImpl({ params, searchParams }: PageProps) {
 
       <AccountingPanel title="Journal queue" description={entriesResponse.success ? "Draft, posted, and reversed manual ledger entries." : entriesResponse.error || "Entries unavailable."}>
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[980px] text-sm">
+          <table className="dashboard-table-base w-full min-w-[980px] text-sm">
             <thead className="border-b border-[var(--dash-border-subtle)] text-left text-xs uppercase text-[var(--dash-text-faint)]">
               <tr>
                 <th className="px-4 py-3">Entry</th>

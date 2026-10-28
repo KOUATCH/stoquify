@@ -135,7 +135,7 @@ async function NewJournalEntryPageImpl({ params, searchParams }: PageProps) {
           </div>
 
           <div className="overflow-x-auto rounded-lg border border-[var(--dash-border-subtle)]">
-            <table className="w-full min-w-[900px] text-sm">
+            <table className="dashboard-table-base w-full min-w-[900px] text-sm">
               <thead className="border-b border-[var(--dash-border-subtle)] text-left text-xs uppercase text-[var(--dash-text-faint)]">
                 <tr>
                   <th className="px-4 py-3">Account</th>

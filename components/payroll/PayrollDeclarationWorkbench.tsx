@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import {
@@ -13,6 +15,12 @@ import {
 import type { PayrollDeclarationWorkbenchResult } from "@/actions/payroll/payroll-control.actions";
 import { localizePath } from "@/i18n/routing";
 import type { Locale } from "@/types/bilingual";
+import PayrollAuditorProofPanel from "./PayrollAuditorProofPanel";
+import {
+  HrPayrollTableControls,
+  HrPayrollTablePagination,
+  useHrPayrollTable,
+} from "@/components/hr-payroll/HrPayrollTableControls";
 import PayrollDeclarationAuthorityExecutionPanel from "./PayrollDeclarationAuthorityExecutionPanel";
 import PayrollProofDrawerButton, {
   type PayrollProofDrawerSubject,
@@ -209,6 +217,10 @@ function declarationProofSubject(
     status: declaration.status,
     source: "services/payroll/declaration-lifecycle.service.ts",
     href: localizePath("/dashboard/payroll/declarations", locale),
+    requiresFreshAuth: declaration.nextActions.some((action) => action.requiresFreshAuth),
+    stateDescription: declaration.nextActions.some((action) => action.requiresFreshAuth)
+      ? "Declaration proof facts are service-owned; authority workflow writes require fresh authentication."
+      : undefined,
     blockers: declaration.blockers,
     redactions: [
       {
@@ -385,6 +397,19 @@ export default function PayrollDeclarationWorkbench({
   error,
   locale,
 }: Props) {
+  const declarationTable = useHrPayrollTable({
+    rows: data?.declarations ?? [],
+    searchText: (declaration) => JSON.stringify(declaration),
+    dateValue: (declaration) => declaration.dueDate,
+    sortOptions: [
+      { key: "declaration", label: "Declaration", value: (declaration) => declaration.authority },
+      { key: "due-date", label: "Due date", value: (declaration) => declaration.dueDate },
+      { key: "run", label: "Payroll run", value: (declaration) => declaration.payrollRun.runNumber },
+      { key: "amount", label: "Amount", value: (declaration) => Number(declaration.amount) },
+      { key: "status", label: "Status", value: (declaration) => declaration.status },
+    ],
+  });
+
   if (error) return <ErrorPanel message={error} />;
   if (!data) return <EmptyState />;
 
@@ -470,6 +495,14 @@ export default function PayrollDeclarationWorkbench({
         />
       </section>
 
+      <PayrollAuditorProofPanel
+        proof={data.accountingAuditProof}
+        sourceScope={data.sourceScope}
+        locale={locale}
+        subjectId="payroll-declarations:accounting-audit-proof"
+        label="Payroll declaration auditor proof pack"
+      />
+
       <section className="rounded-lg border border-white/10 bg-white/[0.05]">
         <div className="flex items-center gap-2 border-b border-white/10 px-4 py-3">
           <BadgeCheck className="h-4 w-4 text-cyan-200" aria-hidden="true" />
@@ -477,7 +510,8 @@ export default function PayrollDeclarationWorkbench({
             Declaration lifecycle
           </h2>
         </div>
-        <div className="overflow-x-auto">
+        <HrPayrollTableControls table={declarationTable} locale={locale} tableLabel="payroll declarations" />
+        <div className="dashboard-data-table dashboard-table-shell overflow-x-auto">
           <table className="min-w-[1440px] w-full table-fixed border-collapse text-left text-sm">
             <thead className="border-b border-white/10 text-xs uppercase tracking-normal text-slate-400">
               <tr>
@@ -494,8 +528,8 @@ export default function PayrollDeclarationWorkbench({
               </tr>
             </thead>
             <tbody className="divide-y divide-white/10">
-              {data.declarations.length ? (
-                data.declarations.map((declaration) => (
+              {declarationTable.rows.length ? (
+                declarationTable.rows.map((declaration) => (
                   <tr key={declaration.id} className="align-top">
                     <td className="px-4 py-3">
                       <p className="break-words font-semibold text-white">
@@ -580,6 +614,7 @@ export default function PayrollDeclarationWorkbench({
             </tbody>
           </table>
         </div>
+        <HrPayrollTablePagination table={declarationTable} locale={locale} />
       </section>
 
       <section className="rounded-lg border border-white/10 bg-white/[0.05] p-4">

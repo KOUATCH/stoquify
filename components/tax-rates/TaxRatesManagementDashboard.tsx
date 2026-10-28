@@ -922,7 +922,7 @@ export default function TaxRatesManagementDashboard({
             </div>
           </div>
 
-          <DataTablePagination table={table} variant="landing" />
+          <DataTablePagination table={table} variant="landing" locale={locale} />
         </div>
       </section>
 

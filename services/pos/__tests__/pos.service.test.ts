@@ -159,6 +159,10 @@ const mockTx = {
     create: jest.fn(),
     update: jest.fn(),
   },
+  paymentTransaction: {
+    findFirst: jest.fn(),
+    updateMany: jest.fn(),
+  },
   paymentRefund: {
     create: jest.fn(),
   },
@@ -435,6 +439,8 @@ describe("commitPOSSale accounting wiring", () => {
     mockTx.payment.findFirst.mockResolvedValue(null)
     mockTx.payment.create.mockResolvedValue({ id: "payment-1" })
     mockTx.payment.update.mockResolvedValue({ id: "payment-1" })
+    mockTx.paymentTransaction.findFirst.mockResolvedValue(null)
+    mockTx.paymentTransaction.updateMany.mockResolvedValue({ count: 1 })
     mockTx.paymentRefund.create.mockResolvedValue({ id: "refund-1" })
     mockTx.businessEvent.findUnique.mockResolvedValue(null)
     mockTx.businessEvent.create.mockImplementation(async (args) => ({
@@ -977,7 +983,10 @@ describe("commitPOSSale accounting wiring", () => {
   it("does not return a committed sale or receipt when payment posting fails", async () => {
     mockPostPayment.mockRejectedValueOnce(new Error("payment posting failed"))
 
-    await expect(commitPOSSale(commitInput())).rejects.toThrow("payment posting failed")
+    await expect(commitPOSSale(commitInput())).rejects.toMatchObject({
+      code: "INTERNAL_ERROR",
+      message: "POS sale could not be completed safely",
+    })
 
     expect(mockPostSale).toHaveBeenCalledTimes(1)
     expect(mockPostPayment).toHaveBeenCalledTimes(1)
@@ -992,7 +1001,10 @@ describe("commitPOSSale accounting wiring", () => {
   it("does not post payment, audit, or receipt when sale posting fails", async () => {
     mockPostSale.mockRejectedValueOnce(new Error("sale posting failed"))
 
-    await expect(commitPOSSale(commitInput())).rejects.toThrow("sale posting failed")
+    await expect(commitPOSSale(commitInput())).rejects.toMatchObject({
+      code: "INTERNAL_ERROR",
+      message: "POS sale could not be completed safely",
+    })
 
     expect(mockPostSale).toHaveBeenCalledTimes(1)
     expect(mockPostPayment).not.toHaveBeenCalled()
@@ -1072,7 +1084,7 @@ describe("commitPOSSale accounting wiring", () => {
     expect(mockSendReceipt).not.toHaveBeenCalled()
   })
 
-  it("blocks electronic capture before opening a transaction", async () => {
+  it("blocks a manual electronic reference before opening a transaction", async () => {
     await expect(commitPOSSale({
       ...commitInput(),
       tenders: [{
@@ -1082,7 +1094,7 @@ describe("commitPOSSale accounting wiring", () => {
         cardLast4: "4242",
       }],
     })).rejects.toThrow(
-      "This development POS pilot accepts cash only; electronic and on-account tenders are disabled",
+      "Electronic tenders require provider-authoritative payment transaction evidence",
     )
 
     expect(mockDb.$transaction).not.toHaveBeenCalled()
@@ -1091,6 +1103,66 @@ describe("commitPOSSale accounting wiring", () => {
     expect(mockPostSale).not.toHaveBeenCalled()
     expect(mockPostPayment).not.toHaveBeenCalled()
     expect(mockGetSalesReceipt).not.toHaveBeenCalled()
+  })
+
+  it("keeps provider-authorized electronic tender disabled in the cash-only pilot", async () => {
+    mockTx.paymentTransaction.findFirst.mockResolvedValueOnce({
+      id: "payment-transaction-1",
+      organizationId: "org-1",
+      legacyPaymentId: null,
+      providerAccountId: "provider-account-1",
+      providerAuthorityEventId: "provider-event-1",
+      direction: "INBOUND",
+      state: "CONFIRMED",
+      amount: decimal(118),
+      currencyCode: "XAF",
+      providerTransactionId: "provider-tx-1",
+      providerReference: "provider-ref-1",
+      confirmedAt: new Date("2026-08-18T09:00:00.000Z"),
+      providerAccount: {
+        id: "provider-account-1",
+        organizationId: "org-1",
+        providerCode: "CARD_ACQUIRER",
+        displayName: "Approved acquirer",
+        status: "ACTIVE",
+        currencyCode: "XAF",
+        paymentRail: {
+          organizationId: "org-1",
+          type: "CARD",
+          currencyCode: "XAF",
+          isActive: true,
+        },
+      },
+      providerAuthorityEvent: {
+        id: "provider-event-1",
+        organizationId: "org-1",
+        providerAccountId: "provider-account-1",
+        providerTransactionId: "provider-tx-1",
+        providerReference: "provider-ref-1",
+        status: "PROCESSED",
+        signatureValid: true,
+        direction: "INBOUND",
+        amount: decimal(118),
+        currencyCode: "XAF",
+        occurredAt: new Date("2026-08-18T08:59:58.000Z"),
+      },
+    })
+
+    await expect(commitPOSSale({
+      ...commitInput(),
+      tenders: [{
+        method: "CARD" as const,
+        amount: 118,
+        paymentTransactionId: "payment-transaction-1",
+        cardLast4: "4242",
+      }],
+    })).rejects.toThrow(
+      "This development POS pilot accepts cash only; electronic and on-account tenders are disabled",
+    )
+    expect(mockDb.$transaction).not.toHaveBeenCalled()
+    expect(mockTx.payment.create).not.toHaveBeenCalled()
+    expect(mockTx.paymentTransaction.updateMany).not.toHaveBeenCalled()
+    expect(mockPostPayment).not.toHaveBeenCalled()
   })
 
   it("stops before stock and payment writes when the cashier-owned active shift claim is lost", async () => {

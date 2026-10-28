@@ -93,6 +93,7 @@ export const posTenderMethodSchema = z.enum([
 export const posTenderSchema = z.object({
   method: posTenderMethodSchema,
   amount: z.coerce.number().positive("Tender amount must be positive"),
+  paymentTransactionId: z.string().trim().min(1).max(191).optional(),
   reference: z.string().trim().max(120).optional(),
   cardLast4: z.string().trim().regex(/^\d{4}$/).optional(),
   cardType: z.string().trim().max(40).optional(),
@@ -100,6 +101,22 @@ export const posTenderSchema = z.object({
   mobileMoneyProvider: z.enum(CAMEROON_PAYMENT_PROVIDER_CODES).optional(),
   mobileMoneyPhoneNumber: z.string().trim().max(40).optional(),
   bankName: z.string().trim().max(120).optional(),
+}).superRefine((tender, ctx) => {
+  const electronic = ["CARD", "MOBILE_MONEY", "BANK_TRANSFER"].includes(tender.method)
+  if (electronic && !tender.paymentTransactionId) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["paymentTransactionId"],
+      message: "Electronic tenders require provider-authoritative payment transaction evidence",
+    })
+  }
+  if (!electronic && tender.paymentTransactionId) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["paymentTransactionId"],
+      message: "Provider payment transaction evidence is only valid for electronic tenders",
+    })
+  }
 })
 
 const receiptDestinationSchema = z.string().trim().max(320, "Receipt destination cannot exceed 320 characters").optional()

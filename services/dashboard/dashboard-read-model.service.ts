@@ -11,6 +11,7 @@ import {
   SalesOrderStatus,
   TransactionType,
 } from '@prisma/client'
+import type { TenantOperatingCommandCard } from '@/services/snapshots/snapshot-contracts'
 import {
   differenceInCalendarDays,
   eachDayOfInterval,
@@ -184,6 +185,7 @@ export interface DashboardData {
     totalItems: number
   }
   setupProgress: DashboardSetupProgress
+  operatingCommandCards?: TenantOperatingCommandCard[]
 }
 
 interface LegacyDashboardMetrics {
@@ -789,6 +791,17 @@ export async function getAllDashboardData(input: DashboardReadModelInput): Promi
     pendingActions,
   })
 
+  const generatedAt = new Date().toISOString()
+  const operatingCommandCards = buildDashboardOperatingCommandCards({
+    generatedAt,
+    cashCurrent,
+    pendingPurchaseOrders,
+    stockIssueCount: inventorySummary.lowStock + inventorySummary.outOfStock + inventorySummary.reorderCandidates.length,
+    accountingReady: Boolean(accountingSettings),
+    payrollReadySignalCount: payrollEmployeeCount + payrollPeriodCount,
+    proofSignalCount: businessEventCount + activities.length + alerts.length,
+  })
+
   return {
     organization,
     period: {
@@ -799,7 +812,7 @@ export async function getAllDashboardData(input: DashboardReadModelInput): Promi
       previousTo: previousTo.toISOString(),
     },
     filters: { locationId },
-    generatedAt: new Date().toISOString(),
+    generatedAt,
     kpis: {
       revenue: {
         current: revenueCurrent,
@@ -857,9 +870,153 @@ export async function getAllDashboardData(input: DashboardReadModelInput): Promi
       totalItems,
     },
     setupProgress,
+    operatingCommandCards,
   }
 }
 
+function buildDashboardOperatingCommandCards(input: {
+  generatedAt: string
+  cashCurrent: number
+  pendingPurchaseOrders: number
+  stockIssueCount: number
+  accountingReady: boolean
+  payrollReadySignalCount: number
+  proofSignalCount: number
+}): TenantOperatingCommandCard[] {
+  const freshness = {
+    generatedAt: input.generatedAt,
+    sourceMaxUpdatedAt: null,
+    maxAgeMinutes: 24 * 60,
+    stale: false,
+    staleReason: null,
+  }
+  const source = (overrides: Omit<TenantOperatingCommandCard, "freshness">): TenantOperatingCommandCard => ({
+    ...overrides,
+    freshness,
+  })
+
+  return [
+    source({
+      id: 'payment',
+      label: 'Payment reconciliation',
+      detail: 'Collected cash is visible; provider reconciliation proof is the next P0 domain source.',
+      metricLabel: 'Collected cash in period',
+      value: input.cashCurrent,
+      valueFormat: 'currency',
+      scope: 'tenant_period',
+      uiState: input.cashCurrent > 0 ? 'partial' : 'module_unavailable',
+      evidenceGrade: input.cashCurrent > 0 ? 'operational' : 'raw',
+      blockerState: input.cashCurrent > 0 ? 'partial' : 'unavailable',
+      blockerCount: input.cashCurrent > 0 ? 1 : 0,
+      actionRoute: '/dashboard/finance/reconciliation',
+      proofRoute: '/dashboard/finance/reconciliation',
+      requiredPermission: 'payments.reconciliation.read',
+      sourceModules: ['payments', 'finance'],
+    }),
+    source({
+      id: 'ap',
+      label: 'AP exposure',
+      detail: 'Purchase-order exposure is visible; invoice, match, and supplier payment proof stay pending.',
+      metricLabel: 'Pending purchase orders',
+      value: input.pendingPurchaseOrders,
+      valueFormat: 'number',
+      scope: 'tenant_period',
+      uiState: 'partial',
+      evidenceGrade: 'operational',
+      blockerState: 'partial',
+      blockerCount: input.pendingPurchaseOrders,
+      actionRoute: '/dashboard/purchases/payables',
+      proofRoute: '/dashboard/purchases/payables',
+      requiredPermission: 'finance.payables.read',
+      sourceModules: ['purchasing', 'finance'],
+    }),
+    source({
+      id: 'close',
+      label: 'Close confidence',
+      detail: 'Accounting setup can be seen; close proof comes from the close readiness snapshot.',
+      metricLabel: 'Close source state',
+      value: input.accountingReady ? 'Setup visible' : null,
+      valueFormat: 'text',
+      scope: 'tenant_period',
+      uiState: input.accountingReady ? 'partial' : 'module_unavailable',
+      evidenceGrade: input.accountingReady ? 'operational' : 'raw',
+      blockerState: input.accountingReady ? 'partial' : 'unavailable',
+      blockerCount: input.accountingReady ? 1 : 0,
+      actionRoute: '/dashboard/accounting/close',
+      proofRoute: '/dashboard/accounting/close',
+      requiredPermission: 'accounting.close.read',
+      sourceModules: ['accounting', 'close'],
+    }),
+    source({
+      id: 'stock',
+      label: 'Stock-to-cash',
+      detail: 'Stock risk is visible; count-proof and cash tieout remain downstream evidence.',
+      metricLabel: 'Stock risk signals',
+      value: input.stockIssueCount,
+      valueFormat: 'number',
+      scope: 'tenant_period',
+      uiState: input.stockIssueCount > 0 ? 'blocked' : 'partial',
+      evidenceGrade: input.stockIssueCount > 0 ? 'blocked' : 'operational',
+      blockerState: input.stockIssueCount > 0 ? 'blocked' : 'partial',
+      blockerCount: input.stockIssueCount,
+      actionRoute: '/dashboard/finance/stock-to-cash',
+      proofRoute: '/dashboard/finance/stock-to-cash',
+      requiredPermission: 'finance.read',
+      sourceModules: ['inventory', 'payments', 'finance'],
+    }),
+    source({
+      id: 'compliance',
+      label: 'Compliance pressure',
+      detail: 'Compliance card is intentionally compact until adapter state is production-confirmed.',
+      metricLabel: 'Adapter state',
+      value: null,
+      valueFormat: 'text',
+      scope: 'tenant_period',
+      uiState: 'module_unavailable',
+      evidenceGrade: 'raw',
+      blockerState: 'unavailable',
+      blockerCount: 0,
+      actionRoute: '/dashboard/compliance',
+      proofRoute: '/dashboard/compliance',
+      requiredPermission: 'compliance.documents.read',
+      sourceModules: ['compliance'],
+    }),
+    source({
+      id: 'payroll',
+      label: 'Payroll pressure',
+      detail: 'Payroll readiness stays aggregate and role-filtered; no employee-level owner card.',
+      metricLabel: 'Payroll setup signals',
+      value: input.payrollReadySignalCount || null,
+      valueFormat: 'number',
+      scope: 'tenant_period',
+      uiState: input.payrollReadySignalCount > 0 ? 'partial' : 'module_unavailable',
+      evidenceGrade: input.payrollReadySignalCount > 0 ? 'operational' : 'raw',
+      blockerState: input.payrollReadySignalCount > 0 ? 'partial' : 'unavailable',
+      blockerCount: input.payrollReadySignalCount > 0 ? 1 : 0,
+      actionRoute: '/dashboard/payroll',
+      proofRoute: '/dashboard/payroll/payments',
+      requiredPermission: 'payroll.command.read',
+      sourceModules: ['payroll'],
+    }),
+    source({
+      id: 'security',
+      label: 'Security posture',
+      detail: 'Security mini-brief is pending audit-log filtering; settings remains the action route.',
+      metricLabel: 'Proof signals',
+      value: input.proofSignalCount || null,
+      valueFormat: 'number',
+      scope: 'tenant',
+      uiState: 'module_unavailable',
+      evidenceGrade: 'raw',
+      blockerState: 'unavailable',
+      blockerCount: 0,
+      actionRoute: '/dashboard/settings/security',
+      proofRoute: '/dashboard/assurance/control-tower',
+      requiredPermission: 'PASSWORD_READ',
+      sourceModules: ['dashboard', 'security'],
+    }),
+  ]
+}
 function buildSetupProgress({
   organization,
   activeLocations,

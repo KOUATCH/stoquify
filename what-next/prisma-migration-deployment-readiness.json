@@ -1,13 +1,15 @@
 {
   "summary": {
-    "generatedAt": "2026-08-15T16:54:17.835Z",
+    "generatedAt": "2026-08-22T08:00:21.294Z",
     "status": "blocked",
     "checkCount": 9,
     "readyCount": 8,
     "blockerCount": 1,
-    "migrationCount": 65,
+    "migrationCount": 76,
     "riskFindingCount": 13,
     "approvedRiskCount": 0,
+    "staleApprovalCount": 0,
+    "revokedApprovalCount": 0,
     "secretValuePrinted": false
   },
   "deployment": {
@@ -65,84 +67,163 @@
   "findings": [
     {
       "migration": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "migrationSha256": "2fde92f4ad0cbb1a2a517b12e71c38997dc4956c9d57d70ff1ae0c636ff2f191",
       "rule": "drop_table",
       "line": 116,
+      "clause": "DROP TABLE \"auth_sessions\";",
+      "clauseSha256": "45cb1a1e1e0ae99fbc0fc9d824f086629987486a7fa7e1d481de5257e2cc25ca",
+      "findingSha256": "69294f51328a0a7575cff0524e5196accf0159913177b11dd249b65e554295fe",
+      "consequence": "Permanently removes \"auth_sessions\" and all of its rows, indexes, triggers, and constraints.",
+      "approvalStatus": "pending",
       "approved": false
     },
     {
       "migration": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "migrationSha256": "2fde92f4ad0cbb1a2a517b12e71c38997dc4956c9d57d70ff1ae0c636ff2f191",
       "rule": "drop_column",
       "line": 80,
+      "clause": "DROP COLUMN \"access_token\"",
+      "clauseSha256": "82476106e62275adbbf0bdf3f8a334a867bd228c97bffeb203470b7b848e56e7",
+      "findingSha256": "4781af03745e807d47ccdc89b62f0562b923707465d36d215cbeaea3e3e164fb",
+      "consequence": "Permanently removes \"accounts\".\"access_token\" and its stored values; owned indexes/constraints may also be removed.",
+      "approvalStatus": "pending",
       "approved": false
     },
     {
       "migration": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "migrationSha256": "2fde92f4ad0cbb1a2a517b12e71c38997dc4956c9d57d70ff1ae0c636ff2f191",
       "rule": "drop_column",
       "line": 81,
+      "clause": "DROP COLUMN \"expires_at\"",
+      "clauseSha256": "f652a3b318f285284e026fcd5b4c24e58a0d14307850fffb06162005cb7848ab",
+      "findingSha256": "277a312724a1c524d910f7c5966d70170825cf1d6a60679269b2388a6c9f3e55",
+      "consequence": "Permanently removes \"accounts\".\"expires_at\" and its stored values; owned indexes/constraints may also be removed.",
+      "approvalStatus": "pending",
       "approved": false
     },
     {
       "migration": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "migrationSha256": "2fde92f4ad0cbb1a2a517b12e71c38997dc4956c9d57d70ff1ae0c636ff2f191",
       "rule": "drop_column",
       "line": 82,
+      "clause": "DROP COLUMN \"id_token\"",
+      "clauseSha256": "c549cdb7ff1a93361b570badce9b7faace6ffcbd7b03cbfe8dc141b6c0df2a20",
+      "findingSha256": "5807ad92f5163c0922dce2373dd15df9d064a28a61b1601e063a510448c52c13",
+      "consequence": "Permanently removes \"accounts\".\"id_token\" and its stored values; owned indexes/constraints may also be removed.",
+      "approvalStatus": "pending",
       "approved": false
     },
     {
       "migration": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "migrationSha256": "2fde92f4ad0cbb1a2a517b12e71c38997dc4956c9d57d70ff1ae0c636ff2f191",
       "rule": "drop_column",
       "line": 83,
+      "clause": "DROP COLUMN \"provider\"",
+      "clauseSha256": "ce41787f691ed1692706e119214aa23e0f2b1f360f3537041c59e990a0d693a0",
+      "findingSha256": "fbc401c6980f7b01658bb2b2f3702c618e2378e92395b4caee631fd8d8bee2cb",
+      "consequence": "Permanently removes \"accounts\".\"provider\" and its stored values; owned indexes/constraints may also be removed.",
+      "approvalStatus": "pending",
       "approved": false
     },
     {
       "migration": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "migrationSha256": "2fde92f4ad0cbb1a2a517b12e71c38997dc4956c9d57d70ff1ae0c636ff2f191",
       "rule": "drop_column",
       "line": 84,
+      "clause": "DROP COLUMN \"providerAccountId\"",
+      "clauseSha256": "8641e4aa22e89045be9bcca389829602b55cff18448f9367277d32c41db3d7a5",
+      "findingSha256": "b5d38ed4fd3e87f368f0948c54731873ffdbec440832c219a078af57364ec76b",
+      "consequence": "Permanently removes \"accounts\".\"providerAccountId\" and its stored values; owned indexes/constraints may also be removed.",
+      "approvalStatus": "pending",
       "approved": false
     },
     {
       "migration": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "migrationSha256": "2fde92f4ad0cbb1a2a517b12e71c38997dc4956c9d57d70ff1ae0c636ff2f191",
       "rule": "drop_column",
       "line": 85,
+      "clause": "DROP COLUMN \"refresh_token\"",
+      "clauseSha256": "9823b6d3cfb2276a4cd005377e6082784182c9e26829b6813817eef9701e0d96",
+      "findingSha256": "07a6cfdfae6507d5572505bc8a0505c74d4f0f1b496f0864b1e2d4e537ce1492",
+      "consequence": "Permanently removes \"accounts\".\"refresh_token\" and its stored values; owned indexes/constraints may also be removed.",
+      "approvalStatus": "pending",
       "approved": false
     },
     {
       "migration": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "migrationSha256": "2fde92f4ad0cbb1a2a517b12e71c38997dc4956c9d57d70ff1ae0c636ff2f191",
       "rule": "drop_column",
       "line": 86,
+      "clause": "DROP COLUMN \"session_state\"",
+      "clauseSha256": "defa287c3723b704404889577da31386f3027c3011f347f4f9aaa7c97d1058a2",
+      "findingSha256": "6ad18571cee52ce1386eacb37d9b18e40c4d6ffbb3b3166de4ffe4710df83988",
+      "consequence": "Permanently removes \"accounts\".\"session_state\" and its stored values; owned indexes/constraints may also be removed.",
+      "approvalStatus": "pending",
       "approved": false
     },
     {
       "migration": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "migrationSha256": "2fde92f4ad0cbb1a2a517b12e71c38997dc4956c9d57d70ff1ae0c636ff2f191",
       "rule": "drop_column",
       "line": 87,
+      "clause": "DROP COLUMN \"token_type\"",
+      "clauseSha256": "92d1661114de882963cbf9087dd39835d7afc8b0f145317c0664aaf8e246c5e5",
+      "findingSha256": "42bf676feeb19705c6bd4a57cf83ac0f99d8cbb830b46cd42b1f980243a31165",
+      "consequence": "Permanently removes \"accounts\".\"token_type\" and its stored values; owned indexes/constraints may also be removed.",
+      "approvalStatus": "pending",
       "approved": false
     },
     {
       "migration": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "migrationSha256": "2fde92f4ad0cbb1a2a517b12e71c38997dc4956c9d57d70ff1ae0c636ff2f191",
       "rule": "drop_column",
       "line": 88,
+      "clause": "DROP COLUMN \"type\"",
+      "clauseSha256": "10186a5502378de299a4df9a468a5417532c08c1d24eb0660321a9e1f42803a8",
+      "findingSha256": "5f168672b10fcdcbe1af94b0da9d9ead18688f6254a326c146ccb1aecda6d9de",
+      "consequence": "Permanently removes \"accounts\".\"type\" and its stored values; owned indexes/constraints may also be removed.",
+      "approvalStatus": "pending",
       "approved": false
     },
     {
       "migration": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "migrationSha256": "2fde92f4ad0cbb1a2a517b12e71c38997dc4956c9d57d70ff1ae0c636ff2f191",
       "rule": "drop_column",
       "line": 101,
+      "clause": "DROP COLUMN \"expires\"",
+      "clauseSha256": "1ad705e6a0896e85f3b4f5321d636b4b888a789d7c5f76e631b4535385ca7ee4",
+      "findingSha256": "8f4f2215000c21bc293358a28c8c4f8df6b90abdbc7c5200cb0b4e7d814807b9",
+      "consequence": "Permanently removes \"sessions\".\"expires\" and its stored values; owned indexes/constraints may also be removed.",
+      "approvalStatus": "pending",
       "approved": false
     },
     {
       "migration": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "migrationSha256": "2fde92f4ad0cbb1a2a517b12e71c38997dc4956c9d57d70ff1ae0c636ff2f191",
       "rule": "drop_column",
       "line": 102,
+      "clause": "DROP COLUMN \"sessionToken\"",
+      "clauseSha256": "8bd2210234809622ce5ba3f64bd1887e98b504a4b9f86e9787e4bae248347a50",
+      "findingSha256": "ec44f20e8dd677d05d2303eef1758a22bebb08077983362349f6d9c5e4fd9178",
+      "consequence": "Permanently removes \"sessions\".\"sessionToken\" and its stored values; owned indexes/constraints may also be removed.",
+      "approvalStatus": "pending",
       "approved": false
     },
     {
       "migration": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "migrationSha256": "2fde92f4ad0cbb1a2a517b12e71c38997dc4956c9d57d70ff1ae0c636ff2f191",
       "rule": "drop_column",
       "line": 112,
+      "clause": "DROP COLUMN \"emailVerified\"",
+      "clauseSha256": "91c160e19ae2987ab9a0360bef0ffa7ff2f6b6a4b5b77e2576856cce3c86704c",
+      "findingSha256": "4b1479492af21a9dd97c0a5212afe7c7383b8cd3b31045310e8ab0e0143bc95d",
+      "consequence": "Permanently removes \"users\".\"emailVerified\" and its stored values; owned indexes/constraints may also be removed.",
+      "approvalStatus": "pending",
       "approved": false
     }
   ],
   "staleApprovals": [],
+  "revokedApprovals": [],
   "blockers": [
     "destructive_sql_is_exact_hash_approved"
   ]

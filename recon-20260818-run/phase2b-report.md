@@ -1,0 +1,79 @@
+# Stoquify Agent Runtime Phase 2B Entry Decision
+
+**Evaluated:** 2026-08-18T03:53:01.637Z<br>
+**Status:** `BLOCKED`<br>
+**Eligible:** No<br>
+**Activation authorized by gate:** No<br>
+**Phase 3 authorized by gate:** No
+
+## Decision Boundary
+
+This read-only gate composes existing authority evidence. It reports eligibility and cannot approve, activate, mutate evidence, or start a phase.
+
+## Summary
+
+| Measure | Result |
+|---|---:|
+| Checks | 23 |
+| Passed | 2 |
+| Blockers | 21 |
+
+## Checks
+
+| Check | Result | Evidence |
+|---|---|---|
+| AUTHORIZED_SCOPE_COMPLETE | Blocked | docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_AUTHORIZED_SCOPE_REQUIREMENTS_AUDIT_2026-07-25.json |
+| FROZEN_COMMIT_VERIFIED | Blocked | docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.json |
+| CLEAN_RELEASE_READY | Blocked | docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.json |
+| GLOBAL_RELEASE_READY | Blocked | what-next/skills-life-cycle/stoquify-ohada-leadership-release-evidence-index-2026-07-11.json |
+| PRODUCTION_SECRETS_READY | Blocked | what-next/release-secret-preflight.json |
+| MIGRATION_TARGET_READY | Blocked | what-next/prisma-migration-deployment-readiness.json |
+| STATUTORY_AUTHORITY_READY | Blocked | what-next/statutory-country-pack-production-readiness.json |
+| CREDENTIAL_ROTATION_READY | Blocked | docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_CREDENTIAL_ROTATION_REGISTER_2026-07-25.json |
+| OPERATIONAL_RELEASE_READY | Blocked | docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_OPERATIONAL_RELEASE_EVIDENCE_2026-07-25.json |
+| PROMOTION_POINT_1_REVIEW_ACCEPTED | Blocked | docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json |
+| PROMOTION_POINT_2_COMPLETED | Blocked | docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json |
+| PROMOTION_POINT_3_COMPLETED | Blocked | docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json |
+| PROMOTION_POINT_4_COMPLETED | Blocked | docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json |
+| PROMOTION_POINT_5_COMPLETED | Blocked | docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json |
+| PROMOTION_POINT_6_COMPLETED | Blocked | docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json |
+| PROMOTION_POINT_7_COMPLETED | Blocked | docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json |
+| PROMOTION_POINT_8_COMPLETED | Blocked | docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json |
+| PROMOTION_POINT_9_COMPLETED | Blocked | docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json |
+| PROMOTION_POINT_10_COMPLETED | Blocked | docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json |
+| PROMOTION_POINT_11_APPROVED_GO | Blocked | docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json |
+| ENTERPRISE_GATE_017_GO | Blocked | docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json |
+| PRE_ACTIVATION_BOUNDARY | Passed | docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_OPERATIONAL_RELEASE_EVIDENCE_2026-07-25.json |
+| PHASE3_REMAINS_UNAUTHORIZED | Passed | docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_PROMOTION_LEDGER_2026-07-25.json |
+
+## Blockers
+
+- `AUTHORIZED_SCOPE_COMPLETE`
+- `FROZEN_COMMIT_VERIFIED`
+- `CLEAN_RELEASE_READY`
+- `GLOBAL_RELEASE_READY`
+- `PRODUCTION_SECRETS_READY`
+- `MIGRATION_TARGET_READY`
+- `STATUTORY_AUTHORITY_READY`
+- `CREDENTIAL_ROTATION_READY`
+- `OPERATIONAL_RELEASE_READY`
+- `PROMOTION_POINT_1_REVIEW_ACCEPTED`
+- `PROMOTION_POINT_2_COMPLETED`
+- `PROMOTION_POINT_3_COMPLETED`
+- `PROMOTION_POINT_4_COMPLETED`
+- `PROMOTION_POINT_5_COMPLETED`
+- `PROMOTION_POINT_6_COMPLETED`
+- `PROMOTION_POINT_7_COMPLETED`
+- `PROMOTION_POINT_8_COMPLETED`
+- `PROMOTION_POINT_9_COMPLETED`
+- `PROMOTION_POINT_10_COMPLETED`
+- `PROMOTION_POINT_11_APPROVED_GO`
+- `ENTERPRISE_GATE_017_GO`
+
+## Safety
+
+- No evidence file was mutated by the evaluation.
+- No activation was requested or attempted.
+- No Phase 3 implementation was started.
+- No authority was granted by this gate.
+- No secret value was printed.

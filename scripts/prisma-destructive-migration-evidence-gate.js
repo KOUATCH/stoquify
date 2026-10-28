@@ -3,6 +3,8 @@
 const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
+const { spawnSync } = require("child_process");
+const { scanMigrationRisks } = require("./prisma-production-migration-gate");
 
 const PACKET_PATH =
   "docs/blockers/stoquify-migration-risk-maker-checker-packet-2026-08-13.json";
@@ -46,6 +48,16 @@ const PRE_CHECKER_IDS = new Set([
   "A-01",
 ]);
 
+const EVIDENCE_OUTPUT_PREFIXES = [
+  "docs/reconcile-destructive-migration/",
+  "docs/blockers/stoquify-migration-risk-maker-checker-packet-2026-08-13.json",
+  "docs/blockers/stoquify-migration-risk-maker-checker-packet-2026-08-13.sha256",
+  "docs/pos-enterprise-grade-audit/evidence/migration-certification/2026-08-17-r2/destructive-migration-technical-hash-manifest.json",
+  "docs/pos-enterprise-grade-audit/evidence/migration-certification/2026-08-17-r2/destructive-migration-technical-hash-manifest.sha256",
+  "what-next/prisma-migration-deployment-readiness.md",
+  "what-next/prisma-migration-deployment-readiness.json",
+];
+
 function parseArgs(argv = process.argv.slice(2)) {
   const options = {
     root: process.cwd(),
@@ -77,6 +89,93 @@ function sha256(value) {
 
 function fileSha256(target) {
   return sha256(fs.readFileSync(target));
+}
+
+function gitValue(root, args) {
+  const result = spawnSync("git", args, {
+    cwd: root,
+    encoding: "utf8",
+    windowsHide: true,
+  });
+  return result.status === 0 ? String(result.stdout || "").trim() : null;
+}
+
+function statusPath(line) {
+  const raw = String(line || "").slice(3).trim();
+  const renamed = raw.includes(" -> ") ? raw.split(" -> ").at(-1) : raw;
+  return normalizePath(renamed.replace(/^"|"$/g, ""));
+}
+
+function isEvidenceOutput(relativePath) {
+  return EVIDENCE_OUTPUT_PREFIXES.some((prefix) =>
+    prefix.endsWith("/")
+      ? relativePath.startsWith(prefix)
+      : relativePath === prefix,
+  );
+}
+
+function currentSourceState(root) {
+  const head = gitValue(root, ["rev-parse", "HEAD"]);
+  const tree = gitValue(root, ["rev-parse", "HEAD^{tree}"]);
+  const status = gitValue(root, [
+    "status",
+    "--porcelain=v1",
+    "--untracked-files=all",
+  ]);
+  if (head == null || tree == null || status == null) {
+    return {
+      available: false,
+      head,
+      tree,
+      sourceDirtyPaths: [],
+      sourceDirtyPathCount: null,
+    };
+  }
+  const sourceDirtyPaths = status
+    .split(/\r?\n/)
+    .filter(Boolean)
+    .map(statusPath)
+    .filter((entry) => entry && !isEvidenceOutput(entry));
+  return {
+    available: true,
+    head,
+    tree,
+    sourceDirtyPaths,
+    sourceDirtyPathCount: sourceDirtyPaths.length,
+  };
+}
+
+function evaluateCandidateFreeze(packet, sourceState) {
+  const repository = packet?.repository || {};
+  const errors = [];
+  if (repository.candidateMode !== "PRODUCTION_FROZEN") {
+    errors.push("candidate_mode_not_production_frozen");
+  }
+  if (repository.sourceDirtyAtRefresh !== false) {
+    errors.push("candidate_was_dirty_when_bindings_were_refreshed");
+  }
+  if (!sourceState?.available) {
+    errors.push("candidate_git_state_unavailable");
+  } else {
+    if (sourceState.sourceDirtyPathCount !== 0) {
+      errors.push("candidate_source_worktree_dirty");
+    }
+    if (!repository.head || repository.head !== sourceState.head) {
+      errors.push("candidate_head_changed_after_refresh");
+    }
+    if (!repository.tree || repository.tree !== sourceState.tree) {
+      errors.push("candidate_tree_changed_after_refresh");
+    }
+  }
+  return {
+    ready: errors.length === 0,
+    errors,
+    mode: repository.candidateMode || "LEGACY_UNCLASSIFIED",
+    refreshedHead: repository.head || null,
+    refreshedTree: repository.tree || null,
+    sourceDirtyAtRefresh: repository.sourceDirtyAtRefresh ?? null,
+    liveSourceDirtyPathCount: sourceState?.sourceDirtyPathCount ?? null,
+  };
 }
 
 function readJson(target) {
@@ -198,22 +297,34 @@ function classifyArtifact(bundleRoot, entry) {
   };
 }
 
-function exactApproval(root, packet) {
-  const registry = readJson(absolute(root, "prisma/migration-risk-approvals.json"));
-  return registry.approvals.find(
-    (entry) =>
-      normalizePath(entry.migration) === normalizePath(packet.migration.path) &&
-      entry.sha256 === packet.migration.sha256 &&
-      Array.isArray(entry.rules) &&
-      entry.rules.includes("drop_column") &&
-      entry.rules.includes("drop_table"),
+function exactApprovalState(root, packet) {
+  const risk = scanMigrationRisks(root);
+  const findings = risk.findings.filter(
+    (finding) =>
+      normalizePath(finding.migration) === normalizePath(packet.migration.path),
   );
+  const approvedFindingCount = findings.filter(
+    (finding) => finding.approved,
+  ).length;
+  return {
+    ready:
+      findings.length === packet.migration.destructiveOperationCount &&
+      approvedFindingCount === findings.length,
+    findingCount: findings.length,
+    approvedFindingCount,
+    staleApprovalCount: risk.staleApprovals.length,
+    revokedApprovalCount: risk.revokedApprovals.length,
+  };
 }
 
 function buildEvidenceReport(root = process.cwd()) {
   const packet = readJson(absolute(root, PACKET_PATH));
   const manifest = readJson(absolute(root, MANIFEST_PATH));
   const packetBindings = checkPacketBindings(root, packet);
+  const candidateFreeze = evaluateCandidateFreeze(
+    packet,
+    currentSourceState(root),
+  );
   const manifestErrors = [];
 
   if (manifest.packetId !== packet.packetId) manifestErrors.push("packet_id_mismatch");
@@ -271,11 +382,14 @@ function buildEvidenceReport(root = process.cwd()) {
   if (checkerArtifact?.validation === "PRESENT_VALID") {
     checkerDecision = readJson(path.resolve(bundleRoot, checkerArtifact.path)).decision;
   }
-  const approval = exactApproval(root, packet);
+  const approvalState = exactApprovalState(root, packet);
   const approved =
+    packetBindings.ready &&
+    manifestErrors.length === 0 &&
+    candidateFreeze.ready &&
     preCheckerReady &&
     checkerDecision === "APPROVE_EXACT_HASH" &&
-    Boolean(approval);
+    approvalState.ready;
 
   const status = approved
     ? "APPROVED_EXACT_HASH_BY_RECORDED_HUMAN_CHECKER"
@@ -288,6 +402,7 @@ function buildEvidenceReport(root = process.cwd()) {
     status,
     packetId: packet.packetId,
     packetBindings,
+    candidateFreeze,
     manifest: {
       ready: manifestErrors.length === 0,
       errors: [...new Set(manifestErrors)],
@@ -302,7 +417,8 @@ function buildEvidenceReport(root = process.cwd()) {
     artifacts,
     preCheckerReady,
     checkerDecision,
-    exactHashApprovalRecorded: Boolean(approval),
+    approvalState,
+    exactHashApprovalRecorded: approvalState.ready,
     productionExecutionAuthorized: approved,
     approvalClaimed: approved,
   };
@@ -319,6 +435,9 @@ function renderMarkdown(report) {
     "## Static bindings",
     "",
     `- Packet bindings: ${report.packetBindings.ready ? "passed" : "failed"}`,
+    `- Candidate freeze: ${report.candidateFreeze.ready ? "passed" : "blocked"}`,
+    `- Candidate mode: \`${report.candidateFreeze.mode}\``,
+    `- Live source dirty paths: ${report.candidateFreeze.liveSourceDirtyPathCount ?? "unknown"}`,
     `- Migration SHA-256: \`${report.packetBindings.migrationSha256}\``,
     `- Destructive operations: ${report.packetBindings.operationCount}`,
     `- Bound consumer/evidence files: ${report.packetBindings.boundFileCount}`,
@@ -338,6 +457,9 @@ function renderMarkdown(report) {
     `- Completed artifacts: ${report.manifest.completedArtifactCount}/${report.manifest.requiredArtifactCount}`,
     `- Ready for independent checker: ${report.preCheckerReady ? "yes" : "no"}`,
     `- Checker decision: ${report.checkerDecision || "none"}`,
+    `- Current finding approvals: ${report.approvalState.approvedFindingCount}/${report.approvalState.findingCount}`,
+    `- Stale approvals: ${report.approvalState.staleApprovalCount}`,
+    `- Revoked approvals: ${report.approvalState.revokedApprovalCount}`,
     `- Exact-hash approval recorded: ${report.exactHashApprovalRecorded ? "yes" : "no"}`,
     `- Production execution authorized: ${report.productionExecutionAuthorized ? "yes" : "no"}`,
     "",
@@ -377,6 +499,8 @@ module.exports = {
   REQUIRED_ARTIFACT_IDS,
   buildEvidenceReport,
   classifyArtifact,
+  currentSourceState,
+  evaluateCandidateFreeze,
   parseArgs,
   renderMarkdown,
 };

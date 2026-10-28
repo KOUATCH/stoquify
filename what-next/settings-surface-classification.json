@@ -1,24 +1,24 @@
 {
   "summary": {
-    "generatedAt": "2026-08-11T16:06:46.997Z",
+    "generatedAt": "2026-08-22T07:59:36.476Z",
     "mode": "report-only",
-    "sourceInventoryGeneratedAt": "2026-08-11T16:06:46.943Z",
-    "recordCount": 37,
+    "sourceInventoryGeneratedAt": "2026-08-22T07:59:36.455Z",
+    "recordCount": 38,
     "activeFindingCount": 0,
     "byStatus": {
-      "protected": 27,
+      "protected": 28,
       "delegated": 3,
       "helper": 2,
       "allowed-public": 4,
       "protected-mixed": 1
     },
     "byExecutionBoundary": {
-      "server-action": 32,
+      "server-action": 33,
       "delegated-re-export": 3,
       "helper-module": 2
     },
     "byAuthorizationBoundary": {
-      "rbac-protected": 27,
+      "rbac-protected": 28,
       "delegated-re-export": 3,
       "helper-module": 2,
       "token-bound-invitation": 1,
@@ -329,6 +329,33 @@
       "moduleDisposition": "module-observed",
       "guardMarkers": [
         "protect("
+      ],
+      "tenantMarkers": [
+        "ctx.orgId"
+      ],
+      "freshAuth": "not-detected",
+      "moduleObserve": "present",
+      "findings": [],
+      "recommendedAction": "Retain the trusted RBAC boundary and verify tenant and module evidence."
+    },
+    {
+      "file": "actions/onboarding/master-data-onboarding.actions.ts",
+      "sourceExists": true,
+      "sourceInventory": {
+        "moduleSlug": "settings",
+        "permission": "MASTER_DATA_ONBOARDING_READ_PERMISSIONS",
+        "guard": "requireAnyPermission",
+        "classification": "mapped",
+        "observeOrEnforce": "enforce"
+      },
+      "executionBoundary": "server-action",
+      "authorizationBoundary": "rbac-protected",
+      "status": "protected",
+      "permissionDisposition": "required-and-present",
+      "moduleDisposition": "module-observed",
+      "guardMarkers": [
+        "requirePermission(",
+        "requireAnyPermission("
       ],
       "tenantMarkers": [
         "ctx.orgId"

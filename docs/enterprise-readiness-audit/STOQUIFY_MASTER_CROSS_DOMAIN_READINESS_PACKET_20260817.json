@@ -1,0 +1,78 @@
+{
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-08-17T14:40:00Z",
+  "candidate": {
+    "workspace": "E:\\ohada saas\\Focused projects\\stoquify",
+    "branch": "codex/service-boundary-burndown",
+    "commit": "35b4cc6a06a50ee11de5bfce6b04993e38bd589a",
+    "dirty": true,
+    "migrationCount": 68,
+    "prismaSchemaSha256": "cdbc9c64e88d642f2bfc716ee4fda2e8b7dfbfc26f08a5170645311268ae8af9"
+  },
+  "decisions": {
+    "DEVELOPMENT_CONTINUATION_DECISION": "GO_WITH_LIMITATIONS",
+    "PRODUCTION_RELEASE_DECISION": "NO_GO",
+    "statutoryCertificationClaimed": false,
+    "hardwareCertificationClaimed": false,
+    "providerSettlementCertificationClaimed": false,
+    "productionActivationAuthorized": false
+  },
+  "liveVerification": [
+    {"id": "prisma_validate", "status": "PASS"},
+    {"id": "typecheck", "status": "PASS"},
+    {"id": "service_boundary", "status": "PASS", "ready": 0, "allowed": 13},
+    {"id": "migration_safety", "status": "BLOCKED_TECHNICAL", "ready": 8, "total": 9, "findings": 13, "approvals": 0},
+    {"id": "migration_evidence_bundle", "status": "BLOCKED_TECHNICAL", "completedArtifacts": 0, "requiredArtifacts": 14},
+    {"id": "payment_cash_truth", "status": "PASS", "ready": 14, "total": 14},
+    {"id": "ledger_close_truth", "status": "PASS", "ready": 10, "total": 10},
+    {"id": "statutory_development", "status": "PASS", "ready": 11, "total": 11},
+    {"id": "statutory_integration", "status": "PASS", "ready": 9, "total": 9},
+    {"id": "statutory_production", "status": "REQUIRES_QUALIFIED_HUMAN_REVIEW", "ready": 11, "total": 12},
+    {"id": "qualified_review_preflight", "status": "REQUIRES_QUALIFIED_HUMAN_REVIEW", "ready": 4, "total": 12},
+    {"id": "country_adapter_pilot", "status": "PASS_WITH_LIMITATIONS", "ready": 16, "total": 16, "productionAuthorityCertified": false},
+    {"id": "payroll_presence", "status": "PASS", "ready": 13, "total": 13},
+    {"id": "payroll_payments_declarations_development", "status": "PASS", "ready": 9, "total": 9},
+    {"id": "payroll_accounting_close_development", "status": "PASS", "ready": 10, "total": 10},
+    {"id": "hris_payroll_migration_development", "status": "PASS", "ready": 11, "total": 11},
+    {"id": "enterprise_release", "status": "BLOCKED_TECHNICAL", "ready": 3, "total": 12},
+    {"id": "focused_jest_replay", "status": "NOT_TESTED", "reason": "Explicit bounded runs produced no result and were interrupted; no pass inferred."}
+  ],
+  "perDomainDecision": {
+    "baseline": "CONDITIONAL",
+    "databaseMigrations": "NO_GO",
+    "securityIamPrivacy": "CONDITIONAL",
+    "posCash": "CONDITIONAL",
+    "posElectronicOfflineHardware": "NO_GO",
+    "inventory": "CONDITIONAL",
+    "accountingLedger": "CONDITIONAL",
+    "accountingClose": "NO_GO",
+    "paymentsInternalEvidence": "CONDITIONAL",
+    "providerSettlement": "NO_GO",
+    "cameroonCountryPack": "NO_GO",
+    "cameroonAuthority": "NO_GO",
+    "hris": "CONDITIONAL",
+    "payroll": "CONDITIONAL",
+    "operations": "NO_GO",
+    "enterpriseRelease": "NO_GO"
+  },
+  "artifactPaths": {
+    "gateMatrix": "docs/enterprise-readiness-audit/STOQUIFY_MASTER_GATE_MATRIX_20260817.json",
+    "unresolvedRegister": "docs/enterprise-readiness-audit/STOQUIFY_UNRESOLVED_EVIDENCE_AND_APPROVAL_REGISTER_20260817.md",
+    "roadmap": "docs/enterprise-readiness-audit/STOQUIFY_CROSS_DOMAIN_IMPLEMENTATION_ROADMAP_20260817.md",
+    "destructiveMigrationTechnical": "what-next/DESTRUCTIVE_MIGRATION_TECHNICAL_CLOSURE_2026-08-17.md",
+    "hrisPayroll": "what-next/payroll/AQSTOQFLOW_HRIS_PAYROLL_FINAL_READINESS_2026-08-17.md",
+    "cameroonReview": "what-next/compliance/CAMEROON_COUNTRY_PACK_QUALIFIED_REVIEW_PACKET_2026-08-17.md",
+    "cameroonConformance": "what-next/compliance/CAMEROON_EXTERNAL_AUTHORITY_CONFORMANCE_CHECKLIST_2026-08-17.md",
+    "paymentAudit": "what-next/PAYMENT_RECON_READINESS_AUDIT_2026-08-17.md",
+    "providerPacket": "what-next/payment-reconciliation/PROVIDER_SETTLEMENT_PRODUCTION_EVIDENCE_PACKET_2026-08-17.json"
+  },
+  "safety": {
+    "productionDatabaseAccessed": false,
+    "productionSchemaMutated": false,
+    "realPaymentCredentialAccessed": false,
+    "realCustomerOrPaymentDataUsed": false,
+    "humanApprovalCreated": false,
+    "statutoryConclusionInferred": false,
+    "dirtyWorktreePreserved": true
+  }
+}

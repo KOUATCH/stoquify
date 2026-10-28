@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react"
 import { getOrgPurchaseOrderById } from "@/actions/purchaseOrderWorkflow/newPOActions"
 import { RbacError, requirePermission } from "@/lib/security/rbac"
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
-import { notFound } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 
 import PurchaseOrderPage from "../page"
 
@@ -37,6 +37,9 @@ jest.mock("next-intl/server", () => ({
 jest.mock("next/navigation", () => ({
   notFound: jest.fn(() => {
     throw new Error("NEXT_NOT_FOUND")
+  }),
+  redirect: jest.fn(() => {
+    throw new Error("NEXT_REDIRECT")
   }),
 }))
 
@@ -131,6 +134,7 @@ const mockGetPurchaseOrder = getOrgPurchaseOrderById as jest.Mock
 const mockRequirePermission = requirePermission as jest.Mock
 const mockObserveModuleAccess = observeModuleAccess as jest.Mock
 const mockNotFound = notFound as unknown as jest.Mock
+const mockRedirect = redirect as unknown as jest.Mock
 
 function params(locale = "en", id?: string) {
   return Promise.resolve(id === undefined ? { locale } : { locale, id }) as Promise<{ locale: string; id?: string }>
@@ -180,14 +184,13 @@ describe("Purchases route", () => {
     mockGetPurchaseOrder.mockResolvedValue({ data: purchaseOrder() })
   })
 
-  it("enforces purchasing RBAC, observes module access, and passes server tenant scope to the action", async () => {
-    render(await PurchaseOrderPage({ params: params("en", "po-1") }))
+  it("enforces purchasing RBAC and redirects the localized overview to the canonical register", async () => {
+    await expect(PurchaseOrderPage({ params: params("en") })).rejects.toThrow("NEXT_REDIRECT")
 
-    expect(mockRequirePermission).toHaveBeenCalledWith("purchases.orders.read", {
-      resource: "PurchaseOrder",
-      resourceId: "po-1",
-      auditAllowed: true,
-    })
+    expect(mockRequirePermission).toHaveBeenCalledWith(
+      "purchases.orders.read",
+      expect.objectContaining({ resource: "PurchaseOrder", auditAllowed: true }),
+    )
     expect(mockObserveModuleAccess).toHaveBeenCalledWith(expect.objectContaining({
       organizationId: "org-1",
       userId: "user-1",
@@ -198,8 +201,8 @@ describe("Purchases route", () => {
       accessIntent: "read",
       mode: "observe",
     }))
-    expect(mockGetPurchaseOrder).toHaveBeenCalledWith("po-1", "org-1")
-    expect(screen.getByRole("heading", { name: "Purchase Order PO-1" })).toBeInTheDocument()
+    expect(mockGetPurchaseOrder).not.toHaveBeenCalled()
+    expect(mockRedirect).toHaveBeenCalledWith("/en/dashboard/purchase-orders")
   })
 
   it("fails closed before purchase-order access when RBAC denies the route", async () => {
@@ -227,20 +230,16 @@ describe("Purchases route", () => {
     expect(mockGetPurchaseOrder).not.toHaveBeenCalled()
   })
 
-  it("guards the legacy overview route before returning notFound when no purchase id is present", async () => {
-    await expect(PurchaseOrderPage({ params: params("en") })).rejects.toThrow("NEXT_NOT_FOUND")
+  it("preserves query context in the localized overview redirect", async () => {
+    await expect(PurchaseOrderPage({
+      params: params("fr"),
+      searchParams: Promise.resolve({ status: "APPROVED", supplier: ["s-1", "s-2"] }),
+    })).rejects.toThrow("NEXT_REDIRECT")
 
-    expect(mockRequirePermission).toHaveBeenCalledWith("purchases.orders.read", {
-      resource: "PurchaseOrder",
-      auditAllowed: true,
-    })
-    expect(mockObserveModuleAccess).toHaveBeenCalledWith(expect.objectContaining({
-      organizationId: "org-1",
-      moduleSlug: "purchasing",
-      surface: "/dashboard/purchases",
-      mode: "observe",
-    }))
     expect(mockGetPurchaseOrder).not.toHaveBeenCalled()
-    expect(mockNotFound).toHaveBeenCalled()
+    expect(mockNotFound).not.toHaveBeenCalled()
+    expect(mockRedirect).toHaveBeenCalledWith(
+      "/fr/dashboard/purchase-orders?status=APPROVED&supplier=s-1&supplier=s-2",
+    )
   })
 })

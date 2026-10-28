@@ -1,6 +1,6 @@
 import "server-only";
 
-import { readFile } from "fs/promises";
+import { readFile, readdir, stat } from "fs/promises";
 import path from "path";
 
 import { CloseRunStatus, Prisma } from "@prisma/client";
@@ -28,6 +28,15 @@ const PROOF_BACKFILL_AUDIT_ACTION =
 const FINAL_PACK_ENTITY_TYPE = "PayrollFinalReleaseReadinessPack";
 const FINAL_PACK_AUDIT_ACTION =
   "PAYROLL_FINAL_RELEASE_READINESS_PACK_EVALUATED";
+const MIN_PAYROLL_BROWSER_ROUTE_COUNT = 11;
+const PAYROLL_ROUTE_SMOKE_EVIDENCE_DIRECTORY = path.join("what-next", "payroll");
+const PAYROLL_ROUTE_SMOKE_EVIDENCE_FILE_PATTERN =
+  /^AQSTOQFLOW_PAYROLL_(?:UI_ROUTE_SMOKE_BROWSER|PROMPT_19_(?:UI_ROUTE_SMOKE_BROWSER(?:_RERUN)?_\d{4}-\d{2}-\d{2}|BROWSER_SMOKE_WARMUP_\d{4}-\d{2}-\d{2}))\.json$/;
+
+const FINAL_RELEASE_REQUIRED_STATUTORY_READY_FAMILIES = [
+  "DEDUCTIONS_RECOVERIES",
+  "COMPOSITE_REGISTER_TIE_OUT",
+] as const;
 
 const payrollFinalReleaseReadinessInputSchema = z.object({
   organizationId: z.string().trim().min(1),
@@ -104,7 +113,9 @@ export type PayrollFinalReleaseReadinessPack = {
       approvalHash: string | null;
       approvedAt: string | null;
       certificateHash: string | null;
+      countryCode: string | null;
       proposedPackVersion: string | null;
+      proposedPackHash: string | null;
       targetFamilyCount: number | null;
       targetFamilies: string[];
       freshAuthSatisfied: boolean | null;
@@ -134,6 +145,8 @@ export type PayrollFinalReleaseReadinessPack = {
       setupGateStatus: string | null;
       setupStatutoryScenarioCoverageStatus: string | null;
       setupStatutoryScenarioCoverageHash: string | null;
+      setupStatutoryScenarioCountryCode: string | null;
+      setupStatutoryScenarioPackVersion: string | null;
       setupStatutoryScenarioReadyFamilyCount: number | null;
       setupStatutoryScenarioRequiredFamilyCount: number | null;
       setupStatutoryScenarioBlockerCodes: string[];
@@ -141,9 +154,15 @@ export type PayrollFinalReleaseReadinessPack = {
       setupStatutoryScenarioSourceEvidenceHashCount: number | null;
       setupStatutoryScenarioRequiredReviewTopicCount: number | null;
       setupStatutoryScenarioRequiredReviewTopics: string | null;
+      setupStatutoryScenarioRequiredLifecycleProofFieldCount: number | null;
+      setupStatutoryScenarioMissingLifecycleProofFieldCount: number | null;
+      setupStatutoryScenarioRequiredLifecycleProofFields: string[];
+      setupStatutoryScenarioCoveredLifecycleProofFields: string[];
+      setupStatutoryScenarioMissingLifecycleProofFields: string[];
       setupStatutoryScenarioFamilies: string[];
       setupStatutoryScenarioReadyFamilies: string[];
       setupStatutoryScenarioMissingApprovedFamilies: string[];
+      setupStatutoryScenarioMissingRequiredReadyFamilies: string[];
       reviewedProofChainStatus: string | null;
       reviewedProofChainCoverageHash: string | null;
       reviewedProofChainBlockerCodes: string[];
@@ -174,6 +193,7 @@ export type PayrollFinalReleaseReadinessPack = {
       safeErrorCount: number;
       seriousViolationCount: number;
       mobileOverflowCount: number;
+      expectedRouteCount: number;
     };
     policyRuntime: {
       generatedAt: string | null;
@@ -302,6 +322,45 @@ async function readJsonEvidence(
   }
 }
 
+async function readLatestJsonEvidence(
+  evidenceRoot: string,
+  relativeDirectory: string,
+  filePattern: RegExp,
+  fallback: unknown,
+) {
+  if (fallback) return fallback;
+  try {
+    const directory = path.join(evidenceRoot, relativeDirectory);
+    const candidates = await Promise.all(
+      (await readdir(directory))
+        .filter((name) => filePattern.test(name))
+        .map(async (name) => {
+          const absolutePath = path.join(directory, name);
+          const raw = await readFile(absolutePath, "utf8");
+          const payload = JSON.parse(raw) as unknown;
+          const checkedAt = stringOrNull(asRecord(payload).checkedAt);
+          const checkedAtMs = checkedAt ? Date.parse(checkedAt) : Number.NaN;
+          return {
+            name,
+            payload,
+            checkedAtMs: Number.isFinite(checkedAtMs) ? checkedAtMs : null,
+            mtimeMs: (await stat(absolutePath)).mtimeMs,
+          };
+        }),
+    );
+    const latest = candidates.sort(
+      (left, right) =>
+        (right.checkedAtMs ?? Number.NEGATIVE_INFINITY) -
+          (left.checkedAtMs ?? Number.NEGATIVE_INFINITY) ||
+        right.mtimeMs - left.mtimeMs ||
+        right.name.localeCompare(left.name),
+    )[0];
+    return latest?.payload ?? null;
+  } catch {
+    return null;
+  }
+}
+
 function latestCountryPackReviewIntakeEvidence(row: AuditRow | null) {
   const payload = payloadAfter(row);
   const sourceCertificate = asRecord(payload.sourceCertificate);
@@ -319,7 +378,9 @@ function latestCountryPackReviewIntakeEvidence(row: AuditRow | null) {
     approvalHash: stringOrNull(payload.approvalHash),
     approvedAt: stringOrNull(payload.approvedAt),
     certificateHash: stringOrNull(sourceCertificate.certificateHash),
+    countryCode: stringOrNull(sourceCertificate.countryCode),
     proposedPackVersion: stringOrNull(sourceCertificate.proposedPackVersion),
+    proposedPackHash: stringOrNull(sourceCertificate.proposedPackHash),
     targetFamilies: stringArray(sourceCertificate.targetFamilies),
     freshAuthSatisfied: booleanOrNull(approval.freshAuthSatisfied),
     approvalEvidenceHashPresent: Boolean(
@@ -380,6 +441,15 @@ function latestProofBackfillEvidence(row: AuditRow | null) {
   const statutoryRequiredReviewTopics = stringArray(
     statutoryScenarioCoverage.requiredReviewTopics,
   );
+  const statutoryRequiredLifecycleProofFields = stringArray(
+    statutoryScenarioCoverage.requiredLifecycleProofFields,
+  );
+  const statutoryCoveredLifecycleProofFields = stringArray(
+    statutoryScenarioCoverage.coveredLifecycleProofFields,
+  );
+  const statutoryMissingLifecycleProofFields = stringArray(
+    statutoryScenarioCoverage.missingLifecycleProofFields,
+  );
   const statutoryFamilies = Array.isArray(statutoryScenarioCoverage.families)
     ? statutoryScenarioCoverage.families.map((item) => asRecord(item))
     : [];
@@ -405,6 +475,12 @@ function latestProofBackfillEvidence(row: AuditRow | null) {
     setupStatutoryScenarioCoverageHash: stringOrNull(
       statutoryScenarioCoverage.coverageHash,
     ),
+    setupStatutoryScenarioCountryCode: stringOrNull(
+      statutoryScenarioCoverage.countryCode,
+    ),
+    setupStatutoryScenarioPackVersion: stringOrNull(
+      statutoryScenarioCoverage.packVersion,
+    ),
     setupStatutoryScenarioReadyFamilyCount: numberOrNull(
       statutoryScenarioCoverage.readyFamilyCount,
     ),
@@ -423,6 +499,18 @@ function latestProofBackfillEvidence(row: AuditRow | null) {
       statutoryRequiredReviewTopics.length,
     setupStatutoryScenarioRequiredReviewTopics:
       statutoryRequiredReviewTopics.join(", ") || null,
+    setupStatutoryScenarioRequiredLifecycleProofFieldCount: numberOrNull(
+      statutoryScenarioCoverage.requiredLifecycleProofFieldCount,
+    ),
+    setupStatutoryScenarioMissingLifecycleProofFieldCount: numberOrNull(
+      statutoryScenarioCoverage.missingLifecycleProofFieldCount,
+    ),
+    setupStatutoryScenarioRequiredLifecycleProofFields:
+      statutoryRequiredLifecycleProofFields,
+    setupStatutoryScenarioCoveredLifecycleProofFields:
+      statutoryCoveredLifecycleProofFields,
+    setupStatutoryScenarioMissingLifecycleProofFields:
+      statutoryMissingLifecycleProofFields,
     setupStatutoryScenarioFamilies,
     setupStatutoryScenarioReadyFamilies,
     reviewedProofChainStatus: stringOrNull(reviewedProofChain.status),
@@ -489,6 +577,7 @@ function browserEvidence(
     safeErrorCount,
     seriousViolationCount,
     mobileOverflowCount,
+    expectedRouteCount: MIN_PAYROLL_BROWSER_ROUTE_COUNT,
   };
 }
 
@@ -573,6 +662,12 @@ function releaseGateRequirements() {
     {
       gate: "browser-validation",
       command: "npm run test:e2e:payroll",
+      status: "REQUIRED_EXTERNAL_GATE" as const,
+    },
+    {
+      gate: "prompt-19-browser-route-smoke",
+      command:
+        "node scripts/ui-route-smoke-gate.js --mode fail --base-url <isolated-app-url> --timeout-ms 120000 --warmup-timeout-ms 120000 --require-screenshots --route payroll --route payroll-attendance --route payroll-compensation --route payroll-contracts --route payroll-employees --route payroll-declarations --route payroll-payments --route payroll-runs --route payroll-payslips --route payroll-register --route payroll-setup --storage-state playwright/.auth/payroll.json",
       status: "REQUIRED_EXTERNAL_GATE" as const,
     },
   ];
@@ -681,9 +776,10 @@ export async function buildPayrollFinalReleaseReadinessPack(
         "what-next/payroll/AQSTOQFLOW_PAYROLL_AUTHENTICATED_ACCESSIBILITY_MOBILE_BROWSER.json",
         parsed.evidenceSnapshot?.browserAccessibility,
       ),
-      readJsonEvidence(
+      readLatestJsonEvidence(
         evidenceRoot,
-        "what-next/payroll/AQSTOQFLOW_PAYROLL_UI_ROUTE_SMOKE_BROWSER.json",
+        PAYROLL_ROUTE_SMOKE_EVIDENCE_DIRECTORY,
+        PAYROLL_ROUTE_SMOKE_EVIDENCE_FILE_PATTERN,
         parsed.evidenceSnapshot?.routeSmoke,
       ),
     ]);
@@ -749,6 +845,29 @@ export async function buildPayrollFinalReleaseReadinessPack(
       .filter((family) => !approvedTargetFamilies.has(family))
       .sort();
 
+  const missingRequiredStatutoryReadyFamilies =
+    FINAL_RELEASE_REQUIRED_STATUTORY_READY_FAMILIES.filter(
+      (family) => !readyStatutoryScenarioFamilies.has(family),
+    ).sort();
+  const deductionRecoveryFamilyMissing =
+    missingRequiredStatutoryReadyFamilies.includes("DEDUCTIONS_RECOVERIES");
+  const compositeRegisterTieOutFamilyMissing =
+    missingRequiredStatutoryReadyFamilies.includes("COMPOSITE_REGISTER_TIE_OUT");
+  const approvedCountryCode =
+    countryPackReviewIntake.countryCode?.toUpperCase() ?? null;
+  const setupCoverageCountryCode =
+    proofBackfill.setupStatutoryScenarioCountryCode?.toUpperCase() ?? null;
+  const countryPackCountryMatches =
+    approvedCountryCode && setupCoverageCountryCode
+      ? approvedCountryCode === setupCoverageCountryCode
+      : null;
+  const countryPackVersionMatches =
+    countryPackReviewIntake.proposedPackVersion &&
+    proofBackfill.setupStatutoryScenarioPackVersion
+      ? countryPackReviewIntake.proposedPackVersion ===
+        proofBackfill.setupStatutoryScenarioPackVersion
+      : null;
+
   if (proofBackfill.setupGateStatus !== "READY") {
     blockers.push(
       blocker(
@@ -779,6 +898,27 @@ export async function buildPayrollFinalReleaseReadinessPack(
       ),
     );
   }
+  if (deductionRecoveryFamilyMissing) {
+    blockers.push(
+      blocker(
+        "statutory_setup",
+        "FINAL_STATUTORY_DEDUCTION_RECOVERY_COVERAGE_MISSING",
+        "Final release requires reviewed deduction/recovery statutory scenario coverage in setup statutory scenario proof.",
+        "critical",
+      ),
+    );
+  }
+  if (compositeRegisterTieOutFamilyMissing) {
+    blockers.push(
+      blocker(
+        "statutory_setup",
+        "FINAL_STATUTORY_COMPOSITE_REGISTER_TIEOUT_MISSING",
+        "Final release requires reviewed composite payroll register tie-out coverage in setup statutory scenario proof.",
+        "critical",
+      ),
+    );
+  }
+
   if (
     proofBackfill.setupStatutoryScenarioMissingReviewEvidenceCount === null ||
     proofBackfill.setupStatutoryScenarioMissingReviewEvidenceCount > 0 ||
@@ -794,6 +934,21 @@ export async function buildPayrollFinalReleaseReadinessPack(
       ),
     );
   }
+  if (
+    proofBackfill.setupStatutoryScenarioMissingLifecycleProofFieldCount ===
+      null ||
+    proofBackfill.setupStatutoryScenarioMissingLifecycleProofFieldCount > 0
+  ) {
+    blockers.push(
+      blocker(
+        "statutory_setup",
+        "FINAL_STATUTORY_LIFECYCLE_PROOF_COVERAGE_MISSING",
+        "Final release requires reviewed statutory fixtures to prove lifecycle hash coverage for YTD, correction, register, payslip, ledger, declaration, and payment outputs.",
+        "critical",
+      ),
+    );
+  }
+
   if (proofBackfill.reviewedProofChainStatus !== "READY") {
     blockers.push(
       blocker(
@@ -801,6 +956,41 @@ export async function buildPayrollFinalReleaseReadinessPack(
         "FINAL_STATUTORY_REVIEWED_PROOF_CHAIN_BLOCKED",
         "Final release requires statutory review evidence to tie to payroll register proof, correction/recalculation lifecycle evidence, and accounting tie-out blockers.",
         proofBackfill.reviewedProofChainStatus ? "high" : "critical",
+      ),
+    );
+  }
+
+  if (
+    proofBackfill.setupStatutoryScenarioCoverageStatus === "READY" &&
+    (!proofBackfill.setupStatutoryScenarioCountryCode ||
+      !proofBackfill.setupStatutoryScenarioPackVersion)
+  ) {
+    blockers.push(
+      blocker(
+        "statutory_setup",
+        "FINAL_STATUTORY_COUNTRY_PACK_PROVENANCE_MISSING",
+        "Ready statutory setup coverage must carry country code and country-pack version provenance before final release.",
+        "critical",
+      ),
+    );
+  }
+  if (countryPackCountryMatches === false) {
+    blockers.push(
+      blocker(
+        "statutory_setup",
+        "FINAL_STATUTORY_COUNTRY_PACK_COUNTRY_MISMATCH",
+        "Country-pack legal-owner approval and statutory setup coverage reference different payroll jurisdictions.",
+        "critical",
+      ),
+    );
+  }
+  if (countryPackVersionMatches === false) {
+    blockers.push(
+      blocker(
+        "statutory_setup",
+        "FINAL_STATUTORY_COUNTRY_PACK_VERSION_MISMATCH",
+        "Country-pack legal-owner approval and statutory setup coverage reference different payroll country-pack versions.",
+        "critical",
       ),
     );
   }
@@ -842,6 +1032,32 @@ export async function buildPayrollFinalReleaseReadinessPack(
         "FINAL_COUNTRY_PACK_REVIEW_INTAKE_FRESH_AUTH_MISSING",
         "Country-pack review intake legal-owner approval lacks fresh-auth proof.",
         "high",
+      ),
+    );
+  }
+  if (
+    countryPackReviewIntake.status === "APPROVED" &&
+    !countryPackReviewIntake.countryCode
+  ) {
+    blockers.push(
+      blocker(
+        "country_pack_review_intake",
+        "FINAL_COUNTRY_PACK_REVIEW_INTAKE_COUNTRY_MISSING",
+        "Country-pack legal-owner approval must name the payroll jurisdiction it certifies.",
+        "critical",
+      ),
+    );
+  }
+  if (
+    countryPackReviewIntake.status === "APPROVED" &&
+    !countryPackReviewIntake.proposedPackVersion
+  ) {
+    blockers.push(
+      blocker(
+        "country_pack_review_intake",
+        "FINAL_COUNTRY_PACK_REVIEW_INTAKE_PACK_VERSION_MISSING",
+        "Country-pack legal-owner approval must name the reviewed country-pack version it certifies.",
+        "critical",
       ),
     );
   }
@@ -1022,6 +1238,19 @@ export async function buildPayrollFinalReleaseReadinessPack(
       ),
     );
   }
+  if (
+    browser.routeSmokeOk === true &&
+    browser.routeCount < MIN_PAYROLL_BROWSER_ROUTE_COUNT
+  ) {
+    blockers.push(
+      blocker(
+        "browser_validation",
+        "FINAL_BROWSER_ROUTE_SMOKE_INCOMPLETE",
+        "Authenticated browser route-smoke evidence does not cover all implemented payroll routes.",
+        "critical",
+      ),
+    );
+  }
   if (browser.seriousViolationCount > 0 || browser.mobileOverflowCount > 0) {
     blockers.push(
       blocker(
@@ -1071,6 +1300,14 @@ export async function buildPayrollFinalReleaseReadinessPack(
           proofBackfill.setupStatutoryScenarioCoverageStatus,
         statutoryScenarioCoverageHashPresent:
           Boolean(proofBackfill.setupStatutoryScenarioCoverageHash),
+        setupStatutoryCountryCode:
+          proofBackfill.setupStatutoryScenarioCountryCode,
+        setupStatutoryPackVersion:
+          proofBackfill.setupStatutoryScenarioPackVersion,
+        approvedCountryCode: countryPackReviewIntake.countryCode,
+        approvedPackVersion: countryPackReviewIntake.proposedPackVersion,
+        countryPackCountryMatches,
+        countryPackVersionMatches,
         statutoryScenarioFamilies:
           `${proofBackfill.setupStatutoryScenarioReadyFamilyCount ?? "missing"}/${proofBackfill.setupStatutoryScenarioRequiredFamilyCount ?? "missing"}`,
         statutoryScenarioBlockerCount:
@@ -1083,6 +1320,21 @@ export async function buildPayrollFinalReleaseReadinessPack(
           proofBackfill.setupStatutoryScenarioRequiredReviewTopicCount,
         requiredReviewTopics:
           proofBackfill.setupStatutoryScenarioRequiredReviewTopics,
+        lifecycleProofRequiredFieldCount:
+          proofBackfill.setupStatutoryScenarioRequiredLifecycleProofFieldCount,
+        lifecycleProofMissingFieldCount:
+          proofBackfill.setupStatutoryScenarioMissingLifecycleProofFieldCount,
+        lifecycleProofRequiredFields:
+          proofBackfill.setupStatutoryScenarioRequiredLifecycleProofFields.join(
+            ", ",
+          ) || null,
+        lifecycleProofMissingFields:
+          proofBackfill.setupStatutoryScenarioMissingLifecycleProofFields.join(
+            ", ",
+          ) || null,
+        lifecycleProofCoverageReady:
+          proofBackfill.setupStatutoryScenarioMissingLifecycleProofFieldCount ===
+          0,
         statutoryScenarioReadyFamilies:
           proofBackfill.setupStatutoryScenarioReadyFamilies.join(", ") || null,
         approvedTargetFamilies:
@@ -1092,6 +1344,12 @@ export async function buildPayrollFinalReleaseReadinessPack(
           missingApprovedTargetFamilies.length === 0,
         missingApprovedTargetFamilies:
           missingApprovedTargetFamilies.join(", ") || null,
+        requiredStatutoryReadyFamilies:
+          FINAL_RELEASE_REQUIRED_STATUTORY_READY_FAMILIES.join(", "),
+        requiredStatutoryReadyFamiliesPresent:
+          missingRequiredStatutoryReadyFamilies.length === 0,
+        missingRequiredStatutoryReadyFamilies:
+          missingRequiredStatutoryReadyFamilies.join(", ") || null,
         readyFamiliesMissingCountryPackApproval:
           setupReadyFamiliesMissingApproval.join(", ") || null,
         reviewedProofChainStatus: proofBackfill.reviewedProofChainStatus,
@@ -1112,7 +1370,15 @@ export async function buildPayrollFinalReleaseReadinessPack(
         status: countryPackReviewIntake.status,
         approvalHashPresent: Boolean(countryPackReviewIntake.approvalHash),
         certificateHashPresent: Boolean(countryPackReviewIntake.certificateHash),
+        countryCode: countryPackReviewIntake.countryCode,
         proposedPackVersion: countryPackReviewIntake.proposedPackVersion,
+        proposedPackHashPresent: Boolean(countryPackReviewIntake.proposedPackHash),
+        setupStatutoryCountryCode:
+          proofBackfill.setupStatutoryScenarioCountryCode,
+        setupStatutoryPackVersion:
+          proofBackfill.setupStatutoryScenarioPackVersion,
+        countryPackCountryMatches,
+        countryPackVersionMatches,
         targetFamilyCount: countryPackReviewIntake.targetFamilies.length,
         targetFamilies: countryPackReviewIntake.targetFamilies.join(", ") || null,
         freshAuthSatisfied: countryPackReviewIntake.freshAuthSatisfied,
@@ -1186,11 +1452,13 @@ export async function buildPayrollFinalReleaseReadinessPack(
       browser.checkedAt ? prefixedHash(browser) : null,
       {
         routeSmokeOk: browser.routeSmokeOk,
+        routeCount: browser.routeCount,
         checkCount: browser.checkCount,
         surfaceCount: browser.surfaceCount,
         safeErrorCount: browser.safeErrorCount,
         seriousViolationCount: browser.seriousViolationCount,
         mobileOverflowCount: browser.mobileOverflowCount,
+        expectedRouteCount: browser.expectedRouteCount,
       },
       blockers,
     ),
@@ -1227,7 +1495,9 @@ export async function buildPayrollFinalReleaseReadinessPack(
         approvalHash: countryPackReviewIntake.approvalHash,
         approvedAt: countryPackReviewIntake.approvedAt,
         certificateHash: countryPackReviewIntake.certificateHash,
+        countryCode: countryPackReviewIntake.countryCode,
         proposedPackVersion: countryPackReviewIntake.proposedPackVersion,
+        proposedPackHash: countryPackReviewIntake.proposedPackHash,
         targetFamilyCount: countryPackReviewIntake.targetFamilies.length,
         targetFamilies: countryPackReviewIntake.targetFamilies,
         freshAuthSatisfied: countryPackReviewIntake.freshAuthSatisfied,
@@ -1266,6 +1536,10 @@ export async function buildPayrollFinalReleaseReadinessPack(
           proofBackfill.setupStatutoryScenarioCoverageStatus,
         setupStatutoryScenarioCoverageHash:
           proofBackfill.setupStatutoryScenarioCoverageHash,
+        setupStatutoryScenarioCountryCode:
+          proofBackfill.setupStatutoryScenarioCountryCode,
+        setupStatutoryScenarioPackVersion:
+          proofBackfill.setupStatutoryScenarioPackVersion,
         setupStatutoryScenarioReadyFamilyCount:
           proofBackfill.setupStatutoryScenarioReadyFamilyCount,
         setupStatutoryScenarioRequiredFamilyCount:
@@ -1280,12 +1554,24 @@ export async function buildPayrollFinalReleaseReadinessPack(
           proofBackfill.setupStatutoryScenarioRequiredReviewTopicCount,
         setupStatutoryScenarioRequiredReviewTopics:
           proofBackfill.setupStatutoryScenarioRequiredReviewTopics,
+        setupStatutoryScenarioRequiredLifecycleProofFieldCount:
+          proofBackfill.setupStatutoryScenarioRequiredLifecycleProofFieldCount,
+        setupStatutoryScenarioMissingLifecycleProofFieldCount:
+          proofBackfill.setupStatutoryScenarioMissingLifecycleProofFieldCount,
+        setupStatutoryScenarioRequiredLifecycleProofFields:
+          proofBackfill.setupStatutoryScenarioRequiredLifecycleProofFields,
+        setupStatutoryScenarioCoveredLifecycleProofFields:
+          proofBackfill.setupStatutoryScenarioCoveredLifecycleProofFields,
+        setupStatutoryScenarioMissingLifecycleProofFields:
+          proofBackfill.setupStatutoryScenarioMissingLifecycleProofFields,
         setupStatutoryScenarioFamilies:
           proofBackfill.setupStatutoryScenarioFamilies,
         setupStatutoryScenarioReadyFamilies:
           proofBackfill.setupStatutoryScenarioReadyFamilies,
         setupStatutoryScenarioMissingApprovedFamilies:
           missingApprovedTargetFamilies,
+        setupStatutoryScenarioMissingRequiredReadyFamilies:
+          missingRequiredStatutoryReadyFamilies,
         reviewedProofChainStatus: proofBackfill.reviewedProofChainStatus,
         reviewedProofChainCoverageHash:
           proofBackfill.reviewedProofChainCoverageHash,

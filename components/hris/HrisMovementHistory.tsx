@@ -6,7 +6,6 @@ import {
   ArrowUpRight,
   CircleAlert,
   FileClock,
-  Search,
   ShieldCheck,
   ShieldX,
 } from "lucide-react"
@@ -18,6 +17,11 @@ import type {
   HrisMovementProofState,
   HrisMovementRisk,
 } from "@/services/hris/movement-history.service"
+import {
+  HrPayrollTableControls,
+  HrPayrollTablePagination,
+  useHrPayrollTable,
+} from "@/components/hr-payroll/HrPayrollTableControls"
 
 const DOMAIN_LABELS: Record<HrisMovementDomain, string> = {
   EMPLOYEE: "Employee",
@@ -85,24 +89,27 @@ export function HrisMovementHistoryView({
   const [domain, setDomain] = useState<"ALL" | HrisMovementDomain>("ALL")
   const [proof, setProof] = useState<"ALL" | HrisMovementProofState>("ALL")
   const [risk, setRisk] = useState<"ALL" | HrisMovementRisk>("ALL")
-  const [query, setQuery] = useState("")
 
   const items = useMemo(() => {
-    const normalizedQuery = query.trim().toLowerCase()
     return history.items.filter((item) => {
       if (domain !== "ALL" && item.domain !== domain) return false
       if (proof !== "ALL" && item.proof.state !== proof) return false
       if (risk !== "ALL" && item.risk !== risk) return false
-      if (!normalizedQuery) return true
-      return [
-        item.employee.displayName,
-        item.employee.employeeNumber,
-        item.employee.department ?? "",
-        item.title,
-        item.source.label,
-      ].some((value) => value.toLowerCase().includes(normalizedQuery))
+      return true
     })
-  }, [domain, history.items, proof, query, risk])
+  }, [domain, history.items, proof, risk])
+  const movementTable = useHrPayrollTable({
+    rows: items,
+    searchText: (item) => JSON.stringify(item),
+    dateValue: (item) => item.recordedAt,
+    sortOptions: [
+      { key: "recorded", label: "Recorded date", value: (item) => item.recordedAt },
+      { key: "employee", label: "Employee", value: (item) => item.employee.displayName },
+      { key: "movement", label: "Movement", value: (item) => item.title },
+      { key: "risk", label: "Risk", value: (item) => item.risk },
+      { key: "proof", label: "Proof", value: (item) => item.proof.state },
+    ],
+  })
 
   return (
     <div className="flex min-w-0 flex-col gap-5">
@@ -138,19 +145,9 @@ export function HrisMovementHistoryView({
         <div className="mb-3 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <h2 id="movement-history-heading" className="text-base font-semibold text-white">Movement history</h2>
-            <p className="mt-1 text-sm text-slate-400">{items.length} visible movement{items.length === 1 ? "" : "s"}</p>
+            <p className="mt-1 text-sm text-slate-400">{movementTable.filteredCount} visible movement{movementTable.filteredCount === 1 ? "" : "s"}</p>
           </div>
-          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-[minmax(190px,1fr)_150px_160px_130px]">
-            <label className="relative min-w-0">
-              <span className="sr-only">Search movements</span>
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" aria-hidden="true" />
-              <input
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search movements"
-                className="h-9 w-full rounded-md border border-white/10 bg-slate-950 pl-9 pr-3 text-sm text-white outline-none placeholder:text-slate-500 focus:border-emerald-400/40"
-              />
-            </label>
+          <div className="grid gap-2 sm:grid-cols-3">
             <label>
               <span className="sr-only">Movement domain</span>
               <select
@@ -192,6 +189,7 @@ export function HrisMovementHistoryView({
             </label>
           </div>
         </div>
+        <HrPayrollTableControls table={movementTable} locale={locale} tableLabel="movement history" />
 
         {items.length === 0 ? (
           <div className="rounded-lg border border-dashed border-white/15 bg-slate-950/60 px-5 py-10 text-center">
@@ -200,7 +198,8 @@ export function HrisMovementHistoryView({
             <p className="mt-1 text-sm text-slate-400">Change the active filters to inspect another evidence set.</p>
           </div>
         ) : (
-          <div className="min-w-0 overflow-x-auto rounded-lg border border-white/10">
+          <div className="min-w-0 overflow-hidden rounded-lg border border-white/10">
+            <div className="dashboard-data-table dashboard-table-shell overflow-x-auto">
             <table className="w-full min-w-[1080px] border-collapse text-left text-sm">
               <thead className="bg-slate-950 text-xs uppercase tracking-normal text-slate-400">
                 <tr>
@@ -215,7 +214,7 @@ export function HrisMovementHistoryView({
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/10 bg-slate-950/70 text-slate-200">
-                {items.map((item) => (
+                {movementTable.rows.length ? movementTable.rows.map((item) => (
                   <tr key={item.id} className="transition-colors hover:bg-white/[0.03]">
                     <td className="whitespace-nowrap px-4 py-3">
                       <p className="text-white">{formatDate(item.recordedAt, locale)}</p>
@@ -252,9 +251,13 @@ export function HrisMovementHistoryView({
                       </Link>
                     </td>
                   </tr>
-                ))}
+                )) : (
+                  <tr><td colSpan={8} className="px-4 py-8 text-center text-slate-400">No movements match the table filters.</td></tr>
+                )}
               </tbody>
             </table>
+            </div>
+            <HrPayrollTablePagination table={movementTable} locale={locale} />
           </div>
         )}
       </section>

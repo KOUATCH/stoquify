@@ -43,6 +43,10 @@ function buildPayrollPresenceReadiness(root = process.cwd(), options = {}) {
     root,
     "services/payroll/__tests__/payroll-control.service.test.ts",
   );
+  const payrollCompletionTests = read(
+    root,
+    "services/payroll/__tests__/payroll-completion.service.test.ts",
+  );
   const timeLeave = read(root, "services/hris/time-leave.service.ts");
   const readiness = read(root, "services/hris/payroll-readiness-contract.ts");
   const register = read(root, "services/payroll/payroll-register.service.ts");
@@ -133,6 +137,31 @@ function buildPayrollPresenceReadiness(root = process.cwd(), options = {}) {
         payrollControl.includes("subjectActorId: run.preparedById") &&
         payrollControl.includes(
           "assertSensitiveActionAllowed(controlDecision)",
+        ),
+    },
+    {
+      id: "payroll_payment_request_approval_release_sod",
+      ready:
+        payrollControl.includes("export async function requestPayrollPaymentBatch") &&
+        payrollControl.includes("export async function approvePayrollPaymentBatch") &&
+        payrollControl.includes("export async function releasePayrollPaymentBatch") &&
+        payrollControl.includes(
+          "Payroll payment requester, approver, and releaser must be separate authenticated actors",
+        ) &&
+        payrollControl.includes(
+          "payrollPaymentBatchId: { not: paymentBatch.id }",
+        ) &&
+        payrollActions.includes('permission: "payroll.payments.request"') &&
+        payrollActions.includes('permission: "payroll.payments.approve"') &&
+        payrollActions.includes('permission: "payroll.payments.release"') &&
+        payrollCompletionTests.includes(
+          "persists a draft payment request before approval or release",
+        ) &&
+        payrollCompletionTests.includes(
+          "rejects a concurrently claimed payment approval",
+        ) &&
+        payrollCompletionTests.includes(
+          "does not commit batch or run release state when reconciliation persistence fails",
         ),
     },
     {

@@ -674,8 +674,8 @@ export function FilterBar({
         </div>
       ) : null}
 
-      <div className="dashboard-table-toolbar flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+      <div className="dashboard-table-toolbar flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between xl:flex-nowrap">
+        <div className="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center xl:flex-nowrap">
           {search ? (
             <label className="relative min-w-[min(100%,18rem)] flex-1 sm:max-w-xs">
               <span className="sr-only">{search.label ?? "Search command surface"}</span>
@@ -699,7 +699,7 @@ export function FilterBar({
         </div>
 
         {actions.length ? (
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 xl:flex-nowrap">
             {actions.map((action) => (
               <CommandActionButton key={action.label} action={action} size="sm" />
             ))}

@@ -594,13 +594,28 @@ export function certifyPayrollPaymentProviderHarness(
           requestedAdapterKey: certificate.paymentProviderAdapterKey,
           requestedStatus: parsed.requestedStatus,
           providerCredentialProofHash: parsed.providerCredentialProofHash,
+          providerCredentialRotationProofHash:
+            parsed.providerCredentialRotationProofHash,
+          providerCredentialScopeProofHash:
+            parsed.providerCredentialScopeProofHash,
           providerPayloadMappingHash: parsed.providerPayloadMappingHash,
           providerResponseMappingHash: parsed.providerResponseMappingHash,
+          providerReversalMappingHash: parsed.providerReversalMappingHash,
           providerAdapterRequestHash: parsed.providerAdapterRequestHash,
           providerAdapterResponseHash: parsed.providerAdapterResponseHash,
           providerSettlementReceiptHash: parsed.providerSettlementReceiptHash,
           providerIdempotencyKey: parsed.providerIdempotencyKey,
           providerAttempt: parsed.providerAttempt,
+          providerReplayFixtureHash: parsed.providerReplayFixtureHash,
+          providerDuplicateResponseFixtureHash:
+            parsed.providerDuplicateResponseFixtureHash,
+          providerOutageRunbookHash: parsed.providerOutageRunbookHash,
+          providerRetryPolicyFixtureHash: parsed.providerRetryPolicyFixtureHash,
+          providerDeadLetterTriageRunbookHash:
+            parsed.providerDeadLetterTriageRunbookHash,
+          providerAuditTrailFixtureHash: parsed.providerAuditTrailFixtureHash,
+          providerRedactionFixtureHash: parsed.providerRedactionFixtureHash,
+          providerCloseImpactRuleHash: parsed.providerCloseImpactRuleHash,
           providerCertificationHarnessHash,
         }
       : null,

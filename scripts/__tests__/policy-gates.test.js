@@ -65,11 +65,14 @@ describe("policy gates", () => {
   })
 
   it("runs the inventory valuation truth gate in the release policy path", () => {
+    expect(packageJson.scripts["inventory:boundary"]).toBe(
+      "node scripts/inventory-boundary-gate.js --mode fail",
+    )
     expect(packageJson.scripts["inventory:valuation:truth:gate"]).toBe(
       "node scripts/inventory-valuation-truth-gate.js --mode fail --out what-next/inventory-valuation-truth-readiness.md --json-out what-next/inventory-valuation-truth-readiness.json",
     )
     expect(packageJson.scripts["policy:gates"]).toContain("npm run inventory:valuation:truth:gate")
-    expect(packageJson.scripts["policy:gates"].indexOf("npm run inventory:boundary:fail")).toBeLessThan(
+    expect(packageJson.scripts["policy:gates"].indexOf("npm run inventory:boundary")).toBeLessThan(
       packageJson.scripts["policy:gates"].indexOf("npm run inventory:valuation:truth:gate"),
     )
   })

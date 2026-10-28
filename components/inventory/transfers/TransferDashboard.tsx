@@ -330,7 +330,7 @@ export function TransferDashboard() {
                 </div>
               </CardHeader>
               <CardContent className="space-y-5 p-5 sm:p-6">
-                <div className="grid gap-3 lg:grid-cols-[minmax(0,1.2fr)_repeat(3,minmax(0,0.8fr))]">
+                <div className="dashboard-table-toolbar grid gap-3 lg:grid-cols-[minmax(0,1.2fr)_repeat(3,minmax(0,0.8fr))]">
                   <div className="relative">
                     <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--dash-text-faint)]" />
                     <Input

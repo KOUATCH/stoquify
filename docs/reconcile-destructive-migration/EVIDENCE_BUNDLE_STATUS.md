@@ -1,16 +1,19 @@
 # Destructive migration evidence-bundle status
 
-Generated: 2026-08-13T16:27:22.964Z
+Generated: 2026-08-18T04:50:33.841Z
 Status: **REJECTED_BLOCKED_EVIDENCE_INCOMPLETE**
 Packet: `MIG-RISK-20260611130000-F7DE8DC7-RECONCILED-2026-08-13`
 
 ## Static bindings
 
-- Packet bindings: passed
+- Packet bindings: failed
+- Candidate freeze: blocked
+- Candidate mode: `DEVELOPMENT_ROLLING`
+- Live source dirty paths: 413
 - Migration SHA-256: `f7de8dc7ace0a5e063cdb7ecd9527e77807b7f872e474546819e9fca13a273d4`
 - Destructive operations: 13
-- Bound consumer/evidence files: 24
-- Manifest structure: passed
+- Bound consumer/evidence files: 27
+- Manifest structure: failed
 
 ## Artifact status
 
@@ -36,6 +39,9 @@ Packet: `MIG-RISK-20260611130000-F7DE8DC7-RECONCILED-2026-08-13`
 - Completed artifacts: 0/14
 - Ready for independent checker: no
 - Checker decision: none
+- Current finding approvals: 0/13
+- Stale approvals: 0
+- Revoked approvals: 0
 - Exact-hash approval recorded: no
 - Production execution authorized: no
 

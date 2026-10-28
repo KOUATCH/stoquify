@@ -46,7 +46,7 @@ export function LandingHero() {
               {t("primaryCta")}
               <ArrowRight className="size-4" aria-hidden="true" />
             </Link>
-            <Link href="/#product" className="inline-flex items-center gap-2 rounded-lg border border-[var(--color-border-muted)] px-5 py-3 body-text text-sm font-semibold text-[var(--color-text-primary)] transition hover:border-[var(--color-border-strong)] hover:bg-white/5">
+            <Link href="/#product" className="inline-flex items-center gap-2 rounded-lg border border-[var(--color-border-muted)] bg-white/[0.045] px-5 py-3 body-text text-sm font-semibold text-[var(--color-text-primary)] transition hover:border-[var(--color-border-strong)] hover:bg-[var(--color-brand-soft)]">
               <PlayCircle className="size-4" aria-hidden="true" />
               {t("secondaryCta")}
             </Link>

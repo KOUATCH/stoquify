@@ -1,0 +1,214 @@
+{
+  "schemaVersion": "1.0.0",
+  "artifactId": "STOQUIFY-POS-G2-G9-CLOSURE-PROGRAM-20260817",
+  "generatedAt": "2026-08-17T17:39:11.2764109Z",
+  "programId": "STOQUIFY-POS-SALES-TO-CASH",
+  "status": "BLOCKED_AT_G1_WITH_LATER_GATE_PREFLIGHT_ALLOWED",
+  "firstBlockingGate": "G1",
+  "authority": {
+    "roadmap": "docs/pos-enterprise-grade-audit/STOQUIFY_POS_AND_SALES_TO_CASH_MASTER_IMPLEMENTATION_ROADMAP_2026-08-17.md",
+    "g1Contract": "docs/pos-enterprise-grade-audit/EXECUTION_06_G1_CONTRACT_FREEZE_V0_2_0.json",
+    "g1ApprovalRegister": "docs/pos-enterprise-grade-audit/EXECUTION_06_G1_CONTRACT_APPROVAL_REGISTER.json",
+    "latestDevelopmentDatabaseEvidence": "docs/pos-enterprise-grade-audit/EXECUTION_05_G0_FINAL_REASSESSMENT_GATE_EVIDENCE.json",
+    "latestEnterpriseReleaseAudit": "what-next/AQSTOQFLOW_017_ENTERPRISE_RELEASE_GATE_EXECUTION_REPORT_2026-08-17_163006.md"
+  },
+  "candidate": {
+    "branch": "codex/service-boundary-burndown",
+    "head": "35b4cc6a06a50ee11de5bfce6b04993e38bd589a",
+    "dirty": true,
+    "observedDirtyPathCount": 272,
+    "classification": "DEVELOPMENT_ROLLING_NOT_PROMOTABLE",
+    "preservationRule": "Preserve and accurately attribute all pre-existing dirty-worktree changes. A later production freeze must use a reviewed candidate-only boundary."
+  },
+  "executionPolicy": {
+    "doNotAdvanceOnHighOrCriticalInvariant": true,
+    "laterGateReadOnlyPreflightAllowed": true,
+    "laterGateImplementationBeforeDependencies": false,
+    "placeholderApprovalAccepted": false,
+    "localEvidenceEqualsProductionProof": false,
+    "financialCorrections": "SOURCE_LINKED_COMPENSATING_RECORDS_ONLY",
+    "destructiveResetOrMigration": false,
+    "realCustomerOrPaymentDataInCertification": false,
+    "secretsInEvidence": false
+  },
+  "evidenceClasses": [
+    "LOCAL_STATIC",
+    "LOCAL_UNIT",
+    "LOCAL_POSTGRES_SYNTHETIC",
+    "AUTHENTICATED_BROWSER",
+    "PROVIDER_SANDBOX",
+    "PHYSICAL_HARDWARE",
+    "QUALIFIED_HUMAN_REVIEW",
+    "PRODUCTION_LIKE_OPERATIONS",
+    "CONTROLLED_PILOT",
+    "ARTIFACT_BOUND_APPROVAL"
+  ],
+  "waves": [
+    {"id":"W0","gates":["G1"],"objective":"Obtain authentic decision approvals against the frozen contract hash."},
+    {"id":"W1","gates":["G2"],"objective":"Complete transaction, cart, inventory and access trust on real PostgreSQL with synthetic fixtures."},
+    {"id":"W2","gates":["G3A","G3B"],"objective":"Build provider-authoritative money truth and immutable fiscal/receipt source truth in parallel after G2."},
+    {"id":"W3","gates":["G4","G6"],"objective":"Certify the bounded workstation configuration and physical fulfillment truth."},
+    {"id":"W4","gates":["G5","G7"],"objective":"Prove store financial close and delivery-based order-to-cash corrections."},
+    {"id":"W5","gates":["G8"],"objective":"Run operational, recovery, security, privacy, accessibility and support hardening."},
+    {"id":"W6","gates":["G9"],"objective":"Run bounded cohorts with automatic stops and signed expansion decisions."}
+  ],
+  "gates": [
+    {
+      "id": "G1",
+      "name": "Architecture and control contract freeze",
+      "dependencies": [],
+      "status": "BLOCKED_AUTHENTIC_APPROVALS",
+      "technicalProgress": "13_OF_13_TECHNICAL_CHECKS_READY",
+      "approvalProgress": "0_OF_11_DECISIONS_APPROVED",
+      "blockers": ["G1-APPROVAL-D01-D11"],
+      "nextAction": "Complete the detached approval register with every required accountable role and externally verifiable fresh-auth signature evidence."
+    },
+    {
+      "id": "G2",
+      "name": "Transaction and access trust",
+      "dependencies": ["G1"],
+      "status": "BLOCKED_DEPENDENCY_AND_PARTIAL_IMPLEMENTATION",
+      "workPackages": {
+        "M2-A01": "VERIFIED_LOCAL",
+        "M2-A02": "VERIFIED_LOCAL",
+        "M2-A03": "VERIFIED_LOCAL",
+        "M2-A04": "VERIFIED_LOCAL",
+        "M2-A05": "NOT_IMPLEMENTED_ONE_DRAFT_AND_LINE_IDENTITY",
+        "M2-A06": "NOT_IMPLEMENTED_CART_VERSION_COMMAND_ID",
+        "M2-A07": "NOT_IMPLEMENTED_TYPED_STALE_AUTHORITATIVE_RESULT",
+        "M2-A08": "FAILED_CURRENT_RUNTIME_SILENT_QUANTITY_CLAMP",
+        "M2-A09": "PARTIAL_COMMIT_RACE_ONLY_NOT_FULL_CART_STOCK_MATRIX",
+        "M2-B01": "NOT_IMPLEMENTED_SINGLE_POS_SURFACE_ACCESS_DESCRIPTOR",
+        "M2-B02": "IMPLEMENTED_REQUIRES_CURRENT_ENTITLEMENT_PROOF",
+        "M2-B03": "REQUIRES_EXPLICIT_CASHIER_ALLOWLIST_PROOF",
+        "M2-B04": "PARTIAL_LOCATION_SCOPE_NO_COMPLETE_NEGATIVE_MATRIX",
+        "M2-B05": "PARTIAL_REFUND_VOID_FRESH_AUTH_NO_COMPLETE_MAKER_CHECKER_MATRIX",
+        "M2-B06": "PARTIAL_RECEIPT_REDACTION_NO_COMPLETE_CASHIER_DTO_PROOF",
+        "M2-B07": "FOUNDATION_READY_PRODUCTION_SECRET_MISSING",
+        "M2-B08": "REQUIRES_CURRENT_API_READ_PERMISSION_PROOF",
+        "M2-B09": "PARTIAL_TEST_COVERAGE"
+      },
+      "verifiedEvidence": [
+        "docs/pos-enterprise-grade-audit/EXECUTION_02_M2_GATE_EVIDENCE.json",
+        "docs/pos-enterprise-grade-audit/EXECUTION_05_G0_FINAL_REASSESSMENT_GATE_EVIDENCE.json",
+        "services/pos/__tests__/pos-commit-result.postgres.test.ts"
+      ],
+      "requiredEvidence": [
+        "One-active-draft and unique-line measurement plus additive migration proof",
+        "Cart version/command replay/stale-write PostgreSQL races",
+        "Sellable-availability conflict without silent clamping",
+        "Duplicate scan and concurrent cart/stock/rollback/response-loss races",
+        "Unified navigation/route/read/write/offline/receipt/report/export/API access decision",
+        "Cashier least-privilege and tenant/location/terminal negative matrix",
+        "Fresh-auth and maker-checker positive/negative matrix",
+        "Privacy, redaction, abuse, retention and safe-error evidence"
+      ],
+      "localClosureOrder": ["M2-A05","M2-A06","M2-A07","M2-A08","M2-A09","M2-B01","M2-B02","M2-B03","M2-B04","M2-B05","M2-B06","M2-B07","M2-B08","M2-B09"],
+      "externalRequirements": [],
+      "stopConditions": ["Cross-tenant or cross-location access","Lost cart update","Duplicate sale/stock/journal consequence","Silent quantity clamp","Unredacted secret or unnecessary PII"]
+    },
+    {
+      "id": "G3A",
+      "name": "Provider-authoritative payment truth",
+      "dependencies": ["G2"],
+      "status": "BLOCKED_DEPENDENCY_AND_EXTERNAL_PROVIDER",
+      "existingFoundations": ["Payment reconciliation schema","Provider event ingestion","Statement import","Suspense and reconciliation services","HMAC adapter foundation"],
+      "localClosureOrder": ["Canonical provider state machine","Payment intent and idempotency","Signed callback/polling ingestion","Capture-to-sale bridge","Unknown/captured-without-sale case workflow","Clearing/fee/refund/reversal/dispute/chargeback postings","Three-leg reconciliation and health read model","Outage/replay/tamper/load tests"],
+      "externalRequirements": ["Named real provider","Merchant sandbox account","Official webhook/signature specification","Sandbox credentials in managed secret custody","Settlement statement source and fee schedule","Treasury/accounting/security approval"],
+      "requiredEvidence": ["Success","Decline","Timeout","Unknown","Duplicate","Late capture","Reversal","Refund","Dispute","Chargeback","Settlement","Statement mismatch"],
+      "stopConditions": ["Pending/unknown completes sale","Unsigned/replayed callback posts","Provider uncertainty mapped to success","Unowned captured-without-sale or settlement drift"]
+    },
+    {
+      "id": "G3B",
+      "name": "Immutable receipt and fiscal-source truth",
+      "dependencies": ["G2"],
+      "status": "BLOCKED_DEPENDENCY_AND_QUALIFIED_COUNTRY_REVIEW",
+      "existingFoundations": ["FiscalDocument schema","Fiscal evidence immutability migration","Compliance submission outbox","Receipt token registry","Receipt delivery separation"],
+      "localClosureOrder": ["Versioned fiscal-source schema","Materialize/hash inside sale transaction","Remove competing synchronous owner","Country-pack numbering interface","Worker lease/retry/dead-letter/replay","Durable per-channel delivery states","Token rotation/revocation gate","Correction lineage","Receipt recovery UI"],
+      "externalRequirements": ["Qualified Cameroon fiscal review","Independent checker verification","Official authority numbering/submission specification or explicit unsupported decision","Managed production signing secrets","Authorized delivery providers for enabled channels"],
+      "requiredEvidence": ["Immutable source before sale result","Historical snapshot independence","Number uniqueness and replay","Authority outage and rejection","Delivery failure recovery","Correction lineage","Token rotation and revocation"],
+      "stopConditions": ["Sale completes without immutable source","Final number allocated outside country authority","Delivery failure rolls back or hides sale","Original fiscal evidence mutated"]
+    },
+    {
+      "id": "G4",
+      "name": "Bounded POS workstation release candidate",
+      "dependencies": ["G2","G3B"],
+      "status": "BLOCKED_DEPENDENCY_AND_PHYSICAL_MATRIX",
+      "existingFoundations": ["Authenticated Edge EN/FR synthetic smoke","Cash-only fail-closed tender policy","Simulated PDF/print-preview receipt"],
+      "localClosureOrder": ["POSSurfaceContext","Exact barcode versus search","Preflight and typed command envelopes","Cashier layout/result recovery","Lock/handover","EN/FR catalog completion","Keyboard/screen-reader/touch/reflow/contrast tests","Redacted telemetry"],
+      "externalRequirements": ["Approved browser/version matrix","Named scanner/printer/drawer devices or signed exclusion","Physical test operator","Accessibility review scope","Professional French review"],
+      "requiredEvidence": ["Authenticated EN/FR at all viewports","Keyboard","Screen reader","Touch","200% zoom and 320px reflow","Scanner","Printer","Drawer","Device disconnect/retry/fallback"],
+      "stopConditions": ["Unknown device rendered ready","Responsibility lost on lock/handover","Unsupported offline or tender shown available","Secret/PII in screenshot or telemetry"]
+    },
+    {
+      "id": "G5",
+      "name": "Store financial close",
+      "dependencies": ["G3A","G3B","G4"],
+      "status": "BLOCKED_DEPENDENCY_AND_PARTIAL_CLOSE_MODEL",
+      "existingFoundations": ["POS shift close","Branch daily close","Close assurance schema/engine/portal","Payment reconciliation","Ledger close truth gate"],
+      "localClosureOrder": ["BusinessDay aggregate","Included-session manifest/hash","Blind declaration","Variance approval and no-self-approval","X/Z artifacts","Retail statement","Statement posting","Provider/suspense close readiness","Typed invalidation and accounting-close handoff"],
+      "externalRequirements": ["Qualified Cameroon X/Z terminology, numbering and retention review","Store/controller/treasury approvers","Real or production-like statement/settlement cycle"],
+      "requiredEvidence": ["Session/declaration/day/statement/reconciliation/accounting-close state separation","Cash/provider/ledger/bank tie-out","Suspense ownership and aging","Late-correction invalidation"],
+      "stopConditions": ["Z omits accepted event","Self-approved material variance","Unexplained tie-out difference","Late correction leaves close evidence valid"]
+    },
+    {
+      "id": "G6",
+      "name": "Physical fulfillment truth",
+      "dependencies": ["G2"],
+      "status": "BLOCKED_DEPENDENCY_AND_MISSING_AGGREGATES",
+      "existingFoundations": ["SalesOrder model","Inventory stock-event kernel","Reservation posting helper","Accounting COGS/inventory posting"],
+      "localClosureOrder": ["Versioned order commands","Non-posting confirmation","Reservation aggregate","Sellable availability","Fulfillment aggregate","Goods issue through stock kernel","Reservation consumption/backorder","Cancellation/reversal","Exception workbench","Unsupported-combination fail-closed policy"],
+      "externalRequirements": ["Inventory controller approval of negative-stock/UOM/lot/serial scope","Named fulfillment owner"],
+      "requiredEvidence": ["Concurrent reservation","Partial fulfillment","Backorder","Cancellation","Goods issue","Issue reversal","No oversell","No duplicate COGS"],
+      "stopConditions": ["Confirmation posts accounting","Reservation changes on-hand/COGS","Oversell","Duplicate goods issue or COGS","Unsupported inventory combination proceeds"]
+    },
+    {
+      "id": "G7",
+      "name": "Financial order-to-cash and returns",
+      "dependencies": ["G3A","G3B","G6"],
+      "status": "BLOCKED_DEPENDENCY_AND_PARTIAL_AR_FOUNDATION",
+      "existingFoundations": ["Customer receivable documents","Settlement allocation","Compensating settlement reversal","Customer statements and aging foundations"],
+      "localClosureOrder": ["Delivered-quantity invoice eligibility","Immutable invoice source and posting","Partial invoices/due dates/allocations/unapplied cash","Provider collections bridge","Return authorization/receipt/inspection/disposition","Restock/quarantine/damage/write-off","Credit/refund/AR/stock corrections","Dispute/chargeback recovery","Statement/aging close invalidation","Role-separated correction timeline"],
+      "externalRequirements": ["Controller approval of recognition and correction policy","Returns disposition owner","Treasury approval for refunds and unapplied cash policy"],
+      "requiredEvidence": ["No double billing","AR/revenue/tax balance","Explicit allocation/unapplied cash","Return disposition before sellable restock","Cross-domain partial-flow tie-out","Maker-checker/fresh-auth matrix"],
+      "stopConditions": ["Undelivered quantity billed without approved advance policy","Funds silently auto-applied","Return increases sellable stock before disposition","Correction rewrites original fact"]
+    },
+    {
+      "id": "G8",
+      "name": "Operational readiness candidate",
+      "dependencies": ["G3A","G3B","G4","G5","G6","G7"],
+      "status": "BLOCKED_DEPENDENCIES_AND_PRODUCTION_LIKE_EVIDENCE",
+      "existingFoundations": ["Static policy gates","Close assurance","Workflow assurance","Release secret preflight","CI release gate","Operational evidence gates","Incident/runbook scaffolds"],
+      "localClosureOrder": ["Candidate-only scan boundary","Remove live inventory boundary violation","Role-cockpit fixes","Frozen service/UI decomposition","Support timeline","Partial-data command surfaces","Observe-mode incident pilot"],
+      "externalRequirements": ["Official Linux CI artifact or approved Windows symlink capability","Production-like load/soak environment","Backup/restore/PITR/failover drill owners","Managed secret rotation","Independent penetration/security review","Physical/accessibility regression evidence","Scheduler/alert delivery/incident-response owners"],
+      "requiredEvidence": ["Load","Soak","Network loss","Provider outage","Worker backlog","Backup restore","PITR","Failover","Secret rotation","Penetration/privacy","Alert delivery and acknowledgement","Incident drill"],
+      "stopConditions": ["Critical defect open","Evidence lost on restore","Alert has no owner/runbook","Non-critical source blanks command surface","Second finalizer or direct stock owner introduced"]
+    },
+    {
+      "id": "G9",
+      "name": "Bounded pilot and production expansion",
+      "dependencies": ["G8"],
+      "status": "BLOCKED_DEPENDENCY_NOT_STARTED",
+      "rolloutStages": ["R0_LOCAL_CI","R1_STAGING_SANDBOX","R2_INTERNAL","R3_DESIGN_PARTNER","R4_FIVE_PERCENT","R5_TWENTY_FIVE_PERCENT","R6_GENERAL_AVAILABILITY"],
+      "externalRequirements": ["Named design partner and agreement","Qualified product/controller/security/country approvals","Daily evidence review owner","Support and rollback capacity","Artifact-bound expansion decisions per cohort"],
+      "requiredEvidence": ["Entry snapshot per cohort","SLO/error-budget report","Close and reconciliation cycles","Incident and support load","Stop-condition evaluation","Signed expansion or rollback decision"],
+      "stopConditions": ["Duplicate consequence","False payment success","Cross-tenant access","Fiscal/stock/accounting mismatch","Unrecoverable close","Evidence loss","Support overload","Error-budget breach"]
+    }
+  ],
+  "externalEvidenceRegister": [
+    {"id":"EXT-G1-APPROVALS","gate":"G1","status":"MISSING_AUTHENTIC_RETURN","required":"D-01 through D-11 role-complete detached approvals"},
+    {"id":"EXT-PROVIDER-SANDBOX","gate":"G3A","status":"MISSING","required":"Named provider, merchant sandbox and official callback/statement contract"},
+    {"id":"EXT-CM-QUALIFIED-REVIEW","gate":"G3B","status":"MISSING_AUTHENTIC_RETURN","required":"Qualified Cameroon review plus independent checker"},
+    {"id":"EXT-HARDWARE-MATRIX","gate":"G4","status":"MISSING_OR_EXCLUDED","required":"Physical device certification or signed exclusion"},
+    {"id":"EXT-CLOSE-CYCLE","gate":"G5","status":"MISSING","required":"Production-like business-day and settlement cycle"},
+    {"id":"EXT-INVENTORY-POLICY","gate":"G6","status":"MISSING_APPROVAL","required":"Inventory scope and unsupported-combination decision"},
+    {"id":"EXT-AR-RETURNS-POLICY","gate":"G7","status":"MISSING_APPROVAL","required":"Recognition, allocation, return and correction policies"},
+    {"id":"EXT-OPS-DRILLS","gate":"G8","status":"MISSING","required":"Load, recovery, failover, rotation, penetration, alerting and incident drills"},
+    {"id":"EXT-PILOT-COHORTS","gate":"G9","status":"NOT_STARTED","required":"R0 through R6 cohort evidence and signed decisions"}
+  ],
+  "nextPermittedWork": {
+    "activeGate": "G1",
+    "allowed": ["Complete authentic G1 approvals","Maintain current cash-only synthetic development controls","Read-only preflight of G2-G9","Build gate tooling and evidence templates"],
+    "notAllowed": ["Mark G2 or later passed","Activate electronic payment provider","Allocate statutory fiscal numbers","Claim physical hardware certification","Deploy production migration","Begin production pilot"]
+  }
+}

@@ -145,7 +145,7 @@ async function AccountingDashboardPageImpl() {
 
           <AccountingPanel title="Latest journal entries" description="Recent activity from draft and posted journals.">
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[760px] text-sm">
+              <table className="dashboard-table-base w-full min-w-[760px] text-sm">
                 <thead className="border-b border-[var(--dash-border-subtle)] text-left text-xs uppercase text-[var(--dash-text-faint)]">
                   <tr>
                     <th className="px-4 py-3">Entry</th>

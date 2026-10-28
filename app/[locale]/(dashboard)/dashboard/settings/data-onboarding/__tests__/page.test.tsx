@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react"
 
 const mockRequireAnyPermission = jest.fn()
 const mockGetDashboard = jest.fn()
+const mockObserveModuleAccess = jest.fn()
 
 jest.mock("@/lib/security/rbac", () => ({
   requireAnyPermission: (...args: unknown[]) => mockRequireAnyPermission(...args),
@@ -9,6 +10,9 @@ jest.mock("@/lib/security/rbac", () => ({
 }))
 jest.mock("@/services/onboarding/master-data-import.service", () => ({
   getMasterDataOnboardingDashboard: (...args: unknown[]) => mockGetDashboard(...args),
+}))
+jest.mock("@/services/modules/module-entitlement.service", () => ({
+  observeModuleAccess: (...args: unknown[]) => mockObserveModuleAccess(...args),
 }))
 jest.mock("@/components/onboarding/MasterDataOnboardingWorkbench", () => ({
   MasterDataOnboardingWorkbench: ({ initialData }: { initialData: { organizationId: string } }) => (
@@ -19,7 +23,10 @@ jest.mock("@/components/onboarding/MasterDataOnboardingWorkbench", () => ({
 import Page from "../page"
 
 describe("master-data onboarding dashboard route", () => {
-  beforeEach(() => jest.clearAllMocks())
+  beforeEach(() => {
+    jest.clearAllMocks()
+    mockObserveModuleAccess.mockResolvedValue({ allowed: true })
+  })
 
   it("derives the tenant from RBAC context and renders the readiness surface", async () => {
     mockRequireAnyPermission.mockResolvedValue({
@@ -35,8 +42,13 @@ describe("master-data onboarding dashboard route", () => {
       ],
     })
     mockGetDashboard.mockResolvedValue({ organizationId: "org-session" })
-    render(await Page())
-    expect(mockGetDashboard).toHaveBeenCalledWith("org-session", ["CUSTOMER", "SUPPLIER", "ITEM"])
+    render(await Page({ params: Promise.resolve({ locale: "en" }) }))
+    expect(mockGetDashboard).toHaveBeenCalledWith("org-session", ["CUSTOMER", "SUPPLIER", "ITEM"], "user-1")
+    expect(mockObserveModuleAccess).toHaveBeenCalledWith(expect.objectContaining({
+      moduleSlug: "settings",
+      mode: "enforce",
+      surfaceType: "page",
+    }))
     expect(screen.getByTestId("onboarding-workbench")).toHaveTextContent("org-session")
   })
 
@@ -47,7 +59,7 @@ describe("master-data onboarding dashboard route", () => {
       permissions: ["customers.read"],
     })
     mockGetDashboard.mockResolvedValue({ organizationId: "org-session" })
-    render(await Page())
-    expect(mockGetDashboard).toHaveBeenCalledWith("org-session", ["CUSTOMER"])
+    render(await Page({ params: Promise.resolve({ locale: "fr" }) }))
+    expect(mockGetDashboard).toHaveBeenCalledWith("org-session", ["CUSTOMER"], "user-1")
   })
 })

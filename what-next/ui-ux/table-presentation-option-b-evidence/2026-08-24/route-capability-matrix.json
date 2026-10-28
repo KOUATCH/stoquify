@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-24",
+  "phase": "0_BROWSER_EVIDENCE_GATE",
+  "decision": "BLOCK_EVIDENCE_ENVIRONMENT_REQUIRED",
+  "browser": {
+    "surface": "approved_in_app_browser",
+    "attempts": 3,
+    "sessionsCreated": 1,
+    "priorErrorCode": "helper_unknown_error",
+    "priorErrorMessage": "setup refresh had errors",
+    "repair": {
+      "rootCause": "Repository .git directory was owned by BUILTIN\\Administrators, preventing the unelevated Codex helper from applying its protective deny ACE.",
+      "action": "Changed only the .git directory owner to KOUATCHOUA\\J COMPUTER.",
+      "verified": true
+    }
+  },
+  "viewports": [375, 768, 1280, 1536],
+  "locales": ["en", "fr"],
+  "routes": [
+    "/en/dashboard/purchases/suppliers",
+    "/en/dashboard/payroll/compensation",
+    "/en/dashboard/payroll/employees",
+    "/en/dashboard/people",
+    "/en/dashboard/purchase-orders",
+    "/en/dashboard/inventory/brands",
+    "/en/dashboard/inventory/units",
+    "/en/dashboard/accounting/reports/trial-balance",
+    "/en/dashboard/inventory/movements",
+    "/en/dashboard/pos",
+    "UNRESOLVED_REPRESENTATIVE_EVIDENCE_OR_AUDIT_ROUTE"
+  ],
+  "routeStatus": "supplier_route_reverified_after_prisma_repair_then_redirected_to_login",
+  "prerequisites": {
+    "authEndpointHealthy": true,
+    "authenticatedSession": false,
+    "knownFixtureOrganizations": 0,
+    "knownFixtureUsers": 0,
+    "eligibleHighlightedRouteUsers": 0,
+    "concreteEvidenceAuditRouteSelected": false,
+    "redactionSafeRepresentativeDataConfirmed": false
+  },
+  "authenticatedDesktopPreflight": {
+    "date": "2026-08-25",
+    "retainedData": "route-level table-presence signals only",
+    "passedRoutes": [
+      "/en/dashboard/purchases/suppliers",
+      "/en/dashboard/payroll/compensation",
+      "/en/dashboard/payroll/employees",
+      "/en/dashboard/people",
+      "/en/dashboard/purchase-orders"
+    ],
+    "remainingRoutesUnverified": true
+  },
+  "requiredPermissions": [
+    "purchases.suppliers.read",
+    "payroll.compensation.read",
+    "payroll.employees.read",
+    "hris.people.read",
+    "purchases.orders.read",
+    "inventory.brands.read",
+    "inventory.units.read",
+    "inventory.levels.read",
+    "accounting.reports.read",
+    "OPERATE_POS"
+  ],
+  "evidence": {
+    "diagnosticLoginStateObserved": true,
+    "diagnosticLoginScreenshotsRetained": 0,
+    "screenshots": [],
+    "keyboardResults": [],
+    "accessibilityResults": [],
+    "sensitiveDataCaptured": false
+  },
+  "phase1Authorized": false
+}

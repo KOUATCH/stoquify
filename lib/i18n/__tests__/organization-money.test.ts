@@ -1,9 +1,16 @@
 import {
   OrganizationCurrencyUnavailableError,
   createOrganizationMoneyFormatter,
+  currencyFractionDigits,
 } from "@/lib/i18n/organization-money"
 
 describe("createOrganizationMoneyFormatter", () => {
+  it("reports ISO currency precision for cash comparisons", () => {
+    expect(currencyFractionDigits("XAF")).toBe(0)
+    expect(currencyFractionDigits("xof")).toBe(0)
+    expect(currencyFractionDigits("USD")).toBe(2)
+  })
+
   it.each(["XAF", "XOF"])("uses ISO minor-unit precision for %s", (currency) => {
     const formatter = createOrganizationMoneyFormatter({
       organizationId: "org-1",

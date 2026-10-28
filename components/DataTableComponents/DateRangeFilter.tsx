@@ -1,37 +1,39 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { filterByDateRange } from "@/lib/dateFilters";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
 import React from "react";
-import { DateRange } from "react-day-picker";
+import {
+  TableDateRangePicker,
+  type TableDateRangeValue,
+} from "./TableDateRangePicker";
 export default function DateRangeFilter({
   data,
   onFilter,
   setIsDateFilterActive,
   className,
+  locale = "en",
+  placeholder,
+  resetKey,
   variant = "default",
 }: {
   data: any[];
   onFilter: any;
   setIsDateFilterActive: (isDateFilterActive: boolean) => void;
   className?: string
+  locale?: "en" | "fr"
+  placeholder?: string
+  resetKey?: number
   variant?: "default" | "landing"
 }) {
-  const [date, setDate] = React.useState<DateRange | undefined>();
-  const isLanding = variant === "landing";
+  const [date, setDate] = React.useState<TableDateRangeValue>({});
 
-  const handleChange = (selectedDate?: DateRange) => {
+  React.useEffect(() => {
+    setDate({});
+  }, [resetKey]);
+
+  const handleChange = (selectedDate: TableDateRangeValue) => {
     setDate(selectedDate);
 
-    if (!selectedDate?.from || !selectedDate?.to) {
+    if (!selectedDate.from || !selectedDate.to) {
       setIsDateFilterActive(false);
       onFilter(data);
       return;
@@ -40,57 +42,20 @@ export default function DateRangeFilter({
     setIsDateFilterActive(true);
     const filteredData = filterByDateRange(
       data,
-      selectedDate.from.toISOString(),
-      selectedDate.to.toISOString()
+      selectedDate.from,
+      selectedDate.to
     );
     onFilter(filteredData);
   };
 
   return (
-    <div className={cn("grid gap-2", className)}>
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button
-            id="date"
-            variant={"outline"}
-            className={cn(
-              "h-9 w-full justify-start rounded-lg text-left font-normal sm:w-[230px]",
-              isLanding && "dashboard-button-secondary border-[var(--dash-border-subtle)]",
-              !date && (isLanding ? "text-[var(--dash-text-faint)]" : "text-muted-foreground")
-            )}
-          >
-            <CalendarIcon className="mr-2 h-4 w-4" />
-            {date?.from ? (
-              date.to ? (
-                <>
-                  {format(date.from, "LLL dd, y")} -{" "}
-                  {format(date.to, "LLL dd, y")}
-                </>
-              ) : (
-                format(date.from, "LLL dd, y")
-              )
-            ) : (
-              <span>Date range</span>
-            )}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent
-          className={cn(
-            "w-auto p-0",
-            isLanding && "border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]"
-          )}
-          align="start"
-        >
-          <Calendar
-            initialFocus
-            mode="range"
-            defaultMonth={date?.from}
-            selected={date}
-            onSelect={(value) => handleChange(value)}
-            numberOfMonths={2}
-          />
-        </PopoverContent>
-      </Popover>
-    </div>
+    <TableDateRangePicker
+      value={date}
+      onChange={handleChange}
+      className={className}
+      locale={locale}
+      placeholder={placeholder}
+      variant={variant}
+    />
   );
 }

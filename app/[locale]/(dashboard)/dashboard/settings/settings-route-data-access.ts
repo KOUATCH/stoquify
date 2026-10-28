@@ -2,6 +2,11 @@ import type {
   CommercialModuleSlug,
   ModuleAccessIntent,
 } from "@/services/modules/module-control-contracts"
+import {
+  MASTER_DATA_ONBOARDING_MODULE_SLUG,
+  MASTER_DATA_ONBOARDING_READ_PERMISSIONS,
+  MASTER_DATA_ONBOARDING_ROUTE,
+} from "@/config/master-data-onboarding"
 
 export type SettingsRouteSurfaceModule = {
   moduleSlug: CommercialModuleSlug
@@ -19,6 +24,7 @@ export type SettingsRouteSurface = {
   route: string
   resource: string
   title: string
+  titleFr?: string
   permissions: readonly string[]
   permissionMode?: PermissionMode
   module?: SettingsRouteSurfaceModule
@@ -39,6 +45,21 @@ export const settingsRouteCatalog: SettingsRouteSurface[] = [
     resource: "SettingsCompany",
     title: "Company settings",
     permissions: ["COMPANY_READ"],
+  },
+  {
+    key: "settings-data-onboarding",
+    route: MASTER_DATA_ONBOARDING_ROUTE,
+    resource: "MasterDataOnboarding",
+    title: "Data onboarding",
+    titleFr: "Intégration des données",
+    permissions: MASTER_DATA_ONBOARDING_READ_PERMISSIONS,
+    permissionMode: "any",
+    module: {
+      moduleSlug: MASTER_DATA_ONBOARDING_MODULE_SLUG,
+      surface: `${MASTER_DATA_ONBOARDING_ROUTE}#page`,
+      accessIntent: "read",
+      mode: "enforce",
+    },
   },
   {
     key: "settings-locations",

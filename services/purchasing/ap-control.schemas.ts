@@ -3,7 +3,8 @@ import { z } from "zod"
 const idSchema = z.string().trim().min(1)
 const hashSchema = z.string().trim().min(8).optional()
 const moneyValueSchema = z.union([z.string().trim().min(1), z.number()])
-const dateInputSchema = z.union([z.date(), z.string().trim().min(1)]).optional()
+const requiredDateInputSchema = z.union([z.date(), z.string().trim().min(1)])
+const dateInputSchema = requiredDateInputSchema.optional()
 
 export const supplierInvoiceLineInputSchema = z.object({
   purchaseOrderLineId: idSchema.optional(),
@@ -38,6 +39,28 @@ export const approveSupplierInvoiceInputSchema = z.object({
   supplierInvoiceId: idSchema,
   approvedById: idSchema,
 })
+
+export const requestSupplierInvoiceMatchExceptionInputSchema = z.object({
+  organizationId: idSchema,
+  supplierInvoiceId: idSchema,
+  requestedById: idSchema,
+  reason: z.string().trim().min(3).max(500),
+  evidenceReference: z.string().trim().min(8).max(500),
+  expiresAt: requiredDateInputSchema,
+})
+
+export const reviewSupplierInvoiceMatchExceptionInputSchema = z
+  .object({
+    organizationId: idSchema,
+    matchExceptionId: idSchema,
+    reviewedById: idSchema,
+    decision: z.enum(["APPROVE", "REJECT"]),
+    decisionReason: z.string().trim().min(3).max(500).optional(),
+  })
+  .refine((value) => value.decision !== "REJECT" || Boolean(value.decisionReason), {
+    message: "Match exception rejection requires a reason.",
+    path: ["decisionReason"],
+  })
 
 export const requestSupplierBankChangeInputSchema = z
   .object({
@@ -107,6 +130,12 @@ export const releaseSupplierPaymentInputSchema = z.object({
 
 export type PostSupplierInvoiceInput = z.input<typeof postSupplierInvoiceInputSchema>
 export type ApproveSupplierInvoiceInput = z.input<typeof approveSupplierInvoiceInputSchema>
+export type RequestSupplierInvoiceMatchExceptionInput = z.input<
+  typeof requestSupplierInvoiceMatchExceptionInputSchema
+>
+export type ReviewSupplierInvoiceMatchExceptionInput = z.input<
+  typeof reviewSupplierInvoiceMatchExceptionInputSchema
+>
 export type RequestSupplierBankChangeInput = z.input<typeof requestSupplierBankChangeInputSchema>
 export type ApproveSupplierBankChangeInput = z.input<typeof approveSupplierBankChangeInputSchema>
 export type ApproveSupplierPaymentInput = z.input<typeof approveSupplierPaymentInputSchema>

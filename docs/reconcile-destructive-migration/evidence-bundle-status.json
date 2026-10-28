@@ -1,22 +1,42 @@
 {
-  "generatedAt": "2026-08-13T16:27:22.964Z",
+  "generatedAt": "2026-08-18T04:50:33.841Z",
   "status": "REJECTED_BLOCKED_EVIDENCE_INCOMPLETE",
   "packetId": "MIG-RISK-20260611130000-F7DE8DC7-RECONCILED-2026-08-13",
   "packetBindings": {
-    "ready": true,
-    "errors": [],
+    "ready": false,
+    "errors": [
+      "bound_file_hash_mismatch"
+    ],
     "migrationSha256": "f7de8dc7ace0a5e063cdb7ecd9527e77807b7f872e474546819e9fca13a273d4",
     "migrationByteLength": 24674,
     "operationCount": 13,
     "operationHashMismatches": [],
     "inventorySha256": "55d332c3319b65acfdf415e64042a15504d12861b664429af7e63155296e1ad1",
-    "boundFileCount": 24,
-    "boundFileMismatches": []
+    "boundFileCount": 27,
+    "boundFileMismatches": [
+      "package.json",
+      "prisma/schema.prisma"
+    ]
+  },
+  "candidateFreeze": {
+    "ready": false,
+    "errors": [
+      "candidate_mode_not_production_frozen",
+      "candidate_was_dirty_when_bindings_were_refreshed",
+      "candidate_source_worktree_dirty"
+    ],
+    "mode": "DEVELOPMENT_ROLLING",
+    "refreshedHead": "35b4cc6a06a50ee11de5bfce6b04993e38bd589a",
+    "refreshedTree": "7efce91d5ba871e91470f60ed3b53833a1c3b4b4",
+    "sourceDirtyAtRefresh": true,
+    "liveSourceDirtyPathCount": 413
   },
   "manifest": {
-    "ready": true,
-    "errors": [],
-    "schemaSha256": "9156e5ae948854abee5d95adc8c033cdc3cea66bbb50173b078e1c24353f0a54",
+    "ready": false,
+    "errors": [
+      "manifest_prisma_schema_hash_mismatch"
+    ],
+    "schemaSha256": "3a4b618b45b3bd5295a49ba7ab755058895be867ad55000a98371a5e03eae5db",
     "requiredArtifactCount": 14,
     "completedArtifactCount": 0,
     "missingArtifactIds": [],
@@ -148,12 +168,19 @@
       "status": "NOT_APPLICABLE_PENDING_CHECKER",
       "validation": "NOT_APPLICABLE_PENDING_CHECKER",
       "declaredStatus": "NOT_APPLICABLE_PENDING_CHECKER",
-      "actualSha256": "7e8317f1944c9d424856ba05e6efa2034b1e3949857c4df7a3b2b2f5abc05c04",
+      "actualSha256": "b1a7331d48df55c3028489bc15482594b60d310b6c02ecea7631cf9272f613a7",
       "reason": "manifest_does_not_claim_completed_evidence"
     }
   ],
   "preCheckerReady": false,
   "checkerDecision": null,
+  "approvalState": {
+    "ready": false,
+    "findingCount": 13,
+    "approvedFindingCount": 0,
+    "staleApprovalCount": 0,
+    "revokedApprovalCount": 0
+  },
   "exactHashApprovalRecorded": false,
   "productionExecutionAuthorized": false,
   "approvalClaimed": false

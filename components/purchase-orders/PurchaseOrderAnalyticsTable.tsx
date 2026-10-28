@@ -182,7 +182,7 @@ export function PurchaseOrderAnalyticsTable<Row>({
 
   return (
     <div className="space-y-3" data-testid="analytics-table-workbench">
-      <div className="flex flex-col gap-3 rounded-xl border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)]/72 p-3 xl:flex-row xl:items-center xl:justify-between">
+      <div className="dashboard-table-toolbar flex flex-col gap-3 rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)]/72 p-3 xl:flex-row xl:flex-nowrap xl:items-center xl:justify-between">
         <div className="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row sm:items-center">
           <div className="relative min-w-0 flex-1 xl:max-w-xl">
             <Search aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--dash-text-faint)]" />
@@ -243,7 +243,7 @@ export function PurchaseOrderAnalyticsTable<Row>({
         </div>
       </div>
 
-      <div className="dashboard-table-shell overflow-hidden rounded-xl border border-[var(--dash-border-subtle)]">
+      <div className="dashboard-table-shell overflow-hidden rounded-lg border border-[var(--dash-border-subtle)]">
         <div className="w-full overflow-x-auto">
           <table className="w-full min-w-[840px] border-collapse text-left text-sm">
             <thead className="bg-[var(--dash-surface-raised)] text-xs uppercase tracking-[0.08em] text-[var(--dash-text-faint)]">
@@ -294,7 +294,7 @@ export function PurchaseOrderAnalyticsTable<Row>({
         </div>
       </div>
 
-      <div className="flex flex-col gap-3 px-1 text-sm text-[var(--dash-text-soft)] sm:flex-row sm:items-center sm:justify-between">
+      <div className="dashboard-table-pagination flex flex-col gap-3 px-1 text-sm text-[var(--dash-text-soft)] sm:flex-row sm:items-center sm:justify-between">
         <p aria-live="polite">{labels.results(resultFrom, resultTo, processedRows.length)}</p>
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs font-medium">{labels.rowsPerPage}</span>

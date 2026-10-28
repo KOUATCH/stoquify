@@ -1,18 +1,18 @@
 {
   "summary": {
-    "generatedAt": "2026-08-12T19:18:08.548Z",
+    "generatedAt": "2026-08-22T09:02:45.282Z",
     "mode": "fail",
-    "routeCount": 14,
+    "routeCount": 16,
     "supportEvidenceCount": 2,
-    "evidenceFileCount": 16,
+    "evidenceFileCount": 18,
     "bySurfaceKind": {
-      "api_route": 14,
+      "api_route": 16,
       "guard_evidence": 2
     },
     "byClassification": {
       "public-intentional": 2,
       "public-auth-provider": 1,
-      "unclassified": 4,
+      "unclassified": 6,
       "authenticated": 1,
       "public-receipt-lookup": 1,
       "tenant-scoped": 5,
@@ -20,12 +20,12 @@
       "public-receipt-service-evidence": 1
     },
     "byModuleAccess": {
-      "none": 11,
+      "none": 13,
       "enforced": 5
     },
     "byModuleApplicability": {
       "not_applicable_public": 4,
-      "review_required": 4,
+      "review_required": 6,
       "not_applicable_session_claims": 1,
       "required": 5,
       "delegated_uploadthing_core": 1,
@@ -280,6 +280,60 @@
         "bounded response"
       ],
       "responseEnvelope": "unknown",
+      "issues": []
+    },
+    {
+      "file": "app/api/supplier-po-envelopes/[envelopeId]/proposals/route.ts",
+      "surfaceKind": "api_route",
+      "evidenceFor": null,
+      "methods": [
+        "POST"
+      ],
+      "classification": "unclassified",
+      "guard": "none",
+      "orgSource": "none",
+      "permission": null,
+      "moduleAccess": "none",
+      "moduleSlug": null,
+      "moduleAccessIntent": null,
+      "moduleAccessMode": null,
+      "moduleAccessAudit": null,
+      "expectedModuleSlug": null,
+      "moduleApplicability": "review_required",
+      "moduleApplicabilityReason": "No deterministic module mapping in report mode.",
+      "returnedDataClass": "json response",
+      "negativeCases": [
+        "unauthenticated",
+        "safe error response"
+      ],
+      "responseEnvelope": "success envelope with safe error envelope",
+      "issues": []
+    },
+    {
+      "file": "app/api/supplier-po-envelopes/[envelopeId]/route.ts",
+      "surfaceKind": "api_route",
+      "evidenceFor": null,
+      "methods": [
+        "GET"
+      ],
+      "classification": "unclassified",
+      "guard": "none",
+      "orgSource": "none",
+      "permission": null,
+      "moduleAccess": "none",
+      "moduleSlug": null,
+      "moduleAccessIntent": null,
+      "moduleAccessMode": null,
+      "moduleAccessAudit": null,
+      "expectedModuleSlug": null,
+      "moduleApplicability": "review_required",
+      "moduleApplicabilityReason": "No deterministic module mapping in report mode.",
+      "returnedDataClass": "json response",
+      "negativeCases": [
+        "unauthenticated",
+        "safe error response"
+      ],
+      "responseEnvelope": "success envelope with safe error envelope",
       "issues": []
     },
     {

@@ -149,6 +149,21 @@ describe("sidebar finance reconciliation permissions", () => {
   })
 })
 
+describe("sidebar governed data onboarding ownership", () => {
+  it("exposes exactly one canonical settings-module entry through any readable target", () => {
+    const destinations = sidebarLinks.flatMap((link) => link.dropdownMenu ?? [])
+    const onboarding = destinations.filter((item) => item.href === "/dashboard/settings/data-onboarding")
+
+    expect(onboarding).toHaveLength(1)
+    expect(onboarding[0]).toEqual(expect.objectContaining({
+      title: "Data onboarding",
+      moduleSlug: "settings",
+      permissionMode: "any",
+      permissions: ["customers.read", "purchases.suppliers.read", "inventory.items.read"],
+    }))
+  })
+})
+
 describe("sidebar HR and payroll visibility", () => {
   it("exposes the implemented payroll command, declaration, payment, employee, and self-service routes", () => {
     const hrPayroll = sidebarLinks.find((link) => link.title === "HR & Payroll")

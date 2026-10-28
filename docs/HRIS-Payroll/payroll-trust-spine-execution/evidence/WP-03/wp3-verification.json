@@ -1,0 +1,39 @@
+{
+  "workPackage": "WP3",
+  "capturedAt": "2026-08-22T07:20:11Z",
+  "decision": "APPROVED_FOR_WP4_INTERNAL_ENGINEERING_ONLY",
+  "selectedSkill": "012-aqstoqflow-payroll-presence-engine",
+  "verification": {
+    "lifecycleFocused": "PASS_22_OF_22",
+    "wp2Wp3Focused": "PASS_30_OF_30",
+    "canonicalWp2Wp3": "PASS_33_OF_33",
+    "typecheck": "PASS_EXIT_0",
+    "prismaValidate": "PASS",
+    "focusedLint": "PASS_ZERO_FINDINGS",
+    "diffCheck": "PASS"
+  },
+  "invariants": {
+    "tenantScopedCas": true,
+    "serializableTransactions": true,
+    "threePersonSod": true,
+    "freshAuthEvaluated": true,
+    "canonicalEvents": true,
+    "eventBoundPayslips": true,
+    "ledgerBeforePostedState": true,
+    "closeInvalidationBeforeEventApplied": true,
+    "laterStateIdempotentReplay": true,
+    "collapsedShortcutFailsClosedAtCutover": true
+  },
+  "promotionLimits": [
+    "real_postgresql_concurrency_and_failure_injection_deferred_to_wp7",
+    "production_release_not_authorized",
+    "qualified_statutory_expert_approval_missing",
+    "inherited_destructive_migration_approvals_missing",
+    "dirty_worktree_provenance_not_clean"
+  ],
+  "fileHashes": {
+    "services/payroll/payroll-control.service.ts": "861BE3CC686F23610ADA66B510EC9DD9CAFD0BE66C16DEB3498E6798F7BBF96D",
+    "services/payroll/payroll-control.schemas.ts": "BED2E42586BC0902B74911C128A6729E32CF633C86E28BC3E519D157A67F9C2B",
+    "services/payroll/__tests__/payroll-run-approval-transition.service.test.ts": "CF880B0D1867731756810199C9A10B88487B93B30222C60DD7D3D4B26BE1710E"
+  }
+}

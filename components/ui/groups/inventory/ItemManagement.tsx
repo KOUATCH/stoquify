@@ -87,6 +87,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { DataTablePagination } from "@/components/DataTableComponents/DataTablePagination"
 import DateFilters from "@/components/DataTableComponents/DateFilters"
 import DateRangeFilter from "@/components/DataTableComponents/DateRangeFilter"
+import type { Locale } from "@/types/bilingual"
 
 // Enhanced form schema with better validation
 const itemFormSchema = z
@@ -146,6 +147,7 @@ interface ItemManagementProps {
   initialTaxRateData: TaxRateDTO[]
   initialSearch?: string
   activeFilterChips?: ActiveFilterChip[]
+  locale?: Locale
 }
 
 const DEFAULT_IMAGE_URL = "https://14J7oh8kso.ufs.sh/f/HLxTbDBCDLwfAXaapcezIN7vwylKf1PXSCqAuseUG0gx8mhd"
@@ -314,6 +316,7 @@ const ModernItemTable = ({
   title,
   initialSearch = "",
   activeFilterChips = [],
+  locale = "en",
 }: {
   data: ItemWithInventoryLevelsPayload[]
   columns: ColumnDef<ItemWithInventoryLevelsPayload>[]
@@ -323,6 +326,7 @@ const ModernItemTable = ({
   title: string
   initialSearch?: string
   activeFilterChips?: ActiveFilterChip[]
+  locale?: Locale
 }) => {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -524,12 +528,14 @@ const ModernItemTable = ({
               data={data}
               onFilter={setDateFilteredData}
               setIsDateFilterActive={setIsDateFilterActive}
+              locale={locale}
               variant="landing"
             />
             <DateFilters
               data={data}
               onFilter={setDateFilteredData}
               setIsDateFilterActive={setIsDateFilterActive}
+              locale={locale}
               variant="landing"
             />
             <Select value={stockFilter} onValueChange={handleStockFilterChange}>
@@ -684,7 +690,7 @@ const ModernItemTable = ({
       </div>
 
         {/* Pagination and summary */}
-        <DataTablePagination table={table} variant="landing" />
+        <DataTablePagination table={table} variant="landing" locale={locale} />
       </div>
     </div>
   )
@@ -702,6 +708,7 @@ const ItemManagement = memo<ItemManagementProps>(
     initialTaxRateData,
     initialSearch = "",
     activeFilterChips = [],
+    locale = "en",
   }) => {
     // Validate required props
     if (!organizationId) {
@@ -902,6 +909,7 @@ const ItemManagement = memo<ItemManagementProps>(
           title={title || "Items Management"}
           initialSearch={initialSearch}
           activeFilterChips={activeFilterChips}
+          locale={locale}
         />
 
         {/* Add Item Form Dialog */}

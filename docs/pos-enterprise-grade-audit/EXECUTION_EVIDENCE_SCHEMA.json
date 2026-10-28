@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stoquify.local/schemas/pos-sales-to-cash-gate-evidence-v1.json",
+  "title": "Stoquify POS and Sales-to-Cash Gate Evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "evidenceId", "gate", "evidenceClass", "candidate", "execution", "result", "privacy", "limitations"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "evidenceId": { "type": "string", "minLength": 1 },
+    "gate": { "type": "string", "pattern": "^G(0|1|2|3A|3B|4|5|6|7|8|9)$" },
+    "evidenceClass": { "enum": ["LOCAL_STATIC", "LOCAL_UNIT", "LOCAL_POSTGRES", "LOCAL_BROWSER", "STAGING_SANDBOX", "REFERENCE_HARDWARE", "PRODUCTION_OBSERVATION", "QUALIFIED_REVIEW"] },
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["commit", "tree", "dirty", "statusSha256"],
+      "properties": {
+        "commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+        "tree": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+        "dirty": { "type": "boolean" },
+        "statusSha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "changedPaths": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["command", "environment", "startedAt", "finishedAt"],
+      "properties": {
+        "command": { "type": "string", "minLength": 1 },
+        "environment": { "type": "string", "minLength": 1 },
+        "startedAt": { "type": "string", "format": "date-time" },
+        "finishedAt": { "type": "string", "format": "date-time" },
+        "configurationVersions": { "type": "object", "additionalProperties": { "type": "string" } },
+        "sourceHashes": { "type": "object", "additionalProperties": { "type": "string", "pattern": "^[0-9a-f]{64}$" } }
+      }
+    },
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "exitCode", "summary"],
+      "properties": {
+        "status": { "enum": ["PASS", "FAIL", "BLOCKED", "NOT_RUN"] },
+        "exitCode": { "type": ["integer", "null"] },
+        "summary": { "type": "string" },
+        "artifactPaths": { "type": "array", "items": { "type": "string" } },
+        "findingIds": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "privacy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["redactionChecked", "containsSecrets", "containsPaymentCredentials", "containsUnnecessaryPii"],
+      "properties": {
+        "redactionChecked": { "type": "boolean" },
+        "containsSecrets": { "const": false },
+        "containsPaymentCredentials": { "const": false },
+        "containsUnnecessaryPii": { "const": false },
+        "reviewer": { "type": "string" }
+      }
+    },
+    "limitations": { "type": "array", "items": { "type": "string" } },
+    "owner": { "type": "string" },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": { "enum": ["NOT_REQUIRED", "PENDING", "APPROVED", "REJECTED", "EXPIRED"] },
+        "reviewer": { "type": "string" },
+        "reviewedAt": { "type": "string", "format": "date-time" },
+        "expiresAt": { "type": "string", "format": "date-time" },
+        "sourceLinks": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

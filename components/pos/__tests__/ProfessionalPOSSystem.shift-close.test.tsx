@@ -385,6 +385,53 @@ describe("ProfessionalPOSSystem sale commit", () => {
     jest.clearAllMocks()
   })
 
+  it("adds an in-stock catalog item when the cashier selects the product card", async () => {
+    const addMutateAsync = jest.fn().mockResolvedValue(actionSuccess({ id: "cart-1" }))
+    setupHooks(0, actionSuccess({ terminalId: "terminal-1" }))
+    mockHooks.usePOSCatalog.mockReturnValue({
+      data: actionSuccess({
+        categories: [],
+        items: [{
+          id: "item-1",
+          sku: "SKU-001",
+          barcode: "123456789",
+          nameEn: "Coffee",
+          nameFr: "Cafe",
+          thumbnail: null,
+          sellingPrice: 100,
+          costPrice: 60,
+          taxRate: 0,
+          trackInventory: true,
+          category: null,
+          brand: null,
+          stock: {
+            quantityOnHand: 10,
+            quantityAvailable: 10,
+            reorderPoint: 2,
+            status: "available",
+          },
+        }],
+      }),
+      isLoading: false,
+    } as never)
+    mockHooks.useAddPOSCartLine.mockReturnValue(mutationState(addMutateAsync) as never)
+
+    render(<ProfessionalPOSSystem />)
+
+    const productCardAction = await screen.findByRole("button", { name: "catalog.add Coffee" })
+    fireEvent.click(productCardAction)
+
+    await waitFor(() => {
+      expect(addMutateAsync).toHaveBeenCalledWith({
+        locationId: "location-1",
+        terminalId: "terminal-1",
+        sessionId: "session-1",
+        itemId: "item-1",
+        quantity: 1,
+      })
+    })
+  })
+
   it("keeps seven long-name cart lines and their controls available", () => {
     setupHooks(700, actionSuccess({ terminalId: "terminal-1" }))
     mockHooks.useActivePOSCart.mockReturnValue({
@@ -530,6 +577,11 @@ describe("ProfessionalPOSSystem sale commit", () => {
     expect(screen.getByText("tender.paid").parentElement).toHaveClass("rounded-md", "border")
     expect(screen.getByText("tender.due").parentElement).toHaveClass("rounded-md", "border")
     expect(screen.getByText("tender.change").parentElement).toHaveClass("rounded-md", "border")
+    expect(
+      within(screen.getByLabelText("tender.method"))
+        .getAllByRole("option")
+        .map((option) => option.getAttribute("value")),
+    ).toEqual(["CASH"])
     expect(screen.getByTestId("pos-cart-line")).toHaveClass("py-0.5")
     expect(screen.getByRole("button", { name: "cart.removeLine" })).toHaveClass("h-7", "w-7")
     expect(screen.getByRole("button", { name: "charge.cta" })).toHaveClass("h-11", "rounded-md", "border")

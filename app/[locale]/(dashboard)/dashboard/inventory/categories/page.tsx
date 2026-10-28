@@ -85,6 +85,7 @@ async function CategoriesPageImpl({ params }: CategoriesPageProps) {
             initialData={initialCategoryData}
             organizationId={organizationId}
             basePath={basePath}
+            locale={locale}
           />
         </Suspense>
       </div>

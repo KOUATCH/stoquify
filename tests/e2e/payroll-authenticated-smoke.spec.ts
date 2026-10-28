@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test"
+import { expect, test, type Locator, type Page } from "@playwright/test"
 import axe from "axe-core"
 import { mkdir, writeFile } from "node:fs/promises"
 import { join } from "node:path"
@@ -39,7 +39,7 @@ const payrollRoutes = [
   {
     name: "payments",
     path: "/en/dashboard/payroll/payments",
-    heading: /employee balance recovery/i,
+    heading: /payment reconciliation|employee balance recovery/i,
   },
   {
     name: "runs",
@@ -107,7 +107,7 @@ const payrollAccessibilityRoutes = [
     id: "payroll-payments",
     name: "payments",
     path: "/en/dashboard/payroll/payments",
-    heading: /employee balance recovery/i,
+    heading: /payment reconciliation|employee balance recovery/i,
   },
   {
     id: "payroll-declarations",
@@ -169,6 +169,65 @@ const payrollEvidencePath = join(
   "AQSTOQFLOW_PAYROLL_AUTHENTICATED_ACCESSIBILITY_MOBILE_BROWSER.json",
 )
 const accessibilityEvidence: AccessibilityEvidence[] = []
+
+type ProofDrawerEvidence = {
+  routeId: string
+  routeName: string
+  path: string
+  screenshot: string
+  finalUrl: string
+  drawerTitle: string
+  redactionMode: "HASHES_AND_AGGREGATES_ONLY"
+  accountingEvidenceLabels: string[]
+  leakedForbiddenMarkers: string[]
+}
+
+const payrollProofDrawerRoutes = [
+  {
+    id: "payroll-runs",
+    name: "runs",
+    path: "/en/dashboard/payroll/runs",
+    heading: /run lifecycle workbench/i,
+    drawerTitle: "Payroll auditor proof pack",
+  },
+  {
+    id: "payroll-payments",
+    name: "payments",
+    path: "/en/dashboard/payroll/payments",
+    heading: /payment reconciliation|employee balance recovery/i,
+    drawerTitle: "Payroll payment auditor proof pack",
+  },
+  {
+    id: "payroll-declarations",
+    name: "declarations",
+    path: "/en/dashboard/payroll/declarations",
+    heading: /declaration evidence workbench/i,
+    drawerTitle: "Payroll declaration auditor proof pack",
+  },
+]
+
+const proofDrawerEvidenceDir = join(
+  process.cwd(),
+  "what-next",
+  "payroll",
+  "screenshots",
+  "payroll-auditor-proof-drawers",
+)
+const proofDrawerEvidencePath = join(
+  process.cwd(),
+  "what-next",
+  "payroll",
+  "AQSTOQFLOW_PAYROLL_AUDITOR_PROOF_DRAWERS_BROWSER.json",
+)
+const proofDrawerEvidence: ProofDrawerEvidence[] = []
+const forbiddenProofDrawerMarkers = [
+  "EMP-001",
+  "Alice Ngono",
+  "MOMO-PAYROLL-2026-06-001",
+  "bankAccountNumber",
+  "submittedPayloadHash",
+  "raw authority payload",
+]
 
 function relativeEvidencePath(absolutePath: string) {
   return absolutePath
@@ -294,6 +353,27 @@ async function expectPayrollSurfaceOrSafeState(page: Page, heading: RegExp) {
   await expect(safeHeading).toBeVisible({ timeout: 10_000 })
   return "safe-error" as const
 }
+async function openAuditorProofDialog(page: Page, drawerTitle: string): Promise<Locator> {
+  const proofButton = page.getByRole("button", { name: "Auditor proof drawer" }).first()
+  await expect(proofButton).toBeVisible({ timeout: 30_000 })
+  await expect(proofButton).toBeEnabled()
+
+  const proofDialog = page.getByRole("dialog").filter({ hasText: drawerTitle }).first()
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    await proofButton.click()
+    if (
+      await proofDialog
+        .getByRole("heading", { name: drawerTitle })
+        .isVisible({ timeout: 4_000 })
+        .catch(() => false)
+    ) {
+      return proofDialog
+    }
+  }
+
+  await expect(proofDialog.getByRole("heading", { name: drawerTitle })).toBeVisible({ timeout: 10_000 })
+  return proofDialog
+}
 
 test.describe("authenticated payroll browser smoke", () => {
   for (const route of payrollRoutes) {
@@ -342,6 +422,78 @@ test.describe("authenticated payroll browser smoke", () => {
         .first(),
     ).toBeVisible()
   })
+
+  test.afterAll(async () => {
+    await mkdir(join(process.cwd(), "what-next", "payroll"), { recursive: true })
+    const payload = JSON.stringify(
+      {
+        checkedAt: new Date().toISOString(),
+        auth: {
+          storageState: process.env.PLAYWRIGHT_STORAGE_STATE ?? "playwright/.auth/payroll.json",
+          fixtureSource: "scripts/seed-payroll-e2e-user.js",
+          fixturePurpose: "authenticated payroll route-level auditor proof drawer validation",
+        },
+        routes: payrollProofDrawerRoutes.map(({ heading: _heading, ...route }) => route),
+        results: proofDrawerEvidence,
+      },
+      null,
+      2,
+    ) + "\n"
+    await writeFile(proofDrawerEvidencePath, payload, "utf8")
+  })
+
+  for (const route of payrollProofDrawerRoutes) {
+    test(`${route.name} opens accounting-backed auditor proof drawer`, async ({ page }, testInfo) => {
+      await mkdir(proofDrawerEvidenceDir, { recursive: true })
+      await page.setViewportSize({ width: 1440, height: 1100 })
+      await page.goto(route.path, { waitUntil: "domcontentloaded" })
+
+      await expect(page).not.toHaveURL(/\/login(?:\?|$)/)
+      await expect(page.locator("body")).not.toContainText("Application error")
+      await expect(page.locator("body")).not.toContainText("Internal Server Error")
+      await expect(page.getByRole("heading", { name: route.heading }).first()).toBeVisible({ timeout: 60_000 })
+      await expect(page.getByRole("heading", { name: "Auditor proof" }).first()).toBeVisible({ timeout: 60_000 })
+
+      const proofDialog = await openAuditorProofDialog(page, route.drawerTitle)
+      await expect(proofDialog.getByText("services/accounting/data-trust.service.ts")).toBeVisible()
+      await expect(proofDialog.getByText("Accounting period", { exact: true })).toBeVisible()
+      await expect(proofDialog.getByText("Redaction mode")).toBeVisible()
+      await expect(proofDialog.getByText("HASHES_AND_AGGREGATES_ONLY").first()).toBeVisible()
+      await expect(proofDialog.getByText("Aggregate gaps")).toBeVisible()
+      await expect(proofDialog.getByText("Source link hashes")).toBeVisible()
+
+      const drawerText = await proofDialog.innerText()
+      const leakedForbiddenMarkers = forbiddenProofDrawerMarkers.filter((marker) =>
+        drawerText.includes(marker),
+      )
+      expect(leakedForbiddenMarkers, `raw payroll proof markers leaked in ${route.id}`).toHaveLength(0)
+
+      const screenshotPath = join(proofDrawerEvidenceDir, `${route.id}-auditor-proof-drawer.png`)
+      await page.screenshot({ path: screenshotPath, fullPage: true })
+      const evidence: ProofDrawerEvidence = {
+        routeId: route.id,
+        routeName: route.name,
+        path: route.path,
+        screenshot: relativeEvidencePath(screenshotPath),
+        finalUrl: page.url(),
+        drawerTitle: route.drawerTitle,
+        redactionMode: "HASHES_AND_AGGREGATES_ONLY",
+        accountingEvidenceLabels: [
+          "Accounting period",
+          "Redaction mode",
+          "Aggregate gaps",
+          "Source link hashes",
+        ],
+        leakedForbiddenMarkers,
+      }
+      proofDrawerEvidence.push(evidence)
+
+      await testInfo.attach(`${route.id}-auditor-proof-drawer-evidence`, {
+        body: JSON.stringify(evidence, null, 2),
+        contentType: "application/json",
+      })
+    })
+  }
 })
 
 test.describe("authenticated payroll accessibility and mobile validation", () => {

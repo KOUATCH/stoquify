@@ -1,0 +1,111 @@
+{
+  "generatedAt": "2026-08-20T15:01:35.246Z",
+  "countryCode": "CM",
+  "countryPackVersion": "CM-2026.1",
+  "status": "BLOCKED_PENDING_QUALIFIED_REVIEW",
+  "operatorUpdatesAllowed": false,
+  "productionUseAllowed": false,
+  "evidenceDirectory": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\HR-Payroll\\evidence\\country-packs\\CM\\2026-07-19",
+  "decisionFile": "E:\\ohada saas\\Focused projects\\stoquify\\docs\\HR-Payroll\\evidence\\country-packs\\CM\\2026-07-19\\review-decision.template.json",
+  "checks": [
+    {
+      "id": "manifest_present_and_parseable",
+      "passed": true,
+      "owner": "Engineering",
+      "requiredEvidence": "Parseable manifest.json",
+      "detail": "Manifest parsed."
+    },
+    {
+      "id": "decision_present_and_parseable",
+      "passed": true,
+      "owner": "Qualified reviewer",
+      "requiredEvidence": "Parseable review decision JSON",
+      "detail": "Decision packet parsed."
+    },
+    {
+      "id": "source_artifact_integrity",
+      "passed": true,
+      "owner": "Engineering",
+      "requiredEvidence": "Captured sources match manifest byte length and SHA-256",
+      "detail": "All manifest source artifacts match."
+    },
+    {
+      "id": "reviewer_identity_complete",
+      "passed": false,
+      "owner": "Compliance/legal owner",
+      "requiredEvidence": "Reviewer identity, qualifications, organization, and conflict declaration",
+      "detail": "Missing: fullName, professionalCapacity, organization, qualificationReference, conflictOfInterestDeclaration"
+    },
+    {
+      "id": "review_window_complete",
+      "passed": false,
+      "owner": "Qualified reviewer",
+      "requiredEvidence": "Valid review start and completion timestamps",
+      "detail": "Review timestamps are missing, invalid, or reversed."
+    },
+    {
+      "id": "reviewer_recomputed_source_digests",
+      "passed": false,
+      "owner": "Qualified reviewer",
+      "requiredEvidence": "Reviewer independently recomputes every source SHA-256",
+      "detail": "Incomplete: CM_CNPS_CONTRIBUTION_DECREE_2016, CM_CNPS_EMPLOYER_RULES"
+    },
+    {
+      "id": "fixture_family_decisions_complete",
+      "passed": false,
+      "owner": "Qualified reviewer",
+      "requiredEvidence": "Decision, source provision, dates, and independent tie-out hash for every family",
+      "detail": "incomplete payroll.cnps.pensionRatesBps; incomplete payroll.cnps.familyAllowanceRatesBps; incomplete payroll.cnps.occupationalRiskRatesBps; incomplete payroll.cnps.employerRules"
+    },
+    {
+      "id": "all_required_fixture_families_approved",
+      "passed": false,
+      "owner": "Qualified reviewer",
+      "requiredEvidence": "Explicit APPROVED decision for every required fixture family",
+      "detail": "One or more required families are not approved."
+    },
+    {
+      "id": "final_decision_consistent",
+      "passed": false,
+      "owner": "Qualified reviewer",
+      "requiredEvidence": "Approved final decision consistent with every fixture decision and effective date",
+      "detail": "Final approval is absent or inconsistent."
+    },
+    {
+      "id": "signed_approval_metadata_complete",
+      "passed": false,
+      "owner": "Qualified reviewer",
+      "requiredEvidence": "Signed artifact filename, SHA-256, signature timestamp, and method",
+      "detail": "Signed-artifact metadata is incomplete or invalid."
+    },
+    {
+      "id": "signed_approval_artifact_verified",
+      "passed": false,
+      "owner": "Authorized checker",
+      "requiredEvidence": "Retained signed artifact matching the decision SHA-256",
+      "detail": "Signed artifact missing or hash mismatch."
+    },
+    {
+      "id": "manifest_transition_not_premature",
+      "passed": true,
+      "owner": "Authorized maker/checker",
+      "requiredEvidence": "Manifest remains fail-closed until review evidence is complete",
+      "detail": "Manifest state is safe for the packet state."
+    }
+  ],
+  "blockers": [
+    "reviewer_identity_complete",
+    "review_window_complete",
+    "reviewer_recomputed_source_digests",
+    "fixture_family_decisions_complete",
+    "all_required_fixture_families_approved",
+    "final_decision_consistent",
+    "signed_approval_metadata_complete",
+    "signed_approval_artifact_verified"
+  ],
+  "nonClaims": [
+    "This preflight validates evidence structure and integrity; it does not perform legal interpretation.",
+    "Development authorization is not qualified statutory approval.",
+    "A passing preflight authorizes a controlled manifest transition, not production release by itself."
+  ]
+}

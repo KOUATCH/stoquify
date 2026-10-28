@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "workPackage": "WP3",
+  "slice": "reviewed_to_approved",
+  "capturedAtUtc": "2026-08-22T06:54:12.0090208Z",
+  "git": {
+    "head": "35b4cc6a06a50ee11de5bfce6b04993e38bd589a",
+    "branch": "codex/service-boundary-burndown",
+    "workingTree": "DIRTY_PREEXISTING"
+  },
+  "ownershipRule": "Preserve every inherited byte outside the reviewed payroll approval hunks; do not reset, stage, reformat, or replace user-owned work.",
+  "overlappingFiles": [
+    {
+      "path": "services/payroll/payroll-control.service.ts",
+      "inheritedStatus": "MODIFIED",
+      "length": 364455,
+      "sha256": "BFED33A170B9D4C8B5FFEF70626AC6A75A8D43C22D80AD2546A66B4AE4F39DC1",
+      "inheritedDiff": { "added": 2345, "deleted": 460 }
+    },
+    {
+      "path": "actions/payroll/payroll-control.actions.ts",
+      "inheritedStatus": "MODIFIED",
+      "length": 17118,
+      "sha256": "BF011DCC95546001FB75F3A08D48BB23E283819E6779471C40D52559AE7D59F2",
+      "inheritedDiff": { "added": 72, "deleted": 1 }
+    },
+    {
+      "path": "actions/payroll/__tests__/payroll-control.actions.test.ts",
+      "inheritedStatus": "MODIFIED",
+      "length": 31472,
+      "sha256": "757AFA25B91E4FF10862769D9002F98E6FB2762861C22EF2241046234A7D0BB7",
+      "inheritedDiff": { "added": 63, "deleted": 22 }
+    },
+    {
+      "path": "components/payroll/PayrollRunActionPanel.tsx",
+      "inheritedStatus": "MODIFIED",
+      "length": 21720,
+      "sha256": "55D4D5396C7399FC3017E64193AC2AE095A8C1572D2E9DA12A73CFCDC3311AF4",
+      "inheritedDiff": { "added": 80, "deleted": 34 }
+    },
+    {
+      "path": "components/payroll/__tests__/PayrollRunWorkbench.test.tsx",
+      "inheritedStatus": "MODIFIED",
+      "length": 25784,
+      "sha256": "974A3CBF0AB271C327AB6E2969B76FC985CA5A1F9B7FFF798F1C2B6D2C7C93BC",
+      "inheritedDiff": { "added": 102, "deleted": 34 }
+    }
+  ],
+  "cleanDependentFiles": [
+    {
+      "path": "hooks/payroll/usePayrollWorkbench.ts",
+      "inheritedStatus": "CLEAN",
+      "sha256": "01FD31539B7A4D8FC20856E6A0437138128CB193068BBDAC75DEC0667562F3B9"
+    }
+  ],
+  "newFilesPlanned": [
+    "services/payroll/__tests__/payroll-run-approval-transition.service.test.ts",
+    "what-next/payroll/AQSTOQFLOW_PAYROLL_TRUST_SPINE_WP3_APPROVAL_SLICE_RUN_REPORT_2026-08-22.md"
+  ]
+}

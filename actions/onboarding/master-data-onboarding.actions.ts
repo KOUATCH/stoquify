@@ -3,7 +3,14 @@
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
 
+import {
+  MASTER_DATA_ONBOARDING_READ_PERMISSIONS,
+  MASTER_DATA_ONBOARDING_ROUTE,
+  MASTER_DATA_ONBOARDING_TARGET_PERMISSIONS,
+} from "@/config/master-data-onboarding"
 import { hasRbacPermission, requireAnyPermission, requirePermission } from "@/lib/security/rbac"
+import { BusinessRuleError } from "@/services/_shared/action-errors"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import {
   approveMasterDataImport,
   commitMasterDataImport,
@@ -20,11 +27,7 @@ import {
 } from "@/services/onboarding/master-data-csv"
 
 const targetSchema = z.enum(MASTER_DATA_IMPORT_TARGETS)
-const targetPermissions = {
-  CUSTOMER: { read: "customers.read", write: "customers.create" },
-  SUPPLIER: { read: "purchases.suppliers.read", write: "purchases.suppliers.create" },
-  ITEM: { read: "inventory.items.read", write: "inventory.items.create" },
-} as const
+const targetPermissions = MASTER_DATA_ONBOARDING_TARGET_PERMISSIONS
 
 const stageSchema = z.object({
   target: targetSchema,
@@ -41,15 +44,36 @@ const batchCommandSchema = z.object({
 })
 
 function revalidateOnboarding() {
-  revalidatePath("/[locale]/dashboard/settings/data-onboarding", "page")
+  revalidatePath(`/[locale]${MASTER_DATA_ONBOARDING_ROUTE}`, "page")
   revalidatePath("/[locale]/dashboard", "page")
 }
 
+async function requireOnboardingModule(
+  ctx: { orgId: string; userId: string; permissions: string[] },
+  surface: string,
+  accessIntent: "read" | "write" | "export",
+) {
+  const decision = await observeModuleAccess({
+    organizationId: ctx.orgId,
+    userId: ctx.userId,
+    actorPermissions: ctx.permissions,
+    moduleSlug: "settings",
+    surfaceType: "action",
+    surface: `${MASTER_DATA_ONBOARDING_ROUTE}#${surface}`,
+    accessIntent,
+    mode: "enforce",
+    audit: true,
+  })
+  if (!decision.allowed) throw new BusinessRuleError("The data-onboarding module is not enabled for this tenant")
+  return ctx
+}
+
 async function requireTargetWrite(target: keyof typeof targetPermissions) {
-  return requirePermission(targetPermissions[target].write, {
+  const ctx = await requirePermission(targetPermissions[target].write, {
     resource: "MasterDataOnboarding",
     auditAllowed: true,
   })
+  return requireOnboardingModule(ctx, "write", "write")
 }
 
 export async function getMasterDataCsvTemplateAction(targetInput: unknown) {
@@ -57,6 +81,7 @@ export async function getMasterDataCsvTemplateAction(targetInput: unknown) {
   const ctx = await requirePermission(targetPermissions[target].read, {
     resource: "MasterDataOnboardingTemplate",
   })
+  await requireOnboardingModule(ctx, "template", "read")
   return getTenantMasterDataCsvTemplate(ctx.orgId, target)
 }
 
@@ -132,13 +157,14 @@ export async function waiveMasterDataReadinessAction(input: unknown) {
 
 export async function getMasterDataOnboardingDashboardAction() {
   const ctx = await requireAnyPermission(
-    Object.values(targetPermissions).map((permission) => permission.read),
+    MASTER_DATA_ONBOARDING_READ_PERMISSIONS,
     { resource: "MasterDataOnboarding" },
   )
+  await requireOnboardingModule(ctx, "dashboard", "read")
   const allowedTargets = MASTER_DATA_IMPORT_TARGETS.filter((target) =>
     hasRbacPermission(ctx.permissions, targetPermissions[target].read),
   )
-  return getMasterDataOnboardingDashboard(ctx.orgId, allowedTargets)
+  return getMasterDataOnboardingDashboard(ctx.orgId, allowedTargets, ctx.userId)
 }
 
 export async function getMasterDataImportEvidenceAction(input: unknown) {
@@ -147,5 +173,6 @@ export async function getMasterDataImportEvidenceAction(input: unknown) {
     resource: "MasterDataOnboardingEvidence",
     resourceId: parsed.batchId,
   })
+  await requireOnboardingModule(ctx, "evidence", "export")
   return getMasterDataImportEvidence(ctx.orgId, parsed.batchId, parsed.target)
 }

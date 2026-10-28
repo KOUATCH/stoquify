@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import {
@@ -14,6 +16,11 @@ import {
 import type { PaymentEvidenceReadinessResult } from "@/actions/payroll/payroll-payment-evidence.actions";
 import { localizePath } from "@/i18n/routing";
 import type { Locale } from "@/types/bilingual";
+import {
+  HrPayrollTableControls,
+  HrPayrollTablePagination,
+  useHrPayrollTable,
+} from "@/components/hr-payroll/HrPayrollTableControls";
 import PayrollProofDrawerButton, {
   type PayrollProofDrawerSubject,
 } from "./PayrollProofDrawerButton";
@@ -283,6 +290,21 @@ export default function PayrollPaymentAttendanceReadinessWorkbench({
   error,
   locale,
 }: Props) {
+  const readinessTable = useHrPayrollTable({
+    rows: data?.employees ?? [],
+    searchText: (employee) => JSON.stringify(employee),
+    dateValue: (employee) =>
+      employee.paymentDestination.latestChange?.requestedAt ??
+      employee.attendanceReadiness.periodEnd ??
+      data?.asOf,
+    sortOptions: [
+      { key: "employee", label: "Employee", value: (employee) => employee.displayName },
+      { key: "destination", label: "Payment destination", value: (employee) => employee.paymentDestination.state },
+      { key: "attendance", label: "Attendance period", value: (employee) => employee.attendanceReadiness.periodEnd },
+      { key: "blockers", label: "Blockers", value: (employee) => employee.blockers.length },
+    ],
+  });
+
   if (error) return <ErrorPanel message={error} />;
   if (!data) return <EmptyState />;
 
@@ -370,7 +392,8 @@ export default function PayrollPaymentAttendanceReadinessWorkbench({
             Employee readiness queue
           </h2>
         </div>
-        <div className="overflow-x-auto">
+        <HrPayrollTableControls table={readinessTable} locale={locale} tableLabel="payment and attendance readiness" />
+        <div className="dashboard-data-table dashboard-table-shell overflow-x-auto">
           <table className="min-w-[1320px] w-full table-fixed border-collapse text-left text-sm">
             <thead className="border-b border-white/10 text-xs uppercase tracking-normal text-slate-400">
               <tr>
@@ -391,8 +414,8 @@ export default function PayrollPaymentAttendanceReadinessWorkbench({
               </tr>
             </thead>
             <tbody className="divide-y divide-white/10">
-              {data.employees.length ? (
-                data.employees.map((employee) => {
+              {readinessTable.rows.length ? (
+                readinessTable.rows.map((employee) => {
                   const latestChange = employee.paymentDestination.latestChange;
                   const attendance = employee.attendanceReadiness;
 
@@ -559,6 +582,7 @@ export default function PayrollPaymentAttendanceReadinessWorkbench({
             </tbody>
           </table>
         </div>
+        <HrPayrollTablePagination table={readinessTable} locale={locale} />
       </section>
     </main>
   );

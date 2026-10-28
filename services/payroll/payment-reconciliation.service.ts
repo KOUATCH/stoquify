@@ -19,6 +19,7 @@ import {
   NotFoundError,
 } from "@/services/_shared/action-errors";
 import { recordCloseCertificationInvalidationsForSourceInTx } from "@/services/accounting/close-assurance-pack.service";
+import { getAccountantPortalData } from "@/services/accounting/data-trust.service";
 import {
   auditSensitiveActionDecision,
   assertSensitiveActionAllowed,
@@ -34,6 +35,10 @@ import {
   evaluateRedaction,
   type RedactionDecision,
 } from "@/services/security/redaction-policy.service";
+import {
+  payrollRouteAccountingAuditProof,
+  type PayrollRouteAccountingAuditProof,
+} from "./payroll-accounting-audit-proof";
 import { resolvePayrollPaymentSettlementLifecycleContract } from "./payroll-adapter-registry.service";
 
 const PAYMENT_RECONCILIATION_READ_PERMISSIONS = [
@@ -169,6 +174,11 @@ export type PayrollPaymentReconciliationBatch = {
     productionPaymentAutomationSupported: boolean;
     latestSettlementEvidenceHash: string | null;
     latestSettlementSourceRegisterHash: string | null;
+    latestSettlementProviderReceiptProofHash: string | null;
+    latestSettlementProviderReceiptProofSource: string | null;
+    latestSettlementProviderReceiptProviderPayloadHash: string | null;
+    latestSettlementProviderReceiptStatementLineHash: string | null;
+    latestSettlementProviderReceiptStatementFileHash: string | null;
     latestSettlementLifecycleContractHash: string | null;
     latestSettlementLifecycleStatus: string | null;
     latestSettlementLifecycleCloseImpact: string | null;
@@ -249,7 +259,20 @@ export type PayrollPaymentReconciliationReadModel = {
     suspenseDetails: PayrollPaymentReconciliationRedaction;
     proofIdentifiers: PayrollPaymentReconciliationRedaction;
   };
+  accountingAuditProof: PayrollRouteAccountingAuditProof;
   batches: PayrollPaymentReconciliationBatch[];
+  sourceScope: {
+    limit: number;
+    returned: number;
+    coverageComplete: boolean;
+    sourceService: "services/payroll/payment-reconciliation.service.ts";
+    accountingAuditProofAvailable: boolean;
+    accountingAuditProofGateCount: number;
+    accountingAuditProofSourceLinkCount: number;
+    accountingAuditProofPeriodId: string | null;
+    returnedAccountingPeriodIds: string[];
+    accountingAuditProofCoverageComplete: boolean;
+  };
 };
 
 export type PayrollPaymentSettlementResult = {
@@ -390,8 +413,18 @@ function metadataString(value: unknown, key: string) {
 function metadataStringList(value: unknown, key: string) {
   const entry = asRecord(value)[key];
   return Array.isArray(entry)
-    ? entry.filter((item): item is string => typeof item === "string" && item.trim().length > 0)
+    ? entry.filter(
+        (item): item is string =>
+          typeof item === "string" && item.trim().length > 0,
+      )
     : [];
+}
+
+function metadataPositiveNumber(value: unknown, key: string) {
+  const entry = asRecord(value)[key];
+  return typeof entry === "number" && Number.isFinite(entry) && entry > 0
+    ? entry
+    : null;
 }
 
 function paymentBatchProofMetadata(batch: PayrollPaymentBatchRecord) {
@@ -411,6 +444,14 @@ function paymentBatchProofMetadata(batch: PayrollPaymentBatchRecord) {
   const payrollComponentMappingStatus = metadataString(
     metadata,
     "payrollComponentMappingStatus",
+  );
+  const compositeRegisterProofHash = metadataString(
+    metadata,
+    "compositeRegisterProofHash",
+  );
+  const compositeRegisterProofStatus = metadataString(
+    metadata,
+    "compositeRegisterProofStatus",
   );
   const paymentAdapterProofHash = metadataString(
     metadata,
@@ -443,7 +484,18 @@ function paymentBatchProofMetadata(batch: PayrollPaymentBatchRecord) {
   );
   const productionPaymentAutomationSupported =
     metadata.productionPaymentAutomationSupported === true;
-
+  const paymentDestinationProofHash = metadataString(
+    metadata,
+    "paymentDestinationProofHash",
+  );
+  const paymentDestinationProofCount = metadataPositiveNumber(
+    metadata,
+    "paymentDestinationProofCount",
+  );
+  const paymentDestinationProofPolicy = metadataString(
+    metadata,
+    "paymentDestinationProofPolicy",
+  );
   if (
     !componentRegisterProofHash ||
     componentRegisterProofStatus !== "MATCHED"
@@ -455,6 +507,14 @@ function paymentBatchProofMetadata(batch: PayrollPaymentBatchRecord) {
   if (!payrollComponentMappingHash || !payrollComponentMappingStatus) {
     throw new BusinessRuleError(
       "Payroll payment settlement requires payroll component mapping proof from the released payment batch.",
+    );
+  }
+  if (
+    !compositeRegisterProofHash ||
+    compositeRegisterProofStatus !== "MATCHED"
+  ) {
+    throw new BusinessRuleError(
+      "Payroll payment settlement requires matched composite register proof from the released payment batch.",
     );
   }
   if (
@@ -473,12 +533,22 @@ function paymentBatchProofMetadata(batch: PayrollPaymentBatchRecord) {
       "Payroll payment settlement requires adapter chaos release gate proof from the released payment batch.",
     );
   }
-
+  if (
+    !paymentDestinationProofHash ||
+    !paymentDestinationProofCount ||
+    paymentDestinationProofPolicy !== "APPROVED_DESTINATION_HASHES_ONLY"
+  ) {
+    throw new BusinessRuleError(
+      "Payroll payment settlement requires approved payment destination proof from the released payment batch.",
+    );
+  }
   return {
     componentRegisterProofHash,
     componentRegisterProofStatus,
     payrollComponentMappingHash,
     payrollComponentMappingStatus,
+    compositeRegisterProofHash,
+    compositeRegisterProofStatus,
     yearToDatePolicy,
     yearToDatePolicyHash,
     yearToDateAccumulatorHashes,
@@ -491,6 +561,9 @@ function paymentBatchProofMetadata(batch: PayrollPaymentBatchRecord) {
     providerSettlementProofRequired:
       metadata.providerSettlementProofRequired === true,
     productionPaymentAutomationSupported,
+    paymentDestinationProofHash,
+    paymentDestinationProofCount,
+    paymentDestinationProofPolicy,
   };
 }
 
@@ -725,6 +798,13 @@ async function auditReconciliationRead(
     organizationId: string;
     actorId?: string | null;
     batchCount: number;
+    accountingAuditProof: {
+      available: boolean;
+      status: PayrollRouteAccountingAuditProof["status"];
+      periodId: string | null;
+      proofGateCount: number;
+      sourceLinkCount: number;
+    };
     amountDecision: RedactionDecision;
     providerDecision: RedactionDecision;
     suspenseDecision: RedactionDecision;
@@ -740,6 +820,7 @@ async function auditReconciliationRead(
       organizationId: input.organizationId,
       changes: safeJson({
         batchCount: input.batchCount,
+        accountingAuditProof: input.accountingAuditProof,
         redaction: {
           amounts: redactionSummary(input.amountDecision),
           providerReferences: redactionSummary(input.providerDecision),
@@ -755,18 +836,20 @@ async function loadReconciliationRows(
   client: Prisma.TransactionClient,
   input: z.output<typeof payrollPaymentReconciliationInputSchema>,
 ) {
-  const batches = await client.payrollPaymentBatch.findMany({
-    where: {
-      organizationId: input.organizationId,
-      ...(input.payrollRunId ? { payrollRunId: input.payrollRunId } : {}),
-      ...(input.payrollPaymentBatchId
-        ? { id: input.payrollPaymentBatchId }
-        : {}),
-    },
-    include: payrollPaymentBatchInclude,
-    orderBy: [{ paymentDate: "desc" }, { createdAt: "desc" }],
-    take: input.limit,
-  });
+  const where = {
+    organizationId: input.organizationId,
+    ...(input.payrollRunId ? { payrollRunId: input.payrollRunId } : {}),
+    ...(input.payrollPaymentBatchId ? { id: input.payrollPaymentBatchId } : {}),
+  };
+  const [batches, totalBatches] = await Promise.all([
+    client.payrollPaymentBatch.findMany({
+      where,
+      include: payrollPaymentBatchInclude,
+      orderBy: [{ paymentDate: "desc" }, { createdAt: "desc" }],
+      take: input.limit,
+    }),
+    client.payrollPaymentBatch.count({ where }),
+  ]);
 
   if (input.payrollPaymentBatchId && batches.length === 0) {
     throw new NotFoundError("Payroll payment batch not found.");
@@ -842,6 +925,7 @@ async function loadReconciliationRows(
 
   return {
     batches,
+    totalBatches,
     transactions,
     exceptions,
     matches,
@@ -852,10 +936,16 @@ async function loadReconciliationRows(
 
 function buildReadModel(input: {
   organizationId: string;
+  asOf: string;
+  limit: number;
+  totalBatches: number;
   amountDecision: RedactionDecision;
   providerDecision: RedactionDecision;
   suspenseDecision: RedactionDecision;
   proofIdentifierDecision: RedactionDecision;
+  accountingAuditProof: PayrollRouteAccountingAuditProof;
+  returnedAccountingPeriodIds: string[];
+  accountingAuditProofCoverageComplete: boolean;
   batches: PayrollPaymentBatchRecord[];
   transactions: PaymentTransactionRecord[];
   exceptions: PaymentExceptionRecord[];
@@ -963,10 +1053,25 @@ function buildReadModel(input: {
             metadata,
             "payrollComponentMappingStatus",
           ),
+          compositeRegisterProofHash: proofIdentifier(
+            input.proofIdentifierDecision,
+            metadataString(metadata, "compositeRegisterProofHash"),
+          ),
+          compositeRegisterProofStatus: metadataString(
+            metadata,
+            "compositeRegisterProofStatus",
+          ),
+          compositeRegisterProofPresent:
+            Boolean(metadataString(metadata, "compositeRegisterProofHash")) &&
+            metadataString(metadata, "compositeRegisterProofStatus") ===
+              "MATCHED",
           yearToDatePolicyHash: proofIdentifier(
             input.proofIdentifierDecision,
             metadataString(metadata, "yearToDatePolicyHash") ??
-              metadataString(asRecord(metadata.yearToDatePolicy), "ytdPolicyHash"),
+              metadataString(
+                asRecord(metadata.yearToDatePolicy),
+                "ytdPolicyHash",
+              ),
           ),
           yearToDateAccumulatorHashes: metadataStringList(
             metadata,
@@ -983,7 +1088,10 @@ function buildReadModel(input: {
             input.proofIdentifierDecision,
             metadataString(metadata, "paymentProviderAdapterContractHash"),
           ),
-          paymentAdapterStatus: metadataString(metadata, "paymentAdapterStatus"),
+          paymentAdapterStatus: metadataString(
+            metadata,
+            "paymentAdapterStatus",
+          ),
           paymentProviderAdapterKey: metadataString(
             metadata,
             "paymentProviderAdapterKey",
@@ -1001,6 +1109,38 @@ function buildReadModel(input: {
           latestSettlementSourceRegisterHash: proofIdentifier(
             input.proofIdentifierDecision,
             metadataString(metadata, "latestSettlementSourceRegisterHash"),
+          ),
+          latestSettlementProviderReceiptProofHash: proofIdentifier(
+            input.proofIdentifierDecision,
+            metadataString(
+              metadata,
+              "latestSettlementProviderReceiptProofHash",
+            ),
+          ),
+          latestSettlementProviderReceiptProofSource: metadataString(
+            metadata,
+            "latestSettlementProviderReceiptProofSource",
+          ),
+          latestSettlementProviderReceiptProviderPayloadHash: proofIdentifier(
+            input.proofIdentifierDecision,
+            metadataString(
+              metadata,
+              "latestSettlementProviderReceiptProviderPayloadHash",
+            ),
+          ),
+          latestSettlementProviderReceiptStatementLineHash: proofIdentifier(
+            input.proofIdentifierDecision,
+            metadataString(
+              metadata,
+              "latestSettlementProviderReceiptStatementLineHash",
+            ),
+          ),
+          latestSettlementProviderReceiptStatementFileHash: proofIdentifier(
+            input.proofIdentifierDecision,
+            metadataString(
+              metadata,
+              "latestSettlementProviderReceiptStatementFileHash",
+            ),
           ),
           latestSettlementLifecycleContractHash: proofIdentifier(
             input.proofIdentifierDecision,
@@ -1076,6 +1216,18 @@ function buildReadModel(input: {
                         match.statementLine.rawLineHash,
                       ),
                     },
+                    ...(match.statementLine.statementFile
+                      ? [
+                          {
+                            type: "StatementFile",
+                            id: match.statementLine.statementFile.id,
+                            payloadHash: proofIdentifier(
+                              input.proofIdentifierDecision,
+                              match.statementLine.statementFile.fileHash,
+                            ),
+                          },
+                        ]
+                      : []),
                   ]
                 : []),
             ]),
@@ -1174,7 +1326,7 @@ function buildReadModel(input: {
 
   return {
     organizationId: input.organizationId,
-    asOf: new Date().toISOString(),
+    asOf: input.asOf,
     summary: {
       batchCount: batches.length,
       awaitingProviderEvidence: batches.filter(
@@ -1198,7 +1350,22 @@ function buildReadModel(input: {
       suspenseDetails: redactionSummary(input.suspenseDecision),
       proofIdentifiers: redactionSummary(input.proofIdentifierDecision),
     },
+    accountingAuditProof: input.accountingAuditProof,
     batches,
+    sourceScope: {
+      limit: input.limit,
+      returned: batches.length,
+      coverageComplete: batches.length >= input.totalBatches,
+      sourceService: "services/payroll/payment-reconciliation.service.ts",
+      accountingAuditProofAvailable: input.accountingAuditProof.available,
+      accountingAuditProofGateCount: input.accountingAuditProof.proofGateCount,
+      accountingAuditProofSourceLinkCount:
+        input.accountingAuditProof.sourceLinkCount,
+      accountingAuditProofPeriodId: input.accountingAuditProof.periodId,
+      returnedAccountingPeriodIds: input.returnedAccountingPeriodIds,
+      accountingAuditProofCoverageComplete:
+        input.accountingAuditProofCoverageComplete,
+    },
   };
 }
 
@@ -1238,12 +1405,47 @@ export async function getPayrollPaymentReconciliation(
     client as Prisma.TransactionClient,
     parsed,
   );
+  const now = new Date();
+  const returnedAccountingPeriodIds = Array.from(
+    new Set(
+      rows.batches
+        .map((batch) => batch.payrollRun.payrollPeriod.accountingPeriodId)
+        .filter((periodId): periodId is string => Boolean(periodId)),
+    ),
+  );
+  const accountingAuditProofPeriodId = returnedAccountingPeriodIds[0] ?? null;
+  const accountingAuditProofCoverageComplete =
+    rows.batches.length === 0 ||
+    (returnedAccountingPeriodIds.length === 1 &&
+      rows.batches.every((batch) =>
+        Boolean(batch.payrollRun.payrollPeriod.accountingPeriodId),
+      ));
+  const accountantPortal = accountingAuditProofPeriodId
+    ? await getAccountantPortalData(
+        {
+          organizationId: parsed.organizationId,
+          periodId: accountingAuditProofPeriodId,
+          limit: Math.min(parsed.limit, 25),
+        },
+        client,
+        now,
+      )
+    : null;
+  const accountingAuditProof = payrollRouteAccountingAuditProof(
+    accountantPortal?.payrollAuditProofPack ?? null,
+    accountingAuditProofPeriodId,
+  );
   const readModel = buildReadModel({
     organizationId: parsed.organizationId,
+    asOf: now.toISOString(),
+    limit: parsed.limit,
     amountDecision,
     providerDecision,
     suspenseDecision,
     proofIdentifierDecision,
+    accountingAuditProof,
+    returnedAccountingPeriodIds,
+    accountingAuditProofCoverageComplete,
     ...rows,
   });
 
@@ -1251,6 +1453,13 @@ export async function getPayrollPaymentReconciliation(
     organizationId: parsed.organizationId,
     actorId: parsed.actorId,
     batchCount: readModel.batches.length,
+    accountingAuditProof: {
+      available: accountingAuditProof.available,
+      status: accountingAuditProof.status,
+      periodId: accountingAuditProof.periodId,
+      proofGateCount: accountingAuditProof.proofGateCount,
+      sourceLinkCount: accountingAuditProof.sourceLinkCount,
+    },
     amountDecision,
     providerDecision,
     suspenseDecision,
@@ -1327,29 +1536,29 @@ function assertSettlementState(
   }
 }
 
-function settlementPayload(input: {
+type SettlementProofInput = {
   parsed: z.output<typeof recordPayrollPaymentSettlementInputSchema>;
   batch: PayrollPaymentBatchRecord;
   transaction: PaymentTransactionRecord;
   matchRecord: MatchRecordRecord | null;
-  now: Date;
-  nextStatus: PayrollPaymentBatchStatus;
-  proofMetadata: ReturnType<typeof paymentBatchProofMetadata>;
-}) {
-  const amountValue = input.parsed.settlementAmount
-    ? decimal(input.parsed.settlementAmount)
-    : decimal(input.batch.amount);
-  const providerEvidence = {
+};
+
+function settlementProviderEvidence(input: SettlementProofInput) {
+  return {
     providerAccountId:
       input.parsed.providerAccountId ??
       input.transaction.providerAccountId ??
       null,
     providerTransactionId:
       input.parsed.providerTransactionId ??
+      input.matchRecord?.providerEvent?.providerTransactionId ??
+      input.matchRecord?.statementLine?.providerTransactionId ??
       input.transaction.providerTransactionId ??
       null,
     providerReference:
       input.parsed.providerReference ??
+      input.matchRecord?.providerEvent?.providerReference ??
+      input.matchRecord?.statementLine?.providerReference ??
       input.transaction.providerReference ??
       null,
     providerEventId:
@@ -1370,6 +1579,152 @@ function settlementPayload(input: {
       input.parsed.reconciliationRunId ??
       null,
   };
+}
+
+function settlementProviderReceiptProof(
+  input: SettlementProofInput & {
+    proofMetadata: ReturnType<typeof paymentBatchProofMetadata>;
+  },
+) {
+  const providerEvidence = settlementProviderEvidence(input);
+  const providerEvent = input.matchRecord?.providerEvent ?? null;
+  const statementLine = input.matchRecord?.statementLine ?? null;
+  const providerPayloadHash = providerEvent?.rawPayloadHash ?? null;
+  const providerSignatureHash = providerEvent?.signatureHash ?? null;
+  const statementLineHash = statementLine?.rawLineHash ?? null;
+  const statementFileHash = providerEvidence.statementFileHash;
+  const matchedProviderReceipt = Boolean(
+    providerEvent &&
+    providerPayloadHash &&
+    providerEvent.signatureValid === true,
+  );
+  const matchedStatementReceipt = Boolean(
+    statementLine && statementLineHash && statementFileHash,
+  );
+  const submittedStatementFileHash = Boolean(input.parsed.statementFileHash);
+
+  if (providerEvent && providerEvent.signatureValid !== true) {
+    throw new BusinessRuleError(
+      "Payroll payment settlement requires valid provider receipt signature proof.",
+    );
+  }
+  if (
+    input.proofMetadata.providerSettlementProofRequired &&
+    !matchedProviderReceipt &&
+    !matchedStatementReceipt
+  ) {
+    throw new BusinessRuleError(
+      "Payroll payment settlement requires provider receipt or statement proof from an approved reconciliation match.",
+    );
+  }
+  if (
+    !matchedProviderReceipt &&
+    !matchedStatementReceipt &&
+    !submittedStatementFileHash
+  ) {
+    throw new BusinessRuleError(
+      "Payroll payment settlement requires provider receipt or statement proof.",
+    );
+  }
+
+  const providerSettlementReceiptProofSource =
+    matchedProviderReceipt && matchedStatementReceipt
+      ? "MATCHED_PROVIDER_EVENT_AND_STATEMENT"
+      : matchedProviderReceipt
+        ? "MATCHED_PROVIDER_EVENT"
+        : matchedStatementReceipt
+          ? "MATCHED_STATEMENT_LINE"
+          : "SUBMITTED_STATEMENT_FILE_HASH";
+  const proofPayload = {
+    kind: "AQSTOQFLOW_PAYROLL_PROVIDER_SETTLEMENT_RECEIPT_PROOF",
+    version: 1,
+    providerSettlementReceiptProofSource,
+    providerAccountId: providerEvidence.providerAccountId,
+    providerTransactionId: providerEvidence.providerTransactionId,
+    providerReference: providerEvidence.providerReference,
+    providerEventId: providerEvidence.providerEventId,
+    providerPayloadHash,
+    providerSignatureHash,
+    providerSignatureValid: providerEvent?.signatureValid ?? null,
+    statementLineId: providerEvidence.statementLineId,
+    statementLineHash,
+    statementFileHash,
+    matchRecordId: providerEvidence.matchRecordId,
+    matchStatus: input.matchRecord?.status ?? null,
+    reconciliationRunId: providerEvidence.reconciliationRunId,
+    reconciliationRunStatus:
+      input.matchRecord?.reconciliationRun?.status ?? null,
+    reconciliationRunCertificateHash:
+      input.matchRecord?.reconciliationRun?.certificateHash ?? null,
+  };
+
+  return {
+    providerSettlementReceiptProofHash: prefixedHash(proofPayload),
+    providerSettlementReceiptProofSource,
+    providerSettlementReceiptProviderPayloadHash: providerPayloadHash,
+    providerSettlementReceiptProviderSignatureHash: providerSignatureHash,
+    providerSettlementReceiptStatementLineHash: statementLineHash,
+    providerSettlementReceiptStatementFileHash: statementFileHash,
+    providerSettlementReceiptReconciliationCertificateHash:
+      input.matchRecord?.reconciliationRun?.certificateHash ?? null,
+  };
+}
+
+type SettlementProviderReceiptProof = ReturnType<
+  typeof settlementProviderReceiptProof
+>;
+
+function settlementReplayProof(
+  input: SettlementProofInput & {
+    providerReceiptProof: SettlementProviderReceiptProof;
+  },
+) {
+  const amountValue = input.parsed.settlementAmount
+    ? decimal(input.parsed.settlementAmount)
+    : decimal(input.batch.amount);
+
+  return {
+    settlementStatus: input.parsed.settlementStatus,
+    settlementAmount: amountValue.toFixed(2),
+    currency: input.batch.currency,
+    paymentTransactionId: input.transaction.id,
+    ...settlementProviderEvidence(input),
+    providerSettlementReceiptProofHash:
+      input.providerReceiptProof.providerSettlementReceiptProofHash,
+  };
+}
+
+function settlementReplayProofConflict(
+  existingValue: unknown,
+  replayProof: ReturnType<typeof settlementReplayProof>,
+) {
+  const existing = asRecord(existingValue);
+  const fields = Object.keys(replayProof) as Array<keyof typeof replayProof>;
+  if (fields.some((field) => !(field in existing))) {
+    return "missing exact provider settlement replay proof";
+  }
+
+  for (const field of fields) {
+    if ((existing[field] ?? null) !== replayProof[field]) {
+      return `different ${String(field)}`;
+    }
+  }
+
+  return null;
+}
+
+function settlementPayload(
+  input: SettlementProofInput & {
+    now: Date;
+    nextStatus: PayrollPaymentBatchStatus;
+    proofMetadata: ReturnType<typeof paymentBatchProofMetadata>;
+    providerReceiptProof: SettlementProviderReceiptProof;
+  },
+) {
+  const amountValue = input.parsed.settlementAmount
+    ? decimal(input.parsed.settlementAmount)
+    : decimal(input.batch.amount);
+  const providerEvidence = settlementProviderEvidence(input);
   const lifecycle = resolvePayrollPaymentSettlementLifecycleContract({
     settlementStatus: input.parsed.settlementStatus,
     sourceRegisterHash: input.parsed.sourceRegisterHash ?? null,
@@ -1399,6 +1754,7 @@ function settlementPayload(input: {
     sourceRegisterHash: input.parsed.sourceRegisterHash ?? null,
     ...input.proofMetadata,
     ...lifecycle,
+    ...input.providerReceiptProof,
     ...providerEvidence,
     inputEvidenceHash: input.parsed.evidenceHash,
     settledAt: input.now.toISOString(),
@@ -1479,6 +1835,25 @@ export async function recordPayrollPaymentSettlementEvidence(
 
     assertSettlementEvidence(parsed, matchRecord);
     const proofMetadata = paymentBatchProofMetadata(batch);
+    const providerReceiptProof = settlementProviderReceiptProof({
+      parsed,
+      batch,
+      transaction,
+      matchRecord,
+      proofMetadata,
+    });
+    const replayProof = settlementReplayProof({
+      parsed,
+      batch,
+      transaction,
+      matchRecord,
+      providerReceiptProof,
+    });
+    const replayProofHash = prefixedHash({
+      kind: "AQSTOQFLOW_PAYROLL_PAYMENT_SETTLEMENT_REPLAY_PROOF",
+      version: 1,
+      ...replayProof,
+    });
 
     const existingSettlement = asRecord(batch.metadata)[
       settlementMetadataKey(parsed.idempotencyKey)
@@ -1496,6 +1871,15 @@ export async function recordPayrollPaymentSettlementEvidence(
       ) {
         throw new ConflictError(
           "Payroll payment settlement idempotency key was reused with a different register proof.",
+        );
+      }
+      const proofConflict = settlementReplayProofConflict(
+        existing.settlementReplayProof,
+        replayProof,
+      );
+      if (proofConflict) {
+        throw new ConflictError(
+          `Payroll payment settlement idempotency key was reused with ${proofConflict}.`,
         );
       }
       return {
@@ -1528,6 +1912,7 @@ export async function recordPayrollPaymentSettlementEvidence(
       now,
       nextStatus: nextBatchStatus,
       proofMetadata,
+      providerReceiptProof,
     });
     const settlementEvidenceHash = prefixedHash(evidence);
     const settlementLifecycleMetadata = {
@@ -1559,6 +1944,7 @@ export async function recordPayrollPaymentSettlementEvidence(
         settlementStatus: parsed.settlementStatus,
         sourceRegisterHash: parsed.sourceRegisterHash,
         ...proofMetadata,
+        ...providerReceiptProof,
         ...settlementLifecycleMetadata,
         paymentTransactionId: transaction.id,
         matchRecordId: matchRecord?.id ?? null,
@@ -1576,34 +1962,53 @@ export async function recordPayrollPaymentSettlementEvidence(
             ? PaymentTransactionState.SETTLED
             : PaymentTransactionState.CONFIRMED,
         providerAccountId:
-          parsed.providerAccountId ?? transaction.providerAccountId,
+          replayProof.providerAccountId ?? transaction.providerAccountId,
         providerTransactionId:
-          parsed.providerTransactionId ?? transaction.providerTransactionId,
+          replayProof.providerTransactionId ??
+          transaction.providerTransactionId,
         providerReference:
-          parsed.providerReference ?? transaction.providerReference,
+          replayProof.providerReference ?? transaction.providerReference,
         confirmedAt: transaction.confirmedAt ?? now,
         settledAt:
           parsed.settlementStatus === "settled" ? now : transaction.settledAt,
         metadata: safeJson({
           ...asRecord(transaction.metadata),
           ...proofMetadata,
+          ...providerReceiptProof,
           ...settlementLifecycleMetadata,
           latestPayrollSettlementEvidenceHash: settlementEvidenceHash,
           latestPayrollSettlementSourceRegisterHash: parsed.sourceRegisterHash,
           latestPayrollSettlementComponentRegisterProofHash:
             proofMetadata.componentRegisterProofHash,
+          latestPayrollSettlementCompositeRegisterProofHash:
+            proofMetadata.compositeRegisterProofHash,
           latestPayrollSettlementPayrollComponentMappingHash:
             proofMetadata.payrollComponentMappingHash,
           latestPayrollSettlementProviderAdapterProofHash:
             proofMetadata.paymentAdapterProofHash,
           latestPayrollSettlementProviderAdapterContractHash:
             proofMetadata.paymentProviderAdapterContractHash,
+          latestPayrollSettlementPaymentDestinationProofHash:
+            proofMetadata.paymentDestinationProofHash,
+          latestPayrollSettlementPaymentDestinationProofCount:
+            proofMetadata.paymentDestinationProofCount,
+          latestPayrollSettlementProviderReceiptProofHash:
+            providerReceiptProof.providerSettlementReceiptProofHash,
+          latestPayrollSettlementProviderReceiptProofSource:
+            providerReceiptProof.providerSettlementReceiptProofSource,
+          latestPayrollSettlementProviderReceiptProviderPayloadHash:
+            providerReceiptProof.providerSettlementReceiptProviderPayloadHash,
+          latestPayrollSettlementProviderReceiptStatementLineHash:
+            providerReceiptProof.providerSettlementReceiptStatementLineHash,
+          latestPayrollSettlementProviderReceiptStatementFileHash:
+            providerReceiptProof.providerSettlementReceiptStatementFileHash,
           latestPayrollSettlementLifecycleContractHash:
             evidence.providerSettlementLifecycleContractHash,
           latestPayrollSettlementLifecycleStatus:
             evidence.providerSettlementLifecycleStatus,
           latestPayrollSettlementAt: now.toISOString(),
           latestPayrollSettlementStatus: parsed.settlementStatus,
+          latestPayrollSettlementReplayProofHash: replayProofHash,
         }),
       },
     });
@@ -1630,6 +2035,7 @@ export async function recordPayrollPaymentSettlementEvidence(
             settlementEvidenceHash,
             sourceRegisterHash: parsed.sourceRegisterHash,
             ...proofMetadata,
+            ...providerReceiptProof,
             ...settlementLifecycleMetadata,
             payrollPaymentBatchId: batch.id,
           }),
@@ -1655,6 +2061,7 @@ export async function recordPayrollPaymentSettlementEvidence(
           settlementEvidenceHash,
           sourceRegisterHash: parsed.sourceRegisterHash,
           ...proofMetadata,
+          ...providerReceiptProof,
           ...settlementLifecycleMetadata,
           paymentTransactionId: updatedTransaction.id,
           paymentTransactionState: updatedTransaction.state,
@@ -1679,6 +2086,7 @@ export async function recordPayrollPaymentSettlementEvidence(
           settlementEvidenceHash,
           sourceRegisterHash: parsed.sourceRegisterHash,
           ...proofMetadata,
+          ...providerReceiptProof,
           ...settlementLifecycleMetadata,
           closeImpactSourceCode: "PAYROLL_PAYMENT_RECONCILED",
         },
@@ -1714,17 +2122,34 @@ export async function recordPayrollPaymentSettlementEvidence(
         metadata: safeJson({
           ...asRecord(batch.metadata),
           ...proofMetadata,
+          ...providerReceiptProof,
           ...settlementLifecycleMetadata,
           latestSettlementEvidenceHash: settlementEvidenceHash,
           latestSettlementSourceRegisterHash: parsed.sourceRegisterHash,
           latestSettlementComponentRegisterProofHash:
             proofMetadata.componentRegisterProofHash,
+          latestSettlementCompositeRegisterProofHash:
+            proofMetadata.compositeRegisterProofHash,
           latestSettlementPayrollComponentMappingHash:
             proofMetadata.payrollComponentMappingHash,
           latestSettlementProviderAdapterProofHash:
             proofMetadata.paymentAdapterProofHash,
           latestSettlementProviderAdapterContractHash:
             proofMetadata.paymentProviderAdapterContractHash,
+          latestSettlementPaymentDestinationProofHash:
+            proofMetadata.paymentDestinationProofHash,
+          latestSettlementPaymentDestinationProofCount:
+            proofMetadata.paymentDestinationProofCount,
+          latestSettlementProviderReceiptProofHash:
+            providerReceiptProof.providerSettlementReceiptProofHash,
+          latestSettlementProviderReceiptProofSource:
+            providerReceiptProof.providerSettlementReceiptProofSource,
+          latestSettlementProviderReceiptProviderPayloadHash:
+            providerReceiptProof.providerSettlementReceiptProviderPayloadHash,
+          latestSettlementProviderReceiptStatementLineHash:
+            providerReceiptProof.providerSettlementReceiptStatementLineHash,
+          latestSettlementProviderReceiptStatementFileHash:
+            providerReceiptProof.providerSettlementReceiptStatementFileHash,
           latestSettlementLifecycleContractHash:
             evidence.providerSettlementLifecycleContractHash,
           latestSettlementLifecycleStatus:
@@ -1732,23 +2157,33 @@ export async function recordPayrollPaymentSettlementEvidence(
           latestSettlementBusinessEventId: eventResult.event.id,
           latestSettlementAt: now.toISOString(),
           latestSettlementStatus: parsed.settlementStatus,
+          latestSettlementReplayProofHash: replayProofHash,
           [settlementMetadataKey(parsed.idempotencyKey)]: {
             businessEventId: eventResult.event.id,
             inputEvidenceHash: parsed.evidenceHash,
             sourceRegisterHash: parsed.sourceRegisterHash,
             ...proofMetadata,
+            ...providerReceiptProof,
             componentRegisterProofHash:
               proofMetadata.componentRegisterProofHash,
+            compositeRegisterProofHash:
+              proofMetadata.compositeRegisterProofHash,
             payrollComponentMappingHash:
               proofMetadata.payrollComponentMappingHash,
             paymentAdapterProofHash: proofMetadata.paymentAdapterProofHash,
             paymentProviderAdapterContractHash:
               proofMetadata.paymentProviderAdapterContractHash,
+            providerSettlementReceiptProofHash:
+              providerReceiptProof.providerSettlementReceiptProofHash,
+            providerSettlementReceiptProofSource:
+              providerReceiptProof.providerSettlementReceiptProofSource,
             providerSettlementLifecycleContractHash:
               evidence.providerSettlementLifecycleContractHash,
             providerSettlementLifecycleStatus:
               evidence.providerSettlementLifecycleStatus,
             settlementEvidenceHash,
+            settlementReplayProof: replayProof,
+            settlementReplayProofHash: replayProofHash,
           },
           requestedMetadata: parsed.metadata ?? null,
         }),
@@ -1796,6 +2231,7 @@ export async function recordPayrollPaymentSettlementEvidence(
             settlementEvidenceHash,
             sourceRegisterHash: parsed.sourceRegisterHash,
             ...proofMetadata,
+            ...providerReceiptProof,
             ...settlementLifecycleMetadata,
             businessEventId: eventResult.event.id,
           },

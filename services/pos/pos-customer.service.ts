@@ -13,6 +13,24 @@ type POSCustomerScope = {
   locationId: string
 }
 
+function customerLocationVisibility(scope: POSCustomerScope): Prisma.CustomerWhereInput[] {
+  return [
+    {
+      locationAssignments: {
+        some: {
+          organizationId: scope.organizationId,
+          locationId: scope.locationId,
+        },
+      },
+    },
+    {
+      locationAssignments: {
+        none: { organizationId: scope.organizationId },
+      },
+    },
+  ]
+}
+
 export type POSCustomerListItem = {
   id: string
   name: string
@@ -63,22 +81,19 @@ export async function listPOSCustomers(rawInput: POSCustomerScope & Record<strin
     isActive: true,
     deletedAt: null,
     code: { not: "WALK_IN" },
-    locationAssignments: {
-      some: {
-        organizationId: scope.organizationId,
-        locationId: scope.locationId,
-      },
-    },
-    ...(input.search
-      ? {
-          OR: [
-            { name: { contains: input.search, mode: "insensitive" as const } },
-            { code: { contains: input.search, mode: "insensitive" as const } },
-            { email: { contains: input.search, mode: "insensitive" as const } },
-            { phone: { contains: input.search, mode: "insensitive" as const } },
-          ],
-        }
-      : {}),
+    AND: [
+      { OR: customerLocationVisibility(scope) },
+      ...(input.search
+        ? [{
+            OR: [
+              { name: { contains: input.search, mode: "insensitive" as const } },
+              { code: { contains: input.search, mode: "insensitive" as const } },
+              { email: { contains: input.search, mode: "insensitive" as const } },
+              { phone: { contains: input.search, mode: "insensitive" as const } },
+            ],
+          }]
+        : []),
+    ],
   }
 
   const [customers, total] = await Promise.all([
@@ -124,14 +139,7 @@ export async function requirePOSCustomerAtLocation(
       deletedAt: null,
       OR: [
         { code: "WALK_IN" },
-        {
-          locationAssignments: {
-            some: {
-              organizationId: input.organizationId,
-              locationId: input.locationId,
-            },
-          },
-        },
+        ...customerLocationVisibility(input),
       ],
     },
     select: {

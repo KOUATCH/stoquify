@@ -1,11 +1,14 @@
 {
   "migration": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
-  "sha256": "2fde92f4ad0cbb1a2a517b12e71c38997dc4956c9d57d70ff1ae0c636ff2f191",
-  "rules": [
-    "drop_column",
-    "drop_table"
-  ],
-  "approvedBy": "REQUIRED_ACCOUNTABLE_REVIEWER",
-  "reason": "REQUIRED: target classification, schema/data verification, compatibility window, backup/restore evidence, and fix-forward decision",
-  "approvedAt": "YYYY-MM-DD"
+  "migrationSha256": "2fde92f4ad0cbb1a2a517b12e71c38997dc4956c9d57d70ff1ae0c636ff2f191",
+  "findingSha256": "REQUIRED_FULL_FINDING_SHA256_FROM_REVIEW_PACKET",
+  "rule": "REQUIRED_EXACT_RULE_FROM_REVIEW_PACKET",
+  "humanAuthored": false,
+  "consequenceAcknowledged": false,
+  "approvedBy": "REQUIRED_NAMED_ACCOUNTABLE_REVIEWER",
+  "reviewerRole": "REQUIRED_ACCOUNTABLE_ROLE",
+  "reason": "REQUIRED_TARGET_SPECIFIC_RATIONALE",
+  "approvedAt": "REQUIRED_UTC_ISO_8601_TIMESTAMP",
+  "expiresAt": null,
+  "revocation": null
 }

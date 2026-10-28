@@ -3,6 +3,7 @@ import { createHash } from "node:crypto"
 import { CustomerCreateSchema } from "@/services/customer/customer.schemas"
 import { ItemCreateSchema } from "@/services/item/item.schemas"
 import { SupplierCreateSchema } from "@/services/supplier/supplier.schemas"
+import { BusinessRuleError } from "@/services/_shared/action-errors"
 
 export const MASTER_DATA_IMPORT_SCHEMA_VERSION = "1"
 export const MASTER_DATA_IMPORT_MAX_BYTES = 5 * 1024 * 1024
@@ -147,19 +148,19 @@ export function validateFieldMap(target: MasterDataImportTarget, fieldMap: Maste
   const seenTargets = new Set<string>()
 
   for (const [sourceColumn, targetField] of Object.entries(fieldMap)) {
-    if (!sourceColumn.trim()) throw new Error("Mapping source columns must not be empty")
+    if (!sourceColumn.trim()) throw new BusinessRuleError("Mapping source columns must not be empty")
     if (!allowedTargets.has(targetField)) {
-      throw new Error(`Unsupported ${config.label} target field: ${targetField}`)
+      throw new BusinessRuleError(`Unsupported ${config.label} target field: ${targetField}`)
     }
     if (seenTargets.has(targetField)) {
-      throw new Error(`Target field ${targetField} may only be mapped once`)
+      throw new BusinessRuleError(`Target field ${targetField} may only be mapped once`)
     }
     seenTargets.add(targetField)
   }
 
   for (const requiredField of config.requiredFields) {
     if (!seenTargets.has(requiredField)) {
-      throw new Error(`Required target field ${requiredField} must be mapped`)
+      throw new BusinessRuleError(`Required target field ${requiredField} must be mapped`)
     }
   }
 }

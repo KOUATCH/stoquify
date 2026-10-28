@@ -10,6 +10,8 @@ const {
 } = require("../run-policy-gates-integration");
 
 const REQUIRED_ALIASES = {
+  "inventory:boundary":
+    "node scripts/inventory-boundary-gate.js --mode fail",
   "inventory:valuation:truth:gate":
     "node scripts/inventory-valuation-truth-gate.js --mode fail --out what-next/inventory-valuation-truth-readiness.md --json-out what-next/inventory-valuation-truth-readiness.json",
   "regulatory:boundary:fail":

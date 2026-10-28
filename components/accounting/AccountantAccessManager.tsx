@@ -133,7 +133,7 @@ export function AccountantAccessManager({
       </form>
 
       <div className="overflow-hidden rounded-xl border">
-        <table className="w-full text-left text-sm">
+        <table className="dashboard-table-base w-full text-left text-sm">
           <thead className="bg-muted/60">
             <tr>
               <th className="p-3">Firm</th>

@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import {
@@ -16,7 +18,13 @@ import {
 import type { PayrollRunWorkbenchResult } from "@/actions/payroll/payroll-control.actions";
 import { localizePath } from "@/i18n/routing";
 import type { Locale } from "@/types/bilingual";
+import {
+  HrPayrollTableControls,
+  HrPayrollTablePagination,
+  useHrPayrollTable,
+} from "@/components/hr-payroll/HrPayrollTableControls";
 import PayrollProofDrawerButton, {
+  type PayrollProofDrawerState,
   type PayrollProofDrawerSubject,
 } from "./PayrollProofDrawerButton";
 import PayrollRunActionPanel from "./PayrollRunActionPanel";
@@ -29,6 +37,7 @@ type Props = {
 
 type RunRow = PayrollRunWorkbenchResult["runs"][number];
 type WorkbenchRedaction = PayrollRunWorkbenchResult["redaction"];
+type AccountingAuditProof = PayrollRunWorkbenchResult["accountingAuditProof"];
 
 function tone(value: string | null | undefined) {
   const normalized = (value ?? "").toUpperCase();
@@ -143,6 +152,8 @@ function ProofList({ run }: { run: RunRow }) {
     ["Attendance", run.proof.attendanceSnapshotHash],
     ["Document", run.proof.documentHash],
     ["Evidence", run.proof.evidenceHash],
+    ["Transition proof", run.proof.lifecycle.transitionEvidence],
+    ["Trust Spine writes", run.proof.lifecycle.writeEnabled ? "Enabled" : "Disabled"],
     ...(run.correction.correctionRun
       ? [
           ["Original document", run.correction.originalRunDocumentHash],
@@ -194,6 +205,10 @@ function runProofSubject(
     status: run.status,
     source: "services/payroll/payroll-control.service.ts",
     href: localizePath("/dashboard/payroll/register", locale),
+    requiresFreshAuth: run.nextActions.some((action) => action.requiresFreshAuth),
+    stateDescription: run.nextActions.some((action) => action.requiresFreshAuth)
+      ? "Run proof is service-owned; listed write actions require fresh authentication."
+      : undefined,
     blockers: run.blockers,
     redactions: [
       ...(amountRedacted
@@ -220,6 +235,14 @@ function runProofSubject(
     rows: [
       { label: "Run type", value: run.runType },
       { label: "Version", value: `v${run.version}` },
+      { label: "Transition proof", value: run.proof.lifecycle.transitionEvidence },
+      { label: "Trust Spine writes", value: run.proof.lifecycle.writeEnabled ? "Enabled" : "Disabled" },
+      ...run.proof.lifecycle.stages.flatMap((stage) => [
+        { label: stage.stage + " event", value: stage.businessEventId },
+        { label: stage.stage + " at", value: stage.transitionedAt },
+        { label: stage.stage + " evidence", value: stage.evidenceStatus },
+        { label: stage.stage + " actor", value: stage.actorPresent ? "Present" : null },
+      ]),
       { label: "Period", value: run.period.name },
       { label: "Period status", value: run.period.status },
       { label: "Pay date", value: run.period.payDate },
@@ -290,6 +313,199 @@ function runProofSubject(
     ],
   };
 }
+function auditProofList(values: string[]) {
+  return values.length ? values.join(", ") : null;
+}
+
+function aggregateGapSummary(aggregateEvidence: AccountingAuditProof["aggregateEvidence"]) {
+  const gaps = Object.entries(aggregateEvidence)
+    .filter(([, value]) => value > 0)
+    .map(([key, value]) => `${key}:${value}`);
+
+  return gaps.length ? gaps.join(", ") : "0";
+}
+
+function auditProofState(data: PayrollRunWorkbenchResult): PayrollProofDrawerState {
+  const proof = data.accountingAuditProof;
+  if (proof.available) {
+    return proof.redactionMode === "UNAVAILABLE" ? "ready" : "redacted";
+  }
+  return data.sourceScope.returnedAccountingPeriodIds.length ? "error" : "empty";
+}
+
+function auditProofStateDescription(data: PayrollRunWorkbenchResult) {
+  if (data.accountingAuditProof.available) {
+    return "Accounting service returned redacted payroll auditor proof facts for run review.";
+  }
+  if (data.sourceScope.returnedAccountingPeriodIds.length) {
+    return "A run accounting period is linked, but no payroll auditor proof pack facts are available yet.";
+  }
+  return "No run accounting period is available for auditor proof yet.";
+}
+function accountingAuditProofSubject(
+  data: PayrollRunWorkbenchResult,
+  locale: Locale,
+): PayrollProofDrawerSubject {
+  const proof = data.accountingAuditProof;
+
+  return {
+    id: "payroll-run-workbench:accounting-audit-proof",
+    label: "Payroll auditor proof pack",
+    status: proof.status,
+    source: "services/accounting/data-trust.service.ts",
+    href: localizePath("/dashboard/accounting/accountant-portal", locale),
+    state: auditProofState(data),
+    stateDescription: auditProofStateDescription(data),
+    blockers: proof.blockers.map((blocker) => ({
+      id: blocker.id,
+      severity: blocker.severity,
+      title: blocker.title,
+      detail: `Gate: ${blocker.gate}`,
+      nextAction: "Resolve the payroll auditor proof gate in the accountant portal.",
+    })),
+    redactions:
+      proof.redactionMode === "UNAVAILABLE"
+        ? []
+        : [
+            {
+              field: "payroll.auditorProofPack",
+              reason:
+                "Auditor proof exposes hashes, source links, and aggregate evidence only.",
+              policy: proof.redactionMode,
+            },
+          ],
+    rows: [
+      { label: "Available", value: proof.available },
+      { label: "Generated", value: proof.generatedAt },
+      { label: "Accounting period", value: proof.periodId },
+      { label: "Scope hash", value: proof.scopeHash },
+      {
+        label: "Period coverage",
+        value: data.sourceScope.accountingAuditProofCoverageComplete
+          ? "Complete"
+          : "Latest returned period only",
+      },
+      {
+        label: "Returned accounting periods",
+        value: auditProofList(data.sourceScope.returnedAccountingPeriodIds),
+      },
+      { label: "Trust level", value: proof.trustLevel },
+      { label: "Verdict", value: proof.verdict },
+      { label: "Exportable", value: proof.exportable },
+      { label: "Blockers", value: proof.blockerCount },
+      { label: "Critical blockers", value: proof.criticalBlockerCount },
+      { label: "High blockers", value: proof.highBlockerCount },
+      { label: "Proof gates", value: proof.proofGateCount },
+      { label: "Blocked gates", value: proof.blockedProofGateCount },
+      { label: "Review gates", value: proof.reviewProofGateCount },
+      { label: "Source links", value: proof.sourceLinkCount },
+      { label: "Source tables", value: auditProofList(proof.sourceTables) },
+      { label: "Redaction mode", value: proof.redactionMode },
+      {
+        label: "Redaction excludes",
+        value: auditProofList(proof.redactionExcluded),
+      },
+      {
+        label: "Gate details",
+        value: auditProofList(
+          proof.proofGates.map((gate) => `${gate.gate}:${gate.status}`),
+        ),
+      },
+      {
+        label: "Gate blockers",
+        value: auditProofList(
+          proof.proofGates.flatMap((gate) => gate.blockerIds),
+        ),
+      },
+      {
+        label: "Source link hashes",
+        value: auditProofList(
+          proof.latestSourceLinks.map((link) => link.sourceLinkHash),
+        ),
+      },
+      {
+        label: "Source link states",
+        value: auditProofList(
+          proof.latestSourceLinks.map(
+            (link) => `${link.sourceType}:${link.postingStatus}`,
+          ),
+        ),
+      },
+      {
+        label: "Aggregate gaps",
+        value: aggregateGapSummary(proof.aggregateEvidence),
+      },
+    ],
+  };
+}
+
+function AuditorProofPanel({
+  data,
+  locale,
+}: {
+  data: PayrollRunWorkbenchResult;
+  locale: Locale;
+}) {
+  const proof = data.accountingAuditProof;
+  const coverage = data.sourceScope.accountingAuditProofCoverageComplete
+    ? "Complete"
+    : "Latest period only";
+
+  return (
+    <section className="rounded-lg border border-white/10 bg-white/[0.05] p-4">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <Landmark className="h-4 w-4 text-cyan-200" aria-hidden="true" />
+            <h2 className="text-sm font-semibold text-white">Auditor proof</h2>
+          </div>
+          <div className="mt-2 flex flex-wrap gap-2">
+            <Badge value={proof.status} />
+            <Badge value={proof.trustLevel ?? "PENDING"} />
+            <Badge value={proof.redactionMode} />
+          </div>
+        </div>
+        <PayrollProofDrawerButton
+          subject={accountingAuditProofSubject(data, locale)}
+          buttonLabel="Auditor proof drawer"
+        />
+      </div>
+      <div className="mt-4 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="rounded-md border border-white/10 bg-white/[0.04] p-3">
+          <p className="text-xs font-semibold uppercase tracking-normal text-slate-500">
+            Period
+          </p>
+          <p className="mt-1 break-all text-sm text-slate-100">
+            {proof.periodId ?? "Pending"}
+          </p>
+        </div>
+        <div className="rounded-md border border-white/10 bg-white/[0.04] p-3">
+          <p className="text-xs font-semibold uppercase tracking-normal text-slate-500">
+            Gates
+          </p>
+          <p className="mt-1 text-sm text-slate-100">
+            {proof.blockedProofGateCount} blocked / {proof.reviewProofGateCount} review / {proof.proofGateCount} total
+          </p>
+        </div>
+        <div className="rounded-md border border-white/10 bg-white/[0.04] p-3">
+          <p className="text-xs font-semibold uppercase tracking-normal text-slate-500">
+            Source links
+          </p>
+          <p className="mt-1 text-sm text-slate-100">
+            {proof.sourceLinkCount}
+          </p>
+        </div>
+        <div className="rounded-md border border-white/10 bg-white/[0.04] p-3">
+          <p className="text-xs font-semibold uppercase tracking-normal text-slate-500">
+            Coverage
+          </p>
+          <p className="mt-1 text-sm text-slate-100">{coverage}</p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function LinkedFacts({ run, locale }: { run: RunRow; locale: Locale }) {
   return (
     <div className="grid gap-2 text-xs text-slate-200">
@@ -360,11 +576,9 @@ function Blockers({ run }: { run: RunRow }) {
 function NextActions({
   run,
   locale,
-  paymentRequesterCandidates,
 }: {
   run: RunRow;
   locale: Locale;
-  paymentRequesterCandidates: PayrollRunWorkbenchResult["paymentRequesterCandidates"];
 }) {
   if (!run.nextActions.length) return <Badge value="No manual action" />;
 
@@ -382,6 +596,8 @@ function NextActions({
             {action.requiresSeparateApprover ? (
               <Badge value="Maker-checker" />
             ) : null}
+            {action.allowed ? <Badge value="Allowed" /> : <Badge value="Blocked" />}
+            {action.blockedBy.map((code) => <Badge key={code} value={code} />)}
             {action.href ? (
               <Link
                 href={localizePath(action.href, locale)}
@@ -394,7 +610,7 @@ function NextActions({
           <PayrollRunActionPanel
             run={run}
             action={action}
-            paymentRequesterCandidates={paymentRequesterCandidates}
+            disabled={!action.allowed || action.blockedBy.length > 0}
           />
         </div>
       ))}
@@ -460,6 +676,19 @@ function RelatedItems({ run }: { run: RunRow }) {
 }
 
 export default function PayrollRunWorkbench({ data, error, locale }: Props) {
+  const runTable = useHrPayrollTable({
+    rows: data?.runs ?? [],
+    searchText: (run) => JSON.stringify(run),
+    dateValue: (run) => run.period.payDate ?? run.period.periodEnd,
+    sortOptions: [
+      { key: "run", label: "Run", value: (run) => run.runNumber },
+      { key: "period", label: "Pay date", value: (run) => run.period.payDate },
+      { key: "status", label: "Status", value: (run) => run.status },
+      { key: "net", label: "Net payable", value: (run) => Number(run.amounts.netPayableAmount) },
+      { key: "blockers", label: "Blockers", value: (run) => run.blockers.length },
+    ],
+  });
+
   if (error) return <ErrorPanel message={error} />;
   if (!data) return <EmptyState />;
 
@@ -544,12 +773,15 @@ export default function PayrollRunWorkbench({ data, error, locale }: Props) {
         />
       </section>
 
+      <AuditorProofPanel data={data} locale={locale} />
+
       <section className="rounded-lg border border-white/10 bg-white/[0.05]">
         <div className="flex items-center gap-2 border-b border-white/10 px-4 py-3">
           <BadgeCheck className="h-4 w-4 text-cyan-200" aria-hidden="true" />
           <h2 className="text-sm font-semibold text-white">Run lifecycle</h2>
         </div>
-        <div className="overflow-x-auto">
+        <HrPayrollTableControls table={runTable} locale={locale} tableLabel="payroll runs" />
+        <div className="dashboard-data-table dashboard-table-shell overflow-x-auto">
           <table className="min-w-[1680px] w-full table-fixed border-collapse text-left text-sm">
             <thead className="border-b border-white/10 text-xs uppercase tracking-normal text-slate-400">
               <tr>
@@ -570,8 +802,8 @@ export default function PayrollRunWorkbench({ data, error, locale }: Props) {
               </tr>
             </thead>
             <tbody className="divide-y divide-white/10">
-              {data.runs.length ? (
-                data.runs.map((run) => (
+              {runTable.rows.length ? (
+                runTable.rows.map((run) => (
                   <tr key={run.id} className="align-top">
                     <td className="px-4 py-3">
                       <p className="break-words font-semibold text-white">
@@ -642,9 +874,6 @@ export default function PayrollRunWorkbench({ data, error, locale }: Props) {
                       <NextActions
                         run={run}
                         locale={locale}
-                        paymentRequesterCandidates={
-                          data.paymentRequesterCandidates
-                        }
                       />
                     </td>
                   </tr>
@@ -659,6 +888,7 @@ export default function PayrollRunWorkbench({ data, error, locale }: Props) {
             </tbody>
           </table>
         </div>
+        <HrPayrollTablePagination table={runTable} locale={locale} />
       </section>
 
       <section className="rounded-lg border border-white/10 bg-white/[0.05] p-4">

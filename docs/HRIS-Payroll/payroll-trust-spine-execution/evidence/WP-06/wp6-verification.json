@@ -1,0 +1,54 @@
+{
+  "workPackage": "WP6",
+  "decision": "APPROVED_FOR_WP7_INTERNAL_ENGINEERING_ONLY",
+  "productionAuthorized": false,
+  "verifiedAt": "2026-08-22",
+  "scope": "payroll_command_read_models_and_operator_ux",
+  "verification": {
+    "focusedSuites": "PASS_8_OF_8",
+    "focusedTests": "PASS_61_OF_61",
+    "typecheck": "PASS_NO_DIAGNOSTICS",
+    "focusedLint": "PASS_ZERO_FINDINGS",
+    "focusedDiffCheck": "PASS",
+    "targetedRouteBrowserSmoke": "PASS_2_OF_2",
+    "broadRouteSmoke": "FAIL_2_INHERITED_OF_9",
+    "serviceBoundary": "PASS_0_ACTIVE",
+    "payrollPresence": "READY_14_OF_14",
+    "purchasingAp": "READY_11_OF_11",
+    "reportTrust": "READY_35_OF_35",
+    "offlinePosReplay": "READY_16_OF_16",
+    "workflowAssuranceStatic": "READY_38_OF_38",
+    "ciRelease": "READY_11_OF_11",
+    "fullPolicyChain": "EXPECTED_STOP_STATUTORY_11_OF_12"
+  },
+  "controls": {
+    "singleServerLifecycleProjection": true,
+    "serverDerivedTenantActorPermissionAuth": true,
+    "missingModernProofFailsClosed": true,
+    "legacyPartialEvidenceDisclosed": true,
+    "controlledWriteSwitchProjected": true,
+    "rawActorIdentifiersExcluded": true
+  },
+  "sourceHashesSha256": {
+    "services/payroll/payroll-run-lifecycle-read-model.ts": "57583ABB8D7A40CE08EDEF00A6BB8B6B5D17C71C9C4350B5021EDC55DEACED5E",
+    "services/payroll/payroll-control.service.ts": "EEA97A0D0CB8BE3317AD42FD3067C8AA4A00BA474941C897FEB09CFFBC8B7ED5",
+    "services/payroll/command-read-model.service.ts": "E881AADF97C699C2A3A2D6587AAEDBBBD9EDCDB6E6C4BAF4B3600BA733E6E252",
+    "components/payroll/PayrollRunActionPanel.tsx": "11F3162881317A46A2A4CC2BBD08ACB4C446FE28F5605A5D5065219AAFE14DC1",
+    "components/payroll/PayrollRunWorkbench.tsx": "2EDDA7C279247A2553AAEF206D547F2409C7D533E7B907382FD8DB647DE4FFEA",
+    "components/payroll/PayrollCommandCenter.tsx": "6CBD64FF0A59B7B33DFF9E8A27C379002093B84F488290811F26F1F3BFB33E47",
+    "services/payroll/__tests__/payroll-run-lifecycle-read-model.test.ts": "7390734B3A2D04134AD6E19F97E2CA9514C17ABBC36465D4B087EB158422E7E5",
+    "services/payroll/__tests__/payroll-command-read-model.service.test.ts": "C0C32CD8E57C6401D1C1C6F20FFC32B0A6C5CA38E1E3EA0BADF9F57BD6C2FD42",
+    "services/payroll/__tests__/payroll-run-workbench.service.test.ts": "93ECC0856E9CCA090724F013CACB589AC72E2711E59E6F8A471856FF17BC787C",
+    "components/payroll/__tests__/PayrollRunWorkbench.test.tsx": "24904B086301C869D6047636FD8F620AE1261BCFF78C999BACBF3CD6729151AB",
+    "components/payroll/__tests__/PayrollCommandCenter.test.tsx": "0F03BF537430570D56058BCE6EA1369B210D2A4F12B7CEF800922B6EC9A66EF1"
+  },
+  "blockingExternalEvidence": [
+    "qualified_statutory_source_artifact_expert_approval_missing",
+    "broad_inherited_dirty_state_blocks_clean_candidate",
+    "inherited_destructive_migration_exact_hash_approvals_missing",
+    "inherited_raw_error_gate_8_findings",
+    "local_prisma_runtime_protocol_blocks_database_queries"
+  ],
+  "wp7Authorized": true,
+  "wp8Authorized": false
+}

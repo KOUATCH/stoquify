@@ -1,4 +1,5 @@
 import { EnhancedNotificationTest } from "@/components/notifications/EnhancedNotificationTest"
+import { notFound } from "next/navigation"
 import { routeByKey, withNotificationsDemoSurfaceAccess } from "./notifications-demo-route-access"
 
 export default async function NotificationsDemoPage({
@@ -6,6 +7,8 @@ export default async function NotificationsDemoPage({
 }: {
   params: Promise<{ locale: string }>
 }) {
+  if (process.env.NODE_ENV !== "development") notFound()
+
   const surface = routeByKey("notifications-demo")
 
   if (!surface) {

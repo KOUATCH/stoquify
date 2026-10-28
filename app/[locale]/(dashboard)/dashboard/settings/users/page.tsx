@@ -98,7 +98,7 @@ async function UsersPageImpl({ params }: UsersPageProps) {
           </div>
         </div>
 
-        <UsersPageClient users={userRows} invites={orgInvites} />
+        <UsersPageClient users={userRows} invites={orgInvites} locale={locale} />
       </div>
     </div>
   )

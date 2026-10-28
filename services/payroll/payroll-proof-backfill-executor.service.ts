@@ -16,9 +16,7 @@ import {
   resolvePayrollPaymentProviderAdapterContract,
   resolvePayrollPaymentSettlementLifecycleContract,
 } from "./payroll-adapter-registry.service";
-import {
-  recordPayrollDeclarationEvidence,
-} from "./declaration-lifecycle.service";
+import { recordPayrollDeclarationEvidence } from "./declaration-lifecycle.service";
 import {
   generatePayrollSeedBackfillDryRunPlan,
   type PayrollDryRunPlannedWrite,
@@ -71,6 +69,13 @@ export type PayrollProofBackfillCorrectionIntent = {
   count: number;
   idempotencyKey: string;
   correlationId: string;
+  countryCode: string | null;
+  periodStart: string;
+  periodEnd: string;
+  payDate: string;
+  proofBackfillEvidenceRef: string;
+  dryRunEvidenceHash: string;
+  periodLineageHash: string;
   mutationAllowed: false;
   reason: string;
 };
@@ -84,7 +89,9 @@ export type PayrollProofBackfillExecutionResult = {
     | "PayrollDeclarationEvidenceAuthorityLifecycleProofBackfill"
     | "PayrollPaymentBatchProviderAdapterProofBackfill"
     | "PayrollPaymentSettlementRegisterProofBackfill"
-    | "PayrollPaymentSettlementLifecycleProofBackfill";
+    | "PayrollPaymentSettlementLifecycleProofBackfill"
+    | "PayrollPaymentProviderReceiptProofBackfill"
+    | "PayrollPaymentSettlementReplayProofBackfill";
   attemptedCount: number;
   updatedCount: number;
   skippedCount: number;
@@ -189,15 +196,16 @@ const CLOSE_IMPACTING_DECLARATION_TRANSITIONS = [
   PayrollDeclarationEvidenceTransition.AMEND,
 ] as const;
 
-const DECLARATION_BACKFILL_AMENDABLE_STATUSES: readonly PayrollDeclarationStatus[] = [
-  PayrollDeclarationStatus.SUBMITTED,
-  PayrollDeclarationStatus.ACCEPTED,
-  PayrollDeclarationStatus.REJECTED,
-  PayrollDeclarationStatus.PAYMENT_DUE,
-  PayrollDeclarationStatus.PAID,
-  PayrollDeclarationStatus.RECONCILED,
-  PayrollDeclarationStatus.ARCHIVED,
-] as const;
+const DECLARATION_BACKFILL_AMENDABLE_STATUSES: readonly PayrollDeclarationStatus[] =
+  [
+    PayrollDeclarationStatus.SUBMITTED,
+    PayrollDeclarationStatus.ACCEPTED,
+    PayrollDeclarationStatus.REJECTED,
+    PayrollDeclarationStatus.PAYMENT_DUE,
+    PayrollDeclarationStatus.PAID,
+    PayrollDeclarationStatus.RECONCILED,
+    PayrollDeclarationStatus.ARCHIVED,
+  ] as const;
 
 const PAYMENT_ADAPTER_PROOF_STATUSES = [
   PayrollPaymentBatchStatus.RELEASED,
@@ -300,9 +308,13 @@ type PreparedPaymentBatchProofBackfill = {
   coversProviderAdapterProof: boolean;
   coversSettlementRegisterProof: boolean;
   coversSettlementLifecycleProof: boolean;
+  coversProviderReceiptProof: boolean;
+  coversSettlementReplayProof: boolean;
   paymentAdapterProofHash: string | null;
   settlementSourceRegisterHash: string | null;
   settlementLifecycleContractHash: string | null;
+  providerReceiptProofHash: string | null;
+  settlementReplayProofHash: string | null;
   metadata: Prisma.InputJsonValue;
 };
 
@@ -311,6 +323,9 @@ type PaymentBatchProofBackfillRow = {
   batchNumber: string;
   status: PayrollPaymentBatchStatus;
   method: PaymentMethod;
+  amount: Prisma.Decimal;
+  currency: string;
+  paymentTransactionId: string | null;
   bankFileHash: string | null;
   documentHash: string | null;
   evidenceHash: string | null;
@@ -349,6 +364,7 @@ function emptyStatutoryScenarioReviewEvidence(): PayrollStatutoryScenarioReviewE
     reviewedOn: [],
     legalRefs: [],
     sourceEvidenceHashes: [],
+    coveredReviewTopics: [],
   };
 }
 
@@ -408,7 +424,9 @@ function statutoryCoverageBackfillBlocker(
   return null;
 }
 
-function payrollRunMissingStatutoryScenarioCoverageWhere(organizationId: string) {
+function payrollRunMissingStatutoryScenarioCoverageWhere(
+  organizationId: string,
+) {
   return {
     organizationId,
     status: { in: [...PAYROLL_REGISTER_PROOF_RUN_STATUSES] },
@@ -428,7 +446,9 @@ function payrollRunMissingStatutoryScenarioCoverageWhere(organizationId: string)
           equals: Prisma.AnyNull,
         },
       },
-      { metadata: { path: ["statutoryScenarioCoverage", "status"], equals: "" } },
+      {
+        metadata: { path: ["statutoryScenarioCoverage", "status"], equals: "" },
+      },
       {
         metadata: {
           path: [
@@ -455,7 +475,9 @@ async function preparePayrollRunStatutoryCoverageBackfills(
   client: DbClient,
 ) {
   const runs = await client.payrollRun.findMany({
-    where: payrollRunMissingStatutoryScenarioCoverageWhere(input.organizationId),
+    where: payrollRunMissingStatutoryScenarioCoverageWhere(
+      input.organizationId,
+    ),
     select: {
       id: true,
       runNumber: true,
@@ -670,6 +692,24 @@ function paymentSettlementLifecycleProofBackfillCoverageWhere() {
   };
 }
 
+function paymentSettlementReplayProofBackfillCoverageWhere() {
+  return {
+    metadata: {
+      path: ["proofBackfill", "coversPaymentSettlementReplayProof"],
+      equals: true,
+    },
+  };
+}
+
+function paymentProviderReceiptProofBackfillCoverageWhere() {
+  return {
+    metadata: {
+      path: ["proofBackfill", "coversPaymentProviderReceiptProof"],
+      equals: true,
+    },
+  };
+}
+
 function paymentBatchMissingProviderAdapterProofWhere(organizationId: string) {
   return {
     organizationId,
@@ -726,7 +766,8 @@ function paymentBatchMissingSettlementRegisterProofWhere(
 }
 
 function paymentBatchMissingSettlementLifecycleProofWhere(
-  organizationId: string) {
+  organizationId: string,
+) {
   return {
     organizationId,
     status: { in: [...PAYMENT_SETTLEMENT_PROOF_STATUSES] },
@@ -757,8 +798,66 @@ function paymentBatchMissingSettlementLifecycleProofWhere(
     NOT: paymentSettlementLifecycleProofBackfillCoverageWhere(),
   };
 }
-function declarationBackfillApprovedBy(input: PreparePayrollProofBackfillExecutionInput) {
-  const approver = input.signoffBundle?.accountingControllerApprovedById ?? null;
+
+function paymentBatchMissingProviderReceiptProofWhere(organizationId: string) {
+  return {
+    organizationId,
+    status: { in: [...PAYMENT_SETTLEMENT_PROOF_STATUSES] },
+    OR: [
+      { metadata: { equals: Prisma.AnyNull } },
+      {
+        metadata: {
+          path: ["latestSettlementProviderReceiptProofHash"],
+          equals: Prisma.AnyNull,
+        },
+      },
+      {
+        metadata: {
+          path: ["latestSettlementProviderReceiptProofHash"],
+          equals: "",
+        },
+      },
+      {
+        metadata: {
+          path: ["latestSettlementProviderReceiptProofSource"],
+          equals: Prisma.AnyNull,
+        },
+      },
+      {
+        metadata: {
+          path: ["latestSettlementProviderReceiptProofSource"],
+          equals: "",
+        },
+      },
+    ],
+    NOT: paymentProviderReceiptProofBackfillCoverageWhere(),
+  };
+}
+
+function paymentBatchMissingSettlementReplayProofWhere(organizationId: string) {
+  return {
+    organizationId,
+    status: { in: [...PAYMENT_SETTLEMENT_PROOF_STATUSES] },
+    OR: [
+      { metadata: { equals: Prisma.AnyNull } },
+      {
+        metadata: {
+          path: ["latestSettlementReplayProofHash"],
+          equals: Prisma.AnyNull,
+        },
+      },
+      {
+        metadata: { path: ["latestSettlementReplayProofHash"], equals: "" },
+      },
+    ],
+    NOT: paymentSettlementReplayProofBackfillCoverageWhere(),
+  };
+}
+function declarationBackfillApprovedBy(
+  input: PreparePayrollProofBackfillExecutionInput,
+) {
+  const approver =
+    input.signoffBundle?.accountingControllerApprovedById ?? null;
   return approver && approver !== input.actorId ? approver : null;
 }
 
@@ -779,8 +878,11 @@ function declarationRegisterBackfillPreflightBlockers(
   return blockers;
 }
 
-function paymentBackfillApprovedBy(input: PreparePayrollProofBackfillExecutionInput) {
-  const approver = input.signoffBundle?.accountingControllerApprovedById ?? null;
+function paymentBackfillApprovedBy(
+  input: PreparePayrollProofBackfillExecutionInput,
+) {
+  const approver =
+    input.signoffBundle?.accountingControllerApprovedById ?? null;
   return approver && approver !== input.actorId ? approver : null;
 }
 
@@ -812,7 +914,9 @@ async function prepareDeclarationRegisterProofBackfills(
   client: DbClient,
 ) {
   const rows = (await client.payrollDeclarationEvidence.findMany({
-    where: declarationEvidenceMissingSourceRegisterHashWhere(input.organizationId),
+    where: declarationEvidenceMissingSourceRegisterHashWhere(
+      input.organizationId,
+    ),
     select: {
       id: true,
       declarationId: true,
@@ -846,9 +950,13 @@ async function prepareDeclarationRegisterProofBackfills(
   for (const [declarationId, declarationRows] of byDeclaration.entries()) {
     const declaration = declarationRows[0]?.declaration;
     const sourceRegisterHash =
-      declaration?.payrollRun.documentHash ?? declaration?.payrollRun.evidenceHash ?? null;
+      declaration?.payrollRun.documentHash ??
+      declaration?.payrollRun.evidenceHash ??
+      null;
     if (!sourceRegisterHash) {
-      blockerCodes.add("PAYROLL_DECLARATION_REGISTER_BACKFILL_SOURCE_HASH_MISSING");
+      blockerCodes.add(
+        "PAYROLL_DECLARATION_REGISTER_BACKFILL_SOURCE_HASH_MISSING",
+      );
       continue;
     }
 
@@ -926,23 +1034,29 @@ async function executeDeclarationRegisterProofBackfill(
   const actorPermissions = [...(input.actorPermissions ?? [])];
 
   for (const prepared of preparedBackfills.prepared) {
-    const result = await recordPayrollDeclarationEvidence({
-      organizationId: input.organizationId,
-      declarationId: prepared.declarationId,
-      transition: "amend",
-      actorId,
-      actorPermissions,
-      lastAuthAt: input.lastAuthAt ?? undefined,
-      now: input.now ?? undefined,
-      authorityChannel: "PAYROLL_PROOF_BACKFILL",
-      authorityEnvironment: "INTERNAL_CONTROL",
-      authorityStatus: "REGISTER_PROOF_BACKFILLED",
-      supportingFileHash: input.expectedDryRunEvidenceHash ?? input.signoffBundle?.dryRunEvidenceHash ?? undefined,
-      sourceRegisterHash: prepared.sourceRegisterHash,
-      approvedById,
-      idempotencyKey: prepared.idempotencyKey,
-      metadata: prepared.metadata,
-    }, client);
+    const result = await recordPayrollDeclarationEvidence(
+      {
+        organizationId: input.organizationId,
+        declarationId: prepared.declarationId,
+        transition: "amend",
+        actorId,
+        actorPermissions,
+        lastAuthAt: input.lastAuthAt ?? undefined,
+        now: input.now ?? undefined,
+        authorityChannel: "PAYROLL_PROOF_BACKFILL",
+        authorityEnvironment: "INTERNAL_CONTROL",
+        authorityStatus: "REGISTER_PROOF_BACKFILLED",
+        supportingFileHash:
+          input.expectedDryRunEvidenceHash ??
+          input.signoffBundle?.dryRunEvidenceHash ??
+          undefined,
+        sourceRegisterHash: prepared.sourceRegisterHash,
+        approvedById,
+        idempotencyKey: prepared.idempotencyKey,
+        metadata: prepared.metadata,
+      },
+      client,
+    );
     const evidenceHash = metadataString(result.evidence, "evidenceHash");
     if (evidenceHash) evidenceHashes.push(evidenceHash);
   }
@@ -1049,7 +1163,10 @@ async function prepareDeclarationAuthorityProofBackfills(
 
   for (const [declarationId, groupedRows] of byDeclaration.entries()) {
     const rowsById = new Map<string, DeclarationAuthorityProofBackfillRow>();
-    for (const row of [...groupedRows.adapterRows, ...groupedRows.lifecycleRows]) {
+    for (const row of [
+      ...groupedRows.adapterRows,
+      ...groupedRows.lifecycleRows,
+    ]) {
       rowsById.set(row.id, row);
     }
     const rows = [...rowsById.values()].sort((a, b) => {
@@ -1064,7 +1181,9 @@ async function prepareDeclarationAuthorityProofBackfills(
         anchor.declaration.status,
       )
     ) {
-      blockerCodes.add("PAYROLL_DECLARATION_AUTHORITY_BACKFILL_STATUS_NOT_AMENDABLE");
+      blockerCodes.add(
+        "PAYROLL_DECLARATION_AUTHORITY_BACKFILL_STATUS_NOT_AMENDABLE",
+      );
       continue;
     }
 
@@ -1074,7 +1193,9 @@ async function prepareDeclarationAuthorityProofBackfills(
       anchor.declaration.payrollRun.evidenceHash ??
       null;
     if (!sourceRegisterHash) {
-      blockerCodes.add("PAYROLL_DECLARATION_AUTHORITY_BACKFILL_SOURCE_HASH_MISSING");
+      blockerCodes.add(
+        "PAYROLL_DECLARATION_AUTHORITY_BACKFILL_SOURCE_HASH_MISSING",
+      );
       continue;
     }
 
@@ -1084,10 +1205,12 @@ async function prepareDeclarationAuthorityProofBackfills(
     const coveredLifecycleEvidenceIds = groupedRows.lifecycleRows
       .map((row) => row.id)
       .sort();
-    const allCoveredEvidenceIds = [...new Set([
-      ...coveredAdapterEvidenceIds,
-      ...coveredLifecycleEvidenceIds,
-    ])].sort();
+    const allCoveredEvidenceIds = [
+      ...new Set([
+        ...coveredAdapterEvidenceIds,
+        ...coveredLifecycleEvidenceIds,
+      ]),
+    ].sort();
     const anchorMetadata = asRecord(anchor.metadata);
     const authorityAdapterKey = metadataString(
       anchorMetadata,
@@ -1220,31 +1343,35 @@ async function executeDeclarationAuthorityProofBackfill(
   const actorPermissions = [...(input.actorPermissions ?? [])];
 
   for (const prepared of preparedBackfills.prepared) {
-    const result = await recordPayrollDeclarationEvidence({
-      organizationId: input.organizationId,
-      declarationId: prepared.declarationId,
-      transition: "amend",
-      actorId,
-      actorPermissions,
-      lastAuthAt: input.lastAuthAt ?? undefined,
-      now: input.now ?? undefined,
-      authorityChannel: prepared.authorityChannel,
-      authorityEnvironment: prepared.authorityEnvironment,
-      authorityStatus: prepared.authorityStatus,
-      authorityAdapterKey: prepared.authorityAdapterKey ?? undefined,
-      authorityResponseHash: prepared.authorityResponseHash ?? undefined,
-      portalReceiptHash: prepared.portalReceiptHash ?? undefined,
-      supportingFileHash:
-        prepared.supportingFileHash ??
-        input.expectedDryRunEvidenceHash ??
-        input.signoffBundle?.dryRunEvidenceHash ??
-        undefined,
-      sourceRegisterHash: prepared.sourceRegisterHash,
-      approvedById,
-      adapterChaosReleaseGateHash: input.adapterChaosReleaseGateHash ?? undefined,
-      idempotencyKey: prepared.idempotencyKey,
-      metadata: prepared.metadata,
-    }, client);
+    const result = await recordPayrollDeclarationEvidence(
+      {
+        organizationId: input.organizationId,
+        declarationId: prepared.declarationId,
+        transition: "amend",
+        actorId,
+        actorPermissions,
+        lastAuthAt: input.lastAuthAt ?? undefined,
+        now: input.now ?? undefined,
+        authorityChannel: prepared.authorityChannel,
+        authorityEnvironment: prepared.authorityEnvironment,
+        authorityStatus: prepared.authorityStatus,
+        authorityAdapterKey: prepared.authorityAdapterKey ?? undefined,
+        authorityResponseHash: prepared.authorityResponseHash ?? undefined,
+        portalReceiptHash: prepared.portalReceiptHash ?? undefined,
+        supportingFileHash:
+          prepared.supportingFileHash ??
+          input.expectedDryRunEvidenceHash ??
+          input.signoffBundle?.dryRunEvidenceHash ??
+          undefined,
+        sourceRegisterHash: prepared.sourceRegisterHash,
+        approvedById,
+        adapterChaosReleaseGateHash:
+          input.adapterChaosReleaseGateHash ?? undefined,
+        idempotencyKey: prepared.idempotencyKey,
+        metadata: prepared.metadata,
+      },
+      client,
+    );
     const evidenceHash = metadataString(result.evidence, "evidenceHash");
     if (evidenceHash) evidenceHashes.push(evidenceHash);
   }
@@ -1261,7 +1388,8 @@ async function executeDeclarationAuthorityProofBackfill(
     preparedBackfills.adapterEvidenceGapCount > 0
       ? {
           kind: "PAYROLL_PROOF_BACKFILL_EXECUTION_RESULT" as const,
-          target: "PayrollDeclarationEvidenceAuthorityAdapterProofBackfill" as const,
+          target:
+            "PayrollDeclarationEvidenceAuthorityAdapterProofBackfill" as const,
           attemptedCount: preparedBackfills.adapterEvidenceGapCount,
           updatedCount: adapterUpdatedCount,
           skippedCount:
@@ -1274,7 +1402,8 @@ async function executeDeclarationAuthorityProofBackfill(
     preparedBackfills.lifecycleEvidenceGapCount > 0
       ? {
           kind: "PAYROLL_PROOF_BACKFILL_EXECUTION_RESULT" as const,
-          target: "PayrollDeclarationEvidenceAuthorityLifecycleProofBackfill" as const,
+          target:
+            "PayrollDeclarationEvidenceAuthorityLifecycleProofBackfill" as const,
           attemptedCount: preparedBackfills.lifecycleEvidenceGapCount,
           updatedCount: lifecycleUpdatedCount,
           skippedCount:
@@ -1292,6 +1421,9 @@ function paymentBatchProofSelect() {
     batchNumber: true,
     status: true,
     method: true,
+    amount: true,
+    currency: true,
+    paymentTransactionId: true,
     bankFileHash: true,
     documentHash: true,
     evidenceHash: true,
@@ -1333,6 +1465,14 @@ function paymentProviderAdapterProofMetadata(input: {
       requestedMetadata,
       "providerCredentialProofHash",
     ),
+    providerCredentialRotationProofHash: metadataString(
+      requestedMetadata,
+      "providerCredentialRotationProofHash",
+    ),
+    providerCredentialScopeProofHash: metadataString(
+      requestedMetadata,
+      "providerCredentialScopeProofHash",
+    ),
     providerPayloadMappingHash: metadataString(
       requestedMetadata,
       "providerPayloadMappingHash",
@@ -1340,6 +1480,10 @@ function paymentProviderAdapterProofMetadata(input: {
     providerResponseMappingHash: metadataString(
       requestedMetadata,
       "providerResponseMappingHash",
+    ),
+    providerReversalMappingHash: metadataString(
+      requestedMetadata,
+      "providerReversalMappingHash",
     ),
     providerAdapterRequestHash: metadataString(
       requestedMetadata,
@@ -1361,6 +1505,38 @@ function paymentProviderAdapterProofMetadata(input: {
       requestedMetadata,
       "providerIdempotencyKey",
     ),
+    providerReplayFixtureHash: metadataString(
+      requestedMetadata,
+      "providerReplayFixtureHash",
+    ),
+    providerDuplicateResponseFixtureHash: metadataString(
+      requestedMetadata,
+      "providerDuplicateResponseFixtureHash",
+    ),
+    providerOutageRunbookHash: metadataString(
+      requestedMetadata,
+      "providerOutageRunbookHash",
+    ),
+    providerRetryPolicyFixtureHash: metadataString(
+      requestedMetadata,
+      "providerRetryPolicyFixtureHash",
+    ),
+    providerDeadLetterTriageRunbookHash: metadataString(
+      requestedMetadata,
+      "providerDeadLetterTriageRunbookHash",
+    ),
+    providerAuditTrailFixtureHash: metadataString(
+      requestedMetadata,
+      "providerAuditTrailFixtureHash",
+    ),
+    providerRedactionFixtureHash: metadataString(
+      requestedMetadata,
+      "providerRedactionFixtureHash",
+    ),
+    providerCloseImpactRuleHash: metadataString(
+      requestedMetadata,
+      "providerCloseImpactRuleHash",
+    ),
     providerAttempt:
       typeof requestedMetadata.providerAttempt === "number"
         ? requestedMetadata.providerAttempt
@@ -1376,21 +1552,40 @@ function paymentProviderAdapterProofMetadata(input: {
     method: input.batch.method,
     paymentProviderAdapterKey: adapterContract.paymentProviderAdapterKey,
     paymentAdapterStatus: adapterContract.paymentAdapterStatus,
-    paymentAdapterRegistryVersion: adapterContract.paymentAdapterRegistryVersion,
+    paymentAdapterRegistryVersion:
+      adapterContract.paymentAdapterRegistryVersion,
     paymentProviderAdapterContractHash:
       adapterContract.paymentProviderAdapterContractHash,
     disbursementFileRequired: adapterContract.disbursementFileRequired,
     paymentDisbursementFileHash: adapterContract.paymentDisbursementFileHash,
     providerCredentialProofHash: adapterContract.providerCredentialProofHash,
+    providerCredentialRotationProofHash:
+      adapterContract.providerCredentialRotationProofHash,
+    providerCredentialScopeProofHash:
+      adapterContract.providerCredentialScopeProofHash,
     providerPayloadMappingHash: adapterContract.providerPayloadMappingHash,
     providerResponseMappingHash: adapterContract.providerResponseMappingHash,
+    providerReversalMappingHash: adapterContract.providerReversalMappingHash,
     providerAdapterRequestHash: adapterContract.providerAdapterRequestHash,
     providerAdapterResponseHash: adapterContract.providerAdapterResponseHash,
-    providerSettlementReceiptHash: adapterContract.providerSettlementReceiptHash,
+    providerSettlementReceiptHash:
+      adapterContract.providerSettlementReceiptHash,
     providerCertificationHarnessHash:
       adapterContract.providerCertificationHarnessHash,
     providerIdempotencyKey: adapterContract.providerIdempotencyKey,
     providerAttempt: adapterContract.providerAttempt,
+    providerReplayFixtureHash: adapterContract.providerReplayFixtureHash,
+    providerDuplicateResponseFixtureHash:
+      adapterContract.providerDuplicateResponseFixtureHash,
+    providerOutageRunbookHash: adapterContract.providerOutageRunbookHash,
+    providerRetryPolicyFixtureHash:
+      adapterContract.providerRetryPolicyFixtureHash,
+    providerDeadLetterTriageRunbookHash:
+      adapterContract.providerDeadLetterTriageRunbookHash,
+    providerAuditTrailFixtureHash:
+      adapterContract.providerAuditTrailFixtureHash,
+    providerRedactionFixtureHash: adapterContract.providerRedactionFixtureHash,
+    providerCloseImpactRuleHash: adapterContract.providerCloseImpactRuleHash,
     providerSettlementProofRequired:
       adapterContract.providerSettlementProofRequired,
     productionPaymentAutomationSupported:
@@ -1425,6 +1620,107 @@ function paymentProviderEvidence(metadata: Record<string, unknown>) {
   };
 }
 
+function paymentSettlementStatusForBatch(batch: PaymentBatchProofBackfillRow) {
+  return batch.status === PayrollPaymentBatchStatus.SETTLED
+    ? "settled"
+    : "partially_settled";
+}
+
+function paymentProviderReceiptBackfillProof(input: {
+  batch: PaymentBatchProofBackfillRow;
+  metadata: Record<string, unknown>;
+}) {
+  const evidence = paymentProviderEvidence(input.metadata);
+  const providerSettlementReceiptHash =
+    metadataString(input.metadata, "providerSettlementReceiptHash") ??
+    metadataString(input.metadata, "providerAdapterResponseHash") ??
+    metadataString(
+      input.metadata,
+      "latestSettlementProviderReceiptProviderPayloadHash",
+    );
+  const statementFileHash =
+    evidence.statementFileHash ??
+    metadataString(
+      input.metadata,
+      "latestSettlementProviderReceiptStatementFileHash",
+    );
+  const statementLineHash =
+    metadataString(input.metadata, "rawLineHash") ??
+    metadataString(
+      input.metadata,
+      "latestSettlementProviderReceiptStatementLineHash",
+    );
+  const {
+    statementFileHash: _providerEvidenceStatementFileHash,
+    ...providerEvidence
+  } = evidence;
+
+  if (!providerSettlementReceiptHash && !statementFileHash) return null;
+
+  const providerSettlementReceiptProofSource =
+    providerSettlementReceiptHash && statementFileHash
+      ? "BACKFILLED_PROVIDER_RECEIPT_AND_STATEMENT"
+      : providerSettlementReceiptHash
+        ? "BACKFILLED_PROVIDER_SETTLEMENT_RECEIPT"
+        : "BACKFILLED_STATEMENT_FILE_HASH";
+  const proofPayload = {
+    kind: "AQSTOQFLOW_PAYROLL_PROVIDER_SETTLEMENT_RECEIPT_BACKFILL_PROOF",
+    version: 1,
+    providerSettlementReceiptProofSource,
+    payrollPaymentBatchId: input.batch.id,
+    batchNumber: input.batch.batchNumber,
+    status: input.batch.status,
+    amount: new Prisma.Decimal(input.batch.amount)
+      .toDecimalPlaces(2)
+      .toFixed(2),
+    currency: input.batch.currency,
+    providerSettlementReceiptHash,
+    statementFileHash,
+    statementLineHash,
+    ...providerEvidence,
+  };
+
+  return {
+    providerSettlementReceiptProofHash: prefixedHash(proofPayload),
+    providerSettlementReceiptProofSource,
+    providerSettlementReceiptProviderPayloadHash: providerSettlementReceiptHash,
+    providerSettlementReceiptStatementLineHash: statementLineHash,
+    providerSettlementReceiptStatementFileHash: statementFileHash,
+  };
+}
+
+function paymentSettlementReplayProof(input: {
+  batch: PaymentBatchProofBackfillRow;
+  metadata: Record<string, unknown>;
+  providerReceiptProofHash?: string | null;
+}) {
+  const amount = new Prisma.Decimal(input.batch.amount).toDecimalPlaces(2);
+
+  return {
+    kind: "AQSTOQFLOW_PAYROLL_PAYMENT_SETTLEMENT_REPLAY_PROOF",
+    version: 1,
+    settlementStatus:
+      metadataString(input.metadata, "latestSettlementStatus") ??
+      paymentSettlementStatusForBatch(input.batch),
+    settlementAmount: amount.toFixed(2),
+    currency: input.batch.currency,
+    paymentTransactionId:
+      metadataString(input.metadata, "paymentTransactionId") ??
+      input.batch.paymentTransactionId,
+    inputEvidenceHash:
+      metadataString(input.metadata, "latestSettlementEvidenceHash") ??
+      input.batch.evidenceHash ??
+      input.batch.documentHash,
+    ...paymentProviderEvidence(input.metadata),
+    providerSettlementReceiptProofHash:
+      input.providerReceiptProofHash ??
+      metadataString(
+        input.metadata,
+        "latestSettlementProviderReceiptProofHash",
+      ),
+  };
+}
+
 async function preparePaymentBatchProofBackfills(
   input: PreparePayrollProofBackfillExecutionInput,
   execution: {
@@ -1437,34 +1733,51 @@ async function preparePaymentBatchProofBackfills(
   client: DbClient,
 ) {
   const select = paymentBatchProofSelect();
-  const [providerRows, settlementRegisterRows, settlementLifecycleRows] =
-    (await Promise.all([
-      client.payrollPaymentBatch.findMany({
-        where: paymentBatchMissingProviderAdapterProofWhere(
-          input.organizationId,
-        ),
-        select,
-        orderBy: [{ createdAt: "asc" }, { id: "asc" }],
-      }),
-      client.payrollPaymentBatch.findMany({
-        where: paymentBatchMissingSettlementRegisterProofWhere(
-          input.organizationId,
-        ),
-        select,
-        orderBy: [{ createdAt: "asc" }, { id: "asc" }],
-      }),
-      client.payrollPaymentBatch.findMany({
-        where: paymentBatchMissingSettlementLifecycleProofWhere(
-          input.organizationId,
-        ),
-        select,
-        orderBy: [{ createdAt: "asc" }, { id: "asc" }],
-      }),
-    ])) as unknown as [
-      PaymentBatchProofBackfillRow[],
-      PaymentBatchProofBackfillRow[],
-      PaymentBatchProofBackfillRow[],
-    ];
+  const [
+    providerRows,
+    settlementRegisterRows,
+    settlementLifecycleRows,
+    providerReceiptRows,
+    settlementReplayRows,
+  ] = (await Promise.all([
+    client.payrollPaymentBatch.findMany({
+      where: paymentBatchMissingProviderAdapterProofWhere(input.organizationId),
+      select,
+      orderBy: [{ createdAt: "asc" }, { id: "asc" }],
+    }),
+    client.payrollPaymentBatch.findMany({
+      where: paymentBatchMissingSettlementRegisterProofWhere(
+        input.organizationId,
+      ),
+      select,
+      orderBy: [{ createdAt: "asc" }, { id: "asc" }],
+    }),
+    client.payrollPaymentBatch.findMany({
+      where: paymentBatchMissingSettlementLifecycleProofWhere(
+        input.organizationId,
+      ),
+      select,
+      orderBy: [{ createdAt: "asc" }, { id: "asc" }],
+    }),
+    client.payrollPaymentBatch.findMany({
+      where: paymentBatchMissingProviderReceiptProofWhere(input.organizationId),
+      select,
+      orderBy: [{ createdAt: "asc" }, { id: "asc" }],
+    }),
+    client.payrollPaymentBatch.findMany({
+      where: paymentBatchMissingSettlementReplayProofWhere(
+        input.organizationId,
+      ),
+      select,
+      orderBy: [{ createdAt: "asc" }, { id: "asc" }],
+    }),
+  ])) as unknown as [
+    PaymentBatchProofBackfillRow[],
+    PaymentBatchProofBackfillRow[],
+    PaymentBatchProofBackfillRow[],
+    PaymentBatchProofBackfillRow[],
+    PaymentBatchProofBackfillRow[],
+  ];
 
   const byBatch = new Map<
     string,
@@ -1472,17 +1785,26 @@ async function preparePaymentBatchProofBackfills(
       provider: PaymentBatchProofBackfillRow | null;
       settlementRegister: PaymentBatchProofBackfillRow | null;
       settlementLifecycle: PaymentBatchProofBackfillRow | null;
+      providerReceipt: PaymentBatchProofBackfillRow | null;
+      settlementReplay: PaymentBatchProofBackfillRow | null;
     }
   >();
   const addRows = (
     rows: PaymentBatchProofBackfillRow[],
-    key: "provider" | "settlementRegister" | "settlementLifecycle",
+    key:
+      | "provider"
+      | "settlementRegister"
+      | "settlementLifecycle"
+      | "providerReceipt"
+      | "settlementReplay",
   ) => {
     for (const row of rows) {
       const existing = byBatch.get(row.id) ?? {
         provider: null,
         settlementRegister: null,
         settlementLifecycle: null,
+        providerReceipt: null,
+        settlementReplay: null,
       };
       existing[key] = row;
       byBatch.set(row.id, existing);
@@ -1491,6 +1813,8 @@ async function preparePaymentBatchProofBackfills(
   addRows(providerRows, "provider");
   addRows(settlementRegisterRows, "settlementRegister");
   addRows(settlementLifecycleRows, "settlementLifecycle");
+  addRows(providerReceiptRows, "providerReceipt");
+  addRows(settlementReplayRows, "settlementReplay");
 
   const prepared: PreparedPaymentBatchProofBackfill[] = [];
   const blockerCodes = new Set<string>();
@@ -1499,13 +1823,21 @@ async function preparePaymentBatchProofBackfills(
     const batch =
       groupedRows.provider ??
       groupedRows.settlementRegister ??
-      groupedRows.settlementLifecycle;
+      groupedRows.settlementLifecycle ??
+      groupedRows.providerReceipt ??
+      groupedRows.settlementReplay;
     if (!batch) continue;
     const metadata = asRecord(batch.metadata);
     const existingProofBackfill = asRecord(metadata.proofBackfill);
     const coversProviderAdapterProof = Boolean(groupedRows.provider);
-    const coversSettlementRegisterProof = Boolean(groupedRows.settlementRegister);
-    const coversSettlementLifecycleProof = Boolean(groupedRows.settlementLifecycle);
+    const coversSettlementRegisterProof = Boolean(
+      groupedRows.settlementRegister,
+    );
+    const coversSettlementLifecycleProof = Boolean(
+      groupedRows.settlementLifecycle,
+    );
+    const coversProviderReceiptProof = Boolean(groupedRows.providerReceipt);
+    const coversSettlementReplayProof = Boolean(groupedRows.settlementReplay);
 
     let providerMetadata: Record<string, unknown> = {};
     let paymentAdapterProofHash = metadataString(
@@ -1528,7 +1860,9 @@ async function preparePaymentBatchProofBackfills(
         adapterChaosReleaseGateHash: execution.adapterChaosReleaseGateHash,
       });
       if (adapterMetadata.disbursementFileRequired && !batch.bankFileHash) {
-        blockerCodes.add("PAYROLL_PAYMENT_PROVIDER_BACKFILL_DISBURSEMENT_FILE_HASH_MISSING");
+        blockerCodes.add(
+          "PAYROLL_PAYMENT_PROVIDER_BACKFILL_DISBURSEMENT_FILE_HASH_MISSING",
+        );
         continue;
       }
       paymentAdapterProofHash = adapterMetadata.paymentAdapterProofHash;
@@ -1548,12 +1882,16 @@ async function preparePaymentBatchProofBackfills(
           adapterMetadata.paymentDisbursementFileHash,
         providerCredentialProofHash:
           adapterMetadata.providerCredentialProofHash,
-        providerPayloadMappingHash:
-          adapterMetadata.providerPayloadMappingHash,
+        providerCredentialRotationProofHash:
+          adapterMetadata.providerCredentialRotationProofHash,
+        providerCredentialScopeProofHash:
+          adapterMetadata.providerCredentialScopeProofHash,
+        providerPayloadMappingHash: adapterMetadata.providerPayloadMappingHash,
         providerResponseMappingHash:
           adapterMetadata.providerResponseMappingHash,
-        providerAdapterRequestHash:
-          adapterMetadata.providerAdapterRequestHash,
+        providerReversalMappingHash:
+          adapterMetadata.providerReversalMappingHash,
+        providerAdapterRequestHash: adapterMetadata.providerAdapterRequestHash,
         providerAdapterResponseHash:
           adapterMetadata.providerAdapterResponseHash,
         providerSettlementReceiptHash:
@@ -1562,13 +1900,26 @@ async function preparePaymentBatchProofBackfills(
           adapterMetadata.providerCertificationHarnessHash,
         providerIdempotencyKey: adapterMetadata.providerIdempotencyKey,
         providerAttempt: adapterMetadata.providerAttempt,
+        providerReplayFixtureHash: adapterMetadata.providerReplayFixtureHash,
+        providerDuplicateResponseFixtureHash:
+          adapterMetadata.providerDuplicateResponseFixtureHash,
+        providerOutageRunbookHash: adapterMetadata.providerOutageRunbookHash,
+        providerRetryPolicyFixtureHash:
+          adapterMetadata.providerRetryPolicyFixtureHash,
+        providerDeadLetterTriageRunbookHash:
+          adapterMetadata.providerDeadLetterTriageRunbookHash,
+        providerAuditTrailFixtureHash:
+          adapterMetadata.providerAuditTrailFixtureHash,
+        providerRedactionFixtureHash:
+          adapterMetadata.providerRedactionFixtureHash,
+        providerCloseImpactRuleHash:
+          adapterMetadata.providerCloseImpactRuleHash,
         providerSettlementProofRequired:
           adapterMetadata.providerSettlementProofRequired,
         productionPaymentAutomationSupported:
           adapterMetadata.productionPaymentAutomationSupported,
         disbursementFileRequired: adapterMetadata.disbursementFileRequired,
-        acceptedSettlementEvidence:
-          adapterMetadata.acceptedSettlementEvidence,
+        acceptedSettlementEvidence: adapterMetadata.acceptedSettlementEvidence,
         paymentAdapterRegistryDecision: adapterMetadata.registryDecision,
         paymentAdapterCertificationBlockers:
           adapterMetadata.certificationBlockers,
@@ -1591,7 +1942,9 @@ async function preparePaymentBatchProofBackfills(
       (coversSettlementRegisterProof || coversSettlementLifecycleProof) &&
       !settlementSourceRegisterHash
     ) {
-      blockerCodes.add("PAYROLL_PAYMENT_SETTLEMENT_BACKFILL_SOURCE_HASH_MISSING");
+      blockerCodes.add(
+        "PAYROLL_PAYMENT_SETTLEMENT_BACKFILL_SOURCE_HASH_MISSING",
+      );
       continue;
     }
     if (
@@ -1600,15 +1953,53 @@ async function preparePaymentBatchProofBackfills(
         !paymentProviderAdapterContractHash ||
         !paymentProviderAdapterKey)
     ) {
-      blockerCodes.add("PAYROLL_PAYMENT_SETTLEMENT_BACKFILL_PROVIDER_PROOF_MISSING");
+      blockerCodes.add(
+        "PAYROLL_PAYMENT_SETTLEMENT_BACKFILL_PROVIDER_PROOF_MISSING",
+      );
       continue;
     }
+
+    const providerReceiptProof = coversProviderReceiptProof
+      ? paymentProviderReceiptBackfillProof({
+          batch,
+          metadata: { ...metadata, ...providerMetadata },
+        })
+      : null;
+    if (coversProviderReceiptProof && !providerReceiptProof) {
+      blockerCodes.add(
+        "PAYROLL_PAYMENT_PROVIDER_RECEIPT_BACKFILL_EVIDENCE_MISSING",
+      );
+      continue;
+    }
+    const providerReceiptProofHash =
+      providerReceiptProof?.providerSettlementReceiptProofHash ??
+      metadataString(metadata, "latestSettlementProviderReceiptProofHash");
 
     const inputEvidenceHash =
       metadataString(metadata, "latestSettlementEvidenceHash") ??
       batch.evidenceHash ??
       batch.documentHash ??
       execution.dryRunEvidenceHash;
+    const settlementReplayProof = coversSettlementReplayProof
+      ? paymentSettlementReplayProof({
+          batch,
+          metadata: { ...metadata, ...providerMetadata },
+          providerReceiptProofHash,
+        })
+      : null;
+    if (
+      coversSettlementReplayProof &&
+      !settlementReplayProof?.paymentTransactionId
+    ) {
+      blockerCodes.add(
+        "PAYROLL_PAYMENT_SETTLEMENT_REPLAY_BACKFILL_TRANSACTION_MISSING",
+      );
+      continue;
+    }
+    const settlementReplayProofHash = settlementReplayProof
+      ? prefixedHash(settlementReplayProof)
+      : metadataString(metadata, "latestSettlementReplayProofHash");
+
     const settlementLifecycle = coversSettlementLifecycleProof
       ? resolvePayrollPaymentSettlementLifecycleContract({
           settlementStatus:
@@ -1631,15 +2022,43 @@ async function preparePaymentBatchProofBackfills(
       coversProviderAdapterProof,
       coversSettlementRegisterProof,
       coversSettlementLifecycleProof,
+      coversProviderReceiptProof,
+      coversSettlementReplayProof,
       paymentAdapterProofHash,
       settlementSourceRegisterHash,
       settlementLifecycleContractHash:
         settlementLifecycle?.providerSettlementLifecycleContractHash ?? null,
+      providerReceiptProofHash,
+      settlementReplayProofHash,
       metadata: safeJson({
         ...metadata,
         ...providerMetadata,
         ...(coversSettlementRegisterProof && settlementSourceRegisterHash
           ? { latestSettlementSourceRegisterHash: settlementSourceRegisterHash }
+          : {}),
+        ...(providerReceiptProof
+          ? {
+              providerSettlementReceiptProofHash:
+                providerReceiptProof.providerSettlementReceiptProofHash,
+              providerSettlementReceiptProofSource:
+                providerReceiptProof.providerSettlementReceiptProofSource,
+              providerSettlementReceiptProviderPayloadHash:
+                providerReceiptProof.providerSettlementReceiptProviderPayloadHash,
+              providerSettlementReceiptStatementLineHash:
+                providerReceiptProof.providerSettlementReceiptStatementLineHash,
+              providerSettlementReceiptStatementFileHash:
+                providerReceiptProof.providerSettlementReceiptStatementFileHash,
+              latestSettlementProviderReceiptProofHash:
+                providerReceiptProof.providerSettlementReceiptProofHash,
+              latestSettlementProviderReceiptProofSource:
+                providerReceiptProof.providerSettlementReceiptProofSource,
+              latestSettlementProviderReceiptProviderPayloadHash:
+                providerReceiptProof.providerSettlementReceiptProviderPayloadHash,
+              latestSettlementProviderReceiptStatementLineHash:
+                providerReceiptProof.providerSettlementReceiptStatementLineHash,
+              latestSettlementProviderReceiptStatementFileHash:
+                providerReceiptProof.providerSettlementReceiptStatementFileHash,
+            }
           : {}),
         ...(settlementLifecycle
           ? {
@@ -1655,6 +2074,12 @@ async function preparePaymentBatchProofBackfills(
                 settlementLifecycle.providerSettlementLifecycleContract,
             }
           : {}),
+        ...(settlementReplayProof && settlementReplayProofHash
+          ? {
+              latestSettlementReplayProofHash: settlementReplayProofHash,
+              latestSettlementReplayProof: settlementReplayProof,
+            }
+          : {}),
         proofBackfill: {
           ...existingProofBackfill,
           kind: "PAYROLL_PAYMENT_BATCH_PROOF_BACKFILL",
@@ -1663,11 +2088,19 @@ async function preparePaymentBatchProofBackfills(
             Boolean(existingProofBackfill.coversPaymentProviderAdapterProof) ||
             coversProviderAdapterProof,
           coversPaymentSettlementRegisterProof:
-            Boolean(existingProofBackfill.coversPaymentSettlementRegisterProof) ||
-            coversSettlementRegisterProof,
+            Boolean(
+              existingProofBackfill.coversPaymentSettlementRegisterProof,
+            ) || coversSettlementRegisterProof,
           coversPaymentSettlementLifecycleProof:
-            Boolean(existingProofBackfill.coversPaymentSettlementLifecycleProof) ||
-            coversSettlementLifecycleProof,
+            Boolean(
+              existingProofBackfill.coversPaymentSettlementLifecycleProof,
+            ) || coversSettlementLifecycleProof,
+          coversPaymentProviderReceiptProof:
+            Boolean(existingProofBackfill.coversPaymentProviderReceiptProof) ||
+            coversProviderReceiptProof,
+          coversPaymentSettlementReplayProof:
+            Boolean(existingProofBackfill.coversPaymentSettlementReplayProof) ||
+            coversSettlementReplayProof,
           source: "payroll-proof-backfill-executor",
           executedAt: execution.executedAt,
           ledgerKey: execution.ledgerKey,
@@ -1686,10 +2119,21 @@ async function preparePaymentBatchProofBackfills(
             metadata,
             "latestSettlementLifecycleContractHash",
           ),
+          previousProviderReceiptProofHash: metadataString(
+            metadata,
+            "latestSettlementProviderReceiptProofHash",
+          ),
+          previousSettlementReplayProofHash: metadataString(
+            metadata,
+            "latestSettlementReplayProofHash",
+          ),
           paymentAdapterProofHash,
           settlementSourceRegisterHash,
           settlementLifecycleContractHash:
-            settlementLifecycle?.providerSettlementLifecycleContractHash ?? null,
+            settlementLifecycle?.providerSettlementLifecycleContractHash ??
+            null,
+          providerReceiptProofHash,
+          settlementReplayProofHash,
         },
       }),
     });
@@ -1699,20 +2143,26 @@ async function preparePaymentBatchProofBackfills(
     providerGapCount: providerRows.length,
     settlementRegisterGapCount: settlementRegisterRows.length,
     settlementLifecycleGapCount: settlementLifecycleRows.length,
+    providerReceiptGapCount: providerReceiptRows.length,
+    settlementReplayGapCount: settlementReplayRows.length,
     prepared,
     blockerCodes: [...blockerCodes].sort(),
   };
 }
 
 async function executePaymentBatchProofBackfill(
-  preparedBackfills: Awaited<ReturnType<typeof preparePaymentBatchProofBackfills>>,
+  preparedBackfills: Awaited<
+    ReturnType<typeof preparePaymentBatchProofBackfills>
+  >,
   client: DbClient,
 ): Promise<PayrollProofBackfillExecutionResult[]> {
   const blockedResult = (
     target:
       | "PayrollPaymentBatchProviderAdapterProofBackfill"
       | "PayrollPaymentSettlementRegisterProofBackfill"
-      | "PayrollPaymentSettlementLifecycleProofBackfill",
+      | "PayrollPaymentSettlementLifecycleProofBackfill"
+      | "PayrollPaymentProviderReceiptProofBackfill"
+      | "PayrollPaymentSettlementReplayProofBackfill",
     attemptedCount: number,
     blockerCodes: string[],
   ): PayrollProofBackfillExecutionResult => ({
@@ -1749,6 +2199,20 @@ async function executePaymentBatchProofBackfill(
             preparedBackfills.blockerCodes,
           )
         : null,
+      preparedBackfills.providerReceiptGapCount > 0
+        ? blockedResult(
+            "PayrollPaymentProviderReceiptProofBackfill",
+            preparedBackfills.providerReceiptGapCount,
+            preparedBackfills.blockerCodes,
+          )
+        : null,
+      preparedBackfills.settlementReplayGapCount > 0
+        ? blockedResult(
+            "PayrollPaymentSettlementReplayProofBackfill",
+            preparedBackfills.settlementReplayGapCount,
+            preparedBackfills.blockerCodes,
+          )
+        : null,
     ].filter(Boolean) as PayrollProofBackfillExecutionResult[];
   }
 
@@ -1766,6 +2230,8 @@ async function executePaymentBatchProofBackfill(
           backfill.paymentAdapterProofHash,
           backfill.settlementSourceRegisterHash,
           backfill.settlementLifecycleContractHash,
+          backfill.providerReceiptProofHash,
+          backfill.settlementReplayProofHash,
         ].filter((hash): hash is string => Boolean(hash)),
       ),
     ),
@@ -1779,6 +2245,12 @@ async function executePaymentBatchProofBackfill(
   const settlementLifecycleUpdatedCount = preparedBackfills.prepared.filter(
     (backfill) => backfill.coversSettlementLifecycleProof,
   ).length;
+  const providerReceiptUpdatedCount = preparedBackfills.prepared.filter(
+    (backfill) => backfill.coversProviderReceiptProof,
+  ).length;
+  const settlementReplayUpdatedCount = preparedBackfills.prepared.filter(
+    (backfill) => backfill.coversSettlementReplayProof,
+  ).length;
 
   return [
     preparedBackfills.providerGapCount > 0
@@ -1787,7 +2259,8 @@ async function executePaymentBatchProofBackfill(
           target: "PayrollPaymentBatchProviderAdapterProofBackfill" as const,
           attemptedCount: preparedBackfills.providerGapCount,
           updatedCount: providerUpdatedCount,
-          skippedCount: preparedBackfills.providerGapCount - providerUpdatedCount,
+          skippedCount:
+            preparedBackfills.providerGapCount - providerUpdatedCount,
           metadataOnly: true,
           coverageHashes,
           blockerCodes: [],
@@ -1816,6 +2289,34 @@ async function executePaymentBatchProofBackfill(
           skippedCount:
             preparedBackfills.settlementLifecycleGapCount -
             settlementLifecycleUpdatedCount,
+          metadataOnly: true,
+          coverageHashes,
+          blockerCodes: [],
+        }
+      : null,
+    preparedBackfills.providerReceiptGapCount > 0
+      ? {
+          kind: "PAYROLL_PROOF_BACKFILL_EXECUTION_RESULT" as const,
+          target: "PayrollPaymentProviderReceiptProofBackfill" as const,
+          attemptedCount: preparedBackfills.providerReceiptGapCount,
+          updatedCount: providerReceiptUpdatedCount,
+          skippedCount:
+            preparedBackfills.providerReceiptGapCount -
+            providerReceiptUpdatedCount,
+          metadataOnly: true,
+          coverageHashes,
+          blockerCodes: [],
+        }
+      : null,
+    preparedBackfills.settlementReplayGapCount > 0
+      ? {
+          kind: "PAYROLL_PROOF_BACKFILL_EXECUTION_RESULT" as const,
+          target: "PayrollPaymentSettlementReplayProofBackfill" as const,
+          attemptedCount: preparedBackfills.settlementReplayGapCount,
+          updatedCount: settlementReplayUpdatedCount,
+          skippedCount:
+            preparedBackfills.settlementReplayGapCount -
+            settlementReplayUpdatedCount,
           metadataOnly: true,
           coverageHashes,
           blockerCodes: [],
@@ -1854,7 +2355,8 @@ async function executePayrollRunStatutoryCoverageBackfill(
     target: "PayrollRunStatutoryScenarioCoverageBackfill",
     attemptedCount: preparedBackfills.runCount,
     updatedCount: preparedBackfills.prepared.length,
-    skippedCount: preparedBackfills.runCount - preparedBackfills.prepared.length,
+    skippedCount:
+      preparedBackfills.runCount - preparedBackfills.prepared.length,
     metadataOnly: true,
     coverageHashes: [
       ...new Set(preparedBackfills.prepared.map((item) => item.coverageHash)),
@@ -1962,20 +2464,42 @@ function missingSignoffs(
 }
 
 function correctionIntents(
+  plan: PayrollSeedBackfillDryRunPlan,
   plannedJobs: PayrollDryRunPlannedWrite[],
   correlationId: string,
+  dryRunEvidenceHash: string,
 ): PayrollProofBackfillCorrectionIntent[] {
   return plannedJobs
     .filter((job) => job.count > 0)
-    .map((job) => ({
-      kind: "PAYROLL_PROOF_BACKFILL_CORRECTION_INTENT" as const,
-      target: job.target,
-      count: job.count,
-      idempotencyKey: job.idempotencyKey,
-      correlationId,
-      mutationAllowed: false as const,
-      reason: job.reason,
-    }));
+    .map((job) => {
+      const lineage = {
+        countryCode: plan.input.countryCode,
+        periodStart: plan.input.periodStart,
+        periodEnd: plan.input.periodEnd,
+        payDate: plan.input.payDate,
+        proofBackfillEvidenceRef: plan.proofBackfill.evidenceRef,
+        dryRunEvidenceHash,
+        target: job.target,
+        idempotencyKey: job.idempotencyKey,
+      };
+
+      return {
+        kind: "PAYROLL_PROOF_BACKFILL_CORRECTION_INTENT" as const,
+        target: job.target,
+        count: job.count,
+        idempotencyKey: job.idempotencyKey,
+        correlationId,
+        countryCode: plan.input.countryCode,
+        periodStart: plan.input.periodStart,
+        periodEnd: plan.input.periodEnd,
+        payDate: plan.input.payDate,
+        proofBackfillEvidenceRef: plan.proofBackfill.evidenceRef,
+        dryRunEvidenceHash,
+        periodLineageHash: hashPayload(lineage),
+        mutationAllowed: false as const,
+        reason: job.reason,
+      };
+    });
 }
 
 function zeroGapCounts(plan: PayrollSeedBackfillDryRunPlan) {
@@ -2125,13 +2649,18 @@ export async function preparePayrollProofBackfillExecution(
     generatedAt,
   }).slice(0, 32);
   const intents = correctionIntents(
+    plan,
     plan.proofBackfill.plannedJobs,
     correlationId,
+    dryRunEvidenceHash,
   );
 
   const unsupportedExecutionTargets = (
     Object.entries(plan.proofBackfill.gapCounts) as Array<
-      [keyof PayrollSeedBackfillDryRunPlan["proofBackfill"]["gapCounts"], number]
+      [
+        keyof PayrollSeedBackfillDryRunPlan["proofBackfill"]["gapCounts"],
+        number,
+      ]
     >
   )
     .filter(
@@ -2144,6 +2673,8 @@ export async function preparePayrollProofBackfillExecution(
           "paymentBatchMissingProviderAdapterProof",
           "paymentBatchMissingSettlementRegisterProof",
           "paymentBatchMissingSettlementLifecycleProof",
+          "paymentBatchMissingProviderReceiptProof",
+          "paymentBatchMissingSettlementReplayProof",
         ].includes(key) && count > 0,
     )
     .map(
@@ -2162,8 +2693,10 @@ export async function preparePayrollProofBackfillExecution(
 
   const declarationProofGapCount =
     plan.proofBackfill.gapCounts.declarationEvidenceMissingSourceRegisterHash +
-    plan.proofBackfill.gapCounts.declarationEvidenceMissingAuthorityAdapterProof +
-    plan.proofBackfill.gapCounts.declarationEvidenceMissingAuthorityLifecycleProof;
+    plan.proofBackfill.gapCounts
+      .declarationEvidenceMissingAuthorityAdapterProof +
+    plan.proofBackfill.gapCounts
+      .declarationEvidenceMissingAuthorityLifecycleProof;
 
   executionBlockers.push(
     ...declarationRegisterBackfillPreflightBlockers(
@@ -2175,7 +2708,9 @@ export async function preparePayrollProofBackfillExecution(
   const paymentProofGapCount =
     plan.proofBackfill.gapCounts.paymentBatchMissingProviderAdapterProof +
     plan.proofBackfill.gapCounts.paymentBatchMissingSettlementRegisterProof +
-    plan.proofBackfill.gapCounts.paymentBatchMissingSettlementLifecycleProof;
+    plan.proofBackfill.gapCounts.paymentBatchMissingSettlementLifecycleProof +
+    plan.proofBackfill.gapCounts.paymentBatchMissingProviderReceiptProof +
+    plan.proofBackfill.gapCounts.paymentBatchMissingSettlementReplayProof;
 
   executionBlockers.push(
     ...paymentBackfillPreflightBlockers(input, paymentProofGapCount),
@@ -2192,7 +2727,6 @@ export async function preparePayrollProofBackfillExecution(
     unsupportedExecutionTargets.length === 0 &&
     executionBlockers.length === 0 &&
     executableProofBackfillGapCount > 0
-
   ) {
     let preparedStatutoryBackfills: Awaited<
       ReturnType<typeof preparePayrollRunStatutoryCoverageBackfills>
@@ -2208,19 +2742,21 @@ export async function preparePayrollProofBackfillExecution(
     > | null = null;
 
     if (
-      plan.proofBackfill.gapCounts.payrollRunMissingStatutoryScenarioCoverage > 0
+      plan.proofBackfill.gapCounts.payrollRunMissingStatutoryScenarioCoverage >
+      0
     ) {
-      preparedStatutoryBackfills = await preparePayrollRunStatutoryCoverageBackfills(
-        input,
-        {
-          ledgerKey,
-          dryRunEvidenceHash,
-          approvalBundleHash,
-          adapterChaosReleaseGateHash,
-          executedAt: generatedAt,
-        },
-        client,
-      );
+      preparedStatutoryBackfills =
+        await preparePayrollRunStatutoryCoverageBackfills(
+          input,
+          {
+            ledgerKey,
+            dryRunEvidenceHash,
+            approvalBundleHash,
+            adapterChaosReleaseGateHash,
+            executedAt: generatedAt,
+          },
+          client,
+        );
       const expectedCount =
         plan.proofBackfill.gapCounts.payrollRunMissingStatutoryScenarioCoverage;
 
@@ -2233,21 +2769,24 @@ export async function preparePayrollProofBackfillExecution(
     }
 
     if (
-      plan.proofBackfill.gapCounts.declarationEvidenceMissingSourceRegisterHash > 0
+      plan.proofBackfill.gapCounts
+        .declarationEvidenceMissingSourceRegisterHash > 0
     ) {
-      preparedDeclarationBackfills = await prepareDeclarationRegisterProofBackfills(
-        input,
-        {
-          ledgerKey,
-          dryRunEvidenceHash,
-          approvalBundleHash,
-          adapterChaosReleaseGateHash,
-          executedAt: generatedAt,
-        },
-        client,
-      );
+      preparedDeclarationBackfills =
+        await prepareDeclarationRegisterProofBackfills(
+          input,
+          {
+            ledgerKey,
+            dryRunEvidenceHash,
+            approvalBundleHash,
+            adapterChaosReleaseGateHash,
+            executedAt: generatedAt,
+          },
+          client,
+        );
       const expectedCount =
-        plan.proofBackfill.gapCounts.declarationEvidenceMissingSourceRegisterHash;
+        plan.proofBackfill.gapCounts
+          .declarationEvidenceMissingSourceRegisterHash;
 
       if (preparedDeclarationBackfills.evidenceGapCount !== expectedCount) {
         executionBlockers.push(
@@ -2258,24 +2797,28 @@ export async function preparePayrollProofBackfillExecution(
     }
 
     if (
-      plan.proofBackfill.gapCounts.declarationEvidenceMissingAuthorityAdapterProof > 0 ||
-      plan.proofBackfill.gapCounts.declarationEvidenceMissingAuthorityLifecycleProof > 0
+      plan.proofBackfill.gapCounts
+        .declarationEvidenceMissingAuthorityAdapterProof > 0 ||
+      plan.proofBackfill.gapCounts
+        .declarationEvidenceMissingAuthorityLifecycleProof > 0
     ) {
-      preparedDeclarationAuthorityBackfills = await prepareDeclarationAuthorityProofBackfills(
-        input,
-        {
-          ledgerKey,
-          dryRunEvidenceHash,
-          approvalBundleHash,
-          adapterChaosReleaseGateHash,
-          executedAt: generatedAt,
-        },
-        client,
-      );
+      preparedDeclarationAuthorityBackfills =
+        await prepareDeclarationAuthorityProofBackfills(
+          input,
+          {
+            ledgerKey,
+            dryRunEvidenceHash,
+            approvalBundleHash,
+            adapterChaosReleaseGateHash,
+            executedAt: generatedAt,
+          },
+          client,
+        );
 
       if (
         preparedDeclarationAuthorityBackfills.adapterEvidenceGapCount !==
-        plan.proofBackfill.gapCounts.declarationEvidenceMissingAuthorityAdapterProof
+        plan.proofBackfill.gapCounts
+          .declarationEvidenceMissingAuthorityAdapterProof
       ) {
         executionBlockers.push(
           "PAYROLL_DECLARATION_AUTHORITY_ADAPTER_BACKFILL_COUNT_MISMATCH",
@@ -2283,7 +2826,8 @@ export async function preparePayrollProofBackfillExecution(
       }
       if (
         preparedDeclarationAuthorityBackfills.lifecycleEvidenceGapCount !==
-        plan.proofBackfill.gapCounts.declarationEvidenceMissingAuthorityLifecycleProof
+        plan.proofBackfill.gapCounts
+          .declarationEvidenceMissingAuthorityLifecycleProof
       ) {
         executionBlockers.push(
           "PAYROLL_DECLARATION_AUTHORITY_LIFECYCLE_BACKFILL_COUNT_MISMATCH",
@@ -2330,6 +2874,22 @@ export async function preparePayrollProofBackfillExecution(
           "PAYROLL_PAYMENT_SETTLEMENT_LIFECYCLE_BACKFILL_COUNT_MISMATCH",
         );
       }
+      if (
+        preparedPaymentBackfills.providerReceiptGapCount !==
+        plan.proofBackfill.gapCounts.paymentBatchMissingProviderReceiptProof
+      ) {
+        executionBlockers.push(
+          "PAYROLL_PAYMENT_PROVIDER_RECEIPT_BACKFILL_COUNT_MISMATCH",
+        );
+      }
+      if (
+        preparedPaymentBackfills.settlementReplayGapCount !==
+        plan.proofBackfill.gapCounts.paymentBatchMissingSettlementReplayProof
+      ) {
+        executionBlockers.push(
+          "PAYROLL_PAYMENT_SETTLEMENT_REPLAY_BACKFILL_COUNT_MISMATCH",
+        );
+      }
       executionBlockers.push(...preparedPaymentBackfills.blockerCodes);
     }
     if (executionBlockers.length === 0) {
@@ -2369,8 +2929,10 @@ export async function preparePayrollProofBackfillExecution(
       }
       executionEnabled = executedBackfills.length > 0;
       mutationAttempted = executedBackfills.length > 0;
-      idempotencyLedgerStatus = executedBackfills.length > 0 ? "written" : "planned-not-written";
-      executionStatus = executedBackfills.length > 0 ? "EXECUTION_COMPLETED" : null;
+      idempotencyLedgerStatus =
+        executedBackfills.length > 0 ? "written" : "planned-not-written";
+      executionStatus =
+        executedBackfills.length > 0 ? "EXECUTION_COMPLETED" : null;
     }
   }
 
@@ -2386,8 +2948,7 @@ export async function preparePayrollProofBackfillExecution(
   const certificateWithoutHash = {
     kind: "AQSTOQFLOW_PAYROLL_PROOF_BACKFILL_EXECUTION_CERTIFICATE" as const,
     version: 1 as const,
-    status:
-      executionStatus ?? statusFor({ plan, missingSignoffs: missing }),
+    status: executionStatus ?? statusFor({ plan, missingSignoffs: missing }),
     executionMode,
     executionEnabled,
     mutationAttempted,

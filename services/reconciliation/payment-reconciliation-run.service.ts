@@ -383,14 +383,31 @@ export async function runPaymentReconciliation(
 
         const externalAmount = event?.amount ?? line?.amount
         const externalCurrency = event?.currencyCode ?? line?.currencyCode ?? transaction.currencyCode
+        const mismatchReasons = [
+          event?.amount !== null && event?.amount !== undefined && !sameAmount(transaction.amount, event.amount)
+            ? "PROVIDER_EVENT_AMOUNT"
+            : null,
+          line && !sameAmount(transaction.amount, line.amount)
+            ? "STATEMENT_LINE_AMOUNT"
+            : null,
+          event && event.currencyCode !== transaction.currencyCode
+            ? "PROVIDER_EVENT_CURRENCY"
+            : null,
+          line && line.currencyCode !== transaction.currencyCode
+            ? "STATEMENT_LINE_CURRENCY"
+            : null,
+          event && (event.amount === null || event.amount === undefined) && !line
+            ? "PROVIDER_EVENT_AMOUNT_MISSING"
+            : null,
+        ].filter((reason): reason is string => reason !== null)
 
-        if (event && event.amount && !sameAmount(transaction.amount, event.amount)) {
+        if (mismatchReasons.length > 0) {
           const suspense = await createExceptionAndSuspense(tx, {
             organizationId: input.organizationId,
             providerAccountId: providerAccount.id,
             reconciliationRunId: run.id,
             paymentTransactionId: transaction.id,
-            providerEventId: event.id,
+            providerEventId: event?.id,
             statementLineId: line?.id,
             type: PaymentExceptionType.AMOUNT_MISMATCH,
             severity: ExceptionSeverity.HIGH,
@@ -399,8 +416,18 @@ export async function runPaymentReconciliation(
             direction: transaction.direction,
             evidence: {
               transactionAmount: money(transaction.amount).toFixed(2),
-              providerAmount: money(event.amount).toFixed(2),
-              rule: "AMOUNT_MISMATCH",
+              transactionCurrency: transaction.currencyCode,
+              providerAmount: event?.amount === null || event?.amount === undefined
+                ? null
+                : money(event.amount).toFixed(2),
+              providerCurrency: event?.currencyCode ?? null,
+              statementAmount: line ? money(line.amount).toFixed(2) : null,
+              statementCurrency: line?.currencyCode ?? null,
+              mismatchSource: mismatchReasons.includes("PROVIDER_EVENT_AMOUNT")
+                ? "PROVIDER_EVENT"
+                : mismatchReasons.includes("STATEMENT_LINE_AMOUNT") ? "STATEMENT_LINE" : null,
+              mismatchReasons,
+              rule: "EXTERNAL_EVIDENCE_MISMATCH",
             },
             correlationId,
             now,
@@ -408,7 +435,7 @@ export async function runPaymentReconciliation(
           exceptionCount += 1
           suspenseCount += 1
           suspenseAmount = suspenseAmount.plus(transaction.amount)
-          matchedEventIds.add(event.id)
+          if (event) matchedEventIds.add(event.id)
           if (line) matchedLineIds.add(line.id)
           matchedTransactionIds.add(transaction.id)
           continue
@@ -438,6 +465,25 @@ export async function runPaymentReconciliation(
               },
             },
           })
+
+          if (event) {
+            await tx.providerEvent.update({
+              where: { id: event.id },
+              data: {
+                status: ProviderEventStatus.PROCESSED,
+                processedAt: now,
+              },
+            })
+          }
+
+          if (line) {
+            await tx.statementLine.update({
+              where: { id: line.id },
+              data: {
+                status: StatementLineStatus.MATCHED,
+              },
+            })
+          }
 
           matchCount += 1
           matchedTransactionIds.add(transaction.id)

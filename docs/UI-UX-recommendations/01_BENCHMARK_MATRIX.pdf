@@ -1,0 +1,124 @@
+%PDF-1.4
+1 0 obj
+<< /Length 6117 >>
+stream
+BT
+/F1 11 Tf
+1 0 0 1 50 0 Tm
+50 770 Td
+0 -14 Td
+14 TL
+(Side-by-side benchmark matrix \(Stoquify vs top platforms\)) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Benchmark set used: SAP S/4HANA Fiori, Oracle NetSuite, Microsoft Dynamics 365, QuickBooks Online, Zoho One, Odoo.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Method:) Tj
+0 -14 Td
+(- Stoquify: local repository behavior evidence \(shell, sidebar, command, overlays, token usage, routes\).) Tj
+0 -14 Td
+(- Benchmark: published platform UX guidance + vendor help patterns.) Tj
+0 -14 Td
+(- Confidence scoring:) Tj
+0 -14 Td
+(- High = official docs + clear pattern alignment.) Tj
+0 -14 Td
+(- Medium = official docs + implementation inference from multiple product docs.) Tj
+0 -14 Td
+(- Low = secondary inference.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Surface comparison) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(| Surface family | Stoquify current | SAP Fiori | Oracle NetSuite | Dynamics 365 | QuickBooks O | Zoho/Odoo | Confidence | Priority |) Tj
+0 -14 Td
+(| --- | --- | --- | --- | --- | --- | --- | --- | --- |) Tj
+0 -14 Td
+(| **Enterprise IA + shell navigation** | Good role-aware module list and mobile shell; naming and grouping can drift by domain | Highly role-aware shell with workspace/workbench model and standardized navigation | Role + permission-aware module segmentation with clear role controls | Workspace + App hub + role-aware tiles/menus | Simpler SaaS navigation, less enterprise workspace layering | Menu + menu groups by role/module with configurable views | Medium | P1 |) Tj
+0 -14 Td
+(| **Command palette / global search** | Present in portions but command semantics differ by surface | Fiori patterns emphasize fast discoverability and predictable actions | NetSuite favors global + contextual commands via suite tools and search | Unified command-like quick actions through command interfaces and contextual bar patterns | Basic global search, less command-driven orchestration | Good global search; command depth varies by module | Medium-High | P1 |) Tj
+0 -14 Td
+(| **Dialogs, drawers, modals** | Reused primitives exist, but size/keyboard semantics and confirmation style vary | Consistent, accessible shell patterns with documented accessibility behavior | Strong role-driven workflow patterns and consistent overlays | Mature enterprise modal/dialog conventions with predictable task flow | Functionally sufficient; less enterprise-grade consistency than top-tier ERPs | Mixed quality across modules | Medium-High | P2 |) Tj
+0 -14 Td
+(| **State model \(empty/loading/error\)** | Coverage exists across modules, but microcopy and recovery flow inconsistent | Strong patterns for guided empty states and clear recovery actions | Better enterprise consistency in guided recovery for action blockers | Standardized progress/empty/error messaging in core areas | Practical baseline, more support-focused than enterprise orchestration | Variable by module | High | P1 |) Tj
+0 -14 Td
+(| **Accessibility baseline \(WCAG\)** | Partial implementation; need explicit focus and keyboard contracts across all shell actions | Explicitly documented accessibility practices for enterprise usage | Strong enterprise documentation for keyboard/roles in mature modules | Accessibility integrated via Microsoft ecosystem controls | Baseline present; enterprise depth is uneven | Varies by app and community edition | Medium | P1 |) Tj
+0 -14 Td
+(| **Localization + copy governance** | Locale framework exists, but cross-module lexical consistency gaps | Structured global language governance; standardized terminology | Localization and terminology alignment by module family | Large enterprise localization + terminology governance | Bilingual support with functional translation coverage | Mature but varied depending on deployment size | Medium | P2 |) Tj
+0 -14 Td
+(| **High-frequency workflows** | Workflow primitives exist; some long forms and confirmation journeys still inconsistent | Optimized enterprise tasks into modular action chains and role-aware steps | Strong process orchestration and guided task modules in mature areas | Consistent task orchestration in core ERP flows | Good for SMB tasks; less deeply configurable than enterprise | Good where workflows are standardized | High | P1 |) Tj
+0 -14 Td
+(| **Performance/operability signal** | Good performance for main surfaces; visual effects can increase render cost on older endpoints | Strong enterprise performance baseline and predictable shell patterns | Enterprise control over UI performance and caching in high complexity environments | Mature performance telemetry + telemetry hooks | Moderate | Medium-High | P2 |) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Evidence annotations \(non-exhaustive\)) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(- Stoquify: layout/shell files and token system show both strong reuse and module drift.) Tj
+0 -14 Td
+(- SAP/Dynamics references indicate role-aware shells, consistent shell controls, and standardized enterprise navigation.) Tj
+0 -14 Td
+(- NetSuite and QuickBooks references were reviewed for role controls, dashboard/permission behavior, and user workflows.) Tj
+0 -14 Td
+(- Zoho/Odoo references show configurable module/role access and customizable navigation/permissions as enterprise baselines.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Competitive gap interpretation) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(- Stoquify is closer to enterprise baseline on **navigation governance** than low-touch SMB UIs.) Tj
+0 -14 Td
+(- Stoquify is behind benchmark on **keyboard-level command determinism** and **cross-surface state semantics**.) Tj
+0 -14 Td
+(- Largest upside is in **normalizing action semantics and enterprise micro-interactions**, not inventing entirely new UI primitives.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Confidence and risk notes) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(- High-confidence opportunities: unify command/popup state contracts; standardize destructive-action confirmation; stabilize mobile shell behavior.) Tj
+0 -14 Td
+(- Medium-confidence opportunities: full navigation IA modernization and breadcrumbing because internal module-level IA metadata may vary by module owner and country pack behavior.) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+ET
+endstream
+endobj
+2 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 4 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 2 0 R >> >> /Contents 2 0 R >>
+endobj
+4 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+5 0 obj
+<< /Type /Catalog /Pages 4 0 R >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000006177 00000 n 
+0000006247 00000 n 
+0000006373 00000 n 
+0000006430 00000 n 
+trailer
+<< /Size 6 /Root 5 0 R >>
+startxref
+6479
+%%EOF

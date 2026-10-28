@@ -10,6 +10,7 @@ import getOrgUnits from "@/actions/units/getOrgUnits"
 import { TableLoading } from "@/components/ui/data-table"
 import ItemManagement from "@/components/ui/groups/inventory/ItemManagement"
 import { getAuthenticatedUser } from "@/config/useAuth"
+import { pickLocale } from "@/i18n/routing"
 import { getTranslations } from "next-intl/server"
 import { Suspense } from "react"
 
@@ -28,6 +29,7 @@ export default async function ItemsPage({
     params,
     surface,
     onAllowed: async () => {
+      const locale = pickLocale((await params).locale)
       const t = await getTranslations()
       const user = await getAuthenticatedUser()
       const userOrg = user?.organizationId
@@ -66,6 +68,7 @@ export default async function ItemsPage({
               initialBrandData={initialBrandData as never}
               initialUnitData={initialUnitData as never}
               initialTaxRateData={initialTaxRateData as never}
+              locale={locale}
             />
           </Suspense>
         </div>

@@ -1,7 +1,7 @@
 import argon2 from "argon2";
 import { faker } from "@faker-js/faker";
 import { existsSync } from "fs";
-import { mkdir, writeFile } from "fs/promises";
+import { mkdir, readFile, writeFile } from "fs/promises";
 import path from "path";
 import sharp from "sharp";
 import {
@@ -441,10 +441,15 @@ async function ensureSeedImages() {
     ),
   };
 
-  await writeFile(
-    path.join(SEED_IMAGE_DIR, "manifest.json"),
-    `${JSON.stringify(manifest, null, 2)}\n`,
-  );
+  const manifestPath = path.join(SEED_IMAGE_DIR, "manifest.json");
+  const serializedManifest = `${JSON.stringify(manifest, null, 2)}\n`;
+  const existingManifest = existsSync(manifestPath)
+    ? await readFile(manifestPath, "utf8")
+    : null;
+
+  if (existingManifest !== serializedManifest) {
+    await writeFile(manifestPath, serializedManifest);
+  }
 }
 
 function verifySeedImageFiles() {
@@ -1182,6 +1187,30 @@ async function seedAccountingControlPlane() {
       isControlAccount: true,
     },
     {
+      id: id("chart_account", 15),
+      code: "4081",
+      nameEn: "Goods received not invoiced",
+      nameFr: "Fournisseurs, factures non parvenues",
+      type: ChartAccountType.LIABILITY,
+      normalBalance: ChartAccountNormalBalance.CREDIT,
+      mappingKey: "GRNI",
+      syscohadaClass: "4",
+      syscohadaReference: "4081",
+      isControlAccount: true,
+    },
+    {
+      id: id("chart_account", 16),
+      code: "4098",
+      nameEn: "Supplier return claims",
+      nameFr: "Fournisseurs, avoirs a recevoir",
+      type: ChartAccountType.ASSET,
+      normalBalance: ChartAccountNormalBalance.DEBIT,
+      mappingKey: "SUPPLIER_RETURN_CLAIM",
+      syscohadaClass: "4",
+      syscohadaReference: "4098",
+      isControlAccount: true,
+    },
+    {
       id: id("chart_account", 9),
       code: "31",
       nameEn: "Inventory",
@@ -1700,6 +1729,20 @@ async function seedBrands() {
 }
 
 async function seedItemsAndInventory() {
+  const activeLocations = await prisma.location.findMany({
+    where: {
+      organizationId: orgId(),
+      isActive: true,
+      deletedAt: null,
+    },
+    orderBy: [{ isDefault: "desc" }, { id: "asc" }],
+    select: { id: true },
+  });
+
+  if (activeLocations.length === 0) {
+    throw new Error(`Cannot seed inventory without an active location for ${orgId()}.`);
+  }
+
   await prisma.item.createMany({
     data: PRODUCT_DEFINITIONS.map((product, offset) => {
       const index = offset + 1;
@@ -1749,53 +1792,34 @@ async function seedItemsAndInventory() {
   });
 
   await prisma.inventoryLevel.createMany({
-    data: [
-      ...PRODUCT_DEFINITIONS.map((product, offset) => {
-        const index = offset + 1;
-        const quantityOnHand = qty(80 + index * 5);
-        const reserved = qty(index % 3);
-        const averageCost = money(product.cost);
+    data: PRODUCT_DEFINITIONS.flatMap((product, productOffset) => {
+      const itemIndex = productOffset + 1;
+      const averageCost = money(product.cost);
+
+      return activeLocations.map((location, locationOffset) => {
+        const locationIndex = locationOffset + 1;
+        const quantityOnHand = qty(80 + itemIndex * 5 + locationIndex * 2);
+        const reserved = qty((itemIndex + locationIndex) % 3);
+
         return {
-          id: id("inventory_level", index),
-          itemId: id("item", index),
-          locationId: id("location", 1),
+          id: `${id("inventory_level", itemIndex)}_${pad(locationIndex)}`,
+          itemId: id("item", itemIndex),
+          locationId: location.id,
           quantityOnHand,
           quantityReserved: reserved,
           quantityAvailable: qty(quantityOnHand - reserved),
-          quantityInTransit: qty(index % 4),
-          quantityOnOrder: qty(20 + index),
+          quantityInTransit: qty((itemIndex + locationIndex) % 4),
+          quantityOnOrder: qty(20 + itemIndex + locationIndex),
           reorderPoint: qty(20),
           averageCost,
           totalValue: money(quantityOnHand * averageCost),
-          version: index,
-          lastCountDate: day(index),
-          lastTransactionAt: day(index),
-          updatedAt: day(index),
-        };
-      }),
-      ...PRODUCT_DEFINITIONS.slice(1).map((product, offset) => {
-        const index = offset + 2;
-        const quantityOnHand = qty(12 + index);
-        const averageCost = money(product.cost);
-        return {
-          id: id("inventory_level_branch", index),
-          itemId: id("item", index),
-          locationId: id("location", index),
-          quantityOnHand,
-          quantityReserved: qty(0),
-          quantityAvailable: quantityOnHand,
-          quantityInTransit: qty(0),
-          quantityOnOrder: qty(10),
-          reorderPoint: qty(8),
-          averageCost,
-          totalValue: money(quantityOnHand * averageCost),
           version: 1,
-          lastCountDate: day(index),
-          lastTransactionAt: day(index),
-          updatedAt: day(index),
+          lastCountDate: day(itemIndex),
+          lastTransactionAt: day(itemIndex),
+          updatedAt: day(itemIndex),
         };
-      }),
-    ],
+      });
+    }),
   });
 
   await prisma.itemSupplier.createMany({
@@ -1852,20 +1876,16 @@ async function seedPointOfSale() {
 
   await prisma.cashDrawer.createMany({
     data: seedIndexes.map((index) => {
-      const isActive = index === 1;
-      const openingBalance = money(20_000 + index * 500);
-      const expectedBalance = isActive
-        ? openingBalance
-        : money(22_100 + index * 550);
+      const expectedBalance = money(22_100 + index * 550);
       const closingBalance = money(22_000 + index * 550);
 
       return {
         id: id("cash_drawer", index),
         name: `Seed Cash Drawer ${pad(index)}`,
         drawerNumber: orgScopedNumber("DRAWER", index),
-        currentBalance: isActive ? expectedBalance : closingBalance,
+        currentBalance: closingBalance,
         expectedBalance,
-        isOpen: isActive,
+        isOpen: false,
         locationId: id("location", index),
         terminalId: id("pos_station", index),
         updatedAt: day(index),
@@ -1875,49 +1895,39 @@ async function seedPointOfSale() {
 
   await prisma.pOSSession.createMany({
     data: seedIndexes.map((index) => {
-      const isActive = index === 1;
       const openingBalance = money(20_000 + index * 500);
-      const expectedBalance = isActive
-        ? openingBalance
-        : money(22_100 + index * 550);
+      const expectedBalance = money(22_100 + index * 550);
       const closingBalance = money(22_000 + index * 550);
 
       return {
         id: id("pos_session", index),
         sessionNumber: orgScopedNumber("POS-SESSION", index),
-        status: isActive
-          ? POSSessionStatus.ACTIVE
-          : index % 2 === 0
-            ? POSSessionStatus.CLOSED
-            : POSSessionStatus.RECONCILED,
+        status: index % 2 === 0
+          ? POSSessionStatus.CLOSED
+          : POSSessionStatus.RECONCILED,
         startTime: day(index),
-        endTime: isActive ? null : day(index + 1),
+        endTime: day(index + 1),
         terminalId: id("pos_station", index),
         locationId: id("location", index),
-        userId: isActive ? id("user", 6) : id("user", index),
+        userId: id("user", index),
         openingBalance,
-        closingBalance: isActive ? null : closingBalance,
+        closingBalance,
         expectedBalance,
-        variance: isActive ? null : money(closingBalance - expectedBalance),
-        totalSales: isActive ? money(0) : money(100_000 + index * 2_500),
-        totalTax: isActive ? money(0) : money(19_250 + index * 450),
-        totalDiscount: isActive ? money(0) : money(index * 125),
-        transactionCount: isActive ? 0 : 4 + index,
-        cashTotal: isActive ? money(0) : money(40_000 + index * 1_000),
-        cardTotal: isActive ? money(0) : money(30_000 + index * 800),
-        mobileMoneyTotal: isActive ? money(0) : money(20_000 + index * 500),
-        bankTransferTotal: isActive ? money(0) : money(5_000 + index * 250),
-        creditTotal: isActive ? money(0) : money(2_000 + index * 100),
+        variance: money(closingBalance - expectedBalance),
+        totalSales: money(100_000 + index * 2_500),
+        totalTax: money(19_250 + index * 450),
+        totalDiscount: money(index * 125),
+        transactionCount: 4 + index,
+        cashTotal: money(40_000 + index * 1_000),
+        cardTotal: money(30_000 + index * 800),
+        mobileMoneyTotal: money(20_000 + index * 500),
+        bankTransferTotal: money(5_000 + index * 250),
+        creditTotal: money(2_000 + index * 100),
         organizationId: orgId(),
         notes: `POS session ${pad(index)}`,
         updatedAt: day(index),
       };
     }),
-  });
-
-  await prisma.pOSStation.update({
-    where: { id: id("pos_station", 1) },
-    data: { currentSessionId: id("pos_session", 1) },
   });
 }
 
@@ -2460,7 +2470,7 @@ async function seedReportingAndCash() {
           notes: `Cash drawer transaction ${pad(index)}`,
           cashDrawerId: id("cash_drawer", index),
           sessionId: id("pos_session", index),
-          userId: id("user", 6),
+          userId: id("user", 1),
           balanceBefore: money(0),
           balanceAfter: openingBalance,
           createdAt: day(index),
@@ -2769,10 +2779,12 @@ export type SeedQualitySummary = {
   organizations: Array<{
     organizationId: string;
     defaultLocationId: string;
+    locationCount: number;
     categoryCount: number;
     unitCount: number;
     activeItemCount: number;
     posReadyItemCount: number;
+    minimumPosReadyItemCount: number;
   }>;
 };
 
@@ -2781,20 +2793,23 @@ async function verifySemanticSeedQuality(): Promise<SeedQualitySummary> {
   const organizations: SeedQualitySummary["organizations"] = [];
 
   for (const context of orgContexts) {
-    const defaultLocations = await prisma.location.findMany({
+    const activeLocations = await prisma.location.findMany({
       where: {
         organizationId: context.organizationId,
-        isDefault: true,
         isActive: true,
+        deletedAt: null,
       },
-      select: { id: true },
+      orderBy: [{ isDefault: "desc" }, { id: "asc" }],
+      select: { id: true, isDefault: true },
     });
+    const defaultLocations = activeLocations.filter((location) => location.isDefault);
     if (defaultLocations.length !== 1) {
       throw new Error(
         `Seed semantic audit failed: ${context.organizationId} must have exactly one active default location; found ${defaultLocations.length}.`,
       );
     }
     const defaultLocation = defaultLocations[0];
+    const activeLocationIds = activeLocations.map((location) => location.id);
 
     const [categories, units, items, terminal] = await Promise.all([
       prisma.category.findMany({
@@ -2831,9 +2846,8 @@ async function verifySemanticSeedQuality(): Promise<SeedQualitySummary> {
           unitId: true,
           taxRateId: true,
           inventoryLevels: {
-            where: { locationId: defaultLocation.id },
-            select: { quantityAvailable: true },
-            take: 1,
+            where: { locationId: { in: activeLocationIds } },
+            select: { locationId: true, quantityAvailable: true },
           },
         },
       }),
@@ -2863,28 +2877,37 @@ async function verifySemanticSeedQuality(): Promise<SeedQualitySummary> {
         !item.barcode ||
         Number(item.sellingPrice) <= 0,
     );
-    const posReadyItems = items.filter(
-      (item) => Number(item.inventoryLevels[0]?.quantityAvailable ?? 0) >= 20,
-    );
+    const posReadyByLocation = new Map(activeLocationIds.map((locationId) => [locationId, 0]));
+    for (const item of items) {
+      for (const level of item.inventoryLevels) {
+        if (Number(level.quantityAvailable) >= 20) {
+          posReadyByLocation.set(level.locationId, (posReadyByLocation.get(level.locationId) ?? 0) + 1);
+        }
+      }
+    }
+    const posReadyItemCount = posReadyByLocation.get(defaultLocation.id) ?? 0;
+    const minimumPosReadyItemCount = Math.min(...posReadyByLocation.values());
 
     if (unusedCategories.length || unusedUnits.length || invalidLabels.length || incompleteItems.length) {
       throw new Error(
         `Seed semantic audit failed for ${context.organizationId}: unusedCategories=${unusedCategories.length}, unusedUnits=${unusedUnits.length}, invalidLabels=${invalidLabels.length}, incompleteItems=${incompleteItems.length}.`,
       );
     }
-    if (!terminal || posReadyItems.length < 10) {
+    if (!terminal || minimumPosReadyItemCount < 10) {
       throw new Error(
-        `POS seed readiness failed for ${context.organizationId}: terminal=${Boolean(terminal)}, posReadyItems=${posReadyItems.length}/10.`,
+        `POS seed readiness failed for ${context.organizationId}: terminal=${Boolean(terminal)}, locations=${activeLocations.length}, minimumPosReadyItems=${minimumPosReadyItemCount}/10.`,
       );
     }
 
     organizations.push({
       organizationId: context.organizationId,
       defaultLocationId: defaultLocation.id,
+      locationCount: activeLocations.length,
       categoryCount: categories.length,
       unitCount: units.length,
       activeItemCount: items.length,
-      posReadyItemCount: posReadyItems.length,
+      posReadyItemCount,
+      minimumPosReadyItemCount,
     });
   }
 

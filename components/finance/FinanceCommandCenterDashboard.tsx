@@ -26,7 +26,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
+import { TableDateRangePicker } from "@/components/DataTableComponents/TableDateRangePicker"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -340,20 +340,12 @@ export default function FinanceCommandCenterDashboard({
 
           <div className="flex items-end gap-2">
             {period === "custom" ? (
-              <>
-                <Input
-                  type="date"
-                  value={customRange.start}
-                  onChange={(event) => setCustomRange((current) => ({ ...current, start: event.target.value }))}
-                  className={cn(dashboardControlClass, "w-36")}
-                />
-                <Input
-                  type="date"
-                  value={customRange.end}
-                  onChange={(event) => setCustomRange((current) => ({ ...current, end: event.target.value }))}
-                  className={cn(dashboardControlClass, "w-36")}
-                />
-              </>
+              <TableDateRangePicker
+                value={{ from: customRange.start, to: customRange.end }}
+                onChange={(range) => setCustomRange({ start: range.from ?? "", end: range.to ?? "" })}
+                locale={locale}
+                triggerClassName="h-10"
+              />
             ) : null}
             <Button
               type="button"

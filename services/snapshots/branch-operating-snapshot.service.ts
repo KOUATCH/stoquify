@@ -41,10 +41,8 @@ const POS_SHIFT_PROOF_STATUSES: POSSessionStatus[] = [
   POSSessionStatus.RECONCILED,
 ];
 const PAYROLL_PROFITABILITY_RUN_STATUSES: PayrollRunStatus[] = [
-  PayrollRunStatus.APPROVED,
-  PayrollRunStatus.EMITTED,
-  PayrollRunStatus.PAID,
   PayrollRunStatus.POSTED,
+  PayrollRunStatus.PAID,
   PayrollRunStatus.ARCHIVED,
 ];
 const PAYROLL_ATTENDANCE_PROOF_STATUSES: PayrollAttendanceSnapshotStatus[] = [
@@ -408,7 +406,7 @@ export async function getBranchOperatingSnapshot(
             gate: "branch_payroll_profitability",
             title: "Branch payroll cost allocation is missing",
             detail:
-              "This branch has completed sales but no approved payroll run lines allocated to the branch, so branch profitability should not claim payroll-complete margin.",
+              "This branch has completed sales but no posted payroll run lines allocated to the branch, so branch profitability should not claim payroll-complete margin.",
             sourceTables: [
               "payroll_run_lines",
               "payroll_runs",
@@ -416,7 +414,7 @@ export async function getBranchOperatingSnapshot(
               "sales_orders",
             ],
             nextAction:
-              "Assign payroll employees to branches and approve the payroll run before relying on branch profitability.",
+              "Assign payroll employees to branches and post the payroll run before relying on branch profitability.",
           }),
         ]
       : []),

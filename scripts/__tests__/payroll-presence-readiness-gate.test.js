@@ -36,6 +36,11 @@ function writeReadyFixture(root) {
       'action: "payroll.run.approve"',
       "subjectActorId: run.preparedById",
       "assertSensitiveActionAllowed(controlDecision)",
+      "export async function requestPayrollPaymentBatch",
+      "export async function approvePayrollPaymentBatch",
+      "export async function releasePayrollPaymentBatch",
+      "Payroll payment requester, approver, and releaser must be separate authenticated actors",
+      "payrollPaymentBatchId: { not: paymentBatch.id }",
     ].join("\n"),
   );
   write(
@@ -89,9 +94,22 @@ function writeReadyFixture(root) {
     [
       'permission: "payroll.runs.calculate"',
       'permission: "payroll.runs.approve"',
+      'permission: "payroll.payments.request"',
+      'permission: "payroll.payments.approve"',
+      'permission: "payroll.payments.release"',
       "freshAuth: true",
     ].join("\n"),
-  );  write(
+  );
+  write(
+    root,
+    "services/payroll/__tests__/payroll-completion.service.test.ts",
+    [
+      "persists a draft payment request before approval or release",
+      "rejects a concurrently claimed payment approval",
+      "does not commit batch or run release state when reconciliation persistence fails",
+    ].join("\n"),
+  );
+  write(
     root,
     "services/hris/operational-time.service.ts",
     [
@@ -137,7 +155,7 @@ describe("payroll presence readiness gate", () => {
 
     expect(report.summary).toMatchObject({
       status: "ready",
-      readyCount: 13,
+      readyCount: 14,
       blockerCount: 0,
     });
     expect(gateResultForReport(report, "fail").exitCode).toBe(0);

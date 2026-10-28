@@ -9,7 +9,9 @@ import {
   getAPWorkbenchData,
   prepareSupplierInvoice,
   releaseSupplierPaymentWithControls,
+  requestSupplierInvoiceMatchException,
   requestSupplierBankChange,
+  reviewSupplierInvoiceMatchException,
 } from "@/services/purchasing/ap-control.service"
 
 import {
@@ -19,7 +21,9 @@ import {
   postSupplierInvoiceAction,
   prepareSupplierInvoiceAction,
   releaseSupplierPaymentAction,
+  requestSupplierInvoiceMatchExceptionAction,
   requestSupplierBankChangeAction,
+  reviewSupplierInvoiceMatchExceptionAction,
 } from "../ap-control.actions"
 
 jest.mock("next/cache", () => ({
@@ -72,13 +76,17 @@ jest.mock("@/services/purchasing/ap-control.service", () => ({
   getAPWorkbenchData: jest.fn(),
   prepareSupplierInvoice: jest.fn(),
   releaseSupplierPaymentWithControls: jest.fn(),
+  requestSupplierInvoiceMatchException: jest.fn(),
   requestSupplierBankChange: jest.fn(),
+  reviewSupplierInvoiceMatchException: jest.fn(),
 }))
 
 const mockRequirePermission = requirePermission as jest.Mock
 const mockRequireFreshAuth = requireFreshAuth as jest.Mock
 const mockPrepareSupplierInvoice = prepareSupplierInvoice as jest.Mock
 const mockApproveSupplierInvoice = approveSupplierInvoice as jest.Mock
+const mockRequestSupplierInvoiceMatchException = requestSupplierInvoiceMatchException as jest.Mock
+const mockReviewSupplierInvoiceMatchException = reviewSupplierInvoiceMatchException as jest.Mock
 const mockRequestSupplierBankChange = requestSupplierBankChange as jest.Mock
 const mockApproveSupplierBankChangeWithControls = approveSupplierBankChangeWithControls as jest.Mock
 const mockApproveSupplierPaymentWithControls = approveSupplierPaymentWithControls as jest.Mock
@@ -200,6 +208,84 @@ describe("AP control actions", () => {
     expect(mockRequirePermission).not.toHaveBeenCalled()
     expect(mockApproveSupplierInvoice).not.toHaveBeenCalled()
   })
+
+  it("derives tenant and requester for match-exception requests", async () => {
+    mockRequirePermission.mockResolvedValue(rbacContext("maker-1", ["purchasing.ap.invoice.post"]))
+    mockRequestSupplierInvoiceMatchException.mockResolvedValue({
+      matchException: { id: "exception-1", status: "OPEN" },
+    })
+
+    const result = await requestSupplierInvoiceMatchExceptionAction({
+      organizationId: "client-org",
+      supplierInvoiceId: "invoice-disputed",
+      requestedById: "client-requester",
+      reason: "Supplier documented a temporary variance.",
+      evidenceReference: "artifact://supplier/variance-proof",
+      expiresAt: "2099-06-30T00:00:00.000Z",
+    })
+
+    expect(result.success).toBe(true)
+    expect(mockRequireFreshAuth).not.toHaveBeenCalled()
+    expect(mockRequestSupplierInvoiceMatchException).toHaveBeenCalledWith(
+      expect.objectContaining({
+        organizationId: "org-1",
+        supplierInvoiceId: "invoice-disputed",
+        requestedById: "maker-1",
+      }),
+    )
+    expect(mockRequestSupplierInvoiceMatchException.mock.calls[0][0]).not.toMatchObject({
+      organizationId: "client-org",
+      requestedById: "client-requester",
+    })
+  })
+
+  it("denies match-exception review without the dedicated review permission", async () => {
+    mockRequirePermission.mockRejectedValue(new RbacError("Forbidden", "FORBIDDEN", 403))
+
+    const result = await reviewSupplierInvoiceMatchExceptionAction({
+      matchExceptionId: "exception-1",
+      decision: "APPROVE",
+    })
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        success: false,
+        code: "FORBIDDEN",
+        status: 403,
+      }),
+    )
+    expect(mockRequireFreshAuth).toHaveBeenCalledTimes(1)
+    expect(mockRequirePermission).toHaveBeenCalledWith(
+      "purchasing.ap.match.review",
+      expect.objectContaining({ resource: "SupplierInvoiceMatchException" }),
+    )
+    expect(mockReviewSupplierInvoiceMatchException).not.toHaveBeenCalled()
+  })
+
+  it("requires fresh auth and derives the independent match-exception reviewer", async () => {
+    mockRequirePermission.mockResolvedValue(rbacContext("checker-1", ["purchasing.ap.match.review"]))
+    mockReviewSupplierInvoiceMatchException.mockResolvedValue({
+      kind: "reviewed",
+      matchException: { id: "exception-1", status: "APPROVED" },
+    })
+
+    const result = await reviewSupplierInvoiceMatchExceptionAction({
+      organizationId: "client-org",
+      matchExceptionId: "exception-1",
+      reviewedById: "client-reviewer",
+      decision: "APPROVE",
+    })
+
+    expect(result.success).toBe(true)
+    expect(mockRequireFreshAuth).toHaveBeenCalledTimes(1)
+    expect(mockReviewSupplierInvoiceMatchException).toHaveBeenCalledWith({
+      organizationId: "org-1",
+      matchExceptionId: "exception-1",
+      reviewedById: "checker-1",
+      decision: "APPROVE",
+    })
+  })
+
   it("returns a client-safe RBAC denial for the AP workbench", async () => {
     mockRequirePermission.mockRejectedValue(new RbacError("Forbidden", "FORBIDDEN", 403))
 

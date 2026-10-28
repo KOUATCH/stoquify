@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import {
@@ -16,6 +18,12 @@ import {
 import type { PayrollPaymentReconciliationReadModel } from "@/actions/payroll/payroll-payment-reconciliation.actions";
 import { localizePath } from "@/i18n/routing";
 import type { Locale } from "@/types/bilingual";
+import PayrollAuditorProofPanel from "./PayrollAuditorProofPanel";
+import {
+  HrPayrollTableControls,
+  HrPayrollTablePagination,
+  useHrPayrollTable,
+} from "@/components/hr-payroll/HrPayrollTableControls";
 import PayrollPaymentSettlementForm from "./PayrollPaymentSettlementForm";
 import PayrollProofDrawerButton, {
   type PayrollProofDrawerSubject,
@@ -182,6 +190,8 @@ function proofRows(batch: Batch): ProofRow[] {
     ["Component status", batch.proof.componentRegisterProofStatus],
     ["Provider proof", batch.proof.paymentAdapterProofHash],
     ["Adapter contract", batch.proof.paymentProviderAdapterContractHash],
+    ["Receipt proof", batch.proof.latestSettlementProviderReceiptProofHash],
+    ["Receipt source", batch.proof.latestSettlementProviderReceiptProofSource],
     ["Lifecycle proof", batch.proof.latestSettlementLifecycleContractHash],
     ["Lifecycle status", batch.proof.latestSettlementLifecycleStatus],
     ["Close impact", batch.proof.closeImpactSourceCode],
@@ -208,6 +218,10 @@ function paymentProofSubject(
     status: batch.derivedState,
     source: "services/payroll/payment-reconciliation.service.ts",
     href: localizePath("/dashboard/finance/reconciliation", locale),
+    requiresFreshAuth: settlementAllowed(batch),
+    stateDescription: settlementAllowed(batch)
+      ? "Payment proof facts are service-owned; settlement evidence writes require fresh authentication."
+      : undefined,
     rows: [
       { label: "Run", value: batch.runNumber },
       { label: "Period", value: batch.periodName },
@@ -306,6 +320,26 @@ function paymentProofSubject(
       {
         label: "Latest register proof",
         value: batch.proof.latestSettlementSourceRegisterHash,
+      },
+      {
+        label: "Provider receipt proof",
+        value: batch.proof.latestSettlementProviderReceiptProofHash,
+      },
+      {
+        label: "Provider receipt source",
+        value: batch.proof.latestSettlementProviderReceiptProofSource,
+      },
+      {
+        label: "Provider receipt payload hash",
+        value: batch.proof.latestSettlementProviderReceiptProviderPayloadHash,
+      },
+      {
+        label: "Provider receipt statement line hash",
+        value: batch.proof.latestSettlementProviderReceiptStatementLineHash,
+      },
+      {
+        label: "Provider receipt statement file hash",
+        value: batch.proof.latestSettlementProviderReceiptStatementFileHash,
       },
       {
         label: "Settlement lifecycle proof",
@@ -457,6 +491,19 @@ export default function PayrollPaymentReconciliationWorkbench({
   error,
   locale,
 }: Props) {
+  const batchTable = useHrPayrollTable({
+    rows: data?.batches ?? [],
+    searchText: (batch) => JSON.stringify(batch),
+    dateValue: (batch) => batch.paymentDate,
+    sortOptions: [
+      { key: "batch", label: "Batch", value: (batch) => batch.batchNumber },
+      { key: "payment-date", label: "Payment date", value: (batch) => batch.paymentDate },
+      { key: "amount", label: "Amount", value: (batch) => Number(batch.amount) },
+      { key: "status", label: "Status", value: (batch) => batch.derivedState },
+      { key: "exceptions", label: "Exceptions", value: (batch) => batch.exceptions.length },
+    ],
+  });
+
   if (error) return <ErrorPanel message={error} />;
   if (!data) return <EmptyState />;
 
@@ -542,12 +589,21 @@ export default function PayrollPaymentReconciliationWorkbench({
         />
       </div>
 
+      <PayrollAuditorProofPanel
+        proof={data.accountingAuditProof}
+        sourceScope={data.sourceScope}
+        locale={locale}
+        subjectId="payroll-payment-reconciliation:accounting-audit-proof"
+        label="Payroll payment auditor proof pack"
+      />
+
       <div className="rounded-lg border border-white/10 bg-white/[0.05]">
         <div className="flex items-center gap-2 border-b border-white/10 px-4 py-3">
           <FileText className="h-4 w-4 text-cyan-200" aria-hidden="true" />
           <h2 className="text-sm font-semibold text-white">Payment batches</h2>
         </div>
-        <div className="overflow-x-auto">
+        <HrPayrollTableControls table={batchTable} locale={locale} tableLabel="payment batches" />
+        <div className="dashboard-data-table dashboard-table-shell overflow-x-auto">
           <table className="min-w-[1440px] w-full table-fixed border-collapse text-left text-sm">
             <thead className="border-b border-white/10 text-xs uppercase tracking-normal text-slate-400">
               <tr>
@@ -568,8 +624,8 @@ export default function PayrollPaymentReconciliationWorkbench({
               </tr>
             </thead>
             <tbody className="divide-y divide-white/10">
-              {data.batches.length ? (
-                data.batches.map((batch) => (
+              {batchTable.rows.length ? (
+                batchTable.rows.map((batch) => (
                   <tr key={batch.id} className="align-top">
                     <td className="px-4 py-3">
                       <p className="break-words font-semibold text-white">
@@ -732,6 +788,7 @@ export default function PayrollPaymentReconciliationWorkbench({
             </tbody>
           </table>
         </div>
+        <HrPayrollTablePagination table={batchTable} locale={locale} />
       </div>
 
       <div className="rounded-lg border border-white/10 bg-white/[0.05] p-4">

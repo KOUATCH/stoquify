@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 
+// @inventory-boundary-demo-script
+// Local synthetic browser-certification fixture only. Runtime and production use are refused below.
+
 const { existsSync, mkdirSync, readFileSync, writeFileSync } = require("node:fs")
 const { dirname, resolve } = require("node:path")
 const argon2 = require("argon2")

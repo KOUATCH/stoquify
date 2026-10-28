@@ -85,11 +85,14 @@ jest.mock("@/services/payments/statement-import.service", () => ({
 }))
 
 import { getPaymentReconciliationWorkbench } from "@/services/payments/payment-reconciliation-workbench.service"
-import { signReconciliationRun } from "@/services/reconciliation/payment-reconciliation-certification.service"
+import { getPaymentReconciliationDashboardData } from "@/services/reconciliation/payment-reconciliation-dashboard.service"
+import { getReconciliationRunDetail, signReconciliationRun } from "@/services/reconciliation/payment-reconciliation-certification.service"
 import { getPaymentReconciliationWorkbenchAction } from "../reconciliation-workbench.actions"
-import { signReconciliationRunAction } from "../reconciliation.actions"
+import { getPaymentReconciliationDashboardAction, getReconciliationRunDetailAction, signReconciliationRunAction } from "../reconciliation.actions"
 
 const mockGetPaymentReconciliationWorkbench = getPaymentReconciliationWorkbench as jest.Mock
+const mockGetPaymentReconciliationDashboardData = getPaymentReconciliationDashboardData as jest.Mock
+const mockGetReconciliationRunDetail = getReconciliationRunDetail as jest.Mock
 
 const mockSignReconciliationRun = signReconciliationRun as jest.Mock
 
@@ -131,6 +134,10 @@ describe("payment reconciliation action RBAC", () => {
   beforeEach(() => {
     mockGetPaymentReconciliationWorkbench.mockReset()
     mockGetPaymentReconciliationWorkbench.mockResolvedValue({ kind: "workbench" })
+    mockGetPaymentReconciliationDashboardData.mockReset()
+    mockGetPaymentReconciliationDashboardData.mockResolvedValue({ kind: "durable-dashboard" })
+    mockGetReconciliationRunDetail.mockReset()
+    mockGetReconciliationRunDetail.mockResolvedValue({ kind: "run-detail" })
     mockSignReconciliationRun.mockReset()
     mockSignReconciliationRun.mockResolvedValue({ kind: "signed" })
     setPaymentReconProtectContext()
@@ -147,6 +154,30 @@ describe("payment reconciliation action RBAC", () => {
     expect(protectOptions()).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ permission: "payments.reconciliation.read", auditResource: "PaymentReconciliation" }),
+      ]),
+    )
+  })
+
+  it("lets the durable reconciliation dashboard read action use the session tenant only", async () => {
+    const result = await getPaymentReconciliationDashboardAction({ organizationId: "attacker-org" })
+
+    expect(result).toEqual({ success: true, data: { kind: "durable-dashboard" }, error: null, status: 200 })
+    expect(mockGetPaymentReconciliationDashboardData).toHaveBeenCalledWith("org-session")
+    expect(protectOptions()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ permission: "payments.reconciliation.read", auditResource: "PaymentReconciliation" }),
+      ]),
+    )
+  })
+
+  it("lets the run detail proof read action use the session tenant only", async () => {
+    const result = await getReconciliationRunDetailAction({ organizationId: "attacker-org", runId: "run-1" })
+
+    expect(result).toEqual({ success: true, data: { kind: "run-detail" }, error: null, status: 200 })
+    expect(mockGetReconciliationRunDetail).toHaveBeenCalledWith("org-session", "run-1")
+    expect(protectOptions()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ permission: "payments.reconciliation.read", auditResource: "PaymentReconciliationRun" }),
       ]),
     )
   })

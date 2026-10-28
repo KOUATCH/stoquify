@@ -160,11 +160,11 @@ type TenderLineState = {
   id: string
   method: TenderMethod
   amount: string
-  reference: string
+  paymentTransactionId: string
 }
 
 type TenderPreview = {
-  tenders: Array<{ method: TenderMethod; amount: number; reference?: string }>
+  tenders: Array<{ method: TenderMethod; amount: number; paymentTransactionId?: string }>
   totalTendered: number
   paid: number
   due: number
@@ -227,8 +227,12 @@ function createTenderLine(method: TenderMethod = "CASH", amount = ""): TenderLin
     id: `tender-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     method,
     amount,
-    reference: "",
+    paymentTransactionId: "",
   }
+}
+
+function isElectronicTenderMethod(method: TenderMethod) {
+  return method === "CARD" || method === "MOBILE_MONEY" || method === "BANK_TRANSFER"
 }
 
 function parseTenderAmount(value: string) {
@@ -241,7 +245,7 @@ function previewTenders(lines: TenderLineState[], total: number): TenderPreview 
     .map((line) => ({
       method: line.method,
       amount: lines.length === 1 && line.amount.trim() === "" ? total : parseTenderAmount(line.amount),
-      reference: line.reference.trim() || undefined,
+      paymentTransactionId: line.paymentTransactionId.trim() || undefined,
     }))
     .filter((line) => line.amount > 0)
 
@@ -274,7 +278,11 @@ function previewTenders(lines: TenderLineState[], total: number): TenderPreview 
   }
 
   return {
-    tenders: normalizedLines.map((line) => ({ method: line.method, amount: line.amount, reference: line.reference })),
+    tenders: normalizedLines.map((line) => ({
+      method: line.method,
+      amount: line.amount,
+      paymentTransactionId: line.paymentTransactionId,
+    })),
     totalTendered: normalizedLines.reduce((sum, line) => sum + line.amount, 0),
     paid: Math.min(paid, total),
     due: Math.max(0, total - paid),
@@ -625,6 +633,9 @@ export default function ProfessionalPOSSystem() {
   const quickCashAmounts = useMemo(() => cashTenderOptions(cartTotal), [cartTotal])
   const isTenderShort = hasCartLines && balancePreview > 0
   const isAccountTenderMissingCustomer = tenderLines.some((line) => line.method === "ON_ACCOUNT") && !selectedCustomer
+  const isElectronicTenderEvidenceMissing = tenderLines.some(
+    (line) => isElectronicTenderMethod(line.method) && !line.paymentTransactionId.trim(),
+  )
   const isWhatsAppReceiptChannel = receiptChannel === "WHATSAPP"
   const receiptDestinationRequired = receiptChannelRequiresDestination(receiptChannel)
   const receiptDestinationPlaceholder = receiptDestinationRequired
@@ -638,6 +649,8 @@ export default function ProfessionalPOSSystem() {
   let tenderBlocker: string | null = null
   if (isAccountTenderMissingCustomer) {
     tenderBlocker = t("tender.customerRequired")
+  } else if (isElectronicTenderEvidenceMissing) {
+    tenderBlocker = t("tender.providerEvidenceRequired")
   } else if (tenderPreview.hasNonCashOverpay) {
     tenderBlocker = t("tender.nonCashOverpay")
   } else if (isTenderShort) {
@@ -1563,7 +1576,15 @@ export default function ProfessionalPOSSystem() {
                         gridMode === "list" && "grid items-center gap-3 lg:grid-cols-[minmax(0,1fr)_280px]",
                       )}
                     >
-                      <div className={cn(gridMode === "grid" ? "space-y-3" : "flex min-w-0 gap-3")}>
+                      <button
+                        type="button"
+                        aria-label={`${t("catalog.add")} ${itemLabel}`}
+                        title={outOfStock ? t("stock.out") : t("catalog.add")}
+                        className="absolute inset-0 z-0 rounded-lg bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--dash-brand)] disabled:cursor-not-allowed"
+                        onClick={() => handleAddItem(item.id)}
+                        disabled={outOfStock || addLine.isPending}
+                      />
+                      <div className={cn("pointer-events-none relative z-[1]", gridMode === "grid" ? "space-y-3" : "flex min-w-0 gap-3")}>
                         <div
                           className={cn(
                             "flex shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(12,20,24,0.58)] text-[var(--dash-text-faint)] shadow-[inset_0_1px_0_rgba(255,255,255,0.045)]",
@@ -1630,7 +1651,7 @@ export default function ProfessionalPOSSystem() {
                         </div>
                       </div>
 
-                      <div className={cn("mt-3 space-y-3", gridMode === "list" && "mt-0")}>
+                      <div className={cn("pointer-events-none relative z-10 mt-3 space-y-3", gridMode === "list" && "mt-0")}>
                         <div className="grid gap-1.5">
                           <div className={cn(posMetricSpruceClass, posMetricRowClass)}>
                             <div className={cn(posMetricLabelClass, posMutedTextClass)}>{t("stock.onHand")}</div>
@@ -1651,7 +1672,7 @@ export default function ProfessionalPOSSystem() {
                             type="button"
                             variant="outline"
                             size="icon"
-                            className={cn("shrink-0", posButtonClass)}
+                            className={cn("pointer-events-auto shrink-0", posButtonClass)}
                             onClick={() => setSelectedProductId(item.id)}
                             title={t("catalog.details")}
                           >
@@ -1661,7 +1682,7 @@ export default function ProfessionalPOSSystem() {
                             type="button"
                             variant="outline"
                             size="icon"
-                            className={cn("shrink-0", isFavorite ? posButtonActiveClass : posButtonClass)}
+                            className={cn("pointer-events-auto shrink-0", isFavorite ? posButtonActiveClass : posButtonClass)}
                             onClick={() => toggleFavorite(item.id)}
                             title={isFavorite ? t("catalog.removeFavorite") : t("catalog.addFavorite")}
                           >
@@ -1673,7 +1694,7 @@ export default function ProfessionalPOSSystem() {
                             disabled={outOfStock || addLine.isPending}
                             title={outOfStock ? t("stock.out") : t("catalog.add")}
                             className={cn(
-                              "min-w-0 flex-1 overflow-hidden px-3",
+                              "pointer-events-auto min-w-0 flex-1 overflow-hidden px-3",
                               posButtonPrimaryClass,
                               outOfStock && "px-2 text-xs",
                               touchMode && (outOfStock ? "h-12 px-2" : "h-12 px-5"),
@@ -2037,7 +2058,15 @@ export default function ProfessionalPOSSystem() {
                             <select
                               className={posSelectClass}
                               value={line.method}
-                              onChange={(event) => updateTenderLine(line.id, { method: event.target.value as TenderMethod })}
+                              onChange={(event) => {
+                                const method = event.target.value as TenderMethod
+                                updateTenderLine(line.id, {
+                                  method,
+                                  paymentTransactionId: isElectronicTenderMethod(method)
+                                    ? line.paymentTransactionId
+                                    : "",
+                                })
+                              }}
                             >
                               {tenderMethods.map((method) => (
                                 <option key={method} value={method}>
@@ -2074,15 +2103,19 @@ export default function ProfessionalPOSSystem() {
                           </POSButton>
                         </div>
 
-                        {line.method !== "CASH" && line.method !== "ON_ACCOUNT" ? (
+                        {isElectronicTenderMethod(line.method) ? (
                           <label className={cn("mt-2", posLabelClass)}>
-                            {t("tender.reference")}
+                            {t("tender.providerEvidence")}
                             <Input
-                              value={line.reference}
-                              onChange={(event) => updateTenderLine(line.id, { reference: event.target.value })}
-                              placeholder={t("tender.referencePlaceholder")}
+                              value={line.paymentTransactionId}
+                              onChange={(event) => updateTenderLine(line.id, { paymentTransactionId: event.target.value })}
+                              placeholder={t("tender.providerEvidencePlaceholder")}
+                              autoComplete="off"
                               className={cn("mt-1", posFieldClass)}
                             />
+                            <span className={cn("mt-1 block text-xs", posMutedTextClass)}>
+                              {t("tender.providerEvidenceHelp")}
+                            </span>
                           </label>
                         ) : null}
                       </div>

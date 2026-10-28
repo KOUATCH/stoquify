@@ -38,10 +38,10 @@ import {
   postPOSStockReturn,
 } from "@/services/inventory/inventory-stock-event.service"
 import {
-  assertNoDuplicateProviderCapture,
-  assertUniqueProviderCaptureReferences,
-  resolveProviderCaptureEvidence,
-} from "@/services/payments/payment-reconciliation.service"
+  claimPOSElectronicTenderAuthority,
+  resolvePOSElectronicTenderAuthority,
+  type POSElectronicTenderAuthorityEvidence,
+} from "@/services/payments/pos-electronic-tender-authority.service"
 import { addMoney, moneyToNumber, moneyToString, subtractMoney, toDecimal } from "./money"
 import { getPOSSaleCommitReceipt, type ReceiptDeliveryResult, type SalesReceiptPayload } from "./receipt.service"
 import { requirePOSCustomerAtLocation } from "./pos-customer.service"
@@ -513,6 +513,25 @@ function allocateTenders(tenders: POSTenderInput[], total: Prisma.Decimal) {
   }
 
   return { allocations, changeDue }
+}
+
+function assertUniquePOSElectronicTenderAuthority(
+  evidence: Array<POSElectronicTenderAuthorityEvidence | null>,
+) {
+  const transactionIds = new Set<string>()
+  const providerEventIds = new Set<string>()
+
+  for (const entry of evidence) {
+    if (!entry) continue
+    if (
+      transactionIds.has(entry.paymentTransactionId) ||
+      providerEventIds.has(entry.providerEventId)
+    ) {
+      throw new ConflictError("Provider-authoritative electronic tender evidence cannot be reused")
+    }
+    transactionIds.add(entry.paymentTransactionId)
+    providerEventIds.add(entry.providerEventId)
+  }
 }
 
 function cleanJson(input: Record<string, unknown>): Prisma.JsonObject {
@@ -1945,6 +1964,14 @@ function posSaleCommitRequestHash(
     tenders: input.tenders.map((tender) => ({
       method: tender.method,
       amount: moneyToString(toDecimal(tender.amount)),
+      paymentTransactionId: tender.paymentTransactionId ?? null,
+      reference: tender.reference ?? null,
+      cardLast4: tender.cardLast4 ?? null,
+      cardType: tender.cardType ?? null,
+      authorizationCode: tender.authorizationCode ?? null,
+      mobileMoneyProvider: tender.mobileMoneyProvider ?? null,
+      mobileMoneyPhoneNumber: tender.mobileMoneyPhoneNumber ?? null,
+      bankName: tender.bankName ?? null,
     })),
     receipt: {
       channel: input.receipt?.channel ?? "NONE",
@@ -2202,22 +2229,17 @@ export async function commitPOSSale(rawInput: UserScoped) {
       .reduce((sum, allocation) => addMoney(sum, allocation.amount), new Prisma.Decimal(0))
       .toDecimalPlaces(2)
     const amountPaid = total.minus(onAccountAmount).toDecimalPlaces(2)
-    const providerCaptures = allocations.map((allocation) =>
-      resolveProviderCaptureEvidence({
+    const providerAuthorities: Array<POSElectronicTenderAuthorityEvidence | null> = []
+    for (const allocation of allocations) {
+      providerAuthorities.push(await resolvePOSElectronicTenderAuthority(tx, {
         organizationId: rawInput.organizationId,
         paymentMethod: allocation.paymentMethod,
-        reference: allocation.tender.reference,
-        authorizationCode: allocation.tender.authorizationCode,
-        mobileMoneyProvider: allocation.tender.mobileMoneyProvider,
-        bankName: allocation.tender.bankName,
-      }),
-    )
-    assertUniqueProviderCaptureReferences(providerCaptures)
-    for (const capture of providerCaptures) {
-      if (capture) {
-        await assertNoDuplicateProviderCapture(tx, capture)
-      }
+        paymentTransactionId: allocation.tender.paymentTransactionId,
+        amount: allocation.amount,
+        currencyCode: sale.organization.currency,
+      }))
     }
+    assertUniquePOSElectronicTenderAuthority(providerAuthorities)
 
     const commitRegistry = await tx.pOSCommitResult.create({
       data: {
@@ -2401,7 +2423,7 @@ export async function commitPOSSale(rawInput: UserScoped) {
 
     const capturedPaymentIds: string[] = []
     for (const [index, allocation] of allocations.entries()) {
-      const providerCapture = providerCaptures[index]
+      const providerAuthority = providerAuthorities[index]
       const payment = await tx.payment.create({
         data: {
           paymentNumber: nextPaymentNumber(),
@@ -2416,24 +2438,34 @@ export async function commitPOSSale(rawInput: UserScoped) {
           cardType: allocation.tender.cardType,
           authorizationCode:
             allocation.paymentMethod === "CARD"
-              ? providerCapture?.providerReference ?? allocation.tender.authorizationCode
-              : allocation.tender.authorizationCode,
-          mobileMoneyProvider: allocation.tender.mobileMoneyProvider,
+              ? providerAuthority?.providerReference
+              : undefined,
+          mobileMoneyProvider: providerAuthority?.mobileMoneyProvider ?? undefined,
           mobileMoneyPhoneNumber: allocation.tender.mobileMoneyPhoneNumber,
           mobileMoneyReference:
             allocation.paymentMethod === "MOBILE_MONEY"
-              ? providerCapture?.providerReference ?? allocation.tender.reference
+              ? providerAuthority?.providerReference
               : undefined,
           bankReference:
             allocation.paymentMethod === "BANK_TRANSFER"
-              ? providerCapture?.providerReference ?? allocation.tender.reference
+              ? providerAuthority?.providerReference
               : undefined,
-          bankName: allocation.tender.bankName,
-          transactionId: providerCapture?.providerReference ?? allocation.tender.reference,
+          bankName: allocation.paymentMethod === "BANK_TRANSFER"
+            ? providerAuthority?.providerName
+            : undefined,
+          transactionId: providerAuthority?.providerTransactionId,
           processedAt: allocation.paymentMethod === "CREDIT" ? undefined : now,
           processedById: rawInput.userId,
         },
       })
+
+      if (providerAuthority) {
+        await claimPOSElectronicTenderAuthority(tx, {
+          organizationId: rawInput.organizationId,
+          legacyPaymentId: payment.id,
+          evidence: providerAuthority,
+        })
+      }
 
       if (allocation.paymentMethod !== "CREDIT") {
         capturedPaymentIds.push(payment.id)
@@ -2531,6 +2563,16 @@ export async function commitPOSSale(rawInput: UserScoped) {
       throw new BusinessRuleError("Finance journal is not balanced")
     }
 
+    const providerAuthorityEvidence = providerAuthorities
+      .filter((entry): entry is POSElectronicTenderAuthorityEvidence => entry !== null)
+      .map((entry) => ({
+        paymentMethod: entry.paymentMethod,
+        paymentTransactionId: entry.paymentTransactionId,
+        providerEventId: entry.providerEventId,
+        providerAccountId: entry.providerAccountId,
+        state: entry.state,
+      }))
+
     const postingBatchId = requireLedgerPostingBatchId(
       saleJournalEntry.postingBatchId,
       "POS sale posting",
@@ -2586,6 +2628,7 @@ export async function commitPOSSale(rawInput: UserScoped) {
           customerReceivableDocumentId: postedReceivableDocumentId,
           onAccountAmount: moneyToString(onAccountAmount),
           changeDue: moneyToString(changeDue),
+          providerAuthorityEvidence,
           fiscalizationRequestId,
           fiscalizationStatus: "PENDING",
         }),
@@ -2617,6 +2660,7 @@ export async function commitPOSSale(rawInput: UserScoped) {
         saleJournalEntryId: saleJournalEntry.id,
         paymentJournalEntryIds: paymentJournalEntries.map((entry) => entry.id),
         capturedPaymentIds,
+        providerAuthorityEvidence,
         inventoryTransactionIds,
         fiscalization: {
           requestId: fiscalizationRequestId,
@@ -2785,7 +2829,13 @@ export async function commitPOSSale(rawInput: UserScoped) {
         }
         if (errorCode === "P2034" && attempt === 0) continue
       }
-      throw error
+      if (error instanceof ApplicationError) throw error
+      throw new ApplicationError(
+        "INTERNAL_ERROR",
+        "POS sale could not be completed safely",
+        500,
+        false,
+      )
     }
   }
 

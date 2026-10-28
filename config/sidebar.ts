@@ -16,6 +16,11 @@ import {
 } from "lucide-react"
 
 import { PERMISSIONS } from "@/lib/permissions"
+import {
+  MASTER_DATA_ONBOARDING_MODULE_SLUG,
+  MASTER_DATA_ONBOARDING_READ_PERMISSIONS,
+  MASTER_DATA_ONBOARDING_ROUTE,
+} from "@/config/master-data-onboarding"
 
 export interface ISidebarDropdownItem {
   title: string
@@ -307,6 +312,15 @@ export const sidebarLinks: ISidebarLink[] = [
       { title: "Appearance", href: "/dashboard/settings/appearance", permission: PERMISSIONS.DASHBOARD_READ },
       { title: "Change Password", href: "/dashboard/change-password", permission: PERMISSIONS.PASSWORD_READ },
       { title: "Company", href: "/dashboard/settings/company", permission: PERMISSIONS.COMPANY_READ },
+      {
+        title: "Data onboarding",
+        href: MASTER_DATA_ONBOARDING_ROUTE,
+        permission: MASTER_DATA_ONBOARDING_READ_PERMISSIONS[0],
+        permissions: MASTER_DATA_ONBOARDING_READ_PERMISSIONS,
+        permissionMode: "any",
+        moduleSlug: MASTER_DATA_ONBOARDING_MODULE_SLUG,
+        description: "Governed customer, supplier, and item imports",
+      },
       { title: "Locations", href: "/dashboard/settings/locations", permission: PERMISSIONS.READ_LOCATIONS },
       { title: "Modules", href: "/dashboard/settings/modules", permission: PERMISSIONS.MANAGE_SYSTEM_SETTINGS },
       { title: "Notifications", href: "/dashboard/settings/notifications", permission: "communication.notifications.read" },

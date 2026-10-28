@@ -1,0 +1,213 @@
+{
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-08-19T11:21:28.651Z",
+  "gateId": "G1",
+  "status": "BLOCKED",
+  "technicalStatus": "READY_FOR_ACCOUNTABLE_REVIEW",
+  "runtimeConformance": "PARTIAL_WITH_EXPLICIT_GAPS",
+  "approvalStatus": "BLOCKED_0_OF_11",
+  "productionAuthorized": false,
+  "summary": {
+    "technicalChecks": 13,
+    "technicalReady": 13,
+    "decisions": 11,
+    "approvedDecisions": 0,
+    "stateMachines": 14,
+    "eventContracts": 15
+  },
+  "technicalChecks": [
+    {
+      "id": "canonical_g1_numbering",
+      "ready": true
+    },
+    {
+      "id": "decision_set_d01_through_d11",
+      "ready": true
+    },
+    {
+      "id": "decisions_have_selected_fail_closed_options",
+      "ready": true
+    },
+    {
+      "id": "limited_development_scope_is_fail_closed",
+      "ready": true
+    },
+    {
+      "id": "state_machine_catalog_complete",
+      "ready": true
+    },
+    {
+      "id": "runtime_mappings_and_gaps_are_explicit",
+      "ready": true
+    },
+    {
+      "id": "accounting_inventory_event_catalog_complete",
+      "ready": true
+    },
+    {
+      "id": "single_sale_finalizer_preserved",
+      "ready": true
+    },
+    {
+      "id": "cash_only_and_store_credit_runtime_control",
+      "ready": true
+    },
+    {
+      "id": "refund_void_fresh_auth_and_compensation_contract",
+      "ready": true
+    },
+    {
+      "id": "stock_and_cogs_event_ownership",
+      "ready": true
+    },
+    {
+      "id": "contract_candidate_disclaims_approval",
+      "ready": true
+    },
+    {
+      "id": "detached_approval_register_binds_exact_contract_hash",
+      "ready": true
+    }
+  ],
+  "approvalChecks": [
+    {
+      "id": "d-01_accountable_approval",
+      "decisionId": "D-01",
+      "ready": false,
+      "requiredApproverRoles": [
+        "Product owner",
+        "Financial controller",
+        "Payments owner"
+      ],
+      "status": "PENDING_ACCOUNTABLE_APPROVERS"
+    },
+    {
+      "id": "d-02_accountable_approval",
+      "decisionId": "D-02",
+      "ready": false,
+      "requiredApproverRoles": [
+        "Retail operations owner",
+        "POS architect",
+        "Security owner"
+      ],
+      "status": "PENDING_ACCOUNTABLE_APPROVERS"
+    },
+    {
+      "id": "d-03_accountable_approval",
+      "decisionId": "D-03",
+      "ready": false,
+      "requiredApproverRoles": [
+        "Payments owner",
+        "Treasury owner",
+        "Security owner"
+      ],
+      "status": "PENDING_ACCOUNTABLE_APPROVERS"
+    },
+    {
+      "id": "d-04_accountable_approval",
+      "decisionId": "D-04",
+      "ready": false,
+      "requiredApproverRoles": [
+        "Product owner",
+        "Risk owner",
+        "Retail operations owner"
+      ],
+      "status": "PENDING_ACCOUNTABLE_APPROVERS"
+    },
+    {
+      "id": "d-05_accountable_approval",
+      "decisionId": "D-05",
+      "ready": false,
+      "requiredApproverRoles": [
+        "Retail operations owner",
+        "QA owner",
+        "Support owner"
+      ],
+      "status": "PENDING_SIGNED_MATRIX_OR_PRODUCTION_EXCLUSION"
+    },
+    {
+      "id": "d-06_accountable_approval",
+      "decisionId": "D-06",
+      "ready": false,
+      "requiredApproverRoles": [
+        "Financial controller",
+        "Retail operations owner",
+        "Risk owner"
+      ],
+      "status": "PENDING_ACCOUNTABLE_APPROVERS"
+    },
+    {
+      "id": "d-07_accountable_approval",
+      "decisionId": "D-07",
+      "ready": false,
+      "requiredApproverRoles": [
+        "Product owner",
+        "Financial controller",
+        "Qualified Cameroon country-pack reviewer"
+      ],
+      "status": "PENDING_QUALIFIED_COUNTRY_REVIEW_AND_ACCOUNTABLE_APPROVERS"
+    },
+    {
+      "id": "d-08_accountable_approval",
+      "decisionId": "D-08",
+      "ready": false,
+      "requiredApproverRoles": [
+        "SRE owner",
+        "Product owner",
+        "Support owner"
+      ],
+      "status": "PENDING_BASELINE_AND_ACCOUNTABLE_APPROVERS"
+    },
+    {
+      "id": "d-09_accountable_approval",
+      "decisionId": "D-09",
+      "ready": false,
+      "requiredApproverRoles": [
+        "Financial controller",
+        "Order-to-cash product owner",
+        "Qualified accounting reviewer"
+      ],
+      "status": "PENDING_ACCOUNTABLE_AND_QUALIFIED_APPROVERS"
+    },
+    {
+      "id": "d-10_accountable_approval",
+      "decisionId": "D-10",
+      "ready": false,
+      "requiredApproverRoles": [
+        "Inventory controller",
+        "Fulfillment owner",
+        "Accounting owner"
+      ],
+      "status": "PENDING_ACCOUNTABLE_APPROVERS"
+    },
+    {
+      "id": "d-11_accountable_approval",
+      "decisionId": "D-11",
+      "ready": false,
+      "requiredApproverRoles": [
+        "Financial controller",
+        "Treasury owner",
+        "Retail operations owner"
+      ],
+      "status": "PENDING_ACCOUNTABLE_APPROVERS"
+    }
+  ],
+  "blockers": [
+    "d-01_accountable_approval",
+    "d-02_accountable_approval",
+    "d-03_accountable_approval",
+    "d-04_accountable_approval",
+    "d-05_accountable_approval",
+    "d-06_accountable_approval",
+    "d-07_accountable_approval",
+    "d-08_accountable_approval",
+    "d-09_accountable_approval",
+    "d-10_accountable_approval",
+    "d-11_accountable_approval"
+  ],
+  "nonClaims": [
+    "Technical validity does not approve a business, accounting, security or country-pack decision.",
+    "Runtime mappings marked partial or missing are not frozen production behavior.",
+    "Development authorization does not authorize production or statutory use."
+  ]
+}

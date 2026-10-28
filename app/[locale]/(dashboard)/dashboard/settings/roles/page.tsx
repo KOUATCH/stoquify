@@ -155,6 +155,7 @@ async function RolesPageImpl({ params }: RolePageProps) {
             <DataTable
               columns={columns}
               data={roles}
+              locale={locale}
               searchPlaceholder="Search roles or permissions"
               variant="landing"
             />

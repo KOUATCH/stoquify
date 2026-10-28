@@ -1,3 +1,7 @@
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "fs";
+import * as os from "os";
+import * as path from "path";
+
 import { CloseRunStatus } from "@prisma/client";
 
 jest.mock("../../../prisma/db", () => ({
@@ -18,19 +22,79 @@ const ADAPTER_CHAOS_HASH = "sha256:adapter-chaos-release-gate";
 const STATUTORY_SCENARIO_COVERAGE_HASH = "sha256:statutory-scenario-coverage";
 const COUNTRY_PACK_REVIEW_APPROVAL_HASH = "sha256:country-pack-review-approval";
 
+const FULL_PRODUCTION_STATUTORY_FAMILIES = [
+  "CNPS_PENSION",
+  "CNPS_FAMILY_ALLOWANCE",
+  "CNPS_OCCUPATIONAL_RISK",
+  "IRPP_PERIOD",
+  "IRPP_YTD",
+  "IRPP_ADJUSTMENTS",
+  "IRPP_CORRECTIONS",
+  "ALLOWANCES_BENEFITS",
+  "DEDUCTIONS_RECOVERIES",
+  "LEAVE_OVERTIME",
+  "COMPOSITE_REGISTER_TIE_OUT",
+] as const;
+const FULL_PRODUCTION_STATUTORY_FAMILY_LIST =
+  FULL_PRODUCTION_STATUTORY_FAMILIES.join(", ");
+const STATUTORY_LIFECYCLE_PROOF_FIELDS = [
+  "correctionBasisHash",
+  "correctionEvidenceHash",
+  "declarationProofHash",
+  "ledgerPostingProofHash",
+  "originalCalculationHash",
+  "originalRunDocumentHash",
+  "originalRunEvidenceHash",
+  "paymentProofHash",
+  "payslipProofHash",
+  "registerProofHash",
+  "yearToDateAccumulatorHash",
+  "yearToDatePolicyHash",
+];
+const STATUTORY_LIFECYCLE_PROOF_FIELD_COUNT = 16;
+const FULL_PRODUCTION_STATUTORY_FAMILY_FIXTURES =
+  FULL_PRODUCTION_STATUTORY_FAMILIES.map((family) => {
+    const reviewStatus = family.startsWith("CNPS_")
+      ? "REGULATOR_CONFIRMED"
+      : "EXPERT_REVIEWED";
+
+    return {
+      family,
+      status: "READY",
+      capabilityStatus: "SUPPORTED",
+      executableScenarioCount: 1,
+      passedScenarioCount: 1,
+      failedScenarioCount: 0,
+      certificationStatus: reviewStatus,
+      reviewStatuses: [reviewStatus],
+      sourceEvidenceHashCount: 1,
+      requiredReviewTopics:
+        family === "IRPP_PERIOD"
+          ? ["taxableSalaryBase", "bracketsAndRates"]
+          : [],
+      blockerCode: null,
+    };
+  });
+
 function statutoryScenarioCoverage(overrides: Record<string, unknown> = {}) {
   return {
     status: "READY",
     countryCode: "CM",
-    packVersion: "CM-2026.1",
+    packVersion: "CM-2026.2",
     coverageHash: STATUTORY_SCENARIO_COVERAGE_HASH,
-    executableScenarioCount: 12,
-    readyFamilyCount: 9,
-    requiredFamilyCount: 9,
+    executableScenarioCount: 14,
+    readyFamilyCount: 11,
+    requiredFamilyCount: 11,
     blockerCodes: [],
     requiredReviewTopics: ["taxableSalaryBase", "bracketsAndRates"],
+    requiredLifecycleProofFieldCount: STATUTORY_LIFECYCLE_PROOF_FIELD_COUNT,
+    requiredLifecycleProofFields: STATUTORY_LIFECYCLE_PROOF_FIELDS,
+    coveredLifecycleProofFieldCount: STATUTORY_LIFECYCLE_PROOF_FIELD_COUNT,
+    coveredLifecycleProofFields: STATUTORY_LIFECYCLE_PROOF_FIELDS,
+    missingLifecycleProofFieldCount: 0,
+    missingLifecycleProofFields: [],
     reviewEvidence: {
-      presentCount: 12,
+      presentCount: 14,
       missingCount: 0,
       reviewedBy: ["Qualified Cameroon payroll tax reviewer"],
       reviewedOn: ["2026-06-28"],
@@ -41,8 +105,8 @@ function statutoryScenarioCoverage(overrides: Record<string, unknown> = {}) {
       status: "READY",
       coverageHash: STATUTORY_SCENARIO_COVERAGE_HASH,
       reviewEvidenceSourceHashes: ["sha256:statutory-review-evidence"],
-      readyFamilyCount: 9,
-      requiredFamilyCount: 9,
+      readyFamilyCount: 11,
+      requiredFamilyCount: 11,
       registerProofGapCount: 0,
       declarationRegisterProofGapCount: 0,
       paymentSettlementRegisterProofGapCount: 0,
@@ -54,21 +118,7 @@ function statutoryScenarioCoverage(overrides: Record<string, unknown> = {}) {
       ],
       blockerCodes: [],
     },
-    families: [
-      {
-        family: "IRPP_PERIOD",
-        status: "READY",
-        capabilityStatus: "SUPPORTED",
-        executableScenarioCount: 1,
-        passedScenarioCount: 1,
-        failedScenarioCount: 0,
-        certificationStatus: "EXPERT_REVIEWED",
-        reviewStatuses: ["EXPERT_REVIEWED"],
-        sourceEvidenceHashCount: 1,
-        requiredReviewTopics: ["taxableSalaryBase", "bracketsAndRates"],
-        blockerCode: null,
-      },
-    ],
+    families: FULL_PRODUCTION_STATUTORY_FAMILY_FIXTURES,
     ...overrides,
   };
 }
@@ -161,7 +211,7 @@ function countryPackReviewIntakeApprovalAudit(
           proposedPackVersion: "CM-2026.2",
           proposedPackHash: "sha256:proposed-pack",
           status: "READY_FOR_LEGAL_OWNER_SIGNOFF",
-          targetFamilies: ["IRPP_PERIOD"],
+          targetFamilies: [...FULL_PRODUCTION_STATUTORY_FAMILIES],
           reviewEvidenceSourceHashes: ["sha256:taxable-salary-base-review"],
           fixtureEvidenceHashes: ["sha256:fixture-provenance"],
         },
@@ -292,6 +342,12 @@ function baseInput(overrides: Record<string, unknown> = {}) {
   };
 }
 
+function writeJsonEvidence(root: string, relativePath: string, payload: unknown) {
+  const absolutePath = path.join(root, relativePath);
+  mkdirSync(path.dirname(absolutePath), { recursive: true });
+  writeFileSync(absolutePath, `${JSON.stringify(payload, null, 2)}\n`, "utf8");
+}
+
 describe("buildPayrollFinalReleaseReadinessPack", () => {
   it("builds a ready full-production approval pack when all evidence passes", async () => {
     const client = buildClient();
@@ -309,15 +365,32 @@ describe("buildPayrollFinalReleaseReadinessPack", () => {
         evidenceHash: STATUTORY_SCENARIO_COVERAGE_HASH,
         summary: expect.objectContaining({
           statutoryScenarioCoverageStatus: "READY",
-          statutoryScenarioFamilies: "9/9",
+          setupStatutoryCountryCode: "CM",
+          setupStatutoryPackVersion: "CM-2026.2",
+          approvedCountryCode: "CM",
+          approvedPackVersion: "CM-2026.2",
+          countryPackCountryMatches: true,
+          countryPackVersionMatches: true,
+          statutoryScenarioFamilies: "11/11",
           missingReviewEvidenceCount: 0,
           sourceEvidenceHashCount: 1,
           requiredReviewTopicCount: 2,
           requiredReviewTopics: "taxableSalaryBase, bracketsAndRates",
+          lifecycleProofRequiredFieldCount:
+            STATUTORY_LIFECYCLE_PROOF_FIELD_COUNT,
+          lifecycleProofMissingFieldCount: 0,
+          lifecycleProofRequiredFields:
+            STATUTORY_LIFECYCLE_PROOF_FIELDS.join(", "),
+          lifecycleProofMissingFields: null,
+          lifecycleProofCoverageReady: true,
           reviewedProofChainStatus: "READY",
           reviewedProofChainBlockerCount: 0,
           reviewedProofChainRegisterProofGapCount: 0,
           reviewedProofChainCorrectionIntentCount: 2,
+          requiredStatutoryReadyFamilies:
+            "DEDUCTIONS_RECOVERIES, COMPOSITE_REGISTER_TIE_OUT",
+          requiredStatutoryReadyFamiliesPresent: true,
+          missingRequiredStatutoryReadyFamilies: null,
         }),
       }),
     );
@@ -325,10 +398,21 @@ describe("buildPayrollFinalReleaseReadinessPack", () => {
       expect.objectContaining({
         setupStatutoryScenarioCoverageStatus: "READY",
         setupStatutoryScenarioCoverageHash: STATUTORY_SCENARIO_COVERAGE_HASH,
+        setupStatutoryScenarioCountryCode: "CM",
+        setupStatutoryScenarioPackVersion: "CM-2026.2",
         setupStatutoryScenarioSourceEvidenceHashCount: 1,
         setupStatutoryScenarioRequiredReviewTopicCount: 2,
         setupStatutoryScenarioRequiredReviewTopics:
           "taxableSalaryBase, bracketsAndRates",
+        setupStatutoryScenarioRequiredLifecycleProofFieldCount:
+          STATUTORY_LIFECYCLE_PROOF_FIELD_COUNT,
+        setupStatutoryScenarioMissingLifecycleProofFieldCount: 0,
+        setupStatutoryScenarioRequiredLifecycleProofFields:
+          STATUTORY_LIFECYCLE_PROOF_FIELDS,
+        setupStatutoryScenarioCoveredLifecycleProofFields:
+          STATUTORY_LIFECYCLE_PROOF_FIELDS,
+        setupStatutoryScenarioMissingLifecycleProofFields: [],
+        setupStatutoryScenarioMissingRequiredReadyFamilies: [],
         reviewedProofChainStatus: "READY",
         reviewedProofChainCoverageHash: STATUTORY_SCENARIO_COVERAGE_HASH,
         reviewedProofChainBlockerCodes: [],
@@ -351,14 +435,20 @@ describe("buildPayrollFinalReleaseReadinessPack", () => {
           status: "APPROVED",
           approvalHashPresent: true,
           certificateHashPresent: true,
+          countryCode: "CM",
           proposedPackVersion: "CM-2026.2",
-          targetFamilyCount: 1,
-          targetFamilies: "IRPP_PERIOD",
+          proposedPackHashPresent: true,
+          setupStatutoryCountryCode: "CM",
+          setupStatutoryPackVersion: "CM-2026.2",
+          countryPackCountryMatches: true,
+          countryPackVersionMatches: true,
+          targetFamilyCount: 11,
+          targetFamilies: FULL_PRODUCTION_STATUTORY_FAMILY_LIST,
           freshAuthSatisfied: true,
           approvalEvidenceHashPresent: true,
           reviewEvidenceSourceHashCount: 1,
           fixtureEvidenceHashCount: 1,
-          setupReadyFamilyCount: 1,
+          setupReadyFamilyCount: 11,
           setupReadyFamiliesMissingApproval: null,
         }),
       }),
@@ -368,16 +458,18 @@ describe("buildPayrollFinalReleaseReadinessPack", () => {
         status: "APPROVED",
         approvalHash: COUNTRY_PACK_REVIEW_APPROVAL_HASH,
         certificateHash: "sha256:intake-certificate",
+        countryCode: "CM",
         proposedPackVersion: "CM-2026.2",
-        targetFamilyCount: 1,
-        targetFamilies: ["IRPP_PERIOD"],
+        proposedPackHash: "sha256:proposed-pack",
+        targetFamilyCount: 11,
+        targetFamilies: [...FULL_PRODUCTION_STATUTORY_FAMILIES],
         freshAuthSatisfied: true,
         approvalEvidenceHashPresent: true,
         reviewEvidenceSourceHashCount: 1,
         fixtureEvidenceHashCount: 1,
         reviewEvidenceSourceHashes: ["sha256:taxable-salary-base-review"],
         fixtureEvidenceHashes: ["sha256:fixture-provenance"],
-        setupReadyFamilyCount: 1,
+        setupReadyFamilyCount: 11,
         setupReadyFamiliesMissingApproval: [],
       }),
     );
@@ -472,6 +564,89 @@ describe("buildPayrollFinalReleaseReadinessPack", () => {
     );
   });
 
+  it("blocks final approval when approved payroll jurisdiction differs from statutory setup coverage", async () => {
+    const result = await buildPayrollFinalReleaseReadinessPack(
+      baseInput(),
+      buildClient({
+        countryPackReviewIntake: countryPackReviewIntakeApprovalAudit({
+          sourceCertificate: {
+            auditLogRef: "country-pack-intake-audit-1",
+            certificateHash: "sha256:intake-certificate",
+            countryCode: "CI",
+            proposedPackVersion: "CM-2026.2",
+            proposedPackHash: "sha256:proposed-pack",
+            status: "READY_FOR_LEGAL_OWNER_SIGNOFF",
+            targetFamilies: [...FULL_PRODUCTION_STATUTORY_FAMILIES],
+            reviewEvidenceSourceHashes: ["sha256:taxable-salary-base-review"],
+            fixtureEvidenceHashes: ["sha256:fixture-provenance"],
+          },
+        }),
+      }) as never,
+    );
+
+    expect(result.decision).toBe("NOT_READY");
+    expect(result.gates.find((gate) => gate.key === "statutory_setup")).toEqual(
+      expect.objectContaining({
+        status: "BLOCKED",
+        blockerCodes: expect.arrayContaining([
+          "FINAL_STATUTORY_COUNTRY_PACK_COUNTRY_MISMATCH",
+        ]),
+        summary: expect.objectContaining({
+          setupStatutoryCountryCode: "CM",
+          approvedCountryCode: "CI",
+          countryPackCountryMatches: false,
+        }),
+      }),
+    );
+    expect(result.evidence.countryPackReviewIntake).toEqual(
+      expect.objectContaining({ countryCode: "CI" }),
+    );
+    expect(result.evidence.proofBackfill).toEqual(
+      expect.objectContaining({ setupStatutoryScenarioCountryCode: "CM" }),
+    );
+  });
+
+  it("blocks final approval when approved country-pack version differs from statutory setup coverage", async () => {
+    const result = await buildPayrollFinalReleaseReadinessPack(
+      baseInput(),
+      buildClient({
+        countryPackReviewIntake: countryPackReviewIntakeApprovalAudit({
+          sourceCertificate: {
+            auditLogRef: "country-pack-intake-audit-1",
+            certificateHash: "sha256:intake-certificate",
+            countryCode: "CM",
+            proposedPackVersion: "CM-2026.9",
+            proposedPackHash: "sha256:proposed-pack-v9",
+            status: "READY_FOR_LEGAL_OWNER_SIGNOFF",
+            targetFamilies: [...FULL_PRODUCTION_STATUTORY_FAMILIES],
+            reviewEvidenceSourceHashes: ["sha256:taxable-salary-base-review"],
+            fixtureEvidenceHashes: ["sha256:fixture-provenance"],
+          },
+        }),
+      }) as never,
+    );
+
+    expect(result.decision).toBe("NOT_READY");
+    expect(result.gates.find((gate) => gate.key === "statutory_setup")).toEqual(
+      expect.objectContaining({
+        status: "BLOCKED",
+        blockerCodes: expect.arrayContaining([
+          "FINAL_STATUTORY_COUNTRY_PACK_VERSION_MISMATCH",
+        ]),
+        summary: expect.objectContaining({
+          setupStatutoryPackVersion: "CM-2026.2",
+          approvedPackVersion: "CM-2026.9",
+          countryPackVersionMatches: false,
+        }),
+      }),
+    );
+    expect(result.evidence.countryPackReviewIntake).toEqual(
+      expect.objectContaining({ proposedPackVersion: "CM-2026.9" }),
+    );
+    expect(result.evidence.proofBackfill).toEqual(
+      expect.objectContaining({ setupStatutoryScenarioPackVersion: "CM-2026.2" }),
+    );
+  });
   it("blocks final approval when legal-owner approval omits setup-ready statutory families", async () => {
     const result = await buildPayrollFinalReleaseReadinessPack(
       baseInput(),
@@ -496,6 +671,19 @@ describe("buildPayrollFinalReleaseReadinessPack", () => {
                 },
               ],
             }),
+          },
+        }),
+        countryPackReviewIntake: countryPackReviewIntakeApprovalAudit({
+          sourceCertificate: {
+            auditLogRef: "country-pack-intake-audit-1",
+            certificateHash: "sha256:intake-certificate",
+            countryCode: "CM",
+            proposedPackVersion: "CM-2026.2",
+            proposedPackHash: "sha256:proposed-pack",
+            status: "READY_FOR_LEGAL_OWNER_SIGNOFF",
+            targetFamilies: ["IRPP_PERIOD"],
+            reviewEvidenceSourceHashes: ["sha256:taxable-salary-base-review"],
+            fixtureEvidenceHashes: ["sha256:fixture-provenance"],
           },
         }),
       }) as never,
@@ -527,6 +715,19 @@ describe("buildPayrollFinalReleaseReadinessPack", () => {
     const result = await buildPayrollFinalReleaseReadinessPack(
       baseInput(),
       buildClient({
+        proofBackfill: proofBackfillAudit({
+          setupGate: {
+            status: "READY",
+            blockerCodes: [],
+            statutoryScenarioCoverage: statutoryScenarioCoverage({
+              readyFamilyCount: 1,
+              requiredFamilyCount: 10,
+              families: FULL_PRODUCTION_STATUTORY_FAMILY_FIXTURES.filter(
+                (family) => family.family === "IRPP_PERIOD",
+              ),
+            }),
+          },
+        }),
         countryPackReviewIntake: countryPackReviewIntakeApprovalAudit({
           sourceCertificate: {
             auditLogRef: "country-pack-intake-audit-1",
@@ -637,6 +838,164 @@ describe("buildPayrollFinalReleaseReadinessPack", () => {
     );
   });
 
+  it("blocks final approval when statutory scenario coverage lacks composite register tie-out readiness", async () => {
+    const result = await buildPayrollFinalReleaseReadinessPack(
+      baseInput(),
+      buildClient({
+        proofBackfill: proofBackfillAudit({
+          setupGate: {
+            status: "READY",
+            blockerCodes: [],
+            statutoryScenarioCoverage: statutoryScenarioCoverage({
+              executableScenarioCount: 13,
+              readyFamilyCount: 10,
+              requiredFamilyCount: 10,
+              reviewEvidence: {
+                presentCount: 13,
+                missingCount: 0,
+                reviewedBy: ["Qualified Cameroon payroll tax reviewer"],
+                reviewedOn: ["2026-06-28"],
+                legalRefs: ["CM_PAYROLL_REVIEWED_SOURCE"],
+                sourceEvidenceHashes: ["sha256:statutory-review-evidence"],
+              },
+              families: FULL_PRODUCTION_STATUTORY_FAMILY_FIXTURES.filter(
+                (family) => family.family !== "COMPOSITE_REGISTER_TIE_OUT",
+              ),
+            }),
+          },
+        }),
+      }) as never,
+    );
+
+    expect(result.decision).toBe("NOT_READY");
+    expect(result.gates.find((gate) => gate.key === "statutory_setup")).toEqual(
+      expect.objectContaining({
+        status: "BLOCKED",
+        blockerCodes: expect.arrayContaining([
+          "FINAL_STATUTORY_COMPOSITE_REGISTER_TIEOUT_MISSING",
+        ]),
+        summary: expect.objectContaining({
+          requiredStatutoryReadyFamilies:
+            "DEDUCTIONS_RECOVERIES, COMPOSITE_REGISTER_TIE_OUT",
+          requiredStatutoryReadyFamiliesPresent: false,
+          missingRequiredStatutoryReadyFamilies:
+            "COMPOSITE_REGISTER_TIE_OUT",
+        }),
+      }),
+    );
+    expect(result.evidence.proofBackfill).toEqual(
+      expect.objectContaining({
+        setupStatutoryScenarioReadyFamilyCount: 10,
+        setupStatutoryScenarioRequiredFamilyCount: 10,
+        setupStatutoryScenarioMissingRequiredReadyFamilies: [
+          "COMPOSITE_REGISTER_TIE_OUT",
+        ],
+      }),
+    );
+  });
+
+  it("blocks final approval when statutory scenario coverage lacks deduction recovery readiness", async () => {
+    const result = await buildPayrollFinalReleaseReadinessPack(
+      baseInput(),
+      buildClient({
+        proofBackfill: proofBackfillAudit({
+          setupGate: {
+            status: "READY",
+            blockerCodes: [],
+            statutoryScenarioCoverage: statutoryScenarioCoverage({
+              executableScenarioCount: 13,
+              readyFamilyCount: 10,
+              requiredFamilyCount: 10,
+              reviewEvidence: {
+                presentCount: 13,
+                missingCount: 0,
+                reviewedBy: ["Qualified Cameroon payroll tax reviewer"],
+                reviewedOn: ["2026-06-28"],
+                legalRefs: ["CM_PAYROLL_REVIEWED_SOURCE"],
+                sourceEvidenceHashes: ["sha256:statutory-review-evidence"],
+              },
+              families: FULL_PRODUCTION_STATUTORY_FAMILY_FIXTURES.filter(
+                (family) => family.family !== "DEDUCTIONS_RECOVERIES",
+              ),
+            }),
+          },
+        }),
+      }) as never,
+    );
+
+    expect(result.decision).toBe("NOT_READY");
+    expect(result.gates.find((gate) => gate.key === "statutory_setup")).toEqual(
+      expect.objectContaining({
+        status: "BLOCKED",
+        blockerCodes: expect.arrayContaining([
+          "FINAL_STATUTORY_DEDUCTION_RECOVERY_COVERAGE_MISSING",
+        ]),
+        summary: expect.objectContaining({
+          requiredStatutoryReadyFamilies:
+            "DEDUCTIONS_RECOVERIES, COMPOSITE_REGISTER_TIE_OUT",
+          requiredStatutoryReadyFamiliesPresent: false,
+          missingRequiredStatutoryReadyFamilies: "DEDUCTIONS_RECOVERIES",
+        }),
+      }),
+    );
+    expect(result.evidence.proofBackfill).toEqual(
+      expect.objectContaining({
+        setupStatutoryScenarioReadyFamilyCount: 10,
+        setupStatutoryScenarioRequiredFamilyCount: 10,
+        setupStatutoryScenarioMissingRequiredReadyFamilies: [
+          "DEDUCTIONS_RECOVERIES",
+        ],
+      }),
+    );
+  });
+
+  it("blocks final approval when statutory lifecycle proof fixture coverage is missing", async () => {
+    const coveredLifecycleProofFields = STATUTORY_LIFECYCLE_PROOF_FIELDS.filter(
+      (field) => field !== "correctionEvidenceHash",
+    );
+    const result = await buildPayrollFinalReleaseReadinessPack(
+      baseInput(),
+      buildClient({
+        proofBackfill: proofBackfillAudit({
+          setupGate: {
+            status: "READY",
+            blockerCodes: [],
+            statutoryScenarioCoverage: statutoryScenarioCoverage({
+              coveredLifecycleProofFieldCount:
+                STATUTORY_LIFECYCLE_PROOF_FIELD_COUNT - 1,
+              coveredLifecycleProofFields,
+              missingLifecycleProofFieldCount: 1,
+              missingLifecycleProofFields: ["correctionEvidenceHash"],
+            }),
+          },
+        }),
+      }) as never,
+    );
+
+    expect(result.decision).toBe("NOT_READY");
+    expect(result.gates.find((gate) => gate.key === "statutory_setup")).toEqual(
+      expect.objectContaining({
+        status: "BLOCKED",
+        blockerCodes: expect.arrayContaining([
+          "FINAL_STATUTORY_LIFECYCLE_PROOF_COVERAGE_MISSING",
+        ]),
+        summary: expect.objectContaining({
+          lifecycleProofMissingFieldCount: 1,
+          lifecycleProofMissingFields: "correctionEvidenceHash",
+          lifecycleProofCoverageReady: false,
+        }),
+      }),
+    );
+    expect(result.evidence.proofBackfill).toEqual(
+      expect.objectContaining({
+        setupStatutoryScenarioMissingLifecycleProofFieldCount: 1,
+        setupStatutoryScenarioMissingLifecycleProofFields: [
+          "correctionEvidenceHash",
+        ],
+      }),
+    );
+  });
+
   it("blocks final approval when statutory scenario coverage proof is missing from proof-backfill setup evidence", async () => {
     const result = await buildPayrollFinalReleaseReadinessPack(
       baseInput(),
@@ -648,13 +1007,13 @@ describe("buildPayrollFinalReleaseReadinessPack", () => {
             statutoryScenarioCoverage: statutoryScenarioCoverage({
               status: "BLOCKED",
               coverageHash: null,
-              readyFamilyCount: 8,
-              requiredFamilyCount: 9,
+              readyFamilyCount: 9,
+              requiredFamilyCount: 10,
               blockerCodes: [
                 "PAYROLL_STATUTORY_SCENARIO_COVERAGE_INCOMPLETE",
               ],
               reviewEvidence: {
-                presentCount: 11,
+                presentCount: 12,
                 missingCount: 1,
                 reviewedBy: ["Qualified Cameroon payroll tax reviewer"],
                 reviewedOn: ["2026-06-28"],
@@ -786,6 +1145,80 @@ describe("buildPayrollFinalReleaseReadinessPack", () => {
         rawProviderPayloadIncluded: false,
         rawAuthorityPayloadIncluded: false,
         rawAuditLogIdsIncluded: false,
+      }),
+    );
+  });
+  it("loads the newest full-route Prompt 19 route-smoke evidence from evidenceRoot", async () => {
+    const evidenceRoot = mkdtempSync(
+      path.join(os.tmpdir(), "payroll-final-release-evidence-"),
+    );
+
+    try {
+      writeJsonEvidence(
+        evidenceRoot,
+        "what-next/payroll/AQSTOQFLOW_PAYROLL_UI_ROUTE_SMOKE_BROWSER.json",
+        {
+          checkedAt: "2026-07-01T19:47:49.000Z",
+          ok: false,
+          routeCount: 11,
+        },
+      );
+      writeJsonEvidence(
+        evidenceRoot,
+        "what-next/payroll/AQSTOQFLOW_PAYROLL_PROMPT_19_BROWSER_SMOKE_WARMUP_2026-07-02.json",
+        {
+          checkedAt: "2026-07-02T04:22:09.000Z",
+          ok: true,
+          routeCount: 11,
+        },
+      );
+
+      const result = await buildPayrollFinalReleaseReadinessPack(
+        baseInput({
+          evidenceRoot,
+          evidenceSnapshot: readyEvidenceSnapshot({ routeSmoke: null }),
+        }),
+        buildClient() as never,
+      );
+
+      expect(result.evidence.browserValidation).toEqual(
+        expect.objectContaining({
+          routeSmokeCheckedAt: "2026-07-02T04:22:09.000Z",
+          routeSmokeOk: true,
+          routeCount: 11,
+          expectedRouteCount: 11,
+        }),
+      );
+      expect(result.gates.find((gate) => gate.key === "browser_validation")).toEqual(
+        expect.objectContaining({ status: "PASS", blockerCodes: [] }),
+      );
+    } finally {
+      rmSync(evidenceRoot, { recursive: true, force: true });
+    }
+  });
+
+  it("blocks final approval when route-smoke evidence covers fewer than implemented payroll routes", async () => {
+    const result = await buildPayrollFinalReleaseReadinessPack(
+      baseInput({
+        evidenceSnapshot: readyEvidenceSnapshot({
+          routeSmoke: {
+            checkedAt: "2026-07-02T04:22:09.000Z",
+            ok: true,
+            routeCount: 1,
+          },
+        }),
+      }),
+      buildClient() as never,
+    );
+
+    expect(result.decision).toBe("NOT_READY");
+    expect(result.evidence.browserValidation).toEqual(
+      expect.objectContaining({ routeCount: 1, expectedRouteCount: 11 }),
+    );
+    expect(result.gates.find((gate) => gate.key === "browser_validation")).toEqual(
+      expect.objectContaining({
+        status: "BLOCKED",
+        blockerCodes: ["FINAL_BROWSER_ROUTE_SMOKE_INCOMPLETE"],
       }),
     );
   });

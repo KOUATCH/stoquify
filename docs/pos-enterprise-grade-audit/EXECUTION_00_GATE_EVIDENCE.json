@@ -1,0 +1,146 @@
+{
+  "schemaVersion": "1.0.0",
+  "programId": "STOQUIFY-POS-SALES-TO-CASH",
+  "capturedAt": "2026-08-17T04:23:49.1475352Z",
+  "candidate": {
+    "commit": "35b4cc6a06a50ee11de5bfce6b04993e38bd589a",
+    "tree": "7efce91d5ba871e91470f60ed3b53833a1c3b4b4",
+    "dirty": true,
+    "baselineStatusSha256": "f03d0b60371361ec39696057cc89604394ddb43f635373e17c023958a68ace02"
+  },
+  "checks": [
+    {
+      "id": "M0-ARTIFACT-JSON",
+      "class": "LOCAL_STATIC",
+      "command": "node JSON.parse over five M0 JSON artifacts",
+      "status": "PASS",
+      "exitCode": 0,
+      "summary": "Five initial JSON artifacts parsed successfully."
+    },
+    {
+      "id": "M0-TYPECHECK",
+      "class": "LOCAL_STATIC",
+      "command": "npm run typecheck",
+      "startedAt": "2026-08-17T04:23:01.7620682Z",
+      "finishedAt": "2026-08-17T04:23:19.8414446Z",
+      "status": "PASS",
+      "exitCode": 0
+    },
+    {
+      "id": "M0-PRISMA-VALIDATE",
+      "class": "LOCAL_STATIC",
+      "command": "npm run prisma:validate",
+      "startedAt": "2026-08-17T04:23:01.2482043Z",
+      "finishedAt": "2026-08-17T04:23:05.8977705Z",
+      "status": "PASS",
+      "exitCode": 0
+    },
+    {
+      "id": "M0-SERVICE-BOUNDARY",
+      "class": "LOCAL_STATIC",
+      "command": "node scripts/service-boundary-gate.js --mode fail",
+      "observedAt": "2026-08-17T04:22:16.816Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "summary": "0 active violations, 13 allowed test/mock/service findings, 13 callsites scanned."
+    },
+    {
+      "id": "M0-KONTAVA-MOAT",
+      "class": "LOCAL_STATIC",
+      "command": "node scripts/kontava-moat-release-gate.js --mode fail",
+      "observedAt": "2026-08-17T04:22:17.692Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "summary": "Static gate ready: 8/8 seed scenarios, 6/6 backfill checks and 8/8 release gates. This is not live tenant or production proof."
+    },
+    {
+      "id": "M0-MIGRATION-SAFETY",
+      "class": "LOCAL_STATIC",
+      "command": "node scripts/prisma-production-migration-gate.js --mode fail --environment local with temporary outputs",
+      "observedAt": "2026-08-17T04:22:16.957Z",
+      "status": "FAIL",
+      "exitCode": 1,
+      "summary": "8/9 checks ready. 13 destructive SQL findings in prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql have zero effective exact-finding-hash approvals. Database execution was skipped and no secret values were printed.",
+      "findingIds": [
+        "69294f51328a0a7575cff0524e5196accf0159913177b11dd249b65e554295fe",
+        "4781af03745e807d47ccdc89b62f0562b923707465d36d215cbeaea3e3e164fb",
+        "277a312724a1c524d910f7c5966d70170825cf1d6a60679269b2388a6c9f3e55",
+        "5807ad92f5163c0922dce2373dd15df9d064a28a61b1601e063a510448c52c13",
+        "fbc401c6980f7b01658bb2b2f3702c618e2378e92395b4caee631fd8d8bee2cb",
+        "b5d38ed4fd3e87f368f0948c54731873ffdbec440832c219a078af57364ec76b",
+        "07a6cfdfae6507d5572505bc8a0505c74d4f0f1b496f0864b1e2d4e537ce1492",
+        "6ad18571cee52ce1386eacb37d9b18e40c4d6ffbb3b3166de4ffe4710df83988",
+        "42bf676feeb19705c6bd4a57cf83ac0f99d8cbb830b46cd42b1f980243a31165",
+        "5f168672b10fcdcbe1af94b0da9d9ead18688f6254a326c146ccb1aecda6d9de",
+        "8f4f2215000c21bc293358a28c8c4f8df6b90abdbc7c5200cb0b4e7d814807b9",
+        "ec44f20e8dd677d05d2303eef1758a22bebb08077983362349f6d9c5e4fd9178",
+        "4b1479492af21a9dd97c0a5212afe7c7383b8cd3b31045310e8ab0e0143bc95d"
+      ]
+    },
+    {
+      "id": "M0-LOCAL-DB-TARGET",
+      "class": "LOCAL_STATIC",
+      "command": "Load and expand DATABASE_URL using prisma.config.ts semantics; disclose only scheme and local-target classification",
+      "status": "PASS",
+      "exitCode": 0,
+      "summary": "A PostgreSQL URL is configured and resolves to an approved local host. No credential or host value was printed."
+    },
+    {
+      "id": "M0-LOCAL-MIGRATION-STATUS",
+      "class": "LOCAL_POSTGRES",
+      "command": "npx prisma migrate status",
+      "startedAt": "2026-08-17T04:27:40.7224572Z",
+      "finishedAt": "2026-08-17T04:27:47.7957659Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "summary": "The configured local PostgreSQL development database reports 67 repository migrations and an up-to-date schema. This proves local history only and does not prove production target state, backup, restore, or destructive-clause approval."
+    },
+    {
+      "id": "M0-POS-POSTGRES-HARNESS",
+      "class": "LOCAL_POSTGRES",
+      "status": "BLOCKED",
+      "exitCode": null,
+      "summary": "Only services/pos/__tests__/pos-shift-close.postgres.test.ts was found. No clientCommitId sale race/response-loss replay harness exists."
+    },
+    {
+      "id": "M0-POS-BROWSER-HARNESS",
+      "class": "LOCAL_BROWSER",
+      "status": "BLOCKED",
+      "exitCode": null,
+      "summary": "No POS-specific authenticated Playwright/E2E harness was found for EN/FR, role, viewport, keyboard and accessibility coverage."
+    }
+  ],
+  "sourceObservations": [
+    {
+      "source": "services/pos/pos.schemas.ts:142",
+      "finding": "commitSaleSchema has no clientCommitId or canonical payload hash."
+    },
+    {
+      "source": "services/pos/pos.service.ts:1873",
+      "sourceSha256": "974f7d8926ec92bca12c9046b56119449262ce9be3729c096d5d6ea1e75f1414",
+      "finding": "commitPOSSale claims only a DRAFT sale and does not replay an immutable prior result."
+    },
+    {
+      "source": "services/pos/pos.service.ts:2194",
+      "sourceSha256": "974f7d8926ec92bca12c9046b56119449262ce9be3729c096d5d6ea1e75f1414",
+      "finding": "All non-credit tender rows are created with PAID status; provider pending/unknown/captured/settled semantics are not represented at this boundary."
+    }
+  ],
+  "notRunAfterHighSeverityStop": [
+    "npm run policy:gates",
+    "npm run build:app",
+    "real POS sale PostgreSQL concurrency tests",
+    "authenticated POS EN/FR browser matrix"
+  ],
+  "privacy": {
+    "redactionChecked": true,
+    "containsSecrets": false,
+    "containsPaymentCredentials": false,
+    "containsUnnecessaryPii": false
+  },
+  "gateDecision": {
+    "gate": "G0",
+    "status": "BLOCKED",
+    "reason": "Migration safety failed, pilot approvals are absent, and the POS-specific PostgreSQL/browser harnesses do not exist."
+  }
+}

@@ -1,0 +1,295 @@
+{
+  "schemaVersion": "1.0.0",
+  "catalogId": "STOQUIFY-BLOCKER-GATE-CONTROL-PLANE-DESIGN-20260818",
+  "generatedAt": "2026-08-18T00:00:00.000Z",
+  "status": "DESIGN_EXAMPLES_NOT_APPROVAL_EVIDENCE",
+  "productionAuthorized": false,
+  "warnings": [
+    "No example identity, authority assignment, approval, verification or gate result in this file receives operational approval credit.",
+    "Human authority and approval must be created through the future authenticated workflow.",
+    "The G1 contract is referenced by exact digest and must not be edited."
+  ],
+  "currentBaseline": {
+    "g1TechnicalChecksPassed": 13,
+    "g1TechnicalChecksRequired": 13,
+    "g1ApprovedDecisions": 0,
+    "g1RequiredDecisions": 11,
+    "g1RequiredDecisionRoleEntries": 33,
+    "posGatesPassed": 0,
+    "posGatesRequired": 10,
+    "firstBlockingGate": "G1",
+    "productionAuthorized": false
+  },
+  "artifactExample": {
+    "artifactId": "STOQUIFY-POS-G1-CONTRACT-FREEZE-0.2.0-20260817",
+    "artifactVersion": "0.2.0",
+    "artifactType": "CONTROL_CONTRACT",
+    "sourceUri": "repo://docs/pos-enterprise-grade-audit/EXECUTION_06_G1_CONTRACT_FREEZE_V0_2_0.json",
+    "canonicalizationProfile": "exact-bytes-v1",
+    "digest": {
+      "algorithm": "sha256",
+      "value": "11434eb3e1af1826516426e90d2d53a2faa47ade361d91191b5f3e0c950a36db",
+      "independentlyRecomputed": true
+    },
+    "lifecycleState": "FROZEN",
+    "approvalEligible": true
+  },
+  "gateDefinitionExample": {
+    "gateKey": "POS.G1.ARCHITECTURE_CONTROL_FREEZE",
+    "version": 1,
+    "name": "Architecture and control contract freeze",
+    "moduleSlug": "pos",
+    "ownerAuthorityCode": "POS_CONTROL_OWNER",
+    "dependencies": [],
+    "evaluationMode": "FAIL_CLOSED",
+    "obligations": [
+      {
+        "kind": "TECHNICAL_CHECK_SET",
+        "reference": "pos-g1-contract-gate:technical-checks",
+        "requiredResult": "PASSED",
+        "requiredCount": 13
+      },
+      {
+        "kind": "DECISION_POLICY",
+        "reference": "POS.G1.DECISIONS:1",
+        "requiredResult": "VERIFIED",
+        "requiredDecisionCount": 11,
+        "requiredRoleEntryCount": 33
+      }
+    ],
+    "downstreamGateKeys": ["POS.G2.TRANSACTION_ACCESS_TRUST"],
+    "releaseAuthorizationSeparate": true
+  },
+  "decisionPolicyExample": {
+    "policyKey": "POS.G1.DECISIONS",
+    "version": 1,
+    "artifactBinding": {
+      "artifactId": "STOQUIFY-POS-G1-CONTRACT-FREEZE-0.2.0-20260817",
+      "artifactVersion": "0.2.0",
+      "sha256": "11434eb3e1af1826516426e90d2d53a2faa47ade361d91191b5f3e0c950a36db"
+    },
+    "freshAuthMaxAgeSeconds": 300,
+    "authenticationAssurance": "POLICY_APPROVED_STEP_UP",
+    "samePersonMultipleRoles": "DENY_WHEN_SOD_GROUP_CONFLICTS",
+    "verificationMode": "AUTOMATED_PLUS_HUMAN_WHERE_REQUIRED",
+    "decisions": [
+      {
+        "decisionId": "D-01",
+        "selectedOption": "DISABLE_HIDE_AND_REJECT_STORE_CREDIT",
+        "requiredAuthorityCodes": ["PRODUCT_OWNER", "FINANCIAL_CONTROLLER", "PAYMENTS_OWNER"]
+      },
+      {
+        "decisionId": "D-02",
+        "selectedOption": "TERMINAL_CURRENT_SESSION_CAS_PLUS_ONE_SESSION_DRAWER_OPENING_CLAIM",
+        "requiredAuthorityCodes": ["RETAIL_OPERATIONS_OWNER", "POS_ARCHITECT", "SECURITY_OWNER"]
+      },
+      {
+        "decisionId": "D-03",
+        "selectedOption": "ELECTRONIC_TENDER_DISABLED_UNTIL_NAMED_PROVIDER_APPROVED",
+        "requiredAuthorityCodes": ["PAYMENTS_OWNER", "TREASURY_OWNER", "SECURITY_OWNER"]
+      },
+      {
+        "decisionId": "D-04",
+        "selectedOption": "OFFLINE_CAPTURE_DISABLED",
+        "requiredAuthorityCodes": ["PRODUCT_OWNER", "RISK_OWNER", "RETAIL_OPERATIONS_OWNER"]
+      },
+      {
+        "decisionId": "D-05",
+        "selectedOption": "EDGE_151_WINDOWS_10_25H2_SIMULATED_DESKTOP_PDF_ONLY_DEVELOPMENT",
+        "requiredAuthorityCodes": ["RETAIL_OPERATIONS_OWNER", "QA_OWNER", "SUPPORT_OWNER"]
+      },
+      {
+        "decisionId": "D-06",
+        "selectedOption": "LINKED_COMPENSATING_FULL_SALE_REFUND_AND_VOID_CURRENT_SCOPE",
+        "requiredAuthorityCodes": ["FINANCIAL_CONTROLLER", "RETAIL_OPERATIONS_OWNER", "RISK_OWNER"]
+      },
+      {
+        "decisionId": "D-07",
+        "selectedOption": "CAMEROON_XAF_EN_FR_DEVELOPMENT_ONLY",
+        "requiredAuthorityCodes": ["PRODUCT_OWNER", "FINANCIAL_CONTROLLER", "QUALIFIED_CAMEROON_COUNTRY_PACK_REVIEWER"]
+      },
+      {
+        "decisionId": "D-08",
+        "selectedOption": "NO_PRODUCTION_SLO_UNTIL_D05_MATRIX_AND_MEASURED_BASELINE",
+        "requiredAuthorityCodes": ["SRE_OWNER", "PRODUCT_OWNER", "SUPPORT_OWNER"]
+      },
+      {
+        "decisionId": "D-09",
+        "selectedOption": "ORDER_CONFIRMATION_NON_POSTING_INVOICE_FROM_ACCEPTED_DELIVERED_QUANTITY",
+        "requiredAuthorityCodes": ["FINANCIAL_CONTROLLER", "ORDER_TO_CASH_PRODUCT_OWNER", "QUALIFIED_ACCOUNTING_REVIEWER"]
+      },
+      {
+        "decisionId": "D-10",
+        "selectedOption": "RESERVATION_AFFECTS_AVAILABILITY_ONLY_PHYSICAL_ISSUE_OWNS_STOCK_AND_COGS",
+        "requiredAuthorityCodes": ["INVENTORY_CONTROLLER", "FULFILLMENT_OWNER", "ACCOUNTING_OWNER"]
+      },
+      {
+        "decisionId": "D-11",
+        "selectedOption": "KEEP_SESSION_DRAWER_BUSINESS_DAY_STATEMENT_RECONCILIATION_AND_CLOSE_SEPARATE",
+        "requiredAuthorityCodes": ["FINANCIAL_CONTROLLER", "TREASURY_OWNER", "RETAIL_OPERATIONS_OWNER"]
+      }
+    ]
+  },
+  "authorityAssignmentExample": {
+    "recordClass": "EXAMPLE_ONLY",
+    "organizationId": "org-example",
+    "authorityAssignmentId": "authority-example-product-owner",
+    "authorityCode": "PRODUCT_OWNER",
+    "subjectUserId": "user-example-not-real",
+    "scope": {
+      "kind": "PLATFORM_DECISION",
+      "reference": "POS.G1"
+    },
+    "status": "PENDING_AUTHORITATIVE_CONFIRMATION",
+    "effectiveFrom": "2026-08-18T00:00:00.000Z",
+    "effectiveTo": null,
+    "appointmentSource": {
+      "sourceType": "GOVERNANCE_RECORD",
+      "sourceReference": "unresolved-example",
+      "sourceSha256": null
+    },
+    "qualification": null,
+    "approvalCredit": 0
+  },
+  "approvalRequestExample": {
+    "recordClass": "EXAMPLE_ONLY",
+    "organizationId": "org-example",
+    "approvalRequestId": "approval-request-example-d01",
+    "policyKey": "POS.G1.DECISIONS",
+    "policyVersion": 1,
+    "decisionId": "D-01",
+    "selectedOption": "DISABLE_HIDE_AND_REJECT_STORE_CREDIT",
+    "artifactId": "STOQUIFY-POS-G1-CONTRACT-FREEZE-0.2.0-20260817",
+    "artifactVersion": "0.2.0",
+    "artifactSha256": "11434eb3e1af1826516426e90d2d53a2faa47ade361d91191b5f3e0c950a36db",
+    "state": "PENDING",
+    "requiredAuthorityCodes": ["PRODUCT_OWNER", "FINANCIAL_CONTROLLER", "PAYMENTS_OWNER"],
+    "requestDigest": "example-server-generated-digest-not-evidence",
+    "expiresAt": "2026-09-18T00:00:00.000Z",
+    "approvalCredit": 0
+  },
+  "approvalEntryExample": {
+    "recordClass": "EXAMPLE_ONLY",
+    "organizationId": "org-example",
+    "approvalEntryId": "approval-entry-example-product-owner",
+    "approvalRequestId": "approval-request-example-d01",
+    "requirementAuthorityCode": "PRODUCT_OWNER",
+    "approverUserId": "user-example-not-real",
+    "authorityAssignmentId": "authority-example-product-owner",
+    "decision": "APPROVED",
+    "rationale": "Example structure only",
+    "freshAuthenticatedAt": "2026-08-18T14:00:00.000Z",
+    "approvedAt": "2026-08-18T14:02:00.000Z",
+    "authenticationAttestation": {
+      "method": "EXAMPLE_WEBAUTHN_OR_APPROVED_MFA",
+      "assuranceLevel": "EXAMPLE",
+      "sessionReference": "redacted-example"
+    },
+    "evidenceEnvelopeSha256": "example-server-generated-digest-not-evidence",
+    "approvalCredit": 0
+  },
+  "evidenceEnvelopeExample": {
+    "recordClass": "EXAMPLE_ONLY",
+    "schemaVersion": "1.0.0",
+    "canonicalizationVersion": "control-envelope-json-v1",
+    "subjectType": "APPROVAL_ENTRY",
+    "subjectId": "approval-entry-example-product-owner",
+    "organizationId": "org-example",
+    "policy": {
+      "key": "POS.G1.DECISIONS",
+      "version": 1,
+      "digest": "example-policy-digest"
+    },
+    "decision": {
+      "id": "D-01",
+      "selectedOption": "DISABLE_HIDE_AND_REJECT_STORE_CREDIT",
+      "result": "APPROVED"
+    },
+    "artifact": {
+      "id": "STOQUIFY-POS-G1-CONTRACT-FREEZE-0.2.0-20260817",
+      "version": "0.2.0",
+      "sha256": "11434eb3e1af1826516426e90d2d53a2faa47ade361d91191b5f3e0c950a36db"
+    },
+    "actor": {
+      "userId": "user-example-not-real",
+      "authorityAssignmentId": "authority-example-product-owner",
+      "authorityCode": "PRODUCT_OWNER"
+    },
+    "authentication": {
+      "attestationId": "auth-attestation-example",
+      "freshAuthenticatedAt": "2026-08-18T14:00:00.000Z"
+    },
+    "approvedAt": "2026-08-18T14:02:00.000Z",
+    "envelopeSha256": "example-server-generated-digest-not-evidence",
+    "approvalCredit": 0
+  },
+  "verificationResultExample": {
+    "recordClass": "EXAMPLE_ONLY",
+    "organizationId": "org-example",
+    "verificationRunId": "verification-example-d01",
+    "subjectType": "APPROVAL_REQUEST",
+    "subjectId": "approval-request-example-d01",
+    "subjectDigest": "example-request-digest",
+    "verifierClass": "AUTOMATED",
+    "verifierVersion": "approval-verifier-v1",
+    "status": "BLOCKED",
+    "reasonCodes": ["EXAMPLE_RECORDS_HAVE_NO_APPROVAL_CREDIT", "MISSING_REQUIRED_LIVE_APPROVALS"],
+    "checks": {
+      "artifactDigest": "STRUCTURALLY_MATCHED_EXAMPLE_ONLY",
+      "policyDigest": "NOT_LIVE",
+      "authority": "NOT_CONFIRMED",
+      "freshAuthentication": "NOT_LIVE",
+      "quorum": "INCOMPLETE",
+      "segregationOfDuties": "NOT_EVALUATED"
+    },
+    "verifiedAt": "2026-08-18T14:03:00.000Z",
+    "approvalCredit": 0
+  },
+  "blockerRecordExample": {
+    "recordClass": "EXAMPLE_ONLY",
+    "blockerCode": "G1.D01.MISSING.AUTHENTIC.APPROVALS",
+    "gateKey": "POS.G1.ARCHITECTURE_CONTROL_FREEZE",
+    "severity": "BLOCKING",
+    "state": "OPEN",
+    "title": "D-01 authentic approvals are incomplete",
+    "detail": "The required Product Owner, Financial Controller and Payments Owner obligations are not all independently verified.",
+    "ownerAuthorityCode": "POS_CONTROL_OWNER",
+    "sourceType": "APPROVAL_REQUEST",
+    "sourceId": "approval-request-example-d01",
+    "sourceHash": "example-request-digest",
+    "nextAction": "Confirm authority assignments and complete fresh-authenticated approvals.",
+    "safeForNotification": true,
+    "approvalCredit": 0
+  },
+  "automationBoundary": {
+    "automatic": [
+      "tenant and stable user lookup",
+      "candidate role lookup",
+      "registered artifact retrieval",
+      "canonical digest calculation",
+      "policy expansion into obligations",
+      "fresh-authentication verification",
+      "approval payload construction and hashing",
+      "quorum and segregation checks",
+      "gate dependency evaluation",
+      "blocker routing and notification",
+      "redacted evidence export"
+    ],
+    "humanRequired": [
+      "authority appointment",
+      "qualification confirmation",
+      "decision selection",
+      "approve or reject intent",
+      "risk acceptance and waiver approval",
+      "human checker certification where policy requires it",
+      "jurisdiction-specific legal or statutory conclusion"
+    ],
+    "prohibitedAutomation": [
+      "invent authority",
+      "approve on behalf of a human",
+      "convert handwriting media into authentication evidence",
+      "infer intent from document access or notification delivery",
+      "permit an AI agent to satisfy a human approval obligation"
+    ]
+  }
+}
