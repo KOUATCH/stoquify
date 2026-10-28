@@ -356,6 +356,72 @@ describe("statement import ingestion", () => {
     )
   })
 
+  it("creates a critical tamper exception when a provider reference reappears with a changed amount", async () => {
+    const rawContent = statementContent([
+      {
+        providerTransactionId: "txn-1",
+        providerReference: "ref-1",
+        direction: "CREDIT",
+        amount: "12000",
+        currencyCode: "XAF",
+        occurredAt: "2026-06-14T10:00:00Z",
+      },
+    ])
+    mockedDb.statementLine.findMany
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([
+        {
+          id: "statement-line-existing",
+          fingerprint: "existing-fingerprint",
+          providerTransactionId: "txn-1",
+          providerReference: "ref-1",
+          amount: "10000",
+          rawLineHash: "existing-raw-line-hash",
+        },
+      ])
+
+    const result = await importProviderStatement({
+      organizationId: "org-1",
+      providerAccountId: "provider-account-1",
+      adapter,
+      rawContent,
+      fileName: "momo-tampered-line.json",
+      correlationId: "corr-tamper",
+    })
+
+    expect(result).toMatchObject({
+      status: "TAMPERED_LINE",
+      importedLineCount: 0,
+      duplicateLineCount: 1,
+      exceptionId: "exception-1",
+      correlationId: "corr-tamper",
+    })
+    expect(mockedDb.statementFile.create).not.toHaveBeenCalled()
+    expect(mockedDb.statementLine.createMany).not.toHaveBeenCalled()
+    expect(mockedDb.paymentException.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          type: PaymentExceptionType.TAMPER_SIGNAL,
+          severity: ExceptionSeverity.CRITICAL,
+          sourceType: "StatementLine",
+          sourceId: "statement-line-existing",
+          evidence: expect.objectContaining({
+            fileName: "momo-tampered-line.json",
+            existingStatementLineId: "statement-line-existing",
+            existingFingerprint: "existing-fingerprint",
+            existingRawLineHash: "existing-raw-line-hash",
+            providerTransactionIdHash: sha256("txn-1"),
+            providerReferenceHash: sha256("ref-1"),
+            existingAmount: "10000",
+            incomingAmount: "12000",
+            correlationId: "corr-tamper",
+          }),
+          correlationId: "corr-tamper",
+        }),
+      }),
+    )
+  })
+
   it("rejects oversized statement files before persistence", async () => {
     await expect(
       importProviderStatement({

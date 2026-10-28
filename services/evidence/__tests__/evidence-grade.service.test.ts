@@ -2,6 +2,7 @@ import {
   CloseRunStatus,
   JournalEntryStatus,
   LedgerPostingBatchStatus,
+  ProviderEventStatus,
   ReconciliationRunStatus,
 } from "@prisma/client"
 
@@ -9,6 +10,7 @@ import { createProofTrailBlocker } from "../evidence-blockers.service"
 import {
   computeCloseRunEvidenceGrade,
   computeJournalEntryEvidenceGrade,
+  computeProviderEventEvidenceGrade,
   computeReconciliationRunEvidenceGrade,
 } from "../evidence-grade.service"
 
@@ -56,6 +58,17 @@ describe("evidence grade service", () => {
     ).toMatchObject({ grade: "reconciled" })
   })
 
+
+  it("returns reconciled for a verified provider event linked to a match", () => {
+    expect(
+      computeProviderEventEvidenceGrade({
+        status: ProviderEventStatus.VERIFIED,
+        signatureValid: true,
+        matchRecordCount: 1,
+        blockers: [],
+      }),
+    ).toMatchObject({ grade: "reconciled" })
+  })
   it("returns certified for a signed reconciliation run with certificate evidence", () => {
     expect(
       computeReconciliationRunEvidenceGrade({

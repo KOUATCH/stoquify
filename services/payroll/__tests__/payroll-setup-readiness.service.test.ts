@@ -37,6 +37,38 @@ const mockedGetCountryPack = getCountryPack as jest.Mock;
 const mockedValidatePayrollCountryPackCalculationFixtures =
   validatePayrollCountryPackCalculationFixtures as jest.Mock;
 
+const IRPP_YTD_LIFECYCLE_PROOF_FIELDS = [
+  "yearToDatePolicyHash",
+  "yearToDateAccumulatorHash",
+  "registerProofHash",
+  "payslipProofHash",
+];
+const IRPP_CORRECTION_LIFECYCLE_PROOF_FIELDS = [
+  "yearToDatePolicyHash",
+  "yearToDateAccumulatorHash",
+  "originalRunDocumentHash",
+  "originalRunEvidenceHash",
+  "originalCalculationHash",
+  "correctionBasisHash",
+  "correctionEvidenceHash",
+  "registerProofHash",
+  "payslipProofHash",
+  "ledgerPostingProofHash",
+  "declarationProofHash",
+  "paymentProofHash",
+];
+
+function lifecycleProofOutputFor(fixtureId: string, purpose: string) {
+  const fields = purpose.includes("PAYROLL_IRPP_YTD_CORRECTION_REPLAY")
+    ? IRPP_CORRECTION_LIFECYCLE_PROOF_FIELDS
+    : purpose.includes("PAYROLL_IRPP_YTD_REGULARIZATION")
+      ? IRPP_YTD_LIFECYCLE_PROOF_FIELDS
+      : [];
+
+  return Object.fromEntries(
+    fields.map((field) => [field, `sha256:${fixtureId}-${field}`]),
+  );
+}
 function passedCalculationFixtures() {
   const passedRun = (
     fixtureId: string,
@@ -54,8 +86,8 @@ function passedCalculationFixtures() {
       legalRef: "CM_DGI_CGI_2025",
       sourceEvidenceHash: `sha256:${fixtureId}-review-evidence`,
     },
-    expectedOutput: { status: "CALCULATED" },
-    actualOutput: { status: "CALCULATED" },
+    expectedOutput: { status: "CALCULATED", ...lifecycleProofOutputFor(fixtureId, purpose) },
+    actualOutput: { status: "CALCULATED", ...lifecycleProofOutputFor(fixtureId, purpose) },
   });
 
   return {
@@ -107,6 +139,11 @@ function passedCalculationFixtures() {
         "PAYROLL_BENEFIT_IN_KIND",
       ),
       passedRun(
+        "cm-deduction-recovery-reviewed",
+        "payroll.compensation.deductions",
+        "PAYROLL_DEDUCTION_RECOVERY",
+      ),
+      passedRun(
         "cm-leave-paid-reviewed",
         "payroll.attendance.leave",
         "PAYROLL_LEAVE_PAID",
@@ -120,6 +157,11 @@ function passedCalculationFixtures() {
         "cm-overtime-reviewed",
         "payroll.attendance.overtime",
         "PAYROLL_OVERTIME_PREMIUM",
+      ),
+      passedRun(
+        "cm-composite-register-tieout-reviewed",
+        "payroll.composite.registerTieOut",
+        "PAYROLL_COMPOSITE_REGISTER_TIE_OUT",
       ),
     ],
     issues: [],
@@ -320,6 +362,7 @@ describe("payroll setup readiness service", () => {
           "payroll.irpp": "SUPPORTED",
           "payroll.compensation": "SUPPORTED",
           "payroll.attendance": "SUPPORTED",
+          "payroll.composite.registerTieOut": "SUPPORTED",
         },
       },
     });
@@ -377,12 +420,12 @@ describe("payroll setup readiness service", () => {
       expect.objectContaining({
         status: "READY",
         packVersion: "CM-2026.1",
-        executableScenarioCount: 12,
-        passedScenarioCount: 12,
+        executableScenarioCount: 14,
+        passedScenarioCount: 14,
         failedScenarioCount: 0,
         issueCount: 0,
         reviewEvidence: expect.objectContaining({
-          presentCount: 12,
+          presentCount: 14,
           missingCount: 0,
           sourceEvidenceHashes: expect.arrayContaining([
             "sha256:cm-irpp-period-reviewed-review-evidence",
@@ -390,10 +433,10 @@ describe("payroll setup readiness service", () => {
         }),
         scenarioCoverage: expect.objectContaining({
           status: "READY",
-          readyFamilyCount: 9,
-          requiredFamilyCount: 9,
+          readyFamilyCount: 11,
+          requiredFamilyCount: 11,
           reviewEvidence: expect.objectContaining({
-            presentCount: 12,
+            presentCount: 14,
             missingCount: 0,
           }),
         }),
@@ -425,11 +468,19 @@ describe("payroll setup readiness service", () => {
       expect.objectContaining({ countryCode: "CM" }),
     );
     expect(mockedResolveRegulatoryParameter).toHaveBeenCalledWith(
+      "payroll.compensation.deductions",
+      expect.objectContaining({ countryCode: "CM" }),
+    );
+    expect(mockedResolveRegulatoryParameter).toHaveBeenCalledWith(
       "payroll.attendance.leave",
       expect.objectContaining({ countryCode: "CM" }),
     );
     expect(mockedResolveRegulatoryParameter).toHaveBeenCalledWith(
       "payroll.attendance.overtime",
+      expect.objectContaining({ countryCode: "CM" }),
+    );
+    expect(mockedResolveRegulatoryParameter).toHaveBeenCalledWith(
+      "payroll.composite.registerTieOut",
       expect.objectContaining({ countryCode: "CM" }),
     );
     expect(result.checks.employeeUserMapping.plannedEmployeeCreateCount).toBe(

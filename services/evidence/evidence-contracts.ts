@@ -14,6 +14,7 @@ export const PROOF_TRAIL_SUBJECT_TYPES = [
   "reconciliation.run",
   "close.run",
   "payment.transaction",
+  "provider.event",
 ] as const
 
 export type ProofTrailSubjectType = (typeof PROOF_TRAIL_SUBJECT_TYPES)[number]
@@ -107,6 +108,7 @@ export const SUBJECT_PERMISSION_MAP: Record<ProofTrailSubjectType, string> = {
   "reconciliation.run": "payments.reconciliation.read",
   "close.run": "accounting.close.read",
   "payment.transaction": "payments.reconciliation.read",
+  "provider.event": "payments.reconciliation.read",
 }
 
 export function isProofTrailSubjectType(value: unknown): value is ProofTrailSubjectType {

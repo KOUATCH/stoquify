@@ -203,13 +203,24 @@ describe("payroll adapter registry service", () => {
       bankFileHash: "sha256:disbursement-file",
       requestedStatus: "SUPPORTED_CERTIFIED",
       providerCredentialProofHash: "sha256:provider-credential-proof",
+      providerCredentialRotationProofHash: "sha256:provider-credential-rotation",
+      providerCredentialScopeProofHash: "sha256:provider-credential-scope",
       providerPayloadMappingHash: "sha256:provider-payload-mapping",
       providerResponseMappingHash: "sha256:provider-response-mapping",
+      providerReversalMappingHash: "sha256:provider-reversal-mapping",
       providerAdapterRequestHash: "sha256:provider-request",
       providerAdapterResponseHash: "sha256:provider-response",
       providerSettlementReceiptHash: "sha256:provider-settlement-receipt",
       providerIdempotencyKey: "momo-payroll-batch-1",
       providerAttempt: 2,
+      providerReplayFixtureHash: "sha256:provider-replay",
+      providerDuplicateResponseFixtureHash: "sha256:provider-duplicate-response",
+      providerOutageRunbookHash: "sha256:provider-outage-runbook",
+      providerRetryPolicyFixtureHash: "sha256:provider-retry-policy",
+      providerDeadLetterTriageRunbookHash: "sha256:provider-dead-letter-runbook",
+      providerAuditTrailFixtureHash: "sha256:provider-audit-trail",
+      providerRedactionFixtureHash: "sha256:provider-redaction-fixture",
+      providerCloseImpactRuleHash: "sha256:provider-close-impact",
       providerCertificationHarnessHash: "sha256:provider-harness",
     });
 
@@ -223,5 +234,41 @@ describe("payroll adapter registry service", () => {
       idempotencyRequired: true,
       maxAttempts: 5,
     });
+  });
+
+  it("keeps certified provider payment automation blocked when operational proof is incomplete", () => {
+    const result = resolvePayrollPaymentProviderAdapterContract({
+      method: PaymentMethod.MOBILE_MONEY,
+      bankFileHash: "sha256:disbursement-file",
+      requestedStatus: "SUPPORTED_CERTIFIED",
+      providerCredentialProofHash: "sha256:provider-credential-proof",
+      providerPayloadMappingHash: "sha256:provider-payload-mapping",
+      providerResponseMappingHash: "sha256:provider-response-mapping",
+      providerAdapterRequestHash: "sha256:provider-request",
+      providerAdapterResponseHash: "sha256:provider-response",
+      providerSettlementReceiptHash: "sha256:provider-settlement-receipt",
+      providerIdempotencyKey: "momo-payroll-batch-1",
+      providerCertificationHarnessHash: "sha256:provider-harness",
+    });
+
+    expect(result.productionPaymentAutomationSupported).toBe(false);
+    expect(result.paymentAdapterStatus).toBe("REQUIRES_EXPERT_REVIEW");
+    expect(result.registryDecision).toBe(
+      "BLOCKED_PROVIDER_ADAPTER_CERTIFICATION_INCOMPLETE",
+    );
+    expect(result.certificationProofComplete).toBe(false);
+    expect(result.certificationBlockers).toEqual(
+      expect.arrayContaining([
+        "PROVIDER_CREDENTIAL_ROTATION_REVIEWED",
+        "PROVIDER_CREDENTIAL_SCOPE_REVIEWED",
+        "PROVIDER_REVERSAL_MAPPING_REVIEWED",
+        "PROVIDER_IDEMPOTENCY_REPLAY_REVIEWED",
+        "PROVIDER_OUTAGE_RUNBOOK_PRESENT",
+        "PROVIDER_RETRY_POLICY_REVIEWED",
+        "PROVIDER_DEAD_LETTER_TRIAGE_REVIEWED",
+        "PROVIDER_REDACTION_REVIEWED",
+        "PROVIDER_CLOSE_IMPACT_REVIEWED",
+      ]),
+    );
   });
 });

@@ -1,4 +1,10 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 
 import { recordPayrollPaymentSettlementEvidenceAction } from "@/actions/payroll/payroll-payment-reconciliation.actions";
 import type { PayrollPaymentReconciliationReadModel } from "@/actions/payroll/payroll-payment-reconciliation.actions";
@@ -94,6 +100,71 @@ function reconciliationData(): PayrollPaymentReconciliationReadModel {
         requiredPermissions: ["payments.reconciliation.read"],
       },
     },
+    accountingAuditProof: {
+      available: true,
+      status: "BLOCKED",
+      generatedAt: "2026-06-30T10:00:00.000Z",
+      scopeHash: "sha256:audit-scope",
+      periodId: "acct-period-1",
+      trustLevel: "T2",
+      verdict: "PARTIAL",
+      exportable: false,
+      blockerCount: 1,
+      criticalBlockerCount: 1,
+      highBlockerCount: 0,
+      proofGateCount: 2,
+      blockedProofGateCount: 1,
+      reviewProofGateCount: 0,
+      sourceLinkCount: 1,
+      sourceTableCount: 3,
+      redactionMode: "HASHES_AND_AGGREGATES_ONLY",
+      redactionExcluded: ["employee identifiers", "bank details"],
+      sourceTables: [
+        "payroll_payment_batches",
+        "payment_transactions",
+        "accounting_source_links",
+      ],
+      aggregateEvidence: {
+        paymentRegisterProofGaps: 1,
+        paymentsMissingLedger: 0,
+      },
+      proofGates: [
+        {
+          gate: "payroll.payments.proof",
+          status: "BLOCKED",
+          blockerCount: 1,
+          blockerIds: ["payroll-payment-register-proof-missing"],
+          evidence: ["payroll payment settlement source register hash"],
+        },
+        {
+          gate: "payroll.accounting.source-link",
+          status: "PASS",
+          blockerCount: 0,
+          blockerIds: [],
+          evidence: ["accounting source link hashes"],
+        },
+      ],
+      blockers: [
+        {
+          id: "payroll-payment-register-proof-missing",
+          severity: "critical",
+          gate: "payroll.payments.proof",
+          title: "Payment register proof missing",
+        },
+      ],
+      latestSourceLinks: [
+        {
+          sourceLinkHash: "sha256:source-link-proof",
+          sourceType: "PAYROLL_PAYMENT_BATCH",
+          sourceNumber: "PB-2026-06-0001",
+          sourceRefHash: "sha256:payment-ref",
+          journalEntryNumber: "JE-2026-06",
+          postingBatchId: "ledger-payment-1",
+          postingStatus: "POSTED",
+          createdAt: "2026-06-30T09:20:00.000Z",
+        },
+      ],
+    },
     batches: [
       {
         id: "batch-1",
@@ -137,9 +208,20 @@ function reconciliationData(): PayrollPaymentReconciliationReadModel {
           productionPaymentAutomationSupported: true,
           latestSettlementEvidenceHash: "sha256:settlement-evidence",
           latestSettlementSourceRegisterHash: "sha256:settlement-register",
+          latestSettlementProviderReceiptProofHash:
+            "sha256:provider-receipt-proof",
+          latestSettlementProviderReceiptProofSource:
+            "MATCHED_PROVIDER_EVENT_AND_STATEMENT",
+          latestSettlementProviderReceiptProviderPayloadHash:
+            "sha256:provider-event",
+          latestSettlementProviderReceiptStatementLineHash:
+            "sha256:statement-line",
+          latestSettlementProviderReceiptStatementFileHash:
+            "sha256:statement-file",
           latestSettlementLifecycleContractHash: "sha256:settlement-lifecycle",
           latestSettlementLifecycleStatus: "SETTLED_WITH_PROVIDER_EVIDENCE",
-          latestSettlementLifecycleCloseImpact: "CLOSE_EVIDENCE_STALE_ON_CHANGE",
+          latestSettlementLifecycleCloseImpact:
+            "CLOSE_EVIDENCE_STALE_ON_CHANGE",
           latestSettlementBusinessEventId: "event-settlement-1",
           latestSettlementAt: "2026-06-30T12:10:00.000Z",
           sourceLinks: [
@@ -190,6 +272,18 @@ function reconciliationData(): PayrollPaymentReconciliationReadModel {
         },
       },
     ],
+    sourceScope: {
+      limit: 25,
+      returned: 1,
+      coverageComplete: true,
+      sourceService: "services/payroll/payment-reconciliation.service.ts",
+      accountingAuditProofAvailable: true,
+      accountingAuditProofGateCount: 2,
+      accountingAuditProofSourceLinkCount: 1,
+      accountingAuditProofPeriodId: "acct-period-1",
+      returnedAccountingPeriodIds: ["acct-period-1"],
+      accountingAuditProofCoverageComplete: true,
+    },
   };
 }
 
@@ -327,6 +421,9 @@ describe("PayrollPaymentReconciliationWorkbench", () => {
       screen.getAllByText("sha256:payment-adapter-proof").length,
     ).toBeGreaterThan(0);
     expect(
+      screen.getAllByText("sha256:provider-receipt-proof").length,
+    ).toBeGreaterThan(0);
+    expect(
       screen.getAllByText("sha256:settlement-lifecycle").length,
     ).toBeGreaterThan(0);
     expect(
@@ -338,6 +435,9 @@ describe("PayrollPaymentReconciliationWorkbench", () => {
     expect(screen.getByText("Provider evidence required")).toBeInTheDocument();
     expect(screen.getByText("Provider adapter proof")).toBeInTheDocument();
     expect(screen.getByText("sha256:adapter-chaos-gate")).toBeInTheDocument();
+    expect(screen.getByText("Provider receipt proof")).toBeInTheDocument();
+    expect(screen.getByText("Provider receipt source")).toBeInTheDocument();
+    expect(screen.getByText("sha256:provider-event")).toBeInTheDocument();
     expect(screen.getByText("Settlement lifecycle status")).toBeInTheDocument();
     expect(
       screen.getAllByText("SETTLED_WITH_PROVIDER_EVIDENCE").length,
@@ -353,6 +453,40 @@ describe("PayrollPaymentReconciliationWorkbench", () => {
         "/en/dashboard/payroll/register",
       ]),
     );
+  });
+
+  it("renders route-level accounting auditor proof drawer", () => {
+    render(
+      <PayrollPaymentReconciliationWorkbench
+        data={reconciliationData()}
+        locale="en"
+      />,
+    );
+
+    expect(screen.getByText("Auditor proof")).toBeInTheDocument();
+    expect(screen.getByText("acct-period-1")).toBeInTheDocument();
+    fireEvent.click(
+      screen.getByRole("button", { name: "Auditor proof drawer" }),
+    );
+
+    const dialog = screen.getByRole("dialog");
+    expect(
+      within(dialog).getByText("Payroll payment auditor proof pack"),
+    ).toBeInTheDocument();
+    expect(within(dialog).getByText("sha256:audit-scope")).toBeInTheDocument();
+    expect(
+      within(dialog).getByText(/payroll\.payments\.proof:BLOCKED/),
+    ).toBeInTheDocument();
+    expect(
+      within(dialog).getByText("sha256:source-link-proof"),
+    ).toBeInTheDocument();
+    expect(
+      within(dialog).getByText("paymentRegisterProofGaps:1"),
+    ).toBeInTheDocument();
+    expect(within(dialog).queryByText("Alice Ngono")).not.toBeInTheDocument();
+    expect(
+      within(dialog).queryByText("MOMO-PAYROLL-2026-06-001"),
+    ).not.toBeInTheDocument();
   });
 
   it("renders service-redacted payment proof identifiers", () => {
@@ -379,6 +513,14 @@ describe("PayrollPaymentReconciliationWorkbench", () => {
     batch.proof.adapterChaosReleaseGateHash = "[REDACTED:IDENTIFIER]";
     batch.proof.latestSettlementEvidenceHash = "[REDACTED:IDENTIFIER]";
     batch.proof.latestSettlementSourceRegisterHash = "[REDACTED:IDENTIFIER]";
+    batch.proof.latestSettlementProviderReceiptProofHash =
+      "[REDACTED:IDENTIFIER]";
+    batch.proof.latestSettlementProviderReceiptProviderPayloadHash =
+      "[REDACTED:IDENTIFIER]";
+    batch.proof.latestSettlementProviderReceiptStatementLineHash =
+      "[REDACTED:IDENTIFIER]";
+    batch.proof.latestSettlementProviderReceiptStatementFileHash =
+      "[REDACTED:IDENTIFIER]";
     batch.proof.latestSettlementLifecycleContractHash = "[REDACTED:IDENTIFIER]";
     batch.proof.sourceLinks = batch.proof.sourceLinks.map((link) => ({
       ...link,
@@ -419,6 +561,10 @@ describe("PayrollPaymentReconciliationWorkbench", () => {
     expect(
       screen.queryByText("sha256:payment-adapter-proof"),
     ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("sha256:provider-receipt-proof"),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText("sha256:provider-event")).not.toBeInTheDocument();
     expect(
       screen.queryByText("sha256:settlement-lifecycle"),
     ).not.toBeInTheDocument();

@@ -32,12 +32,15 @@ import type {
   DashboardMetric,
   DashboardPendingAction,
 } from "@/actions/dashboard/getDashboardData"
+import type { TenantOperatingCommandCard } from "@/services/snapshots/snapshot-contracts"
 import { createOrganizationMoneyFormatter } from "@/lib/i18n/organization-money"
 
 type DashboardCopy = {
   title: string
   eyebrow: string
   stateReady: string
+  statePartial: string
+  stateBlocked: string
   period: string
   location: string
   generated: string
@@ -206,6 +209,8 @@ export function buildTodaysOperatingTruthModel({
     dashboard.stockHealth.outOfStock +
     dashboard.stockHealth.reorderCandidates
   const visibleActionCount = dashboard.pendingActions.reduce((sum, action) => sum + action.count, 0)
+  const commandCards = dashboard.operatingCommandCards ?? []
+  const commandState = summarizeCommandState(commandCards, dashboard.alerts, copy)
   const revenue = moneyFormatter.format(dashboard.kpis.revenue.current)
   const cash = moneyFormatter.format(dashboard.kpis.cashCollected.current)
 
@@ -222,9 +227,9 @@ export function buildTodaysOperatingTruthModel({
         actionCount: formatNumber(visibleActionCount, locale),
       }),
       state: {
-        label: copy.stateReady,
-        tone: dashboard.alerts.some((alert) => alert.type === "critical") ? "danger" : "success",
-        icon: dashboard.alerts.some((alert) => alert.type === "critical") ? AlertTriangle : ShieldCheck,
+        label: commandState.label,
+        tone: commandState.tone,
+        icon: commandState.icon,
       },
       metadata: [
         { label: copy.period, value: periodLabel, icon: Activity },
@@ -240,15 +245,15 @@ export function buildTodaysOperatingTruthModel({
         },
       ],
       proof: {
-        state: "operational",
+        state: commandState.proofState,
         source: copy.proofSource,
-        sourceCount: countAvailableSources(dashboard),
+        sourceCount: commandCards.length > 0 ? commandState.readyCount : countAvailableSources(dashboard),
       },
     },
     status: {
       title: copy.statusTitle,
       detail: copy.statusDetail,
-      items: buildStatusItems({ dashboard, copy, moneyFormatter, locale, dashboardBasePath, stockRiskCount }),
+      items: buildStatusItems({ dashboard, copy, moneyFormatter, locale, dashboardBasePath, stockRiskCount, commandCards }),
     },
     actionQueue: {
       title: copy.actionTitle,
@@ -276,9 +281,11 @@ export function buildTodaysOperatingTruthModel({
 function getDashboardCopy(locale: string): DashboardCopy {
   if (locale.startsWith("fr")) {
     return {
-      title: "Verite operationnelle du jour",
-      eyebrow: "Brief de commande",
+      title: "Brief de confiance business quotidien",
+      eyebrow: "Confiance et action",
       stateReady: "Lecture autorisee",
+      statePartial: "Lecture partielle",
+      stateBlocked: "Bloque",
       period: "Periode",
       location: "Lieu",
       generated: "Genere",
@@ -288,8 +295,8 @@ function getDashboardCopy(locale: string): DashboardCopy {
       notAvailable: "Non disponible",
       summary: ({ organizationName, periodLabel, revenue, cash, stockRisk, actionCount }) =>
         `${organizationName} sur ${periodLabel}: ${revenue} de revenu, ${cash} encaisse, ${stockRisk} risque(s) stock et ${actionCount} action(s) visibles.`,
-      statusTitle: "Etat vivant",
-      statusDetail: "Signaux transverses issus du modele lecture dashboard et etats partiels explicites.",
+      statusTitle: "Etats de confiance",
+      statusDetail: "Etats paiement, AP, cloture, stock, conformite, paie et securite issus du contrat command-card.",
       statuses: {
         pos: "PDV",
         stock: "Stock",
@@ -408,9 +415,11 @@ function getDashboardCopy(locale: string): DashboardCopy {
   }
 
   return {
-    title: "Today's Operating Truth",
-    eyebrow: "Command brief",
+    title: "Daily Business Confidence Brief",
+    eyebrow: "Trust and action front door",
     stateReady: "Authorized read",
+    statePartial: "Partial proof",
+    stateBlocked: "Blocked proof",
     period: "Period",
     location: "Location",
     generated: "Generated",
@@ -420,8 +429,8 @@ function getDashboardCopy(locale: string): DashboardCopy {
     notAvailable: "Not available",
     summary: ({ organizationName, periodLabel, revenue, cash, stockRisk, actionCount }) =>
       `${organizationName} for ${periodLabel}: ${revenue} revenue, ${cash} collected, ${stockRisk} stock risk signal(s), and ${actionCount} visible action(s).`,
-    statusTitle: "Live operating status",
-    statusDetail: "Cross-domain signals from the dashboard read model, with partial states called out.",
+    statusTitle: "Trust states",
+    statusDetail: "Payment, AP, close, stock, compliance, payroll, and security states from the command-card contract.",
     statuses: {
       pos: "POS",
       stock: "Stock",
@@ -546,6 +555,7 @@ function buildStatusItems({
   locale,
   dashboardBasePath,
   stockRiskCount,
+  commandCards,
 }: {
   dashboard: DashboardData
   copy: DashboardCopy
@@ -553,7 +563,12 @@ function buildStatusItems({
   locale: string
   dashboardBasePath: string
   stockRiskCount: number
+  commandCards: TenantOperatingCommandCard[]
 }): StatusStripItem[] {
+  if (commandCards.length > 0) {
+    return commandCards.map((card) => commandCardStatusItem({ card, copy, moneyFormatter, locale, dashboardBasePath }))
+  }
+
   const apCount = dashboard.counts.pendingPurchaseOrders
 
   return [
@@ -603,6 +618,98 @@ function buildStatusItems({
   ]
 }
 
+function commandCardStatusItem({
+  card,
+  copy,
+  moneyFormatter,
+  locale,
+  dashboardBasePath,
+}: {
+  card: TenantOperatingCommandCard
+  copy: DashboardCopy
+  moneyFormatter: Intl.NumberFormat
+  locale: string
+  dashboardBasePath: string
+}): StatusStripItem {
+  return {
+    id: card.id,
+    label: card.label,
+    value: formatCommandCardValue(card, moneyFormatter, locale, copy),
+    detail: card.detail,
+    tone: commandCardTone(card),
+    icon: commandCardIcon(card.id),
+    href: resolveDashboardHref(card.actionRoute, dashboardBasePath),
+    source: card.scope.replace("_", " "),
+    proof: {
+      state: commandCardProofState(card),
+      source: card.proofRoute,
+      sourceCount: card.blockerCount,
+    },
+  }
+}
+
+function commandCardIcon(id: TenantOperatingCommandCard["id"]): LucideIcon {
+  if (id === "payment") return CreditCard
+  if (id === "ap") return Building2
+  if (id === "close") return ClipboardCheck
+  if (id === "stock") return Package
+  if (id === "payroll") return Users
+  return ShieldCheck
+}
+
+function commandCardTone(card: TenantOperatingCommandCard): DashboardTone {
+  if (card.blockerState === "blocked" || card.uiState === "blocked") return "danger"
+  if (card.blockerState === "unavailable" || ["module_unavailable", "permission_denied", "safe_error"].includes(card.uiState)) return "muted"
+  if (card.uiState === "stale") return "warning"
+  if (card.blockerState === "partial" || ["partial", "empty"].includes(card.uiState)) return "gold"
+  return "success"
+}
+
+function commandCardProofState(card: TenantOperatingCommandCard): ProofBadgeState {
+  if (card.blockerState === "blocked" || card.uiState === "blocked") return "blocked"
+  if (card.uiState === "stale") return "stale"
+  if (card.blockerState === "unavailable" || ["module_unavailable", "permission_denied", "safe_error", "empty"].includes(card.uiState)) return "unavailable"
+  if (card.blockerState === "partial" || card.uiState === "partial") return "pending"
+  if (card.evidenceGrade === "raw") return "pending"
+  return card.evidenceGrade
+}
+
+function formatCommandCardValue(
+  card: TenantOperatingCommandCard,
+  moneyFormatter: Intl.NumberFormat,
+  locale: string,
+  copy: DashboardCopy,
+) {
+  if (card.value === null || card.value === undefined || card.value === "") return copy.notAvailable
+  if (typeof card.value === "string") return card.value
+  if (card.valueFormat === "currency") return moneyFormatter.format(card.value)
+  return formatNumber(card.value, locale)
+}
+
+function summarizeCommandState(
+  commandCards: TenantOperatingCommandCard[],
+  alerts: DashboardAlert[],
+  copy: DashboardCopy,
+): {
+  label: string
+  tone: DashboardTone
+  icon: LucideIcon
+  proofState: ProofBadgeState
+  readyCount: number
+} {
+  const hasCriticalAlert = alerts.some((alert) => alert.type === "critical")
+  const blocked = hasCriticalAlert || commandCards.some((card) => card.blockerState === "blocked" || card.uiState === "blocked")
+  const partial = commandCards.some((card) => card.blockerState !== "none" || card.uiState !== "fresh")
+  const readyCount = commandCards.filter((card) => card.blockerState === "none" && card.uiState === "fresh").length
+
+  if (blocked) {
+    return { label: copy.stateBlocked, tone: "danger", icon: AlertTriangle, proofState: "blocked", readyCount }
+  }
+  if (partial) {
+    return { label: copy.statePartial, tone: "gold", icon: Activity, proofState: "pending", readyCount }
+  }
+  return { label: copy.stateReady, tone: "success", icon: ShieldCheck, proofState: "operational", readyCount }
+}
 function partialStatus(
   id: string,
   label: string,

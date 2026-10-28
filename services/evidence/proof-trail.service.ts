@@ -8,6 +8,7 @@ import {
   LedgerPostingBatchStatus,
   PaymentExceptionStatus,
   PaymentTransactionState,
+  ProviderEventStatus,
   Prisma,
   ReconciliationRunStatus,
   SuspenseStatus,
@@ -35,6 +36,7 @@ import {
   computeCloseRunEvidenceGrade,
   computeJournalEntryEvidenceGrade,
   computePaymentTransactionEvidenceGrade,
+  computeProviderEventEvidenceGrade,
   computeReconciliationRunEvidenceGrade,
 } from "./evidence-grade.service"
 import { applyProofTrailRedactions, createProofTrailRedaction } from "./evidence-redaction.service"
@@ -59,6 +61,13 @@ const OPEN_SUSPENSE_STATUSES: readonly SuspenseStatus[] = [
   SuspenseStatus.REOPENED,
 ]
 
+
+const BLOCKED_PROVIDER_EVENT_STATUSES: readonly ProviderEventStatus[] = [
+  ProviderEventStatus.FAILED,
+  ProviderEventStatus.REJECTED,
+  ProviderEventStatus.TAMPERED,
+  ProviderEventStatus.REPLAYED,
+]
 const ACCOUNTING_SOURCE_TYPES = new Set<string>(Object.values(AccountingSourceType))
 
 function accountingSourceType(value: string | null | undefined): AccountingSourceType | null {
@@ -706,6 +715,306 @@ async function buildReconciliationRunProofTrail(input: ProofTrailInput, client: 
   }, client)
 }
 
+
+async function buildProviderEventProofTrail(input: ProofTrailInput, client: DbClient) {
+  const event = await client.providerEvent.findFirst({
+    where: { id: input.subjectId, organizationId: input.organizationId },
+    select: {
+      id: true,
+      providerEventId: true,
+      providerTransactionId: true,
+      providerReference: true,
+      eventType: true,
+      status: true,
+      direction: true,
+      amount: true,
+      feeAmount: true,
+      currencyCode: true,
+      occurredAt: true,
+      receivedAt: true,
+      processedAt: true,
+      rawPayloadHash: true,
+      headersHash: true,
+      signatureHash: true,
+      signatureValid: true,
+      providerCustomerReferenceMasked: true,
+      providerAccount: {
+        select: {
+          id: true,
+          providerCode: true,
+          displayName: true,
+          status: true,
+          paymentRail: { select: { id: true, code: true, name: true } },
+        },
+      },
+      matchRecords: {
+        select: {
+          id: true,
+          status: true,
+          confidence: true,
+          amountMatched: true,
+          currencyCode: true,
+          paymentTransactionId: true,
+          statementLineId: true,
+          reconciliationRunId: true,
+          ledgerPostingBatchId: true,
+        },
+        orderBy: { createdAt: "desc" },
+        take: 10,
+      },
+      paymentExceptions: {
+        select: { id: true, status: true, severity: true, type: true, resolutionNotes: true, suspenseItemId: true },
+        orderBy: { createdAt: "desc" },
+        take: 10,
+      },
+    },
+  })
+
+  if (!event) throw new NotFoundError("Provider event proof subject not found")
+
+  const blockers: ProofTrailBlocker[] = []
+  const openExceptions = event.paymentExceptions.filter((entry) => OPEN_PAYMENT_EXCEPTION_STATUSES.includes(entry.status))
+
+  if (BLOCKED_PROVIDER_EVENT_STATUSES.includes(event.status)) {
+    blockers.push(createProofTrailBlocker({
+      id: "provider-event-blocked-status",
+      severity: event.status === ProviderEventStatus.TAMPERED || event.status === ProviderEventStatus.REPLAYED ? "critical" : "high",
+      gate: "payments.provider-event.status",
+      title: "Provider event is not trusted",
+      detail: `Provider event status is ${event.status}.`,
+      sourceTables: ["provider_events"],
+      nextAction: "Review the provider event before relying on this proof.",
+    }))
+  }
+
+  if (!event.signatureValid) {
+    blockers.push(createProofTrailBlocker({
+      id: "provider-event-signature-unverified",
+      severity: "high",
+      gate: "payments.provider-event.signature",
+      title: "Provider event signature is not verified",
+      detail: "Provider event proof requires a verified signature or trusted ingestion hash.",
+      sourceTables: ["provider_events"],
+      nextAction: "Reprocess or quarantine this provider event before sign-off.",
+    }))
+  }
+
+  if (openExceptions.length > 0) {
+    blockers.push(createProofTrailBlocker({
+      id: "provider-event-open-exceptions",
+      severity: openExceptions.some((entry) => entry.severity === "CRITICAL" || entry.severity === "HIGH") ? "high" : "medium",
+      gate: "payments.reconciliation.exceptions",
+      title: "Open payment exceptions remain",
+      detail: `${openExceptions.length} exception(s) remain open for this provider event.`,
+      sourceTables: ["payment_exceptions"],
+      nextAction: "Resolve payment exceptions before trusting this provider event as reconciled.",
+    }))
+  }
+
+  const decision = computeProviderEventEvidenceGrade({
+    status: event.status,
+    signatureValid: event.signatureValid,
+    matchRecordCount: event.matchRecords.length,
+    blockers,
+  })
+
+  const subjectNodeId = "provider-event"
+  const redactions: ProofTrailRedaction[] = [
+    createProofTrailRedaction({
+      id: "provider-event-account-internal-id",
+      field: "nodes.provider-account",
+      reason: "Provider account internals are masked in provider event proof trails.",
+      policy: "kontava-proof-hidden-identifier-policy",
+    }),
+  ]
+
+  if (event.providerTransactionId || event.providerReference || event.providerCustomerReferenceMasked) {
+    redactions.push(createProofTrailRedaction({
+      id: "provider-event-reference",
+      field: "nodes.provider-reference",
+      reason: "Provider event references are protected by provider reference redaction policy.",
+      policy: "kontava-provider-reference-redaction",
+    }))
+  }
+
+  const nodes: ProofTrailNode[] = [
+    node({
+      id: subjectNodeId,
+      nodeType: "provider.event",
+      nodeId: event.id,
+      label: `Provider event ${event.eventType}`,
+      moduleSlug: "payments",
+      evidenceGrade: decision.grade,
+      sourceTable: "provider_events",
+      available: true,
+      redacted: false,
+      metadata: {
+        status: event.status,
+        direction: event.direction,
+        amount: money(event.amount),
+        feeAmount: money(event.feeAmount),
+        currencyCode: event.currencyCode,
+        occurredAt: event.occurredAt?.toISOString() ?? null,
+        receivedAt: event.receivedAt.toISOString(),
+        processedAt: event.processedAt?.toISOString() ?? null,
+        signatureValid: event.signatureValid,
+        rawPayloadHash: event.rawPayloadHash,
+        headersHash: event.headersHash,
+        signatureHash: event.signatureHash,
+      },
+    }),
+    node({
+      id: "provider-account",
+      nodeType: "payment.provider_account",
+      nodeId: event.providerAccount.id,
+      label: `${event.providerAccount.providerCode} account`,
+      moduleSlug: "payments",
+      evidenceGrade: "operational",
+      sourceTable: "provider_accounts",
+      available: true,
+      redacted: true,
+      metadata: { status: event.providerAccount.status },
+    }),
+    node({
+      id: "provider-payload-hash",
+      nodeType: "provider.payload_hash",
+      nodeId: event.rawPayloadHash,
+      label: "Provider payload hash",
+      moduleSlug: "payments",
+      evidenceGrade: event.signatureValid ? "operational" : "blocked",
+      sourceTable: "provider_events",
+      available: true,
+      redacted: false,
+      metadata: {
+        signatureValid: event.signatureValid,
+        headersHash: event.headersHash,
+        signatureHash: event.signatureHash,
+      },
+    }),
+  ]
+  const edges: ProofTrailEdge[] = [
+    edge({
+      fromNodeId: "provider-account",
+      toNodeId: subjectNodeId,
+      edgeType: "source",
+      label: "Receives provider event",
+      evidenceGrade: "operational",
+    }),
+    edge({
+      fromNodeId: "provider-payload-hash",
+      toNodeId: subjectNodeId,
+      edgeType: event.signatureValid ? "source" : "blocks",
+      label: event.signatureValid ? "Supports raw payload integrity" : "Blocks signature trust",
+      evidenceGrade: event.signatureValid ? "operational" : "blocked",
+    }),
+  ]
+
+  if (event.providerTransactionId || event.providerReference || event.providerCustomerReferenceMasked) {
+    nodes.push(node({
+      id: "provider-reference",
+      nodeType: "provider.reference",
+      nodeId: event.providerTransactionId ?? event.providerReference ?? event.providerCustomerReferenceMasked ?? event.id,
+      label: "Provider event reference",
+      moduleSlug: "payments",
+      evidenceGrade: "operational",
+      sourceTable: "provider_events",
+      available: true,
+      redacted: true,
+      metadata: undefined,
+    }))
+    edges.push(edge({
+      fromNodeId: "provider-reference",
+      toNodeId: subjectNodeId,
+      edgeType: "source",
+      label: "Identifies provider-side event",
+      evidenceGrade: "operational",
+    }))
+  }
+
+  event.matchRecords.forEach((matchRecord, index) => {
+    const matchNodeId = `match-${index + 1}`
+    const blocked = matchRecord.status === "REJECTED" || matchRecord.status === "VOIDED"
+    const grade: EvidenceGrade = blocked
+      ? "blocked"
+      : matchRecord.status === "APPROVED" || matchRecord.status === "AUTO_MATCHED"
+        ? "reconciled"
+        : "operational"
+    nodes.push(node({
+      id: matchNodeId,
+      nodeType: "reconciliation.match",
+      nodeId: matchRecord.id,
+      label: `Match ${matchRecord.status}`,
+      moduleSlug: "reconciliation",
+      evidenceGrade: grade,
+      sourceTable: "match_records",
+      available: !blocked,
+      redacted: false,
+      metadata: {
+        confidence: matchRecord.confidence.toString(),
+        amountMatched: matchRecord.amountMatched ? money(matchRecord.amountMatched) : null,
+        currencyCode: matchRecord.currencyCode,
+        paymentTransactionId: matchRecord.paymentTransactionId,
+        statementLineId: matchRecord.statementLineId,
+        reconciliationRunId: matchRecord.reconciliationRunId,
+        ledgerPostingBatchId: matchRecord.ledgerPostingBatchId,
+      },
+    }))
+    edges.push(edge({
+      fromNodeId: matchNodeId,
+      toNodeId: subjectNodeId,
+      edgeType: blocked ? "blocks" : "matches",
+      label: blocked ? "Blocks provider event reconciliation" : "Matches provider event",
+      evidenceGrade: grade,
+    }))
+  })
+
+  event.paymentExceptions.forEach((paymentException, index) => {
+    const exceptionNodeId = `exception-${index + 1}`
+    const blocked = OPEN_PAYMENT_EXCEPTION_STATUSES.includes(paymentException.status)
+    nodes.push(node({
+      id: exceptionNodeId,
+      nodeType: "payment.exception",
+      nodeId: paymentException.id,
+      label: blocked ? "Open payment exception" : `Payment exception ${paymentException.status}`,
+      moduleSlug: "payments",
+      evidenceGrade: blocked ? "blocked" : "reconciled",
+      sourceTable: "payment_exceptions",
+      available: !blocked,
+      redacted: false,
+      metadata: {
+        status: paymentException.status,
+        severity: paymentException.severity,
+        type: paymentException.type,
+        suspenseItemId: paymentException.suspenseItemId,
+      },
+    }))
+    edges.push(edge({
+      fromNodeId: exceptionNodeId,
+      toNodeId: subjectNodeId,
+      edgeType: blocked ? "blocks" : "matches",
+      label: blocked ? "Blocks provider event trust" : "Resolved provider event exception",
+      evidenceGrade: blocked ? "blocked" : "reconciled",
+    }))
+  })
+
+  return finalizeProofTrail({
+    input,
+    moduleSlug: "payments",
+    decision,
+    nodes,
+    edges,
+    blockers,
+    redactions,
+    nextActions: blockers.length
+      ? [nextAction({
+          id: "review-provider-event-proof",
+          label: "Review provider event proof blockers",
+          href: "/dashboard/finance/reconciliation",
+          requiredPermission: "payments.reconciliation.read",
+        })]
+      : [],
+  }, client)
+}
 async function buildPaymentTransactionProofTrail(input: ProofTrailInput, client: DbClient) {
   const transaction = await client.paymentTransaction.findFirst({
     where: { id: input.subjectId, organizationId: input.organizationId },
@@ -1485,6 +1794,8 @@ export async function getProofTrail(input: ProofTrailInput, client: DbClient = d
       return buildReconciliationRunProofTrail(input, client)
     case "payment.transaction":
       return buildPaymentTransactionProofTrail(input, client)
+    case "provider.event":
+      return buildProviderEventProofTrail(input, client)
     case "close.run":
       // Supplied transaction clients must provide the same snapshot for the
       // selected record, assessment order and complete evidence reads.

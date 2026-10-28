@@ -18,7 +18,9 @@ export type PayrollStatutoryScenarioFamily =
   | "IRPP_ADJUSTMENTS"
   | "IRPP_CORRECTIONS"
   | "ALLOWANCES_BENEFITS"
-  | "LEAVE_OVERTIME";
+  | "DEDUCTIONS_RECOVERIES"
+  | "LEAVE_OVERTIME"
+  | "COMPOSITE_REGISTER_TIE_OUT";
 
 export type PayrollStatutoryScenarioCoverageStatus = "READY" | "BLOCKED";
 
@@ -32,6 +34,8 @@ export type PayrollStatutoryScenarioCoverageBlockerCode =
   | "PAYROLL_STATUTORY_SCENARIO_CAPABILITY_NOT_PRODUCTION_READY"
   | "PAYROLL_STATUTORY_SCENARIO_CERTIFIED_REVIEW_MISSING"
   | "PAYROLL_STATUTORY_SCENARIO_REVIEW_EVIDENCE_MISSING"
+  | "PAYROLL_STATUTORY_SCENARIO_REVIEW_TOPIC_COVERAGE_MISSING"
+  | "PAYROLL_STATUTORY_SCENARIO_LIFECYCLE_PROOF_COVERAGE_MISSING"
   | "PAYROLL_STATUTORY_SCENARIO_FAMILY_MISSING"
   | "PAYROLL_STATUTORY_SCENARIO_FAMILY_FAILED";
 
@@ -42,6 +46,7 @@ export type PayrollStatutoryScenarioReviewEvidenceSummary = {
   reviewedOn: string[];
   legalRefs: string[];
   sourceEvidenceHashes: string[];
+  coveredReviewTopics: string[];
 };
 
 export type PayrollStatutoryScenarioCoverageFamily = {
@@ -59,6 +64,11 @@ export type PayrollStatutoryScenarioCoverageFamily = {
   coveredPurposeMatchers: string[];
   missingPurposeMatchers: string[];
   requiredReviewTopics: string[];
+  coveredReviewTopics: string[];
+  missingReviewTopics: string[];
+  requiredLifecycleProofFields: string[];
+  coveredLifecycleProofFields: string[];
+  missingLifecycleProofFields: string[];
   reviewStatuses: string[];
   expertReviewedScenarioCount: number;
   regulatorConfirmedScenarioCount: number;
@@ -84,6 +94,11 @@ export type PayrollStatutoryScenarioCoverageBlocker = {
     issueCodes: string[];
     missingPurposeMatchers: string[];
     requiredReviewTopics: string[];
+    coveredReviewTopics: string[];
+    missingReviewTopics: string[];
+    requiredLifecycleProofFields: string[];
+    coveredLifecycleProofFields: string[];
+    missingLifecycleProofFields: string[];
   };
 };
 
@@ -104,6 +119,16 @@ export type PayrollStatutoryScenarioCoverageSummary = {
   regulatorConfirmedScenarioCount: number;
   requiredReviewTopicCount: number;
   requiredReviewTopics: string[];
+  coveredReviewTopicCount: number;
+  coveredReviewTopics: string[];
+  missingReviewTopicCount: number;
+  missingReviewTopics: string[];
+  requiredLifecycleProofFieldCount: number;
+  requiredLifecycleProofFields: string[];
+  coveredLifecycleProofFieldCount: number;
+  coveredLifecycleProofFields: string[];
+  missingLifecycleProofFieldCount: number;
+  missingLifecycleProofFields: string[];
   reviewEvidence: PayrollStatutoryScenarioReviewEvidenceSummary;
   certificationStatus: PayrollStatutoryScenarioCoverageCertificationStatus;
   families: PayrollStatutoryScenarioCoverageFamily[];
@@ -133,6 +158,7 @@ type FamilySpec = {
   capabilityPath: string | null;
   purposeMatchers: readonly string[];
   requiredPurposeMatchers?: readonly string[];
+  requiredLifecycleProofFields?: readonly string[];
 };
 
 const PRODUCTION_CAPABILITY_STATUSES = new Set([
@@ -177,6 +203,12 @@ const FAMILY_SPECS: readonly FamilySpec[] = [
     parameterPaths: ["payroll.irpp.incomeTaxRules"],
     capabilityPath: "payroll.irpp",
     purposeMatchers: ["PAYROLL_IRPP_YTD_REGULARIZATION"],
+    requiredLifecycleProofFields: [
+      "yearToDatePolicyHash",
+      "yearToDateAccumulatorHash",
+      "registerProofHash",
+      "payslipProofHash",
+    ],
   },
   {
     family: "IRPP_ADJUSTMENTS",
@@ -191,6 +223,20 @@ const FAMILY_SPECS: readonly FamilySpec[] = [
     parameterPaths: ["payroll.irpp.incomeTaxRules"],
     capabilityPath: "payroll.irpp",
     purposeMatchers: ["PAYROLL_IRPP_YTD_CORRECTION_REPLAY"],
+    requiredLifecycleProofFields: [
+      "yearToDatePolicyHash",
+      "yearToDateAccumulatorHash",
+      "originalRunDocumentHash",
+      "originalRunEvidenceHash",
+      "originalCalculationHash",
+      "correctionBasisHash",
+      "correctionEvidenceHash",
+      "registerProofHash",
+      "payslipProofHash",
+      "ledgerPostingProofHash",
+      "declarationProofHash",
+      "paymentProofHash",
+    ],
   },
   {
     family: "ALLOWANCES_BENEFITS",
@@ -207,6 +253,14 @@ const FAMILY_SPECS: readonly FamilySpec[] = [
     ],
   },
   {
+    family: "DEDUCTIONS_RECOVERIES",
+    label: "Deductions and recoveries",
+    parameterPaths: ["payroll.compensation.deductions"],
+    capabilityPath: "payroll.compensation",
+    purposeMatchers: ["PAYROLL_DEDUCTION_RECOVERY"],
+    requiredPurposeMatchers: ["PAYROLL_DEDUCTION_RECOVERY"],
+  },
+  {
     family: "LEAVE_OVERTIME",
     label: "Leave and overtime",
     parameterPaths: ["payroll.attendance.leave", "payroll.attendance.overtime"],
@@ -217,6 +271,14 @@ const FAMILY_SPECS: readonly FamilySpec[] = [
       "PAYROLL_LEAVE_UNPAID",
       "PAYROLL_OVERTIME",
     ],
+  },
+  {
+    family: "COMPOSITE_REGISTER_TIE_OUT",
+    label: "Composite payroll register tie-out",
+    parameterPaths: ["payroll.composite.registerTieOut"],
+    capabilityPath: "payroll.composite.registerTieOut",
+    purposeMatchers: ["PAYROLL_COMPOSITE_REGISTER_TIE_OUT"],
+    requiredPurposeMatchers: ["PAYROLL_COMPOSITE_REGISTER_TIE_OUT"],
   },
 ];
 
@@ -253,7 +315,18 @@ export function payrollStatutoryScenarioCoverageProofPayload(input: {
   requiredFamilyCount: number;
   blockerCodes: string[];
   reviewEvidence: PayrollStatutoryScenarioReviewEvidenceSummary;
+  requiredLifecycleProofFieldCount?: number;
+  requiredLifecycleProofFields?: string[];
+  coveredLifecycleProofFieldCount?: number;
+  coveredLifecycleProofFields?: string[];
+  missingLifecycleProofFieldCount?: number;
+  missingLifecycleProofFields?: string[];
 }) {
+  const requiredLifecycleProofFields =
+    input.requiredLifecycleProofFields ?? [];
+  const coveredLifecycleProofFields = input.coveredLifecycleProofFields ?? [];
+  const missingLifecycleProofFields = input.missingLifecycleProofFields ?? [];
+
   return {
     status: input.status,
     countryCode: input.countryCode,
@@ -262,12 +335,25 @@ export function payrollStatutoryScenarioCoverageProofPayload(input: {
     readyFamilyCount: input.readyFamilyCount,
     requiredFamilyCount: input.requiredFamilyCount,
     blockerCodes: [...input.blockerCodes].sort(),
+    requiredLifecycleProofFieldCount:
+      input.requiredLifecycleProofFieldCount ??
+      requiredLifecycleProofFields.length,
+    requiredLifecycleProofFields: [...requiredLifecycleProofFields].sort(),
+    coveredLifecycleProofFieldCount:
+      input.coveredLifecycleProofFieldCount ??
+      coveredLifecycleProofFields.length,
+    coveredLifecycleProofFields: [...coveredLifecycleProofFields].sort(),
+    missingLifecycleProofFieldCount:
+      input.missingLifecycleProofFieldCount ??
+      missingLifecycleProofFields.length,
+    missingLifecycleProofFields: [...missingLifecycleProofFields].sort(),
     reviewEvidence: {
       ...input.reviewEvidence,
       reviewedBy: [...input.reviewEvidence.reviewedBy].sort(),
       reviewedOn: [...input.reviewEvidence.reviewedOn].sort(),
       legalRefs: [...input.reviewEvidence.legalRefs].sort(),
       sourceEvidenceHashes: [...input.reviewEvidence.sourceEvidenceHashes].sort(),
+      coveredReviewTopics: [...input.reviewEvidence.coveredReviewTopics].sort(),
     },
   };
 }
@@ -281,6 +367,12 @@ export function buildPayrollStatutoryScenarioCoverageHash(input: {
   requiredFamilyCount: number;
   blockerCodes: string[];
   reviewEvidence: PayrollStatutoryScenarioReviewEvidenceSummary;
+  requiredLifecycleProofFieldCount?: number;
+  requiredLifecycleProofFields?: string[];
+  coveredLifecycleProofFieldCount?: number;
+  coveredLifecycleProofFields?: string[];
+  missingLifecycleProofFieldCount?: number;
+  missingLifecycleProofFields?: string[];
 }) {
   return hashPayload(payrollStatutoryScenarioCoverageProofPayload(input));
 }
@@ -433,7 +525,26 @@ function reviewEvidenceSummaryFor(
     sourceEvidenceHashes: uniqueValues(
       records.map((evidence) => evidence.sourceEvidenceHash),
     ),
+    coveredReviewTopics: uniqueValues(
+      records.flatMap((evidence) => evidence.coveredReviewTopics),
+    ).sort(),
   };
+}
+
+function lifecycleProofFieldValue(value: unknown) {
+  return typeof value === "string" && value.trim().length > 0
+    ? value.trim()
+    : null;
+}
+
+function runCoversLifecycleProofField(
+  run: PayrollCalculationFixtureRun,
+  field: string,
+) {
+  return Boolean(
+    lifecycleProofFieldValue(run.expectedOutput[field]) &&
+      lifecycleProofFieldValue(run.actualOutput?.[field]),
+  );
 }
 
 function runBelongsToSpec(run: PayrollCalculationFixtureRun, spec: FamilySpec) {
@@ -476,6 +587,8 @@ function familyBlockerFor(
   failedScenarioCount: number,
   issueCodes: string[],
   missingPurposeMatchers: string[],
+  missingReviewTopics: string[],
+  missingLifecycleProofFields: string[],
   reviewEvidence: PayrollStatutoryScenarioReviewEvidenceSummary,
   certificationStatus: PayrollStatutoryScenarioCoverageCertificationStatus,
 ) {
@@ -510,6 +623,13 @@ function familyBlockerFor(
     };
   }
 
+  if (missingLifecycleProofFields.length > 0) {
+    return {
+      code: "PAYROLL_STATUTORY_SCENARIO_LIFECYCLE_PROOF_COVERAGE_MISSING" as const,
+      message: `${spec.label} executable scenarios are missing lifecycle proof output fields: ${missingLifecycleProofFields.join(", ")}.`,
+    };
+  }
+
   if (failedScenarioCount > 0 || issueCodes.length > 0) {
     return {
       code: "PAYROLL_STATUTORY_SCENARIO_FAMILY_FAILED" as const,
@@ -521,6 +641,13 @@ function familyBlockerFor(
     return {
       code: "PAYROLL_STATUTORY_SCENARIO_REVIEW_EVIDENCE_MISSING" as const,
       message: `${spec.label} has executable calculation scenarios without review evidence provenance.`,
+    };
+  }
+
+  if (missingReviewTopics.length > 0) {
+    return {
+      code: "PAYROLL_STATUTORY_SCENARIO_REVIEW_TOPIC_COVERAGE_MISSING" as const,
+      message: `${spec.label} executable fixture review evidence is missing required legal review topics: ${missingReviewTopics.join(", ")}.`,
     };
   }
 
@@ -574,6 +701,20 @@ export function buildPayrollStatutoryScenarioCoverageSummary(
       (run) => run.reviewStatus === "REGULATOR_CONFIRMED",
     ).length;
     const reviewEvidence = reviewEvidenceSummaryFor(runs);
+    const coveredReviewTopics = requiredReviewTopics.filter((topic) =>
+      reviewEvidence.coveredReviewTopics.includes(topic),
+    );
+    const missingReviewTopics = requiredReviewTopics.filter(
+      (topic) => !coveredReviewTopics.includes(topic),
+    );
+    const requiredLifecycleProofFields =
+      spec.requiredLifecycleProofFields ?? [];
+    const coveredLifecycleProofFields = requiredLifecycleProofFields.filter(
+      (field) => runs.some((run) => runCoversLifecycleProofField(run, field)),
+    );
+    const missingLifecycleProofFields = requiredLifecycleProofFields.filter(
+      (field) => !coveredLifecycleProofFields.includes(field),
+    );
     const certificationStatus = certificationStatusFor(runs);
     const blocker = familyBlockerFor(
       spec,
@@ -582,6 +723,8 @@ export function buildPayrollStatutoryScenarioCoverageSummary(
       failedScenarioCount,
       issueCodes,
       missingPurposeMatchers,
+      missingReviewTopics,
+      missingLifecycleProofFields,
       reviewEvidence,
       certificationStatus,
     );
@@ -601,6 +744,11 @@ export function buildPayrollStatutoryScenarioCoverageSummary(
       coveredPurposeMatchers,
       missingPurposeMatchers,
       requiredReviewTopics,
+      coveredReviewTopics,
+      missingReviewTopics,
+      requiredLifecycleProofFields: [...requiredLifecycleProofFields],
+      coveredLifecycleProofFields,
+      missingLifecycleProofFields,
       reviewStatuses,
       expertReviewedScenarioCount,
       regulatorConfirmedScenarioCount,
@@ -631,6 +779,11 @@ export function buildPayrollStatutoryScenarioCoverageSummary(
         issueCodes: family.issueCodes,
         missingPurposeMatchers: family.missingPurposeMatchers,
         requiredReviewTopics: family.requiredReviewTopics,
+        coveredReviewTopics: family.coveredReviewTopics,
+        missingReviewTopics: family.missingReviewTopics,
+        requiredLifecycleProofFields: family.requiredLifecycleProofFields,
+        coveredLifecycleProofFields: family.coveredLifecycleProofFields,
+        missingLifecycleProofFields: family.missingLifecycleProofFields,
       },
     }));
 
@@ -647,6 +800,21 @@ export function buildPayrollStatutoryScenarioCoverageSummary(
   const certificationStatus = certificationStatusFor(validation.runs);
   const requiredReviewTopics = uniqueValues(
     families.flatMap((family) => family.requiredReviewTopics),
+  ).sort();
+  const coveredReviewTopics = uniqueValues(
+    families.flatMap((family) => family.coveredReviewTopics),
+  ).sort();
+  const missingReviewTopics = uniqueValues(
+    families.flatMap((family) => family.missingReviewTopics),
+  ).sort();
+  const requiredLifecycleProofFields = uniqueValues(
+    families.flatMap((family) => family.requiredLifecycleProofFields),
+  ).sort();
+  const coveredLifecycleProofFields = uniqueValues(
+    families.flatMap((family) => family.coveredLifecycleProofFields),
+  ).sort();
+  const missingLifecycleProofFields = uniqueValues(
+    families.flatMap((family) => family.missingLifecycleProofFields),
   ).sort();
 
   return {
@@ -671,6 +839,25 @@ export function buildPayrollStatutoryScenarioCoverageSummary(
     regulatorConfirmedScenarioCount,
     requiredReviewTopicCount: requiredReviewTopics.length,
     requiredReviewTopics,
+    coveredReviewTopicCount: coveredReviewTopics.length,
+    coveredReviewTopics,
+    missingReviewTopicCount: missingReviewTopics.length,
+    missingReviewTopics,
+    requiredLifecycleProofFieldCount: families.reduce(
+      (count, family) => count + family.requiredLifecycleProofFields.length,
+      0,
+    ),
+    requiredLifecycleProofFields,
+    coveredLifecycleProofFieldCount: families.reduce(
+      (count, family) => count + family.coveredLifecycleProofFields.length,
+      0,
+    ),
+    coveredLifecycleProofFields,
+    missingLifecycleProofFieldCount: families.reduce(
+      (count, family) => count + family.missingLifecycleProofFields.length,
+      0,
+    ),
+    missingLifecycleProofFields,
     reviewEvidence,
     certificationStatus,
     families,

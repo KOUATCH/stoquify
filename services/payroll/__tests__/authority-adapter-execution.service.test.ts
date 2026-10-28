@@ -611,6 +611,7 @@ describe("payroll authority adapter execution service", () => {
   it("returns idempotent replay for duplicate terminal authority responses", async () => {
     const existing = queuedExecution({
       status: "ACCEPTED",
+      authorityReference: "CNPS-ACCEPTED-1",
       responseHash: "sha256:accepted-response",
       receiptHash: "sha256:accepted-receipt",
       completedAt: "2026-06-30T10:10:00.000Z",
@@ -651,6 +652,7 @@ describe("payroll authority adapter execution service", () => {
   it("rejects duplicate terminal authority responses with conflicting proof", async () => {
     const existing = queuedExecution({
       status: "ACCEPTED",
+      authorityReference: "CNPS-ACCEPTED-1",
       responseHash: "sha256:accepted-response",
       receiptHash: "sha256:accepted-receipt",
       completedAt: "2026-06-30T10:10:00.000Z",
@@ -670,6 +672,54 @@ describe("payroll authority adapter execution service", () => {
           status: "accepted",
           authorityReference: "CNPS-ACCEPTED-1",
           responseHash: "sha256:different-response",
+          receiptHash: "sha256:accepted-receipt",
+        },
+      }),
+    ).rejects.toThrow(BusinessRuleError);
+    expect(tx.payrollDeclaration.update).not.toHaveBeenCalled();
+    expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled();
+  });
+  it("blocks close-grade authority outcomes without live receipt proof", async () => {
+    await expect(
+      processPayrollAuthorityAdapterExecution({
+        organizationId: "org-1",
+        declarationEvidenceId: "evidence-1",
+        processedBy: "worker-1",
+        now: "2026-06-30T10:22:00.000Z",
+        outcome: {
+          status: "accepted",
+          authorityReference: "CNPS-ACCEPTED-1",
+          responseHash: "sha256:accepted-response",
+        },
+      }),
+    ).rejects.toThrow(BusinessRuleError);
+    expect(mockDb.$transaction).not.toHaveBeenCalled();
+    expect(mockRecordBusinessEventInTx).not.toHaveBeenCalled();
+  });
+
+  it("rejects duplicate terminal authority responses with conflicting authority reference", async () => {
+    const existing = queuedExecution({
+      status: "ACCEPTED",
+      authorityReference: "CNPS-ACCEPTED-1",
+      responseHash: "sha256:accepted-response",
+      receiptHash: "sha256:accepted-receipt",
+      completedAt: "2026-06-30T10:10:00.000Z",
+    });
+    const tx = buildTx(
+      evidenceFixture({}, { authorityAdapterExecution: existing }),
+    );
+    mockDb.$transaction.mockImplementation((callback) => callback(tx));
+
+    await expect(
+      processPayrollAuthorityAdapterExecution({
+        organizationId: "org-1",
+        declarationEvidenceId: "evidence-1",
+        processedBy: "worker-1",
+        now: "2026-06-30T10:23:00.000Z",
+        outcome: {
+          status: "accepted",
+          authorityReference: "CNPS-ACCEPTED-2",
+          responseHash: "sha256:accepted-response",
           receiptHash: "sha256:accepted-receipt",
         },
       }),
