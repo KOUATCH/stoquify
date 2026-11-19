@@ -1,10 +1,13 @@
 #!/usr/bin/env node
 
 const fs = require("fs")
+const os = require("os")
 const path = require("path")
 const { createHash } = require("crypto")
 const { createRequire } = require("module")
 const { spawnSync } = require("child_process")
+
+const windowsEngineName = "query_engine-windows.dll.node"
 
 // Prisma formats the copied schema, including reordering adjacent block-level
 // attributes. Their declaration order is irrelevant; field order inside an
@@ -36,15 +39,22 @@ function hashFile(file) {
   return createHash("sha256").update(fs.readFileSync(file)).digest("hex")
 }
 
+function windowsEnginePaths(projectRequire) {
+  const clientDir = path.dirname(projectRequire.resolve("@prisma/client/package.json"))
+  const generatedDir = path.resolve(clientDir, "../../.prisma/client")
+  const prismaRequire = createRequire(projectRequire.resolve("prisma/package.json"))
+  const engineDir = path.dirname(prismaRequire.resolve("@prisma/engines/package.json"))
+  return { generatedDir, installedEngine: path.join(engineDir, windowsEngineName) }
+}
+
 function isClientCurrent({ root, projectRequire, platform, env }) {
   // Reuse covers this project's default Windows library generator.
   // Prisma handles other platforms and explicit generation overrides.
   if (platform !== "win32" || Object.keys(env).some((key) => key.startsWith("PRISMA_"))) return false
 
   try {
-    const clientRequire = createRequire(projectRequire.resolve("@prisma/client"))
-    const generatedDir = path.dirname(clientRequire.resolve(".prisma/client/default"))
-    const requiredFiles = ["index.js", "index.d.ts", "default.js", "default.d.ts", "schema.prisma", "query_engine-windows.dll.node"]
+    const { generatedDir, installedEngine } = windowsEnginePaths(projectRequire)
+    const requiredFiles = ["index.js", "index.d.ts", "default.js", "default.d.ts", "schema.prisma", windowsEngineName]
     if (requiredFiles.some((file) => fs.statSync(path.join(generatedDir, file)).size === 0)) return false
 
     const schema = fs.readFileSync(path.join(root, "prisma/schema.prisma"), "utf8")
@@ -57,13 +67,83 @@ function isClientCurrent({ root, projectRequire, platform, env }) {
     if (projectRequire("prisma/package.json").version !== version) return false
 
     // Reading the engine is safe; loading the native module would lock it here.
-    const prismaRequire = createRequire(projectRequire.resolve("prisma/package.json"))
-    const engineDir = path.dirname(prismaRequire.resolve("@prisma/engines/package.json"))
-    return hashFile(path.join(generatedDir, "query_engine-windows.dll.node")) ===
-      hashFile(path.join(engineDir, "query_engine-windows.dll.node"))
+    return hashFile(path.join(generatedDir, windowsEngineName)) === hashFile(installedEngine)
   } catch {
     return false
   }
+}
+
+function matchingEngineForGeneration({ root, projectRequire, platform, env, args, cliVersion }) {
+  if (platform !== "win32" || args.length || !cliVersion.startsWith("6.")) return null
+  // Leave explicit engine settings and custom dotenv files to Prisma. The child
+  // override would otherwise take precedence over settings loaded by prisma.config.ts.
+  const hasOverrides = (settings) => Object.keys(settings).some((key) => /^(PRISMA_|DOTENV_CONFIG_|NETLIFY$)/i.test(key))
+  if (hasOverrides(env)) return null
+
+  try {
+    const envFile = path.join(root, ".env")
+    if (fs.existsSync(envFile) && hasOverrides(projectRequire("dotenv").parse(fs.readFileSync(envFile)))) return null
+    if (projectRequire("@prisma/client/package.json").version !== cliVersion) return null
+
+    const schema = fs.readFileSync(path.join(root, "prisma/schema.prisma"), "utf8")
+    const generators = [...schema.matchAll(/^[ \t]*generator\s+\w+\s*\{[^}]*\}/gm)]
+    if (generators.length !== 1 || !/^\s*generator\s+client\s*\{\s*provider\s*=\s*"prisma-client-js"\s*\}$/.test(generators[0][0])) return null
+
+    const engine = windowsEnginePaths(projectRequire)
+    if (hashFile(path.join(engine.generatedDir, windowsEngineName)) === hashFile(engine.installedEngine)) return engine
+  } catch {
+    // Missing files and layouts outside the default setup use normal generation.
+  }
+  return null
+}
+
+function generateClient(options = {}) {
+  const root = options.root || path.resolve(__dirname, "..")
+  const projectRequire = createRequire(path.join(root, "package.json"))
+  const platform = options.platform || process.platform
+  const env = options.env || process.env
+  const args = options.args || []
+  const log = options.log || console.log
+  const prismaPackagePath = projectRequire.resolve("prisma/package.json")
+  const { bin, version: cliVersion } = projectRequire(prismaPackagePath)
+  const prismaCli = path.resolve(path.dirname(prismaPackagePath), bin.prisma)
+  const run = (childEnv) => (options.spawnSync || spawnSync)(process.execPath, [prismaCli, "generate", ...args], {
+    cwd: root,
+    env: childEnv,
+    stdio: "inherit",
+    windowsHide: true,
+  })
+
+  const engine = matchingEngineForGeneration({ root, projectRequire, platform, env, args, cliVersion })
+  let result
+  if (engine) {
+    const stagingDir = fs.mkdtempSync(path.join(os.tmpdir(), "stoquify-prisma-engine-"))
+    const alias = `${path.basename(stagingDir)}.dll.node`
+    const source = path.join(stagingDir, alias)
+    try {
+      // Prisma 6 copies the override by basename. Use a unique name so the
+      // generator can finish without replacing the identical DLL Windows has loaded.
+      fs.copyFileSync(engine.installedEngine, source)
+      log("Generating Prisma Client while preserving the matching Windows engine DLL.")
+      result = run({ ...env, PRISMA_QUERY_ENGINE_LIBRARY: source })
+    } finally {
+      fs.rmSync(source, { force: true })
+      fs.rmdirSync(stagingDir)
+      for (const file of fs.existsSync(engine.generatedDir) ? fs.readdirSync(engine.generatedDir) : []) {
+        if (file === alias || (file.startsWith(alias) && /^\.tmp\d+$/.test(file.slice(alias.length)))) {
+          fs.rmSync(path.join(engine.generatedDir, file), { force: true })
+        }
+      }
+    }
+  } else {
+    result = run(env)
+  }
+
+  if (result.error) throw result.error
+  if (result.status !== 0 && platform === "win32") {
+    console.error("If Prisma reports an EPERM engine lock, stop this project's dev servers and Prisma Studio, then retry generation.")
+  }
+  return result.status ?? 1
 }
 
 function ensureClient(options = {}) {
@@ -79,28 +159,17 @@ function ensureClient(options = {}) {
   }
 
   log("Generating Prisma Client for the current schema and installed version...")
-  const prismaPackagePath = projectRequire.resolve("prisma/package.json")
-  const prismaCli = path.resolve(path.dirname(prismaPackagePath), projectRequire("prisma/package.json").bin.prisma)
-  const result = (options.spawnSync || spawnSync)(process.execPath, [prismaCli, "generate"], {
-    cwd: root,
-    env,
-    stdio: "inherit",
-    windowsHide: true,
-  })
-  if (result.error) throw result.error
-  if (result.status !== 0 && platform === "win32") {
-    console.error("If Prisma reports an EPERM engine lock, stop this project's dev servers and Prisma Studio, then run npm run prisma:generate.")
-  }
-  return result.status ?? 1
+  return generateClient(options)
 }
 
 if (require.main === module) {
   try {
-    process.exitCode = ensureClient()
+    const args = process.argv.slice(2)
+    process.exitCode = args[0] === "--generate" ? generateClient({ args: args.slice(1) }) : ensureClient()
   } catch (error) {
     console.error(error.message)
     process.exitCode = 1
   }
 }
 
-module.exports = { ensureClient, schemaTokens }
+module.exports = { ensureClient, generateClient, schemaTokens }

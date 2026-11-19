@@ -196,6 +196,16 @@
       },
       "files": {}
     },
+    "prisma:generate": {
+      "script": "node scripts/ensure-prisma-client.js --generate",
+      "auditAllowed": false,
+      "reason": "Loads Prisma configuration and regenerates the local client. The matching Windows engine can be reused through a per-invocation temporary copy. Does not run migrations.",
+      "lifecycle": {
+        "pre": null,
+        "post": null
+      },
+      "files": {}
+    },
     "prisma:restart": {
       "script": "pwsh -NoProfile -File scripts/prisma-dev-restart.ps1",
       "auditAllowed": false,

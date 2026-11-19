@@ -30,7 +30,7 @@
     "lint": "eslint app actions components config hooks lib services --ext .js,.jsx,.ts,.tsx",
     "typecheck": "tsc --noEmit --pretty false",
     "prisma:validate": "prisma validate",
-    "prisma:generate": "prisma generate",
+    "prisma:generate": "node scripts/ensure-prisma-client.js --generate",
     "prisma:restart": "pwsh -NoProfile -File scripts/prisma-dev-restart.ps1",
     "test:prisma:restart": "pwsh -NoProfile -File scripts/__tests__/prisma-dev-restart.test.ps1",
     "prisma:ensure": "node scripts/ensure-prisma-client.js",

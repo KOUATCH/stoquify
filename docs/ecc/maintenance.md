@@ -78,11 +78,15 @@ installed/generated versions, required files and engine hashes match. Schema
 comparison ignores Prisma's reordering of adjacent single-line block attributes
 such as `@@index` and `@@unique`, while preserving the field order inside each
 constraint. This avoids unnecessary DLL replacement while another dev server
-has the engine loaded. A real schema/version/engine change still requires
-generation: stop this project's Prisma-using processes before generating, then
-restart them. The startup guard does not automatically terminate other sessions.
+has the engine loaded. To regenerate after a schema edit while the dev server is
+running, use `npm run prisma:generate`. On Windows, the default Prisma 6
+generator preserves the loaded DLL when it matches the installed engine. It
+generates the current schema with a temporary copy and removes that copy when
+generation finishes. Explicit Prisma CLI arguments and custom engine settings
+use standard Prisma generation.
 
-For a Windows development restart after editing the schema, run:
+When an engine upgrade requires replacing a loaded DLL, use the Windows restart
+command:
 
 ```powershell
 npm run prisma:restart

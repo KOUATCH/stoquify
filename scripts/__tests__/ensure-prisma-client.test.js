@@ -2,7 +2,7 @@
 const fs = require("fs")
 const os = require("os")
 const path = require("path")
-const { ensureClient } = require("../ensure-prisma-client")
+const { ensureClient, generateClient } = require("../ensure-prisma-client")
 
 const schema = 'generator client {\n  provider = "prisma-client-js"\n}\nmodel Item {\n  id String @id\n  name String @default("New York")\n}\n'
 const roots = []
@@ -116,7 +116,12 @@ describe("Prisma development startup", () => {
     expect(ensureClient(task.options)).toBe(0)
     expect(task.spawnSync).toHaveBeenCalledWith(process.execPath,
       [path.join(task.root, "node_modules/prisma/cli.js"), "generate"],
-      expect.objectContaining({ cwd: task.root, stdio: "inherit", windowsHide: true }))
+      expect.objectContaining({
+        cwd: task.root,
+        stdio: "inherit",
+        windowsHide: true,
+        env: expect.objectContaining({ PRISMA_QUERY_ENGINE_LIBRARY: expect.any(String) }),
+      }))
   })
 
   it("regenerates a client from an older Prisma version", () => {
@@ -161,5 +166,51 @@ describe("Prisma development startup", () => {
     task.spawnSync.mockReturnValue({ status: 1 })
     jest.spyOn(console, "error").mockImplementation(() => {})
     expect(ensureClient(task.options)).toBe(1)
+  })
+})
+
+describe("Prisma Client generation", () => {
+  it.each([0, 17])("uses and cleans up an engine alias when Prisma exits with %s", (status) => {
+    const task = fixture()
+    const originalEngine = path.join(task.generated, "query_engine-windows.dll.node")
+    const originalStat = fs.statSync(originalEngine)
+    const originalEnv = { STOQUIFY_TEST_SETTING: "preserved" }
+    let sourceAlias
+    let generatedAlias
+    jest.spyOn(console, "error").mockImplementation(() => {})
+    task.spawnSync.mockImplementation((_node, args, { env }) => {
+      expect(args).toEqual([path.join(task.root, "node_modules/prisma/cli.js"), "generate"])
+      sourceAlias = env.PRISMA_QUERY_ENGINE_LIBRARY
+      expect(env.STOQUIFY_TEST_SETTING).toBe("preserved")
+      expect(path.basename(sourceAlias)).not.toBe(path.basename(originalEngine))
+      expect(fs.readFileSync(sourceAlias)).toEqual(fs.readFileSync(originalEngine))
+      generatedAlias = path.join(task.generated, path.basename(sourceAlias))
+      fs.copyFileSync(sourceAlias, generatedAlias)
+      return { status }
+    })
+
+    expect(generateClient({ ...task.options, env: originalEnv })).toBe(status)
+    expect(task.spawnSync).toHaveBeenCalledTimes(1)
+    expect(originalEnv).toEqual({ STOQUIFY_TEST_SETTING: "preserved" })
+    expect(fs.existsSync(sourceAlias)).toBe(false)
+    expect(fs.existsSync(generatedAlias)).toBe(false)
+    expect(fs.statSync(originalEngine).mtimeMs).toBe(originalStat.mtimeMs)
+    expect(fs.readFileSync(originalEngine, "utf8")).toBe("engine")
+  })
+
+  it.each([
+    ["an engine mismatch", {}, "old engine"],
+    ["explicit schema arguments", { args: ["--schema", "alternate.prisma"] }, null],
+    ["an explicit engine override", { env: { PRISMA_QUERY_ENGINE_LIBRARY: "custom.dll.node" } }, null],
+  ])("preserves the standard Prisma invocation with %s", (_label, overrides, generatedEngine) => {
+    const task = fixture()
+    if (generatedEngine) task.write("node_modules/.prisma/client/query_engine-windows.dll.node", generatedEngine)
+    const options = { ...task.options, ...overrides }
+
+    expect(generateClient(options)).toBe(0)
+    expect(task.spawnSync).toHaveBeenCalledTimes(1)
+    expect(task.spawnSync).toHaveBeenCalledWith(process.execPath,
+      [path.join(task.root, "node_modules/prisma/cli.js"), "generate", ...(options.args || [])],
+      expect.objectContaining({ env: options.env }))
   })
 })
