@@ -69,6 +69,14 @@ describe("dashboard session cookie routing", () => {
 })
 
 describe("private receipt transport policy", () => {
+  it.each(["/en/pos-receipt", "/fr/pos-receipt"])("keeps authenticated print preview %s private and unindexed", path => {
+    const req = { ...request(), nextUrl: new URL("https://stoquify.example" + path + "?saleId=fixture"), headers: new Headers({ "x-real-ip": "192.0.2.183" }) } as unknown as NextRequest
+    const response = middleware(req)
+    expect(response.headers.get("Referrer-Policy")).toBe("no-referrer")
+    expect(response.headers.get("Cache-Control")).toBe("private, no-store, max-age=0")
+    expect(response.headers.get("X-Robots-Tag")).toBe("noindex, nofollow, noarchive")
+  })
+
   it.each(["/digital-receipt/sale", "/api/receipts/sale"])("keeps %s private and unindexed without requiring a session", path => {
     const req = { ...request(), nextUrl: new URL("https://stoquify.example" + path + "?token=opaque"), headers: new Headers({ "x-real-ip": "192.0.2.181" }) } as unknown as NextRequest
     const response = middleware(req)

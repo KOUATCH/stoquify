@@ -44,6 +44,10 @@ function receiptTokenSecret() {
   return process.env.AQSTOQFLOW_RECEIPT_TOKEN_SECRET || process.env.RECEIPT_TOKEN_SECRET || null
 }
 
+export function isPublicReceiptTokenSigningConfigured() {
+  return (receiptTokenSecret()?.trim().length ?? 0) >= 32
+}
+
 function base64UrlJson(value: PublicReceiptTokenPayload) {
   return Buffer.from(JSON.stringify(value), "utf8").toString("base64url")
 }

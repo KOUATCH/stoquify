@@ -123,6 +123,20 @@ describe("business event outbox gateway", () => {
     )
   })
 
+  it("keeps WhatsApp receipts out of generic delivery even when explicitly requested", async () => {
+    const client = createClient()
+    const eventName = "pos.receipt.whatsapp.requested"
+    const handler = jest.fn()
+    client.businessEventOutbox.findMany.mockImplementation(async query =>
+      query.where.eventName?.not === eventName ? [] : [message({ eventName })])
+    client.businessEventOutbox.updateMany.mockResolvedValue({ count: 1 })
+    await expect(runBusinessEventOutboxWorker(
+      { organizationId: "org-1", workerId: "generic", eventNames: [eventName], now }, handler, client,
+    )).resolves.toEqual([])
+    expect(handler).not.toHaveBeenCalled()
+    expect(client.businessEventOutbox.updateMany).not.toHaveBeenCalled()
+  })
+
   it("completes delivery and audit evidence in the same transaction", async () => {
     const client = createClient()
     client.businessEventOutbox.findFirst.mockResolvedValue(
@@ -351,7 +365,10 @@ describe("business event outbox gateway", () => {
       client.businessEventOutbox.findFirst.mockResolvedValue(leased())
       client.businessEventOutbox.updateMany.mockResolvedValue({ count: 0 })
       await expect(terminal(input(), client)).resolves.toEqual({ messageId: "outbox-1", status: "LEASE_LOST" })
-      const expectedIdentity = { id: "outbox-1", organizationId: "org-1", status: "LOCKED", lockedBy: "worker-1", attempts: 1, lockedAt: now }
+      const expectedIdentity = {
+        id: "outbox-1", organizationId: "org-1", status: "LOCKED", lockedBy: "worker-1", attempts: 1, lockedAt: now,
+        eventName: { not: "pos.receipt.whatsapp.requested" },
+      }
       expect(client.businessEventOutbox.findFirst).toHaveBeenCalledWith(expect.objectContaining({ where: expectedIdentity }))
       expect(client.businessEventOutbox.updateMany).toHaveBeenCalledWith(expect.objectContaining({ where: expectedIdentity }))
       expect(client.businessEventAudit.create).not.toHaveBeenCalled()
@@ -393,6 +410,7 @@ describe("business event outbox gateway", () => {
     expect(handler.mock.calls.map(([claimed]) => claimed.id)).toEqual(["outbox-1", "outbox-2"])
     expect(client.businessEventOutbox.findFirst).toHaveBeenNthCalledWith(1, expect.objectContaining({ where: {
       id: "outbox-1", organizationId: "org-1", status: "LOCKED", lockedBy: "worker-1", attempts: 1, lockedAt: now,
+      eventName: { not: "pos.receipt.whatsapp.requested" },
     } }))
     expect(client.businessEventOutbox.updateMany).toHaveBeenCalledTimes(3) // Two claims; only the second terminal write.
     expect(client.businessEventAudit.create).toHaveBeenCalledTimes(1)

@@ -6,6 +6,7 @@ import { usePOSCheckoutLifecycle } from "@/hooks/posHooks/usePOSCheckoutLifecycl
 import { retainLegacyPOSCheckoutAction } from "@/actions/pos/checkout.actions"
 import type { getPOSSaleCommitStatus } from "@/services/pos/pos.service"
 import { useLocale, useTranslations } from "next-intl"
+import Link from "next/link"
 import { usePermissions } from "@/hooks/usePermissions"
 import { DashboardErrorState } from "@/components/dashboard/DashboardErrorState"
 import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
@@ -1387,7 +1388,7 @@ function POSWorkspace() {
 
   return (
     <div className={cn("dashboard-landing-theme dark min-h-screen overflow-x-hidden text-[var(--dash-text)]", touchMode && "text-base")}>
-      <header className="dashboard-landing-content sticky top-16 z-20 border-b border-[var(--dash-border-subtle)] bg-[rgba(20,33,41,0.92)] px-4 py-3 text-white shadow-[0_18px_42px_rgba(5,12,16,0.22)] backdrop-blur-xl lg:top-[68px]">
+      <header data-pos-header className="dashboard-landing-content sticky top-16 z-20 border-b border-[var(--dash-border-subtle)] bg-[rgba(20,33,41,0.92)] px-4 py-3 text-white shadow-[0_18px_42px_rgba(5,12,16,0.22)] backdrop-blur-xl lg:top-[68px]">
         <div className="mx-auto flex w-full max-w-[112rem] flex-wrap items-center gap-3">
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
@@ -1410,6 +1411,22 @@ function POSWorkspace() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
+            <POSButton asChild className={cn(posButtonClass, "min-h-11 px-3")}>
+              <Link
+                prefetch={false}
+                href={{
+                  pathname: `/${locale}/dashboard/pos/activity`,
+                  query: {
+                    ...(selectedLocationId ? { locationId: selectedLocationId } : {}),
+                    ...(selectedTerminalId && selectedTerminal?.id === selectedTerminalId ? { terminalId: selectedTerminalId } : {}),
+                    ...(activeShift && activeShift.id === currentUserShift?.id && activeShift.locationId === selectedLocationId && activeShift.terminalId === selectedTerminal?.id ? { sessionId: activeShift.id } : {}),
+                  },
+                }}
+              >
+                <Clock aria-hidden="true" className="h-4 w-4" />
+                {t("shell.todayActivity")}
+              </Link>
+            </POSButton>
             <Badge variant="outline" className="hidden gap-1.5 rounded-lg border-[var(--dash-info)]/35 bg-[var(--dash-info-soft)] px-3 py-2 text-[#cfe8ff] md:flex">
               <Barcode className="h-4 w-4" />
               {t("shell.scannerReady")}

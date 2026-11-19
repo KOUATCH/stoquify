@@ -38,12 +38,18 @@ type WhatsAppFetch = (
     method?: string
     headers?: Record<string, string>
     body?: string
+    redirect?: "error"
+    signal?: AbortSignal
   },
 ) => Promise<{
   ok: boolean
   status: number
   json: () => Promise<unknown>
 }>
+
+export type WhatsAppReceiptProviderResult = ReceiptDeliveryResult & {
+  acceptance?: "UNKNOWN"
+}
 
 function enabled(value?: string) {
   return LIVE_SEND_VALUES.has(String(value ?? "").trim().toLowerCase())
@@ -125,12 +131,6 @@ export function hashWhatsAppDestination(destination: string) {
   return `sha256:${createHash("sha256").update(normalized).digest("hex")}`
 }
 
-function safeWhatsAppProviderMessage(status?: number) {
-  if (!status) return "WhatsApp receipt delivery failed before the provider accepted the request."
-  if (status >= 500) return "WhatsApp receipt provider is temporarily unavailable."
-  return "WhatsApp receipt provider rejected the delivery request."
-}
-
 function receiptTotalText(input: ReceiptDeliveryProviderInput) {
   return `${input.receipt.receipt.total} ${input.receipt.business.currency}`
 }
@@ -164,7 +164,15 @@ function providerReferenceFromPayload(payload: unknown) {
   const first = messages[0]
   if (!first || typeof first !== "object") return undefined
   const id = (first as { id?: unknown }).id
-  return typeof id === "string" ? id : undefined
+  return typeof id === "string" && id.trim().length > 0 ? id : undefined
+}
+
+function graphErrorCode(payload: unknown) {
+  if (!payload || typeof payload !== "object") return undefined
+  const error = (payload as { error?: unknown }).error
+  if (!error || typeof error !== "object") return undefined
+  const code = (error as { code?: unknown }).code
+  return typeof code === "number" && Number.isInteger(code) ? code : undefined
 }
 
 export async function sendWhatsAppReceipt(
@@ -173,7 +181,7 @@ export async function sendWhatsAppReceipt(
     environment?: WhatsAppReceiptEnvironment
     fetcher?: WhatsAppFetch
   } = {},
-): Promise<ReceiptDeliveryResult> {
+): Promise<WhatsAppReceiptProviderResult> {
   const normalizedDestination = normalizeWhatsAppPhoneNumber(input.destination)
   const redactedDestination = redactWhatsAppPhoneNumber(normalizedDestination)
   const destinationHash = hashWhatsAppDestination(normalizedDestination)
@@ -206,36 +214,58 @@ export async function sendWhatsAppReceipt(
   }
 
   const url = `https://graph.facebook.com/${config.apiVersion}/${config.phoneNumberId}/messages`
-  const response = await fetcher(url, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${config.accessToken}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(buildWhatsAppTemplatePayload(input, normalizedDestination, config)),
-  })
+  const uncertain: WhatsAppReceiptProviderResult = {
+    channel: "WHATSAPP",
+    status: "FAILED",
+    destination: redactedDestination,
+    destinationHash,
+    retryable: false,
+    acceptance: "UNKNOWN",
+    message: "WhatsApp acceptance could not be confirmed. This receipt will not be sent again automatically.",
+    digitalReceiptUrl: input.receipt.digitalReceiptUrl,
+  }
 
-  const payload = await response.json().catch(() => null)
-  if (!response.ok) {
+  try {
+    const response = await fetcher(url, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${config.accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(buildWhatsAppTemplatePayload(input, normalizedDestination, config)),
+      redirect: "error",
+      signal: AbortSignal.timeout(30_000),
+    })
+    const payload = await response.json().catch(() => null)
+    const providerReference = providerReferenceFromPayload(payload)
+    if (response.ok && providerReference) {
+      return {
+        channel: "WHATSAPP",
+        status: "SENT",
+        destination: redactedDestination,
+        destinationHash,
+        providerReference,
+        retryable: false,
+        message: "WhatsApp receipt accepted by provider.",
+        digitalReceiptUrl: input.receipt.digitalReceiptUrl,
+      }
+    }
+
+    const code = graphErrorCode(payload)
+    // A provider rejection is evidence of no acceptance. Timeouts, 5xx and
+    // malformed responses are not, even if a later attempt might succeed.
+    if (providerReference || response.status < 400 || response.status >= 500 || response.status === 408 || code === undefined) return uncertain
+    const throttled = response.status === 429 || code === 4 || code === 17 || code === 130429
     return {
       channel: "WHATSAPP",
       status: "FAILED",
       destination: redactedDestination,
       destinationHash,
-      retryable: response.status >= 500 || response.status === 429,
-      message: safeWhatsAppProviderMessage(response.status),
+      retryable: throttled,
+      message: throttled ? "WhatsApp temporarily rejected the receipt due to rate limits." : "WhatsApp rejected the receipt request.",
       digitalReceiptUrl: input.receipt.digitalReceiptUrl,
     }
-  }
-
-  return {
-    channel: "WHATSAPP",
-    status: "SENT",
-    destination: redactedDestination,
-    destinationHash,
-    providerReference: providerReferenceFromPayload(payload),
-    retryable: false,
-    message: "WhatsApp receipt accepted by provider.",
-    digitalReceiptUrl: input.receipt.digitalReceiptUrl,
+  } catch {
+    return uncertain
   }
 }

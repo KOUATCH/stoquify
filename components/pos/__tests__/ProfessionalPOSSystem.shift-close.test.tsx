@@ -162,6 +162,17 @@ function openCloseDialog() {
 describe("POS search keyboard scope", () => {
   beforeEach(() => { jest.clearAllMocks(); sessionStorage.clear(); setupHooks(100, actionSuccess(null)) })
 
+  it("opens today’s activity directly with the current cashier's register and shift", () => {
+    mockHooks.usePOSTerminals.mockReturnValue({ data: actionSuccess([{
+      id: "terminal-1", locationId: "location-1", terminalNumber: "T01", name: "Till 1", currentSessionId: "session-1",
+    }]) } as never)
+    render(<ProfessionalPOSSystem />)
+    const href = screen.getByRole("link", { name: "shell.todayActivity" }).getAttribute("href")
+    const url = new URL(href ?? "", "http://localhost")
+    expect(url.pathname).toBe("/en/dashboard/pos/activity")
+    expect(Object.fromEntries(url.searchParams)).toEqual({ locationId: "location-1", terminalId: "terminal-1", sessionId: "session-1" })
+  })
+
   it("keeps the search input and its focus while catalogue results load", () => {
     const { rerender } = render(<ProfessionalPOSSystem />)
     const search = screen.getByRole("textbox", { name: "search.placeholder" })

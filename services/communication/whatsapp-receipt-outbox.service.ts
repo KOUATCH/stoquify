@@ -1,5 +1,6 @@
 import type { Prisma } from "@prisma/client"
 
+import { ConflictError } from "@/services/_shared/action-errors"
 import {
   hashBusinessPayload,
   recordBusinessEventInTx,
@@ -20,6 +21,8 @@ export const WHATSAPP_RECEIPT_EVENT_TYPE = "POS_RECEIPT_WHATSAPP_DELIVERY_REQUES
 export const WHATSAPP_RECEIPT_EVENT_NAME = "pos.receipt.whatsapp.requested"
 export const WHATSAPP_RECEIPT_OUTBOX_CHANNEL = "WEBHOOK"
 export const WHATSAPP_RECEIPT_MAX_ATTEMPTS = 5
+export const WHATSAPP_RECEIPT_RETRYABLE_REJECTION = "WHATSAPP_RETRYABLE_REJECTION"
+export const WHATSAPP_RECEIPT_OUTCOME_UNCERTAIN = "WHATSAPP_OUTCOME_UNCERTAIN"
 
 type BusinessEventTx = Parameters<typeof recordBusinessEventInTx>[0]
 
@@ -49,6 +52,10 @@ export type WhatsAppReceiptOutboxPayload = {
   sourcePayloadHash: string
 }
 
+export function whatsAppReceiptIdempotencyKey(salesOrderId: string, destinationHash: string) {
+  return `pos-receipt:${salesOrderId}:whatsapp:${destinationHash}`
+}
+
 function cleanJson(input: Record<string, unknown>): Prisma.JsonObject {
   return Object.fromEntries(Object.entries(input).filter(([, value]) => value !== undefined)) as Prisma.JsonObject
 }
@@ -69,7 +76,7 @@ export function whatsappReceiptSourceFingerprint(input: {
   })
 }
 
-function queuedReference(event: { id: string; outboxMessages?: unknown[] }) {
+function queuedMessage(event: { outboxMessages?: unknown[] }) {
   const outbox = event.outboxMessages?.find((message) => {
     return (
       typeof message === "object" &&
@@ -77,8 +84,7 @@ function queuedReference(event: { id: string; outboxMessages?: unknown[] }) {
       (message as { eventName?: unknown }).eventName === WHATSAPP_RECEIPT_EVENT_NAME
     )
   })
-  const outboxId = outbox && typeof outbox === "object" ? (outbox as { id?: unknown }).id : null
-  return typeof outboxId === "string" ? outboxId : event.id
+  return outbox as { id?: string; payload?: Partial<WhatsAppReceiptOutboxPayload> } | undefined
 }
 
 export async function queueWhatsAppReceiptDeliveryInTx(
@@ -88,6 +94,45 @@ export async function queueWhatsAppReceiptDeliveryInTx(
   const normalizedDestination = normalizeWhatsAppPhoneNumber(input.destination)
   const destinationHash = hashWhatsAppDestination(normalizedDestination)
   const redactedDestination = redactWhatsAppPhoneNumber(normalizedDestination)
+  const idempotencyKey = whatsAppReceiptIdempotencyKey(input.receipt.receipt.id, destinationHash)
+  const pendingResult = {
+    channel: "WHATSAPP",
+    status: "PENDING",
+    destination: redactedDestination,
+    destinationHash,
+    retryable: false,
+    message: "WhatsApp receipt delivery was queued for controlled background processing.",
+  } as const
+
+  const existing = await tx.businessEvent.findUnique({
+    where: {
+      organizationId_eventSource_idempotencyKey: {
+        organizationId: input.organizationId,
+        eventSource: "POS",
+        idempotencyKey,
+      },
+    },
+    include: { outboxMessages: true },
+  })
+  if (existing) {
+    const original = queuedMessage(existing)
+    const prev = original?.payload
+    if (existing.eventType !== WHATSAPP_RECEIPT_EVENT_TYPE || !original?.id || !prev ||
+        prev.organizationId !== input.organizationId || prev.destinationHash !== destinationHash ||
+        prev.salesOrderId !== input.receipt.receipt.id || prev.orderNumber !== input.receipt.receipt.orderNumber ||
+        typeof prev.digitalReceiptUrl !== "string" ||
+        prev.sourcePayloadHash !== whatsappReceiptSourceFingerprint({
+          salesOrderId: input.receipt.receipt.id,
+          orderNumber: input.receipt.receipt.orderNumber,
+          total: input.receipt.receipt.total,
+          digitalReceiptUrl: prev.digitalReceiptUrl,
+          destinationHash,
+        })) {
+      throw new ConflictError("The stored WhatsApp delivery does not match this receipt request.")
+    }
+    return { ...pendingResult, providerReference: original.id, digitalReceiptUrl: prev.digitalReceiptUrl }
+  }
+
   const sourcePayloadHash = whatsappReceiptSourceFingerprint({
     salesOrderId: input.receipt.receipt.id,
     orderNumber: input.receipt.receipt.orderNumber,
@@ -108,7 +153,9 @@ export async function queueWhatsAppReceiptDeliveryInTx(
     sourcePayloadHash,
   }
 
-  const idempotencyKey = `pos-receipt:${input.receipt.receipt.id}:whatsapp:${destinationHash}`
+  // Only the dispatch worker needs the bearer URL. Keep it out of the business
+  // event and audit payloads.
+  const { digitalReceiptUrl: _receiptUrl, ...eventPayload } = payload
   const recorded = await recordBusinessEventInTx(tx, {
     organizationId: input.organizationId,
     eventType: WHATSAPP_RECEIPT_EVENT_TYPE,
@@ -120,7 +167,7 @@ export async function queueWhatsAppReceiptDeliveryInTx(
     sourceType: "POS_SALE",
     sourceId: input.receipt.receipt.id,
     documentHash: sourcePayloadHash,
-    payload,
+    payload: eventPayload,
     metadata: {
       receiptChannel: "WHATSAPP",
       destinationHash,
@@ -144,13 +191,8 @@ export async function queueWhatsAppReceiptDeliveryInTx(
   })
 
   const result: ReceiptDeliveryResult = {
-    channel: "WHATSAPP",
-    status: "PENDING",
-    destination: redactedDestination,
-    destinationHash,
-    providerReference: queuedReference(recorded.event),
-    retryable: false,
-    message: "WhatsApp receipt delivery was queued for controlled background processing.",
+    ...pendingResult,
+    providerReference: queuedMessage(recorded.event)?.id ?? recorded.event.id,
     digitalReceiptUrl: input.receipt.digitalReceiptUrl,
   }
 
@@ -170,7 +212,6 @@ export async function queueWhatsAppReceiptDeliveryInTx(
         retryable: result.retryable,
         message: result.message,
         orderNumber: input.receipt.receipt.orderNumber,
-        digitalReceiptUrl: input.receipt.digitalReceiptUrl,
         businessEventId: recorded.event.id,
         created: recorded.created,
       }),

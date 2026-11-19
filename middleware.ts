@@ -47,11 +47,12 @@ function applySecurityHeaders(response: NextResponse, pathname = ""): NextRespon
   })
   // Signed statement, supplier and receipt URLs carry bearer evidence. Preserve the private route
   // policy through middleware responses, including rate-limit denials.
-  if (/^\/(?:customer-statement|digital-receipt|api\/receipts|api\/customer-statements|api\/supplier-po-envelopes)(?:\/|$)/.test(pathname) || /^\/(?:en|fr)\/supplier-purchase-order(?:\/|$)/.test(pathname)) {
+  const posPrintReceipt = /^\/(?:en|fr)\/pos-receipt(?:\/|$)/.test(pathname)
+  if (posPrintReceipt || /^\/(?:customer-statement|digital-receipt|api\/receipts|api\/customer-statements|api\/supplier-po-envelopes)(?:\/|$)/.test(pathname) || /^\/(?:en|fr)\/supplier-purchase-order(?:\/|$)/.test(pathname)) {
     response.headers.set("Referrer-Policy", "no-referrer")
     response.headers.set("Cache-Control", "private, no-store, max-age=0")
   }
-  if (/^\/(?:digital-receipt|api\/receipts)(?:\/|$)/.test(pathname)) {
+  if (posPrintReceipt || /^\/(?:digital-receipt|api\/receipts)(?:\/|$)/.test(pathname)) {
     response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive")
   }
   return response

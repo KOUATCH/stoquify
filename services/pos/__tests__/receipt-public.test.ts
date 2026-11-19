@@ -7,7 +7,7 @@ import {
 import { db } from "@/prisma/db"
 import { NotFoundError } from "@/services/_shared/action-errors"
 import { createPublicReceiptAccessToken } from "@/services/pos/public-receipt-token"
-import { getPublicSalesReceipt, getSalesReceipt, sendReceipt } from "@/services/pos/receipt.service"
+import { getPOSReceiptPrintPreview, getPublicSalesReceipt, getSalesReceipt, sendReceipt } from "@/services/pos/receipt.service"
 
 const mockDb = db as unknown as {
   $transaction: jest.Mock
@@ -205,6 +205,53 @@ function createActiveRegistryToken(input: {
   })
   return receiptAccessToken as string
 }
+
+describe("private POS print preview", () => {
+  it("reads only a completed POS sale at the trusted tenant and location, owned by the printing cashier", async () => {
+    mockDb.salesOrder.findFirst.mockResolvedValue(saleFixture())
+    const preview = await getPOSReceiptPrintPreview({
+      organizationId: "org-1",
+      locationId: "loc-1",
+      locale: "FR",
+      selection: { salesOrderId: "sale-1", actorId: "cashier-1" },
+    })
+
+    expect(mockDb.salesOrder.findFirst).toHaveBeenCalledWith(expect.objectContaining({
+      where: {
+        id: "sale-1", organizationId: "org-1", locationId: "loc-1", status: "COMPLETED", channel: "POS", deletedAt: null,
+        location: { is: { organizationId: "org-1", isActive: true, deletedAt: null } },
+        customer: { is: { organizationId: "org-1" } },
+        terminal: { is: { organizationId: "org-1", locationId: "loc-1" } },
+        session: { is: { organizationId: "org-1", locationId: "loc-1", userId: "cashier-1" } },
+      },
+    }))
+    expect(preview.receipt).toMatchObject({ locale: "FR", orderNumber: "SO-0001", total: 1000 })
+    expect(preview.receipt).not.toHaveProperty("customerEmail")
+    expect(preview.receipt).not.toHaveProperty("customerPhone")
+    expect(preview.digitalReceiptUrl).toBe("")
+    expect(mockDb.publicReceiptAccessToken.create).not.toHaveBeenCalled()
+    expect(mockDb.businessEvent.create).not.toHaveBeenCalled()
+    expect(mockDb.auditLog.create).not.toHaveBeenCalled()
+  })
+
+  it("requires an exact completed POS sale number in the selected location for reprints", async () => {
+    mockDb.salesOrder.findFirst.mockResolvedValue(null)
+    await expect(getPOSReceiptPrintPreview({
+      organizationId: "org-1",
+      locationId: "loc-1",
+      locale: "EN",
+      selection: { orderNumber: "SO-0001" },
+    })).rejects.toBeInstanceOf(NotFoundError)
+    expect(mockDb.salesOrder.findFirst).toHaveBeenCalledWith(expect.objectContaining({
+      where: expect.objectContaining({
+        orderNumber: "SO-0001", organizationId: "org-1", locationId: "loc-1", status: "COMPLETED", channel: "POS",
+        location: { is: { organizationId: "org-1", isActive: true, deletedAt: null } },
+        session: { is: { organizationId: "org-1", locationId: "loc-1" } },
+      }),
+    }))
+    expect(mockDb.fiscalDocument.findFirst).not.toHaveBeenCalled()
+  })
+})
 
 describe("public receipt payload", () => {
   it("keeps provider and outbox error details out of public receipts", async () => {
